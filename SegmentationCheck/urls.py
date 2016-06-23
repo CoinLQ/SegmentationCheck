@@ -15,7 +15,20 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.conf import settings
+from django.views.static import serve
 
 urlpatterns = [
+    url(r'^segmentation/', include('segmentation.urls')),
     url(r'^admin/', include(admin.site.urls)),
 ]
+
+if settings.DEBUG:
+    urlpatterns += [
+        url(r'^page_images/(?P<path>.*)$', serve, {
+            'document_root': settings.PAGE_IMAGE_ROOT,
+        }),
+        url(r'^character_images/(?P<path>.*)$', serve, {
+            'document_root': settings.CHARACTER_IMAGE_ROOT,
+        }),
+    ]

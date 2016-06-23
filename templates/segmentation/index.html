@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Svg.resize.js : Demo-Page">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="/static/demo.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="/static/svg.select.css">
+    
+    <title>Svg.resize.js | Demo-Page</title>
+    <style>
+    </style>
+
+  </head>
+  
+  <body>
+  <div id="container">
+    <h1>svg.resize.js - Demo</h1>
+
+    <div class="box">
+      <div id="polygon_normal"></div>
+    </div>
+
+  </div>
+    
+    <script src="/static/svg.min.js"></script>
+    <script src="/static/svg.select.min.js"></script>
+    <script src="/static/svg.resize.js"></script>
+    <script>
+        var draw = new SVG('polygon_normal').size('100%', '100%');
+draw.style('background:url(/page_images/K0001V01P0425a.jpg);');
+var polygon = draw.rect(100, 100);
+polygon.attr('stroke','red').attr('stroke-width',1).attr('fill','none').select().resize({
+snapToAngle:0
+});
+window.addEventListener('keydown', function(e){
+            if(e.keyCode == 17){
+                polygon.resize({'snapToGrid': 20, 'snapToAngle':0});
+            }
+        }, false);
+        
+        window.addEventListener('keyup', function(e){
+            if(e.keyCode == 17){
+                polygon.resize({'snapToGrid': 1,'snapToAngle':0});
+            }
+        }, false);
+polygon.on('resizedone', function(e) { console.log("width: " + polygon.width() + ", height: " + polygon.height()); });
+
+    </script>
+  </body>
+</html>
+

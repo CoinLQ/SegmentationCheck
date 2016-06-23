@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="/static/css/svg.select.css">
+    <title>切分</title>
+
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="/static/css/bootstrap-theme.min.css">
+    <style>
+        .highlight {
+          stroke: red;
+          stroke-width: 2;
+        }
+        .segment-line {
+          stroke: blue;
+          stroke-width: 2;
+        }
+        .error-char {
+          stroke: coral;
+          stroke-width: 2;
+        }
+    </style>
+</head>
+<body>
+<div id="segmentation_page"></div>
+<button class="btn btn-default" id="save_button">保存</button>
+
+<script src="/static/js/jquery-2.2.4.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/svg.min.js"></script>
+<script src="/static/js/svg.draggable.min.js"></script>
+<!--<script src="/static/js/svg.select.min.js"></script>
+
+<script src="/static/js/svg.resize.js"></script>-->
+<script type="text/javascript">
+
+var draw = new SVG('segmentation_page').size('1621', '837');
+draw.style('background:url(/page_images/{{ page.id }}.jpg) no-repeat;');
+
+var lines = [];
+var moves = {};
+var line1 = null;
+{% for char_line in line_lst %}
+{% if char_line.line_no == 1 %}
+line1 = draw.line({{ char_line.right }}, 0, {{ char_line.right }}, 837).addClass('segment-line');
+line1.draggable().on('dragmove', function(e){
+  e.preventDefault();
+  this.x(e.detail.p.x);
+}).on('dragend', function(e){
+  console.log('line-0: ' + this.x() + ', ' + this.y());
+  this.addClass('highlight').removeClass('segment-line');
+  moves['line-0'] = this.x();
+});
+{% endif %}
+line1 = draw.line({{ char_line.left }}, 0, {{ char_line.left }}, 837).addClass('segment-line');
+line1.draggable().on('dragmove', function(e){
+  e.preventDefault();
+  this.x(e.detail.p.x);
+}).on('dragend', function(e){
+  var key = 'line-' + {{ char_line.line_no }};
+  console.log(key + ': ' + this.x() + ', ' + this.y());
+  this.addClass('highlight').removeClass('segment-line');
+  moves[key] = this.x();
+});
+{% for character in char_line.char_lst %}
+
+{% if character.char_no == 1 %}
+line1 = draw.line({{ char_line.left }}, {{ character.top }}, {{ char_line.right }}, {{ character.top }}).addClass('segment-line');
+line1.draggable().on('dragmove', function(e){
+  e.preventDefault();
+  this.y(e.detail.p.y);
+}).on('dragend', function(e){
+  var key = 'char-' + {{ char_line.line_no }} + '-0';
+  console.log(key + ': y=' + this.y());
+  this.addClass('highlight').removeClass('segment-line');
+  moves[key] = this.y();
+});
+{% endif %}
+line1 = draw.line({{ char_line.left }}, {{ character.bottom }}, {{ char_line.right }}, {{ character.bottom }}).addClass('segment-line');
+{% if character.is_correct == -1 %}
+line1.addClass('error-char').removeClass('segment-line');
+{% endif %}
+line1.draggable().on('dragmove', function(e){
+  e.preventDefault();
+  this.y(e.detail.p.y);
+}).on('dragend', function(e){
+  var key = 'char-' + {{ char_line.line_no }} + '-' + {{ character.char_no }};
+  console.log(key + ': y=' + this.y());
+  this.addClass('highlight').removeClass('segment-line');
+  moves[key] = this.y();
+});
+
+{% endfor %}
+{% endfor %}
+
+$('#save_button').on('click', function(){
+  moves['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+  $.post('/segmentation/{{ page.id }}/modify', moves,
+  function(d) {
+    console.log('ok');
+    location.reload();
+  });
+});
+
+</script>
+</body>
+</html>
