@@ -1,35 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" media="screen" href="/static/css/svg.select.css">
-    <title>切分</title>
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/static/favicon.ico">
 
-    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="/static/css/bootstrap-theme.min.css">
+    <title></title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="/static/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/static/css/starter-template.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="/static/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="/static/js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" media="screen" href="/static/css/svg.select.css">
     <style>
         .highlight {
           stroke: red;
-          stroke-width: 2;
+          stroke-width: 4;
         }
         .segment-line {
           stroke: blue;
-          stroke-width: 2;
+          stroke-width: 4;
         }
         .error-char {
           stroke: #FF00FF;
-          stroke-width: 2;
+          stroke-width: 4;
         }
     </style>
 </head>
 <body>
-<div id="segmentation_page"></div>
-<button class="btn btn-default" id="save_button">保存</button>
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Project name</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="/segmentation">Home</a></li>
+            <li><a href="/segmentation/K0001V01P0425a/">切分调整示例</a></li>
+            <li><a href="/segmentation/charactercheck/%E5%A4%9A">切分校对</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div class="container">
+      <div>
+          <div id="segmentation_page"></div>
+          <button class="btn btn-default" id="save_button">保存</button>
+      </div>
+
+    </div><!-- /.container -->
 
 <script src="/static/js/jquery-2.2.4.min.js"></script>
 <script src="/static/js/bootstrap.min.js"></script>
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="/static/js/ie10-viewport-bug-workaround.js"></script>
 <script src="/static/js/svg.min.js"></script>
 <script src="/static/js/svg.draggable.min.js"></script>
 <!--<script src="/static/js/svg.select.min.js"></script>

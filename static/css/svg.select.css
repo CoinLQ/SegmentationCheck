@@ -1,0 +1,52 @@
+.svg_select_points_lt{
+    cursor: nw-resize;
+    opacity: 0;
+}
+.svg_select_points_rt{
+    cursor: ne-resize;
+    opacity: 0;
+}
+.svg_select_points_rb{
+    cursor: se-resize;
+    opacity: 0;
+}
+.svg_select_points_lb{
+    cursor: sw-resize;
+    opacity: 0;
+}
+.svg_select_points_t{
+    cursor: n-resize;
+    opacity: 0;
+}
+.svg_select_points_r{
+    cursor: e-resize;
+    opacity: 0;
+}
+.svg_select_points_b{
+    cursor: s-resize;
+    opacity: 0;
+}
+.svg_select_points_l{
+    cursor: w-resize;
+    opacity: 0;
+}
+
+.svg_select_points_rot{
+    stroke-width:0;
+    stroke:black;
+    opacity: 0;
+}
+
+.svg_select_points_point{
+    cursor: move;
+    stroke-width:0;
+}
+
+.svg_select_boundingRect{
+    stroke-width:1;
+    fill:null;
+    stroke:red;
+    stroke-opacity:0.8;
+    fill-opacity:0;
+    pointer-events:none; /* This ons is needed if you want to deselect or drag the shape*/
+}

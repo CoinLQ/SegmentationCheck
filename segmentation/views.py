@@ -4,6 +4,9 @@ from django.shortcuts import get_object_or_404, render, redirect
 
 from .models import Page, Character
 
+from django.views import generic
+from django import forms
+
 class CharacterLine:
     def __init__(self, line_no, left, right, char_lst):
         self.line_no = line_no
@@ -35,8 +38,41 @@ def page_detail(request, page_id):
     if temp_lst:
         line = CharacterLine(cur_line_no, temp_lst[0].left, temp_lst[0].right, temp_lst)
         line_lst.append(line)
+
+    print '----------------------'
+    print page
+    #print line_lst
+    print '----------------------'
     return render(request, 'segmentation/page_detail.html',
                   {'page': page, 'line_lst': line_lst})
+
+
+class PageCheckView(generic.ListView):
+    template_name = 'segmentation/page_check.html'
+
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        return Page.objects.filter(id__startswith=pk)[:2]
+
+def page_check(request,pk):
+    Page.objects.filter(id__startswith=pk)[:3].update(check_tag='1')
+    data = {'status': 'ok'}
+    return JsonResponse(data)
+
+def uploadimg(request,pk):
+    def handle_uploaded_file(f):
+        destination_file = '/page_images/'+pk+'.jpg'
+        destination = open(destination_file, 'wb')
+        for chunk in f.chunks():
+            destination.write(chunk)
+        destination.close()
+    if request.method == 'POST':
+        handle_uploaded_file(request.FILES['uploadimg'])
+        data = {'status': 'ok'}
+        return JsonResponse(data)
+
+
+
 
 def page_modify(request, page_id):
     data = {}
@@ -73,7 +109,6 @@ def page_modify(request, page_id):
     return JsonResponse(data)
 
 def character_check(request, char):
-    print char
     characters = Character.objects.filter(char=char)
     return render(request, 'segmentation/character_check.html', {'char': char, 'characters': characters})
 

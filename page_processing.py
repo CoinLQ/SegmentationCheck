@@ -28,7 +28,7 @@ class Char:
         char_image = 1 - line_image[self.top:self.bottom, :]
         image = np.tile(char_image[:, :, np.newaxis], [1, 1, 3]) * 255
         image = image.astype('ubyte')
-        io.imsave(u'/home/share/dzj_characters/characters/%s.jpg' % self.char_id.strip(), image)
+        io.imsave(u'/home/share/dzj_characters/character_images/%s.jpg' % self.char_id.strip(), image)
 
 def process_page(image, text, page_id):
     thresh = filters.threshold_otsu(image)
@@ -141,7 +141,8 @@ def process_page(image, text, page_id):
             line_chars = line_text[space_pos + 1:].strip()
         else:
             line_chars = line_text
-        print line_chars
+        line_chars = filter(lambda x: x != u' ', line_chars)
+        #print line_chars
         char_idx = 0
 
         line_bins = []

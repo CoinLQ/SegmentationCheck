@@ -6,6 +6,7 @@ class Page(models.Model):
     id = models.CharField(max_length=32, primary_key=True)
     image = models.CharField(max_length=512)
     text = models.TextField()
+    check_tag = models.SmallIntegerField(default=0)
 
     def __unicode__(self):
         return self.id
@@ -26,3 +27,12 @@ class Character(models.Model):
 
     def __unicode__(self):
         return u'%s:%s' % (self.id, self.char)
+
+class CharacterSet(models.Model):
+    id = models.AutoField(max_length=5,primary_key=True)
+    char = models.CharField(max_length=4, db_index=True)
+    count = models.IntegerField(default=0)
+    check_tag = models.SmallIntegerField(default=0)
+
+    def __unicode__(self):
+        return u'%s:%s' % ( self.char,self.count)

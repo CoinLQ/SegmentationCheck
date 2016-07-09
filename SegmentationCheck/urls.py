@@ -17,9 +17,11 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.conf import settings
 from django.views.static import serve
+import segmentation.views
 
 urlpatterns = [
-    url(r'^segmentation/', include('segmentation.urls')),
+    url(r'^$', segmentation.views.index, name='main_index'),
+    url(r'^segmentation/', include('segmentation.urls',namespace='segmentation')),
     url(r'^admin/', include(admin.site.urls)),
 ]
 

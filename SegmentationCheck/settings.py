@@ -37,7 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'bootstrapform',
+#    'bootstrapform',
     'segmentation',
 )
 
@@ -68,14 +68,6 @@ TEMPLATES = [
             ],
         },
     },
-
-    {
-        'BACKEND': 'django.template.backends.jinja2.Jinja2',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-        },
-    },
 ]
 
 WSGI_APPLICATION = 'SegmentationCheck.wsgi.application'
@@ -90,7 +82,8 @@ DATABASES = {
         'NAME': 'dzj_characters',
         'USER': 'dzj',
         'PASSWORD': 'dzjsql',
-        'HOST': '192.168.16.3',
+#        'HOST': '192.168.16.3',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }
@@ -116,6 +109,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 PAGE_IMAGE_ROOT = '/home/share/dzj_characters/page_images/'
 CHARACTER_IMAGE_ROOT = '/home/share/dzj_characters/character_images/'
+#PAGE_IMAGE_ROOT = 'segmentation/files/page_images/'
+#CHARACTER_IMAGE_ROOT = 'segmentation/files/character_images/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )

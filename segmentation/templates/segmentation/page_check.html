@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="/static/favicon.ico">
 
-    <title>{{ char }}</title>
+    <title></title>
 
     <!-- Bootstrap core CSS -->
     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
@@ -20,11 +20,19 @@
     <!-- Custom styles for this template -->
     <link href="/static/css/starter-template.css" rel="stylesheet">
 
-    <style>
-      .error-char {
-        background-color: pink;
-      }
+
+    <style type="text/css">
+    <!-- 
+    .tnt {Writing-mode:tb-rl;Text-align:left;font-size:9pt}
+    -- >
     </style>
+
+    <style> 
+
+  .black_overlay{  display: none;  position: absolute;  top: 0%;  left: 0%;  width: 100%;  height: 100%;  background-color: black;  z-index:1001;  -moz-opacity: 0.5;  opacity:0.5;  filter: alpha(opacity=50);  }  
+  .white_content {  display: none;  position: absolute;  top: 25%;  left: 25%;  width: 50%;  height: 50%;  padding: 16px;  border: 16px solid orange;  background-color: white;  z-index:1002;  overflow: auto;  -moz-opacity: 0.8;  opacity:0.8;  filter: alpha(opacity=80); }  
+    </style> 
+
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="/static/js/ie8-responsive-file-warning.js"></script><![endif]-->
     <script src="/static/js/ie-emulation-modes-warning.js"></script>
@@ -51,32 +59,50 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li class="active"><a href="/segmentation">Home</a></li>
+            <li><a href="/segmentation/K0001V01P0425a/">切分调整示例</a></li>
+            <li><a href="/segmentation/charactercheck/%E5%A4%9A">切分校对</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
     </nav>
 
     <div class="container">
-      <div>
-        <table class="table table-bordered">
-          <tbody>
-            {% for ch in characters %}
-              {% if forloop.first %}
-          <tr>
-              {% else %}
-                {% if forloop.counter|divisibleby:"10" %}</tr><tr>
-                {% endif %}
-              {% endif %}
-            <td id="{{ ch.id }}" class="char-image {% if ch.is_correct == -1 %}error-char{% endif %}"><img src="/character_images/{{ ch.image }}" alt="*"></td>
-              {% if forloop.last %}</tr>
-              {% endif %}
-            {% endfor %}
-          </tbody>
+
+
+        <table border='1'>
+        {%for page in page_list%}
+        <tr>
+            <td width='500'>
+<a href="javascript:void(0)" onclick="document.getElementById('light{{page.id}}').style.display='block';document.getElementById('fade').style.display='block'">
+            <img src='/page_images/{{page.image}} ' width='500' height='256'/>
+</a>
+
+
+            <form  enctype="multipart/form-data" action="{% url 'segmentation:uploadimg'  page.id%}" method="POST" > 
+                {% csrf_token %}
+                <input id='file1' type="file" name="uploadimg"/>
+                <input type="submit" value="ok" /> 
+            </form>
+
+            <a href='/page_images/{{page.image}} '> 下载原图 </a>
+
+            </td>
+            <td width ='500'>
+
+            <div id="light{{page.id}}" class="white_content tnt"> 
+                {{page.text}}  
+            <a href="javascript:void(0)" onclick="document.getElementById('light{{page.id}}').style.display='none';document.getElementById('fade').style.display='none'"> Close</a></div> 
+        <div id="fade" class="black_overlay"> </div> 
+
+            </td>
+        </tr>
+        {%endfor%}
         </table>
-      </div>
+        <ul class="pager"> 
+            <li class="previous"><a href="#">&larr; Older</a></li> 
+            <li class="next"><a href="#">Newer &rarr;</a></li>
+        </ul>
 
     </div><!-- /.container -->
 
@@ -89,22 +115,5 @@
     <script src="/static/js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="/static/js/ie10-viewport-bug-workaround.js"></script>
-  <script>
-    $('.char-image').click(function(){
-      var data = {'id': this.id};
-      data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
-      if ($(this).hasClass('error-char')) {
-        $(this).removeClass('error-char');
-        data['is_correct'] = 1;
-        $.post('/segmentation/set_correct', data, function() {
-        });
-      } else {
-        $(this).addClass('error-char');
-        data['is_correct'] = -1;
-        $.post('/segmentation/set_correct', data, function() {
-        });
-      }
-    });
-  </script>
   </body>
 </html>
