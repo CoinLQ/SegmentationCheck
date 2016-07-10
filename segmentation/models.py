@@ -6,10 +6,19 @@ class Page(models.Model):
     id = models.CharField(max_length=32, primary_key=True)
     image = models.CharField(max_length=512)
     text = models.TextField()
-    check_tag = models.SmallIntegerField(default=0)
+    width = models.SmallIntegerField(default=0)
+    height = models.SmallIntegerField(default=0)
 
     def __unicode__(self):
         return self.id
+
+    def short_text(self):
+        s_text = u''
+        start_pos = self.text.find(u';')
+        pos = self.text.find(u'\n')
+        if start_pos != -1:
+            s_text = self.text[start_pos + 1:pos].strip()
+        return s_text
 
 class Character(models.Model):
     id = models.CharField(max_length=32, primary_key=True)
@@ -27,12 +36,3 @@ class Character(models.Model):
 
     def __unicode__(self):
         return u'%s:%s' % (self.id, self.char)
-
-class CharacterSet(models.Model):
-    id = models.AutoField(max_length=5,primary_key=True)
-    char = models.CharField(max_length=4, db_index=True)
-    count = models.IntegerField(default=0)
-    check_tag = models.SmallIntegerField(default=0)
-
-    def __unicode__(self):
-        return u'%s:%s' % ( self.char,self.count)

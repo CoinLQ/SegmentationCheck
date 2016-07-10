@@ -78,16 +78,15 @@
 
 <script src="/static/js/jquery-2.2.4.min.js"></script>
 <script src="/static/js/bootstrap.min.js"></script>
-<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 <script src="/static/js/ie10-viewport-bug-workaround.js"></script>
 <script src="/static/js/svg.min.js"></script>
 <script src="/static/js/svg.draggable.min.js"></script>
-<!--<script src="/static/js/svg.select.min.js"></script>
-
-<script src="/static/js/svg.resize.js"></script>-->
 <script type="text/javascript">
-
-var draw = new SVG('segmentation_page').size('1621', '837');
+{% if page.width %}
+var draw = new SVG('segmentation_page').size('{{ page.width }}', '{{ page.height }}');
+{% else %}
+var draw = new SVG('segmentation_page').size('1200', '800');
+{% endif %}
 draw.style('background:url(/page_images/{{ page.id }}.jpg) no-repeat;');
 
 var lines = [];
@@ -154,7 +153,6 @@ $('#save_button').on('click', function(){
     location.reload();
   });
 });
-
 </script>
 </body>
 </html>
