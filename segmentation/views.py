@@ -61,6 +61,7 @@ def page_check(request,pk):
 
 def uploadimg(request,pk):
     def handle_uploaded_file(f):
+        #PAGE_IMAGE_ROOT = '/home/share/dzj_characters/page_images/'
         destination_file = '/page_images/'+pk+'.jpg'
         destination = open(destination_file, 'wb')
         for chunk in f.chunks():
