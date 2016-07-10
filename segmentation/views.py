@@ -2,10 +2,34 @@ from operator import attrgetter
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 
+from django.utils.functional import Promise
+from django.utils.encoding import force_text
+from django.core.serializers.json import DjangoJSONEncoder
+
 from .models import Page, Character
 
 from django.views import generic
-from django import forms
+
+class MyJsonEncoder(DjangoJSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, CharacterLine):
+            return {
+                u'line_no': obj.line_no,
+                u'left': obj.left,
+                u'right': obj.right,
+                u'char_lst': obj.char_lst,
+            }
+        if isinstance(obj, Character):
+            return {
+                u'id': obj.id,
+                u'char': obj.char,
+                u'line_no': obj.line_no,
+                u'char_no': obj.char_no,
+                u'top': obj.top,
+                u'bottom': obj.bottom,
+                u'is_correct': obj.is_correct,
+            }
+        return super(MyJsonEncoder, self).default(obj)
 
 class CharacterLine:
     def __init__(self, line_no, left, right, char_lst):
@@ -108,6 +132,30 @@ def page_modify(request, page_id):
 
         data = {'status': 'ok'}
     return JsonResponse(data)
+
+def page_segmentation_line(request, page_id):
+    page = get_object_or_404(Page, pk=page_id)
+    characters = Character.objects.filter(page_id=page.id).order_by('line_no')
+    temp_lst = []
+    line_lst = []
+    cur_line_no = 0
+    for character in characters:
+        character.width = character.right - character.left
+        character.height = character.bottom - character.top
+        if character.line_no != cur_line_no:
+            if temp_lst:
+                temp_lst.sort(key=attrgetter('char_no'))
+                line = CharacterLine(cur_line_no, temp_lst[0].left, temp_lst[0].right, temp_lst)
+                line_lst.append(line)
+            cur_line_no = character.line_no
+            temp_lst = [character]
+        else:
+            temp_lst.append(character)
+    if temp_lst:
+        temp_lst.sort(key=attrgetter('char_no'))
+        line = CharacterLine(cur_line_no, temp_lst[0].left, temp_lst[0].right, temp_lst)
+        line_lst.append(line)
+    return JsonResponse(line_lst, safe=False, encoder=MyJsonEncoder)
 
 def character_check(request, char):
     characters = Character.objects.filter(char=char)

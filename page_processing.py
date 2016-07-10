@@ -46,7 +46,7 @@ def process_page(image, text, page_id):
     min_v = binary_line.min()
     max_v = binary_line.max()
     cut_thresh = min_v + (max_v - min_v) / 25
-    print 'min, max, cut_thresh', min_v, max_v, cut_thresh
+    #print 'min, max, cut_thresh', min_v, max_v, cut_thresh
 
     bins = []
     data = []
@@ -83,7 +83,7 @@ def process_page(image, text, page_id):
         x = bins[white_region[0]] + (bins[white_region[-1]] - bins[white_region[0]]) / 10
         new_bins.append(x)
         new_data.append(binary_line[x])
-        print 'last white region: ', x
+        #print 'last white region: ', x
 
     for i in range(len(new_bins) - 1):
         end_x = new_bins[i+1]
@@ -95,7 +95,7 @@ def process_page(image, text, page_id):
             if width >= LINE_WIDTH * 2: # cut
                 cut_x = np.argmin(
                     binary_line[start_x + LINE_WIDTH / 2: start_x + LINE_WIDTH * 3 / 2 + 1]) + start_x + LINE_WIDTH / 2
-                print 'add cut_x: ', cut_x
+                #print 'add cut_x: ', cut_x
                 new_bins.insert(insert_pos, cut_x)
                 insert_pos = insert_pos + 1
                 start_x = cut_x
@@ -107,7 +107,7 @@ def process_page(image, text, page_id):
     #plt.bar(new_bins, [image_height] * len(new_bins), facecolor='red', edgecolor='red')
 
     # char segmentation for each line
-    line_texts = text.rstrip().split(u'\r\n')
+    line_texts = text.rstrip().split(u'\n')
     line_count = len(line_texts)
     total_char_lst = []
 
@@ -131,16 +131,16 @@ def process_page(image, text, page_id):
         if line_no > line_count:  # 不处理超出文字行数的行
             break
         line_id = page_id + u'%02dL' % line_no
-        print u'#### line %s: %s ####' % (line_no, line_id)
+        #print u'#### line %s: %s ####' % (line_no, line_id)
         line_text = line_texts[line_no - 1]
         if line_text.find(u'<') != -1:  # 这一行有<，表示有小字，不处理
             last_x = new_bins[i]
             continue
-        space_pos = line_text.find(u' ')
+        space_pos = line_text.find(u';')
         if space_pos != -1:
             line_chars = line_text[space_pos + 1:].strip()
         else:
-            line_chars = line_text
+            line_chars = line_text.strip()
         line_chars = filter(lambda x: x != u' ', line_chars)
         #print line_chars
         char_idx = 0
@@ -191,20 +191,20 @@ def process_page(image, text, page_id):
                 y0 = line_new_bins[-1]
                 char_height = y - y0
                 height_width_ratio = (char_height * 1.0) / line_width
-                ignore_ratio = 0.4
+                ignore_ratio = 0.45
 
                 if line_chars[char_idx] in [u'三']:
-                    ignore_ratio = 0.45
+                    ignore_ratio = 0.55
                 if height_width_ratio < ignore_ratio:
                     # line_new_bins.append(y)
                     # line_new_data.append(binary_line_vertical[y])
                     pass
-                elif height_width_ratio > 1.4 and height_width_ratio < 2.1:  # 2 chars
-                    print '2 chars'
+                elif height_width_ratio > 1.4 and height_width_ratio < 2.1 and char_idx < (len(line_chars) - 1):  # 2 chars
+                    #print '2 chars'
                     # find cut line between [y0 + char_height / 4, y - char_height / 4]
                     cut_y = np.argmin(
                         binary_line_vertical[y0 + char_height / 4: y - char_height / 4 + 1]) + y0 + char_height / 4
-                    print 'add cut_y: ', cut_y
+                    #print 'add cut_y: ', cut_y
                     ch = Char(line_chars[char_idx], new_bins[i], last_x, line_new_bins[-1], cut_y, line_no,
                               char_idx + 1, line_id + u'%02d' % (char_idx + 1))
                     line_char_lst.append(ch)
@@ -218,12 +218,12 @@ def process_page(image, text, page_id):
                     char_idx += 1
                     line_new_bins.append(y)
                     line_new_data.append(binary_line_vertical[y])
-                elif height_width_ratio > 2.1 and height_width_ratio < 2.8:  # 3 chars
+                elif height_width_ratio > 2.1 and height_width_ratio < 2.8 and char_idx < (len(line_chars) - 2):  # 3 chars
                     # find cut line
-                    print '3 chars'
+                    #print '3 chars'
                     cut_y = np.argmin(
                         binary_line_vertical[y0 + char_height / 6: y0 + char_height / 2]) + y0 + char_height / 6
-                    print 'add cut_y: ', cut_y
+                    #print 'add cut_y: ', cut_y
                     ch = Char(line_chars[char_idx], new_bins[i], last_x, line_new_bins[-1], cut_y, line_no,
                               char_idx + 1, line_id + u'%02d' % (char_idx + 1))
                     line_char_lst.append(ch)
@@ -232,9 +232,9 @@ def process_page(image, text, page_id):
                     line_new_data.append(binary_line_vertical[cut_y])
                     cut_y = np.argmin(binary_line_vertical[
                                       y0 + char_height * 3 / 6: y0 + char_height * 5 / 6]) + y0 + char_height * 3 / 6
-                    print y, y0, char_height
-                    print 'between: ', y0 + char_height * 3 / 6, y0 + char_height * 5 / 6
-                    print 'add cut_y: ', cut_y, (y0 + char_height * 3 / 6)
+                    #print y, y0, char_height
+                    #print 'between: ', y0 + char_height * 3 / 6, y0 + char_height * 5 / 6
+                    #print 'add cut_y: ', cut_y, (y0 + char_height * 3 / 6)
                     ch = Char(line_chars[char_idx], new_bins[i], last_x, line_new_bins[-1], cut_y, line_no,
                               char_idx + 1, line_id + u'%02d' % (char_idx + 1))
                     line_char_lst.append(ch)
@@ -259,26 +259,28 @@ def process_page(image, text, page_id):
         for j in range(remained_count):
             # 找到切分图像高度最大的字
             line_char_lst.sort(key = lambda ch: (ch.bottom - ch.top))
-            last_char = line_char_lst[-1]
-            line_char_lst.remove(last_char)
-            # 对char_no > last_char.char_no的字调整字符、char_no
-            for ch in line_char_lst:
-                ch.char_no = ch.char_no + 1
-                ch.char = line_chars[ch.char_no - 1]
-            char_height = last_char.bottom - last_char.top
-            print 'remained cut: ', char_height
-            char_idx = last_char.char_no - 1
-            char_line_vertical = binary_line_vertical[last_char.top + char_height / 4: last_char.bottom - char_height / 4]
-            cut_y = np.argmin(char_line_vertical) + last_char.top + char_height / 4
-            print 'add cut_y: ', cut_y
-            line_new_bins.append(cut_y)
-            line_new_data.append(binary_line_vertical[cut_y])
-            ch = Char(line_chars[char_idx], last_char.left, last_char.right, last_char.top, cut_y, last_char.line_no,
-                      char_idx + 1, line_id + u'%02d' % (char_idx + 1))
-            line_char_lst.append(ch)
-            ch = Char(line_chars[char_idx + 1], last_char.left, last_char.right, cut_y, last_char.bottom, last_char.line_no,
-                      char_idx + 2, line_id + u'%02d' % (char_idx + 2))
-            line_char_lst.append(ch)
+            if len(line_char_lst) >= 1:
+                last_char = line_char_lst[-1]
+                line_char_lst.remove(last_char)
+                # 对char_no > last_char.char_no的字调整字符、char_no
+                for ch in line_char_lst:
+                    if ch.char_no > last_char.char_no:
+                        ch.char_no = ch.char_no + 1
+                        ch.char = line_chars[ch.char_no - 1]
+                char_height = last_char.bottom - last_char.top
+                #print 'remained cut: ', char_height
+                char_idx = last_char.char_no - 1
+                char_line_vertical = binary_line_vertical[last_char.top + char_height / 4: last_char.bottom - char_height / 4]
+                cut_y = np.argmin(char_line_vertical) + last_char.top + char_height / 4
+                #print 'add cut_y: ', cut_y
+                line_new_bins.append(cut_y)
+                line_new_data.append(binary_line_vertical[cut_y])
+                ch = Char(line_chars[char_idx], last_char.left, last_char.right, last_char.top, cut_y, last_char.line_no,
+                          char_idx + 1, line_id + u'%02d' % (char_idx + 1))
+                line_char_lst.append(ch)
+                ch = Char(line_chars[char_idx + 1], last_char.left, last_char.right, cut_y, last_char.bottom, last_char.line_no,
+                          char_idx + 2, line_id + u'%02d' % (char_idx + 2))
+                line_char_lst.append(ch)
 
         for ch in line_char_lst:
             ch.cut_char_image(line_image)
