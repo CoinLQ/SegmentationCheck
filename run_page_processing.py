@@ -3,7 +3,8 @@
 import skimage.io as io
 from page_processing import process_page
 import subprocess
-import os, sys, redis
+#import os, sys, redis
+import os, sys
 import cPickle
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "SegmentationCheck.settings")
@@ -93,5 +94,5 @@ def add_segmentation_task():
 
 if __name__ == '__main__':
     #test_file()
-    #run_segmentation_for_all_pages()
-    add_segmentation_task()
+    run_segmentation_for_all_pages()
+    #add_segmentation_task()
