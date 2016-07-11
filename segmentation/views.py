@@ -10,6 +10,8 @@ from .models import Page, Character
 
 from django.views import generic
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 class MyJsonEncoder(DjangoJSONEncoder):
     def default(self, obj):
         if isinstance(obj, CharacterLine):
@@ -158,8 +160,21 @@ def page_segmentation_line(request, page_id):
     return JsonResponse(line_lst, safe=False, encoder=MyJsonEncoder)
 
 def character_check(request, char):
-    characters = Character.objects.filter(char=char)
+    characters_list = Character.objects.filter(char=char)
+    paginator = Paginator(characters_list, 30) # Show 30 characters per page
+
+    page = request.GET.get('page')
+    try:
+        characters = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        characters = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        characters = paginator.page(paginator.num_pages)
+
     return render(request, 'segmentation/character_check.html', {'char': char, 'characters': characters})
+
 
 def set_correct(request):
     if 'id' in request.POST:

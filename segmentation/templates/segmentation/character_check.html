@@ -76,6 +76,11 @@
             {% endfor %}
           </tbody>
         </table>
+
+        <div class="pagec" id="pagearea">
+            <ul class="pagination">
+            </ul>
+        </div>
       </div>
 
     </div><!-- /.container -->
@@ -89,6 +94,20 @@
     <script src="/static/js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="/static/js/ie10-viewport-bug-workaround.js"></script>
+    <script src="/static/js/pagination.js" charset="utf-8"></script>
+	<script type="text/javascript">
+		$(function(){
+			$(".pagination").createPage({
+                totalPage:{{characters.paginator.num_pages }},
+                currPage:{{characters.number}},
+				turndown:'true',
+				backFn:function(p){
+					console.log("回调函数："+p);
+                    window.open('?page='+p,'_self')
+				}
+			});
+		})
+    </script>
   <script>
     $('.char-image').click(function(){
       var data = {'id': this.id};
