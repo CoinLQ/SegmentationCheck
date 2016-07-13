@@ -36,3 +36,15 @@ class Character(models.Model):
 
     def __unicode__(self):
         return u'%s:%s' % (self.id, self.char)
+
+class CharacterStatistics(models.Model):
+    char = models.CharField(max_length=4,db_index=True,primary_key=True)
+    total_cnt = models.IntegerField(default=0)
+    uncheck_cnt = models.IntegerField(default=0)
+    checked_cnt = models.IntegerField(default=0)
+    uncertainty_cnt = models.IntegerField(default=0)
+
+
+    def __unicode__(self):
+        return u'%s:%d' % (self.char,self.total_cnt )
+

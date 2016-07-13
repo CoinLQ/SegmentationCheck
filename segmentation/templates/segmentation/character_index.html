@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block mainbody %}
+    <table class="table table-bordered table-striped table-hover">
+        <caption>已经切分出的字列表</caption>
+        <thead>
+          <tr>
+             <th>字</th>
+             <th>字形总数</th>
+          </tr>
+        </thead>
+      <tbody>
+        {% for char in characterstatistics_list %}
+      <tr>
+          <td ><a href="/segmentation/charactercheck/{{char.char}}">{{char.char}}</td><td>{{char.total_cnt}}</td>
+        {% endfor %}
+      </tbody>
+    </table>
+
+{% endblock %}

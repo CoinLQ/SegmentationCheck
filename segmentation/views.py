@@ -6,11 +6,12 @@ from django.utils.functional import Promise
 from django.utils.encoding import force_text
 from django.core.serializers.json import DjangoJSONEncoder
 
-from .models import Page, Character
+from .models import Page, Character, CharacterStatistics
 
 from django.views import generic
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Count
 
 class MyJsonEncoder(DjangoJSONEncoder):
     def default(self, obj):
@@ -75,7 +76,6 @@ def page_detail(request, page_id):
 
 class PageCheckView(generic.ListView):
     template_name = 'segmentation/page_check.html'
-
     def get_queryset(self):
         pk = self.kwargs['pk']
         return Page.objects.filter(id__startswith=pk)[:2]
@@ -159,10 +159,13 @@ def page_segmentation_line(request, page_id):
         line_lst.append(line)
     return JsonResponse(line_lst, safe=False, encoder=MyJsonEncoder)
 
+class CharacterIndex(generic.ListView):
+    model = CharacterStatistics
+    template_name = 'segmentation/character_index.html'
+
 def character_check(request, char):
     characters_list = Character.objects.filter(char=char)
-    paginator = Paginator(characters_list, 30) # Show 30 characters per page
-
+    paginator = Paginator(characters_list, 3) # Show 30 characters per page
     page = request.GET.get('page')
     try:
         characters = paginator.page(page)
@@ -172,7 +175,6 @@ def character_check(request, char):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         characters = paginator.page(paginator.num_pages)
-
     return render(request, 'segmentation/character_check.html', {'char': char, 'characters': characters})
 
 
