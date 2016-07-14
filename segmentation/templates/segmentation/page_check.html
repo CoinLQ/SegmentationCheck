@@ -1,31 +1,40 @@
-
 {% extends "base.html" %}
 {% block head %}
+<title>页面检查</title>
 {# 用于在html head部分添加内容，如引入css，js资源等#}
+
+<script type="text/javascript">
+windo.onload = function(){
+   //去掉默认的contextmenu事件，否则会和右键事件同时出现。
+   document.oncontextmenu = function(e){
+       e.preventDefault();
+   };
+}
+</script>
+
 <style type="text/css">
 <!-- 
 .tnt {Writing-mode:tb-rl;Text-align:left;font-size:9pt}
 -- >
-</style>
-
-<style> 
 .black_overlay{  display: none;  position: absolute;  top: 0%;  left: 0%;  width: 100%;  height: 100%;  background-color: black;  z-index:1001;  -moz-opacity: 0.5;  opacity:0.5;  filter: alpha(opacity=50);  }  
 .white_content {  display: none;  position: absolute;  top: 25%;  left: 25%;  width: 50%;  height: 50%;  padding: 16px;  border: 16px solid orange;  background-color: white;  z-index:1002;  overflow: auto;  -moz-opacity: 0.8;  opacity:0.8;  filter: alpha(opacity=80); }  
-.flow{width:800px;height:400px;float:left;background-color: red;margin:8px;}
+.flow{width:300px;height:150px;float:left;background-color: red;margin:8px;}
 .flow img{width:100%;}
+
+.error-char {
+background-color: pink;
+opacity: 0.4;
+z-index: 99;
+}
 </style> 
-
-
 {% endblock %}
 
 
 {% block mainbody %}
 {# 主内容区 #}
 {%for page in page_list%}
-<div class='flow'>
-<a href="javascript:void(0)" onclick="document.getElementById('light{{page.id}}').style.display='block';document.getElementById('fade').style.display='block'">
-    <img src='/page_images/{{page.image}} ' />
-</a>
+<div id="{{ page.id }}" class="page-image flow {% if page.is_correct == -1 %}error-char{% endif %}"> 
+    <img id="page{{page.id}}" src='/page_images/{{page.image}} ' />
 </div>
 
     <div id="light{{page.id}}" class="white_content tnt"> 
@@ -39,15 +48,13 @@
 
     <a href='/page_images/{{page.image}} '> 下载原图 </a>
     <a href="javascript:void(0)" onclick="document.getElementById('light{{page.id}}').style.display='none';document.getElementById('fade').style.display='none'"> Close</a>
+
 </div> 
 {%endfor%}
 
 <div id="fade" class="black_overlay"> </div> 
 <div style="clear:both;"> </div>
-<ul class="pager"> 
-    <li class="previous"><a href="#">&larr; Older</a></li> 
-    <li class="next"><a href="#">Newer &rarr;</a></li>
-</ul>
+<div  class="btn btn-primary batch-check" onclick="alert("aa");">批量审核通过(除了有错误标记的都会通过)</div>
 
 
 
@@ -55,6 +62,42 @@
 
 {% block foot %}
 {# 用于在body标签闭合前添加代码，如引入js代码等 #}
+<script>
+$('.batch-check').click(function(){
+        var arr =[];
+        {%for page in page_list%}
+        arr.push('{{page.id}}');
+        {%endfor%}
+        var data = {'pageArr':arr};
+        data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+        $.post('/segmentation/set_page_correct', data, function() {
+        location.reload(false);
+            });
+} );
+
+$('.page-image').click(function(){
+  var data = {'id': this.id};
+  data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+  if ($(this).hasClass('error-char')) {
+    $(this).removeClass('error-char');
+    data['is_correct'] = 1;
+  } else {
+    $(this).addClass('error-char');
+    data['is_correct'] = -1;
+  }
+    $.post('/segmentation/set_page_correct', data, function() { });
+});
+
+{%for page in page_list%}
+document.getElementById("page{{page.id}}").onmousedown = function(e){
+   if(e.button ==2){
+    document.getElementById('light{{page.id}}').style.display='block';
+    document.getElementById('fade').style.display='block';
+   }
+}
+
+{%endfor%}
+</script>
 {% endblock %}
 
 

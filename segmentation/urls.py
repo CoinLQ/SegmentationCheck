@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^pagecheck/(?P<pk>[0-9A-Za-z]*)$', views.PageCheckView.as_view(), name='page_check'),
+    url(r'^set_page_correct$', views.set_page_correct, name='set_page_correct'),
     url(r'^characterindex/$', views.CharacterIndex.as_view(), name='character_index'),
     url(r'^charactercheck/(?P<char>.*)', views.character_check, name='character_check'),
     url(r'^set_correct$', views.set_correct, name='set_correct'),

@@ -82,9 +82,9 @@ DATABASES = {
         'NAME': 'dzj_characters',
         'USER': 'dzj',
         'PASSWORD': 'dzjsql',
-#        'HOST': '192.168.16.3',
+       'HOST': '192.168.16.3',
         'HOST': 'localhost',
-        'PORT': '5432',
+#        'PORT': '5432',
     }
 }
 

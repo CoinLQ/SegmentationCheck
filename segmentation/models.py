@@ -8,6 +8,7 @@ class Page(models.Model):
     text = models.TextField()
     width = models.SmallIntegerField(default=0)
     height = models.SmallIntegerField(default=0)
+    is_correct = models.SmallIntegerField(default=0)
 
     def __unicode__(self):
         return self.id

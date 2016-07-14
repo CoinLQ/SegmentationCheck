@@ -78,12 +78,35 @@ class PageCheckView(generic.ListView):
     template_name = 'segmentation/page_check.html'
     def get_queryset(self):
         pk = self.kwargs['pk']
-        return Page.objects.filter(id__startswith=pk)[:2]
+        return Page.objects.filter(id__startswith=pk).filter(is_correct=0)[:3]
 
-def page_check(request,pk):
-    Page.objects.filter(id__startswith=pk)[:3].update(check_tag='1')
+def set_page_correct(request):
+    if 'id' in request.POST:
+        page_id = request.POST['id']
+        is_correct = int(request.POST['is_correct'])
+        Page.objects.filter(id=page_id).update(is_correct=is_correct)
+        data = {'status': 'ok'}
+    elif 'pageArr[]' in request.POST:
+        pageArr = request.POST.getlist('pageArr[]')
+        Page.objects.filter(id__in = pageArr ).filter(is_correct=0).update(is_correct=1)
+        data = {'status': 'ok'}
+    else:
+        data = {'status': 'error'}
+    return JsonResponse(data)
+
+def set_page_check(request):
+    Page.objects.filter(id)[:2].update(check_tag='1')
     data = {'status': 'ok'}
     return JsonResponse(data)
+
+def set_page_check(request):
+    if 'pagelist' in request.POST:
+        char_id = request.POST['id']
+        is_correct = int(request.POST['is_correct'])
+        Character.objects.filter(id=char_id).update(is_correct=is_correct)
+    data = {'status': 'ok'}
+    return JsonResponse(data)
+
 
 def uploadimg(request,pk):
     def handle_uploaded_file(f):
