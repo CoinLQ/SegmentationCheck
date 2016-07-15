@@ -82,7 +82,6 @@ def run_segmentation_for_all_pages():
             continue
         print 'page.id: ', page.id.encode('utf-8')
         segment_one_page(page.id, u'/home/share/dzj_characters/page_images/%s' % page.image, page.text)
-        break
 
 def add_segmentation_task():
     redis_client = redis.StrictRedis(host='localhost', port=6379, db=1)

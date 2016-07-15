@@ -8,14 +8,14 @@
         <caption>已经切分出的字列表</caption>
         <thead>
           <tr>
-             <th>字</th>
-             <th>字形总数</th>
+             <th>页面号</th>
+             <th>含且错字形总数</th>
           </tr>
         </thead>
       <tbody>
-        {% for char in characterstatistics_list %}
+        {% for page in character_list %}
       <tr>
-          <td ><a href="/segmentation/charactercheck/{{char.char}}">{{char.char}}</td><td>{{char.total_cnt}}</td>
+          <td ><a href="/segmentation/{{page.page}}">{{page.page}}</td><td>{{page.dcount}}</td>
         {% endfor %}
       </tbody>
     </table>

@@ -13,6 +13,8 @@ from django.views import generic
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
 
+import Image #use to cut charImg
+
 class MyJsonEncoder(DjangoJSONEncoder):
     def default(self, obj):
         if isinstance(obj, CharacterLine):
@@ -78,7 +80,7 @@ class PageCheckView(generic.ListView):
     template_name = 'segmentation/page_check.html'
     def get_queryset(self):
         pk = self.kwargs['pk']
-        return Page.objects.filter(id__startswith=pk).filter(is_correct=0)[:3]
+        return Page.objects.filter(id__startswith=pk).filter(is_correct=0)[:9]
 
 def set_page_correct(request):
     if 'id' in request.POST:
@@ -111,11 +113,12 @@ def set_page_check(request):
 def uploadimg(request,pk):
     def handle_uploaded_file(f):
         #PAGE_IMAGE_ROOT = '/home/share/dzj_characters/page_images/'
-        destination_file = '/page_images/'+pk+'.jpg'
+        destination_file = '/home/share/dzj_characters/page_images/'+pk+'.jpg'
         destination = open(destination_file, 'wb')
         for chunk in f.chunks():
             destination.write(chunk)
         destination.close()
+        Page.objects.filter(id=pk).update(is_correct=2)
     if request.method == 'POST':
         handle_uploaded_file(request.FILES['uploadimg'])
         data = {'status': 'ok'}
@@ -123,6 +126,15 @@ def uploadimg(request,pk):
 
 
 
+
+def cut_char_img( page_id,char_id):
+    ch = Character.objects.filter(id=char_id)
+    pageimg_file = '/home/share/dzj_characters/page_images/'+page_id+'.jpg'
+    charimg_file = '/home/share/dzj_characters/character_images/'+char_id+'.jpg'
+    regin = (ch[0].left,ch[0].top,ch[0].right,ch[0].bottom)
+    pageimg=Image.open(pageimg_file)
+    cropimg = pageimg.crop(regin)
+    cropimg.save(charimg_file)
 
 def page_modify(request, page_id):
     data = {}
@@ -137,12 +149,16 @@ def page_modify(request, page_id):
                     char_no = int(char_no)
                     if char_no == 0:
                         char_id = page_id + u'%02dL%02d' % (line_no, 1)
-                        Character.objects.filter(id=char_id).update(top=pos)
+                        Character.objects.filter(id=char_id).update(top=pos,is_correct=1)
+                        cut_char_img(page_id,char_id)
                     else:
                         char_id = page_id + u'%02dL%02d' % (line_no, char_no)
-                        Character.objects.filter(id=char_id).update(bottom=pos)
+                        Character.objects.filter(id=char_id).update(bottom=pos,is_correct=1)
+                        cut_char_img(page_id,char_id)
+
                         char_id = page_id + u'%02dL%02d' % (line_no, char_no + 1)
-                        Character.objects.filter(id=char_id).update(top=pos)
+                        Character.objects.filter(id=char_id).update(top=pos,is_correct=1)
+                        cut_char_img(page_id,char_id)
                 else:
                     typ, line_no = segs
                     line_no = int(line_no)
@@ -185,6 +201,12 @@ def page_segmentation_line(request, page_id):
 class CharacterIndex(generic.ListView):
     model = CharacterStatistics
     template_name = 'segmentation/character_index.html'
+
+class ErrPageIndex(generic.ListView):
+    model = Character
+    template_name = 'segmentation/err_page_index.html'
+    def get_queryset(self):
+        return Character.objects.filter(is_correct=-1).values('page').annotate(dcount=Count('page'))
 
 def character_check(request, char):
     characters_list = Character.objects.filter(char=char)

@@ -8,6 +8,7 @@ urlpatterns = [
     url(r'^characterindex/$', views.CharacterIndex.as_view(), name='character_index'),
     url(r'^charactercheck/(?P<char>.*)', views.character_check, name='character_check'),
     url(r'^set_correct$', views.set_correct, name='set_correct'),
+    url(r'^errpageindex/$', views.ErrPageIndex.as_view(), name='err_page_index'),
     url(r'^(?P<pk>[0-9A-Za-z]+)/uploadimg$',views.uploadimg, name='uploadimg'),
     url(r'^(?P<page_id>[0-9A-Za-z]+)/$', views.page_detail, name='page_detail'),
     url(r'^(?P<page_id>[0-9A-Za-z]+)/modify$', views.page_modify, name='page_modify'),

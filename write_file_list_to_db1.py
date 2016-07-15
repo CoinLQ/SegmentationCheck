@@ -5,7 +5,7 @@ django.setup()
 from segmentation.models import Page
 
 def write_file_list_to_db():
-    file_lst = ['K0001V01P0034a','K0001V01P0034b','K0001V01P0034c',
+    file_lst = ['K0001V01P0034b','K0001V01P0034c',
             'K0001V01P0035a','K0001V01P0035b','K0001V01P0035c',
             'K0001V01P0036a','K0001V01P0036b','K0001V01P0036c',
             'K0001V01P0037a','K0001V01P0037b','K0001V01P0037c',

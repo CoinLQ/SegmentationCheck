@@ -18,9 +18,8 @@ windo.onload = function(){
 -- >
 .black_overlay{  display: none;  position: absolute;  top: 0%;  left: 0%;  width: 100%;  height: 100%;  background-color: black;  z-index:1001;  -moz-opacity: 0.5;  opacity:0.5;  filter: alpha(opacity=50);  }  
 .white_content {  display: none;  position: absolute;  top: 25%;  left: 25%;  width: 50%;  height: 50%;  padding: 16px;  border: 16px solid orange;  background-color: white;  z-index:1002;  overflow: auto;  -moz-opacity: 0.8;  opacity:0.8;  filter: alpha(opacity=80); }  
-.flow{width:300px;height:150px;float:left;background-color: red;margin:8px;}
+.flow{width:370px;height:185px;float:left;margin:5px;margin-top:20px;border:1px solid blue;}
 .flow img{width:100%;}
-
 .error-char {
 background-color: pink;
 opacity: 0.4;
@@ -32,37 +31,39 @@ z-index: 99;
 
 {% block mainbody %}
 {# 主内容区 #}
-{%for page in page_list%}
-<div id="{{ page.id }}" class="page-image flow {% if page.is_correct == -1 %}error-char{% endif %}"> 
-    <img id="page{{page.id}}" src='/page_images/{{page.image}} ' />
-</div>
+<div class="container">
+    {%for page in page_list%}
+    <div id="{{ page.id }}" class="page-image flow {% if page.is_correct == -1 %}error-char{% endif %}"> 
+        <img id="page{{page.id}}" src='/page_images/{{page.image}} ' />
+    </div>
 
-    <div id="light{{page.id}}" class="white_content tnt"> 
-        {{page.text}}  
+        <div id="light{{page.id}}" class="white_content tnt"> 
+            {{page.text}}  
 
-    <form  enctype="multipart/form-data" action="{% url 'segmentation:uploadimg'  page.id%}" method="POST" > 
-        {% csrf_token %}
-        <input id='file1' type="file" name="uploadimg"/>
-        <input type="submit" value="ok" /> 
-    </form>
+        <form  enctype="multipart/form-data" action="{% url 'segmentation:uploadimg'  page.id%}" method="POST" > 
+            {% csrf_token %}
+            <input id='file1' type="file" name="uploadimg"/>
+            <input type="submit" value="ok" /> 
+        </form>
 
-    <a href='/page_images/{{page.image}} '> 下载原图 </a>
-    <a href="javascript:void(0)" onclick="document.getElementById('light{{page.id}}').style.display='none';document.getElementById('fade').style.display='none'"> Close</a>
+        <a href='/page_images/{{page.image}} '> 下载原图 </a>
+         <a href="javascript:void(0)" onclick="document.getElementById('light{{page.id}}').style.display='none';document.getElementById('fade').style.display='none'"> Close</a> 
 
-</div> 
-{%endfor%}
+    </div> 
+    {%endfor%}
 
-<div id="fade" class="black_overlay"> </div> 
-<div style="clear:both;"> </div>
-<div  class="btn btn-primary batch-check" onclick="alert("aa");">批量审核通过(除了有错误标记的都会通过)</div>
+    <div id="fade" class="black_overlay"> </div> 
+    <div style="clear:both;"> </div>
+    <div  class="btn btn-primary batch-check" onclick="alert("aa");">批量审核通过(除了有错误标记的都会通过)</div>
 
 
 
+</div><!-- /.container -->
 {% endblock %}
 
 {% block foot %}
 {# 用于在body标签闭合前添加代码，如引入js代码等 #}
-<script>
+<script type="text/javascript">
 $('.batch-check').click(function(){
         var arr =[];
         {%for page in page_list%}

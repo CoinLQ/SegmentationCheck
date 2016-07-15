@@ -9,27 +9,29 @@
 {% endblock %}
 
 {% block mainbody %}
-<table class="table table-bordered">
-  <tbody>
-    {% for ch in characters %}
-      {% if forloop.first %}
-  <tr>
-      {% else %}
-        {% if forloop.counter|divisibleby:"10" %}</tr><tr>
-        {% endif %}
-      {% endif %}
-    <td id="{{ ch.id }}" class="char-image {% if ch.is_correct == -1 %}error-char{% endif %}"><img src="/character_images/{{ ch.image }}" alt="*"></td>
-      {% if forloop.last %}</tr>
-      {% endif %}
-    {% endfor %}
-  </tbody>
-</table>
+<div class="container">
+    <table class="table table-bordered">
+      <tbody>
+        {% for ch in characters %}
+          {% if forloop.first %}
+      <tr>
+          {% else %}
+            {% if forloop.counter|divisibleby:"10" %}</tr><tr>
+            {% endif %}
+          {% endif %}
+        <td id="{{ ch.id }}" class="char-image {% if ch.is_correct == -1 %}error-char{% endif %}"><img src="/character_images/{{ ch.image }}" alt="*"></td>
+          {% if forloop.last %}</tr>
+          {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
 
-<div class="pagec" id="pagearea">
-    <ul class="pagination">
-    </ul>
-</div>
+    <div class="pagec" id="pagearea">
+        <ul class="pagination">
+        </ul>
+    </div>
 
+</div><!-- /.container -->
 {% endblock %}
 
 
