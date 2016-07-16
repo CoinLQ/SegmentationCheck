@@ -194,7 +194,7 @@ class ErrPageIndex(generic.ListView):
 
 def character_check(request, char):
     characters_list = Character.objects.filter(char=char).filter(is_correct=0)
-    paginator = Paginator(characters_list, 3) # Show 30 characters per page
+    paginator = Paginator(characters_list, 30) # Show 30 characters per page
     page = request.GET.get('page')
     try:
         characters = paginator.page(page)
