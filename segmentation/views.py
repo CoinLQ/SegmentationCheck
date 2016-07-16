@@ -96,20 +96,6 @@ def set_page_correct(request):
         data = {'status': 'error'}
     return JsonResponse(data)
 
-def set_page_check(request):
-    Page.objects.filter(id)[:2].update(check_tag='1')
-    data = {'status': 'ok'}
-    return JsonResponse(data)
-
-def set_page_check(request):
-    if 'pagelist' in request.POST:
-        char_id = request.POST['id']
-        is_correct = int(request.POST['is_correct'])
-        Character.objects.filter(id=char_id).update(is_correct=is_correct)
-    data = {'status': 'ok'}
-    return JsonResponse(data)
-
-
 def uploadimg(request,pk):
     def handle_uploaded_file(f):
         #PAGE_IMAGE_ROOT = '/home/share/dzj_characters/page_images/'
@@ -123,8 +109,6 @@ def uploadimg(request,pk):
         handle_uploaded_file(request.FILES['uploadimg'])
         data = {'status': 'ok'}
         return JsonResponse(data)
-
-
 
 
 def cut_char_img( page_id,char_id):
@@ -209,7 +193,7 @@ class ErrPageIndex(generic.ListView):
         return Character.objects.filter(is_correct=-1).values('page').annotate(dcount=Count('page'))
 
 def character_check(request, char):
-    characters_list = Character.objects.filter(char=char)
+    characters_list = Character.objects.filter(char=char).filter(is_correct=0)
     paginator = Paginator(characters_list, 3) # Show 30 characters per page
     page = request.GET.get('page')
     try:
@@ -228,7 +212,13 @@ def set_correct(request):
         char_id = request.POST['id']
         is_correct = int(request.POST['is_correct'])
         Character.objects.filter(id=char_id).update(is_correct=is_correct)
-    data = {'status': 'ok'}
+        data = {'status': 'ok'}
+    elif 'charArr[]' in request.POST:
+        charArr = request.POST.getlist('charArr[]')
+        Character.objects.filter(id__in = charArr ).filter(is_correct=0).update(is_correct=1)
+        data = {'status': 'ok'}
+    else:
+        data = {'status': 'error'}
     return JsonResponse(data)
 
 def page_image(request, page_id):

@@ -1,11 +1,21 @@
 {% extends "base.html" %}
 {% block head %}
 <title>切分校对</title>
-    <style>
-      .error-char {
-        background-color: pink;
-      }
-    </style>
+<style>
+  .error-char {
+    background-color: pink;
+  }
+</style>
+<!--
+<script type="text/javascript">
+   window.onload = function(){
+       //去掉默认的contextmenu事件，否则会和右键事件同时出现。
+       document.oncontextmenu = function(e){
+           e.preventDefault();
+       };
+   }
+</script>
+-->
 {% endblock %}
 
 {% block mainbody %}
@@ -31,40 +41,56 @@
         </ul>
     </div>
 
+    <div style="clear:both;"> </div>
+    <div  class="btn btn-primary batch-check" >批量审核通过(除了有错误标记的都会通过)</div>
+
 </div><!-- /.container -->
 {% endblock %}
 
 
 {% block foot  %}
-    <script src="/static/js/pagination.js" charset="utf-8"></script>
-	<script type="text/javascript">
-		$(function(){
-			$(".pagination").createPage({
-                totalPage:{{characters.paginator.num_pages }},
-                currPage:{{characters.number}},
-				turndown:'true',
-				backFn:function(p){
-					console.log("回调函数："+p);
-                    window.open('?page='+p,'_self')
-				}
-			});
-		})
-    </script>
-  <script>
-    $('.char-image').click(function(){
-      var data = {'id': this.id};
-      data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
-      if ($(this).hasClass('error-char')) {
-        $(this).removeClass('error-char');
-        data['is_correct'] = 1;
-        $.post('/segmentation/set_correct', data, function() {
+<script src="/static/js/pagination.js" charset="utf-8"></script>
+<script type="text/javascript">
+    $(function(){
+        $(".pagination").createPage({
+            totalPage:{{characters.paginator.num_pages }},
+            currPage:{{characters.number}},
+            turndown:'true',
+            backFn:function(p){
+                console.log("回调函数："+p);
+                window.open('?page='+p,'_self')
+            }
         });
-      } else {
-        $(this).addClass('error-char');
-        data['is_correct'] = -1;
+    })
+</script>
+<script type="text/javascript">
+$('.batch-check').click(function(){
+        var arr =[];
+        {%for ch in characters%}
+        arr.push('{{ch.id}}');
+        {%endfor%}
+        var data = {'charArr':arr};
+        data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
         $.post('/segmentation/set_correct', data, function() {
-        });
-      }
+        location.reload(false);
+            });
+} );
+</script>
+<script type="text/javascript">
+$('.char-image').click(function(){
+  var data = {'id': this.id};
+  data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+  if ($(this).hasClass('error-char')) {
+    $(this).removeClass('error-char');
+    data['is_correct'] = 1;
+    $.post('/segmentation/set_correct', data, function() {
     });
-  </script>
+  } else {
+    $(this).addClass('error-char');
+    data['is_correct'] = -1;
+    $.post('/segmentation/set_correct', data, function() {
+    });
+  }
+});
+</script>
 {% endblock %}
