@@ -82,9 +82,9 @@ DATABASES = {
         'NAME': 'dzj_characters',
         'USER': 'dzj',
         'PASSWORD': 'dzjsql',
-       'HOST': '192.168.16.3',
+   #    'HOST': '192.168.16.3',
         'HOST': 'localhost',
-#        'PORT': '5432',
+        'PORT': '5432',
     }
 }
 
@@ -109,8 +109,32 @@ USE_TZ = True
 STATIC_URL = '/static/'
 PAGE_IMAGE_ROOT = '/home/share/dzj_characters/page_images/'
 CHARACTER_IMAGE_ROOT = '/home/share/dzj_characters/character_images/'
-#PAGE_IMAGE_ROOT = 'segmentation/files/page_images/'
-#CHARACTER_IMAGE_ROOT = 'segmentation/files/character_images/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/segmentation_web.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
+
