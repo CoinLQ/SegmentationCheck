@@ -29,7 +29,7 @@
             {% if forloop.counter|divisibleby:"10" %}</tr><tr>
             {% endif %}
           {% endif %}
-        <td id="{{ ch.id }}" class="char-image {% if ch.is_correct == -1 %}error-char{% endif %}"><img src="/character_images/{{ ch.image }}" alt="*"></td>
+        <td id="{{ ch.id }}" class="char-image {% if ch.is_correct == -1 %}error-char{% endif %}"><img src="/character_images/{{ ch.image }}" alt="加载中"></td>
           {% if forloop.last %}</tr>
           {% endif %}
         {% endfor %}
@@ -71,6 +71,7 @@ $('.batch-check').click(function(){
         {%endfor%}
         var data = {'charArr':arr};
         data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+        data['char'] = '{{ char }}';
         $.post('/segmentation/set_correct', data, function() {
         location.reload(false);
             });
@@ -80,6 +81,7 @@ $('.batch-check').click(function(){
 $('.char-image').click(function(){
   var data = {'id': this.id};
   data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+  data['char'] = '{{ char }}';
   if ($(this).hasClass('error-char')) {
     $(this).removeClass('error-char');
     data['is_correct'] = 1;

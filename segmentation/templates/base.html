@@ -54,6 +54,16 @@
             <li><a href="/segmentation/characterindex">切分校对</a></li>
             <li><a href="/segmentation/errpageindex/">切分调整示例</a></li>
           </ul>
+          
+<div class="btn-group">
+  <a class="btn btn-primary" href="#"><i class="icon-user icon-white"></i>{{user}} </a>
+  <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+  <ul class="dropdown-menu">
+    <li><a href="#">信息</a></li>
+    <li class="divider"></li>
+    <li><a href="{% url 'segmentation:logout' %}">退出</a></li>
+  </ul>
+</div>           
         </div><!--/.nav-collapse -->
       </div>
     </nav>

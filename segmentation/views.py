@@ -15,6 +15,9 @@ from django.db.models import Count
 
 import Image #use to cut charImg
 
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+
 class MyJsonEncoder(DjangoJSONEncoder):
     def default(self, obj):
         if isinstance(obj, CharacterLine):
@@ -44,9 +47,11 @@ class CharacterLine:
         self.char_lst = char_lst
 
 # Create your views here.
+@login_required(login_url='/segmentation/login/')
 def index(request):
     return render(request, 'segmentation/index.html')
 
+@login_required(login_url='/segmentation/login/')
 def page_detail(request, page_id):
     page = get_object_or_404(Page, pk=page_id)
     characters = Character.objects.filter(page_id=page.id).order_by('line_no')
@@ -81,6 +86,11 @@ class PageCheckView(generic.ListView):
     def get_queryset(self):
         pk = self.kwargs['pk']
         return Page.objects.filter(id__startswith=pk).filter(is_correct=0)[:9]
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(PageCheckView, self).dispatch(*args, **kwargs)
+
 
 def set_page_correct(request):
     if 'id' in request.POST:
@@ -183,15 +193,28 @@ def page_segmentation_line(request, page_id):
     return JsonResponse(line_lst, safe=False, encoder=MyJsonEncoder)
 
 class CharacterIndex(generic.ListView):
-    model = CharacterStatistics
     template_name = 'segmentation/character_index.html'
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(CharacterIndex, self).dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        return CharacterStatistics.objects.order_by('-uncheck_cnt')
 
 class ErrPageIndex(generic.ListView):
     model = Character
     template_name = 'segmentation/err_page_index.html'
+
     def get_queryset(self):
         return Character.objects.filter(is_correct=-1).values('page').annotate(dcount=Count('page'))
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ErrPageIndex, self).dispatch(*args, **kwargs)
+
+
+@login_required(login_url='/segmentation/login/')
 def character_check(request, char):
     characters_list = Character.objects.filter(char=char).filter(is_correct=0)
     paginator = Paginator(characters_list, 30) # Show 30 characters per page
@@ -211,7 +234,13 @@ def set_correct(request):
     if 'id' in request.POST:
         char_id = request.POST['id']
         is_correct = int(request.POST['is_correct'])
+        char = request.POST['char']
         Character.objects.filter(id=char_id).update(is_correct=is_correct)
+        page_id = char_id[:14]
+        Character.objects.filter(id__startswith=page_id).filter(is_correct=0).update(is_correct=-2)
+#bug cant recover the status
+        #cs = CharacterStatistics.objects.filter(char=char)
+        #CharacterStatistics.objects.filter(char=char).update(uncheck_cnt=cs.uncheck_cnt-1)
         data = {'status': 'ok'}
     elif 'charArr[]' in request.POST:
         charArr = request.POST.getlist('charArr[]')

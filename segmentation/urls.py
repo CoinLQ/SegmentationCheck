@@ -1,8 +1,12 @@
 from django.conf.urls import include, url
 from . import views
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
+    #url('^', include('django.contrib.auth.urls')),
     url(r'^$', views.index, name='index'),
+    url(r'^login/$', auth_views.login, {'template_name':'login.html'},name='login'),
+    url(r'^logout/$', auth_views.logout,{'template_name':'logout.html'},name='logout'),
     url(r'^pagecheck/(?P<pk>[0-9A-Za-z]*)$', views.PageCheckView.as_view(), name='page_check'),
     url(r'^set_page_correct$', views.set_page_correct, name='set_page_correct'),
     url(r'^characterindex/$', views.CharacterIndex.as_view(), name='character_index'),

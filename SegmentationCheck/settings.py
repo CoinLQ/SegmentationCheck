@@ -105,7 +105,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
-
+LOGIN_URL = '/segmentation/login/'
 STATIC_URL = '/static/'
 PAGE_IMAGE_ROOT = '/home/share/dzj_characters/page_images/'
 CHARACTER_IMAGE_ROOT = '/home/share/dzj_characters/character_images/'
