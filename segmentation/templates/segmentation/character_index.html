@@ -10,12 +10,15 @@
           <tr>
              <th>字</th>
              <th>字形总数</th>
+             <th>未审核字形数</th>
+             <th>错误字形数</th>
           </tr>
         </thead>
       <tbody>
         {% for char in characterstatistics_list %}
       <tr>
-          <td ><a href="/segmentation/charactercheck/{{char.char}}">{{char.char}}</td><td>{{char.total_cnt}}</td>
+          <td ><a href="/segmentation/charactercheck/{{char.char}}">{{char.char}}</td><td>{{char.total_cnt}}</td><td>{{char.uncheck_cnt}}</td><td>{{char.err_cnt}}</td>
+
         {% endfor %}
       </tbody>
     </table>

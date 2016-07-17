@@ -32,7 +32,7 @@ class Character(models.Model):
     bottom = models.SmallIntegerField()
     line_no = models.SmallIntegerField()
     char_no = models.SmallIntegerField()
-    is_correct = models.SmallIntegerField(default=0)
+    is_correct = models.SmallIntegerField(default=0,db_index=True)
     verification_user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
 
     def __unicode__(self):
@@ -42,7 +42,7 @@ class CharacterStatistics(models.Model):
     char = models.CharField(max_length=4,db_index=True,primary_key=True)
     total_cnt = models.IntegerField(default=0)
     uncheck_cnt = models.IntegerField(default=0)
-    checked_cnt = models.IntegerField(default=0)
+    err_cnt = models.IntegerField(default=0)
     uncertainty_cnt = models.IntegerField(default=0)
 
 

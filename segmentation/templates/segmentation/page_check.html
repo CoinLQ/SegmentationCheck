@@ -26,6 +26,7 @@ opacity: 0.4;
 z-index: 99;
 }
 </style> 
+
 {% endblock %}
 
 
@@ -54,8 +55,7 @@ z-index: 99;
 
     <div id="fade" class="black_overlay"> </div> 
     <div style="clear:both;"> </div>
-    <div  class="btn btn-primary batch-check" onclick="alert("aa");">批量审核通过(除了有错误标记的都会通过)</div>
-
+    <div  class="btn btn-primary batch-check" >批量审核通过(除了有错误标记的都会通过)</div>
 
 
 </div><!-- /.container -->
@@ -75,7 +75,9 @@ $('.batch-check').click(function(){
         location.reload(false);
             });
 } );
+</script>
 
+<script type="text/javascript">
 $('.page-image').click(function(){
   var data = {'id': this.id};
   data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
@@ -88,17 +90,18 @@ $('.page-image').click(function(){
   }
     $.post('/segmentation/set_page_correct', data, function() { });
 });
+</script>
 
 {%for page in page_list%}
-document.getElementById("page{{page.id}}").onmousedown = function(e){
-   if(e.button ==2){
-    document.getElementById('light{{page.id}}').style.display='block';
-    document.getElementById('fade').style.display='block';
-   }
-}
-
-{%endfor%}
+<script type="text/javascript">
+    document.getElementById("page{{page.id}}").onmousedown = function(e){
+       if(e.button ==2){
+        document.getElementById('light{{page.id}}').style.display='block';
+        document.getElementById('fade').style.display='block';
+       }
+    }
 </script>
+{%endfor%}
 {% endblock %}
 
 

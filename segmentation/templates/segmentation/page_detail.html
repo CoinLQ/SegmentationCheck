@@ -39,11 +39,9 @@
 <script src="/static/js/svg.min.js"></script>
 <script src="/static/js/svg.draggable.min.js"></script>
 <script type="text/javascript">
-{% if page.width %}
-var draw = new SVG('segmentation_page').size('{{ page.width }}', '{{ page.height }}');
-{% else %}
-var draw = new SVG('segmentation_page').size('1200', '800');
-{% endif %}
+var image=new Image();
+image.src="/page_images/{{ page.id }}.jpg";
+var draw = new SVG('segmentation_page').size(image.width, image.height);
 draw.style('background:url(/page_images/{{ page.id }}.jpg) no-repeat;');
 
 var lines = [];
