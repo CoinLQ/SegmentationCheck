@@ -3,8 +3,7 @@
 import skimage.io as io
 from page_processing import process_page
 import subprocess
-#import os, sys, redis
-import os, sys
+import os, sys, redis
 import cPickle
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "SegmentationCheck.settings")
@@ -83,15 +82,20 @@ def run_segmentation_for_all_pages():
         print 'page.id: ', page.id.encode('utf-8')
         segment_one_page(page.id, u'/home/share/dzj_characters/page_images/%s' % page.image, page.text)
 
-def add_segmentation_task():
+def add_segmentation_task(filename):
     redis_client = redis.StrictRedis(host='localhost', port=6379, db=1)
-    iter = Page.objects.iterator()
-    for page in iter:
-        print page.id
-        page_data = cPickle.dumps(page)
-        redis_client.rpush('pages', page_data)
+    #iter = Page.objects.iterator()
+    #for page in iter:
+    with open(filename, 'r') as f:
+        for l in f.readlines():
+            page_id = l.rstrip()
+            page = Page.objects.get(id=page_id)
+            print page.id
+            page_data = cPickle.dumps(page)
+            redis_client.rpush('pages', page_data)
 
 if __name__ == '__main__':
     #test_file()
-    run_segmentation_for_all_pages()
-    #add_segmentation_task()
+    #run_segmentation_for_all_pages()
+    add_segmentation_task(sys.argv[1])
+
