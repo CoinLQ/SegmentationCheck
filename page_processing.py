@@ -53,6 +53,14 @@ class LineRegion:
         self.right = right
         self.width = self.right - self.left
 
+    def set_left(self, left):
+        self.left = left
+        self.width = self.right - self.left
+
+    def set_right(self, right):
+        self.right = right
+        self.width = self.right - self.left
+
 def process_page1(image, text, page_id):
     thresh = filters.threshold_otsu(image)
     binary = (image > thresh).astype('ubyte')
@@ -364,7 +372,7 @@ def process_line(line_image, binary_line_vertical,
 
         # the last white region
         if j == len(line_bins):
-            print line_top + line_bins[white_region[0]], line_top + line_bins[white_region[-1]]
+            #print line_top + line_bins[white_region[0]], line_top + line_bins[white_region[-1]]
             if len(white_region) > 0:
                 y = line_bins[white_region[0]] + (line_bins[white_region[-1]] - line_bins[white_region[0]]) / 25
                 process_cut_lines = True
@@ -668,6 +676,12 @@ def process_page(image, text, page_id):
         else:
             line_regions.pop()
             new_bins.pop(0)
+
+    avg_width = np.average( map(attrgetter('width'), line_regions[1:-2]) )
+    print 'avg_width: ', avg_width
+    if line_regions[0].width > avg_width * 1.2:
+        print 'the width of the first line > avg_width * 1.2'
+        line_regions[0].set_right( int(line_regions[0].left + avg_width) )
 
     for line_region in line_regions:
         line_no = line_no + 1
