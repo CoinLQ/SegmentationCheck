@@ -26,12 +26,11 @@ def segment_one_page(page_id, image_name, text):
                               top=ch.top, bottom=ch.bottom,
                               line_no=ch.line_no, char_no=ch.char_no,
                               is_correct=False)
-        #character_lst.append(character)
-        #print character
-        #character.save()
-        #Character.objects.bulk_create(character_lst)
-        character_data = cPickle.dumps(character)
-        redis_client.rpush('characters', character_data)
+        character_lst.append(character)
+    Character.objects.filter(page_id=page_id).delete()
+    Character.objects.bulk_create(character_lst)
+    #character_data = cPickle.dumps(character)
+    #redis_client.rpush('characters', character_data)
 
 def check_if_segment(page_id):
     #cmd = u'ls /home/share/dzj_characters/character_images/%s* 2>/dev/null |head -n1' % page_id

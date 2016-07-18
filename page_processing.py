@@ -53,6 +53,14 @@ class LineRegion:
         self.right = right
         self.width = self.right - self.left
 
+    def set_left(self, left):
+        self.left = left
+        self.width = self.right - self.left
+
+    def set_right(self, right):
+        self.right = right
+        self.width = self.right - self.left
+
 def process_page1(image, text, page_id):
     thresh = filters.threshold_otsu(image)
     binary = (image > thresh).astype('ubyte')
@@ -364,7 +372,7 @@ def process_line(line_image, binary_line_vertical,
 
         # the last white region
         if j == len(line_bins):
-            print line_top + line_bins[white_region[0]], line_top + line_bins[white_region[-1]]
+            #print line_top + line_bins[white_region[0]], line_top + line_bins[white_region[-1]]
             if len(white_region) > 0:
                 y = line_bins[white_region[0]] + (line_bins[white_region[-1]] - line_bins[white_region[0]]) / 25
                 process_cut_lines = True
@@ -409,11 +417,11 @@ def process_line(line_image, binary_line_vertical,
                     line_char_lst[-1].bottom = y
                 pass
             elif height_width_ratio > 1.4 and height_width_ratio < 2.1:  # 2 chars
-                print '2 chars'
+                #print '2 chars'
                 # find cut line between [y0 + char_height / 4, y - char_height / 4]
                 cut_y = np.argmin(
                     binary_line_vertical[y0 + char_height / 4: y - char_height / 4 + 1]) + y0 + char_height / 4
-                print 'add cut_y: ', cut_y
+                #print 'add cut_y: ', cut_y
                 ch = Char(u'', line_left, line_right, line_new_bins[-1], cut_y, line_no,
                           char_idx + 1, line_id + u'%02d' % (char_idx + 1))
                 line_char_lst.append(ch)
@@ -429,10 +437,10 @@ def process_line(line_image, binary_line_vertical,
                 line_new_data.append(binary_line_vertical[y])
             elif height_width_ratio > 2.1 and height_width_ratio < 2.8:  # 3 chars
                 # find cut line
-                print '3 chars'
+                #print '3 chars'
                 cut_y = np.argmin(
                     binary_line_vertical[y0 + char_height / 6: y0 + char_height / 2]) + y0 + char_height / 6
-                print 'add cut_y: ', cut_y
+                #print 'add cut_y: ', cut_y
                 ch = Char(u'', line_left, line_right, line_new_bins[-1], cut_y, line_no,
                           char_idx + 1, line_id + u'%02d' % (char_idx + 1))
                 line_char_lst.append(ch)
@@ -441,9 +449,9 @@ def process_line(line_image, binary_line_vertical,
                 line_new_data.append(binary_line_vertical[cut_y])
                 cut_y = np.argmin(binary_line_vertical[
                                   y0 + char_height * 3 / 6: y0 + char_height * 5 / 6]) + y0 + char_height * 3 / 6
-                print y, y0, char_height
-                print 'between: ', y0 + char_height * 3 / 6, y0 + char_height * 5 / 6
-                print 'add cut_y: ', cut_y, (y0 + char_height * 3 / 6)
+                #print y, y0, char_height
+                #print 'between: ', y0 + char_height * 3 / 6, y0 + char_height * 5 / 6
+                #print 'add cut_y: ', cut_y, (y0 + char_height * 3 / 6)
                 ch = Char(u'', line_left, line_right, line_new_bins[-1], cut_y, line_no,
                           char_idx + 1, line_id + u'%02d' % (char_idx + 1))
                 line_char_lst.append(ch)
@@ -477,11 +485,11 @@ def process_line(line_image, binary_line_vertical,
                     ch.char_no = ch.char_no + 1
                     ch.char = line_chars[ch.char_no - 1]
             char_height = last_char.bottom - last_char.top
-            print 'remained cut: ', char_height
+            #print 'remained cut: ', char_height
             char_idx = last_char.char_no - 1
             char_line_vertical = binary_line_vertical[last_char.top + char_height / 4: last_char.bottom - char_height / 4]
             cut_y = np.argmin(char_line_vertical) + last_char.top + char_height / 4
-            print 'add cut_y: ', cut_y
+            #print 'add cut_y: ', cut_y
             line_new_bins.append(cut_y)
             line_new_data.append(binary_line_vertical[cut_y])
             ch = Char(line_chars[char_idx], last_char.left, last_char.right, last_char.top, cut_y, last_char.line_no,
@@ -492,7 +500,7 @@ def process_line(line_image, binary_line_vertical,
             line_char_lst.append(ch)
 
     beyond_count = len(line_char_lst) - len(line_chars)
-    print 'beyond_count: ', beyond_count
+    #print 'beyond_count: ', beyond_count
     if beyond_count > 0:
         correct_char_lst = []
         short_char_lst = []
@@ -502,7 +510,7 @@ def process_line(line_image, binary_line_vertical,
             else:
                 correct_char_lst.append(ch)
         #short_char_lst.sort(key=attrgetter('top'))
-        print 'short_char_lst: ', len(short_char_lst)
+        #print 'short_char_lst: ', len(short_char_lst)
         short_chars_lst = []
         temp_lst = []
         for ch in short_char_lst:
@@ -576,7 +584,7 @@ def process_page(image, text, page_id):
     min_v = binary_line.min()
     max_v = binary_line.max()
     cut_thresh = min_v + (max_v - min_v) / 25
-    print 'min, max, cut_thresh', min_v, max_v, cut_thresh
+    #print 'min, max, cut_thresh', min_v, max_v, cut_thresh
 
     bins = []
     data = []
@@ -597,7 +605,7 @@ def process_page(image, text, page_id):
             #print 'bins[i]: ', bins[i], last_x, white_region
             if len(new_bins) == 0:
                 if len(white_region) > 0:
-                    print 'last_x, bins[white_region[-1]]:', bins[white_region[0]], bins[white_region[-1]]
+                    #print 'last_x, bins[white_region[-1]]:', bins[white_region[0]], bins[white_region[-1]]
                     x = last_x - (bins[white_region[-1]] - bins[white_region[0]]) / 10
                 else:
                     x = last_x
@@ -614,7 +622,7 @@ def process_page(image, text, page_id):
         x = bins[white_region[0]] + (bins[white_region[-1]] - bins[white_region[0]]) / 10
         new_bins.append(x)
         new_data.append(binary_line[x])
-        print 'last white region: ', x
+        #print 'last white region: ', x
 
     for i in range(len(new_bins) - 1):
         end_x = new_bins[i+1]
@@ -626,7 +634,7 @@ def process_page(image, text, page_id):
             if width >= LINE_WIDTH * 2: # cut
                 cut_x = np.argmin(
                     binary_line[start_x + LINE_WIDTH / 2: start_x + LINE_WIDTH * 3 / 2 + 1]) + start_x + LINE_WIDTH / 2
-                print 'add cut_x: ', cut_x
+                #print 'add cut_x: ', cut_x
                 new_bins.insert(insert_pos, cut_x)
                 insert_pos = insert_pos + 1
                 start_x = cut_x
@@ -661,7 +669,7 @@ def process_page(image, text, page_id):
         last_x = new_bins[i]
 
     if len(line_regions) - line_count == 1: #如果计算出的行数比文字行数多1
-        print 'line_regions[0].width, line_regions[-1].width:', line_regions[0].width, line_regions[-1].width
+        #print 'line_regions[0].width, line_regions[-1].width:', line_regions[0].width, line_regions[-1].width
         if line_regions[0].width < line_regions[-1].width:
             line_regions.pop(0)
             new_bins.pop()
@@ -669,12 +677,18 @@ def process_page(image, text, page_id):
             line_regions.pop()
             new_bins.pop(0)
 
+    avg_width = np.average( map(attrgetter('width'), line_regions[1:-2]) )
+    print 'avg_width: ', avg_width
+    if line_regions[0].width > avg_width * 1.2:
+        print 'the width of the first line > avg_width * 1.2'
+        line_regions[0].set_right( int(line_regions[0].left + avg_width) )
+
     for line_region in line_regions:
         line_no = line_no + 1
         if line_no > line_count:
             break
         line_id = page_id + u'%02dL' % line_no
-        print u'#### line %s: %s ####' % (line_no, line_id)
+        #print u'#### line %s: %s ####' % (line_no, line_id)
         line_text = line_texts[line_no - 1]
         if line_text.find(u'<') != -1:  # 这一行有<，表示有小字，不处理
             continue
@@ -704,7 +718,7 @@ def process_page(image, text, page_id):
             line_bottom = line_bottom + 10
         else:
             line_bottom = image_height-1
-        print 'line_top, line_bottom: ', line_top, line_bottom
+        #print 'line_top, line_bottom: ', line_top, line_bottom
         line_image_new = line_image[line_top:line_bottom+1]
         binary_line_vertical_new = binary_line_vertical[line_top:line_bottom+1]
 
