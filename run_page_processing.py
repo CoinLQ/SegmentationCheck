@@ -11,6 +11,8 @@ import django
 django.setup()
 from segmentation.models import Character, Page
 
+redis_client = redis.StrictRedis(host='localhost', port=6379, db=1)
+
 text1 = u''
 def test_file():
     vol_no = u'01'
@@ -82,17 +84,22 @@ def run_segmentation_for_all_pages():
         print 'page.id: ', page.id.encode('utf-8')
         segment_one_page(page.id, u'/home/share/dzj_characters/page_images/%s' % page.image, page.text)
 
+def add_page_task(page_id):
+    page = Page.objects.get(id=page_id)
+    print page.id
+    page_data = cPickle.dumps(page)
+    redis_client.rpush('pages', page_data)
+
 def add_segmentation_task(filename):
-    redis_client = redis.StrictRedis(host='localhost', port=6379, db=1)
     #iter = Page.objects.iterator()
     #for page in iter:
-    with open(filename, 'r') as f:
-        for l in f.readlines():
-            page_id = l.rstrip()
-            page = Page.objects.get(id=page_id)
-            print page.id
-            page_data = cPickle.dumps(page)
-            redis_client.rpush('pages', page_data)
+    if filename.startswith('K'):
+        add_page_task(filename)
+    else:
+        with open(filename, 'r') as f:
+            for l in f.readlines():
+                page_id = l.rstrip()
+                add_page_task(page_id)
 
 if __name__ == '__main__':
     #test_file()
