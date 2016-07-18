@@ -3,6 +3,14 @@
 {# 用于在html head部分添加内容，如引入css，js资源等#}
 <title>切分调整</title>
 <link rel="stylesheet" type="text/css" media="screen" href="/static/css/svg.select.css">
+<script type="text/javascript">
+window.onload = function(){
+   //去掉默认的contextmenu事件，否则会和右键事件同时出现。
+   document.oncontextmenu = function(e){
+       e.preventDefault();
+   };
+}
+</script>
 <style>
     .highlight {
       stroke: red;
@@ -16,6 +24,9 @@
       stroke: #FF00FF;
       stroke-width: 4;
     }
+.tnt {Writing-mode:tb-rl;Text-align:left;font-size:16pt}
+.black_overlay{  display: none;  position: absolute;  top: 0%;  left: 0%;  width: 100%;  height: 100%;  background-color: black;  z-index:1001;  -moz-opacity: 0.3;  opacity:0.3; }  
+.white_content {  display: none;  position: absolute;  top: 10%;  left: 10%;  padding: 16px;  border: 16px solid grey;  background-color: white;  z-index:1002;  overflow: auto;  -moz-opacity: 0.8;  opacity:0.8; }  
 </style>
 {% endblock %}
 
@@ -25,8 +36,16 @@
 <div class="container">
 {# 主内容区 #}
     <div>
+        <p>切分审核</p>
       <div id="segmentation_page"></div>
       <button class="btn btn-default" id="save_button">保存</button>
+    <div id="light" class="white_content tnt"> 
+        {% for line in text %}
+        <div>{{line}}</div>
+        {%endfor%}
+    <a href="javascript:void(0)" onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'"> Close</a> 
+    </div> 
+    <div id="fade" class="black_overlay"> </div> 
     </div>
 </div><!-- /.container -->
 {% endblock %}
@@ -39,9 +58,15 @@
 <script src="/static/js/svg.min.js"></script>
 <script src="/static/js/svg.draggable.min.js"></script>
 <script type="text/javascript">
-var image=new Image();
+/*var image=new Image();
 image.src="/page_images/{{ page.id }}.jpg";
 var draw = new SVG('segmentation_page').size(image.width, image.height);
+*/
+{% if page.width %}
+var draw = new SVG('segmentation_page').size('{{ page.width }}', '{{ page.height }}');
+{% else %}
+var draw = new SVG('segmentation_page').size('1200', '800');
+{% endif %}
 draw.style('background:url(/page_images/{{ page.id }}.jpg) no-repeat;');
 
 var lines = [];
@@ -108,6 +133,14 @@ $('#save_button').on('click', function(){
     location.reload();
   });
 });
+</script>
+<script type="text/javascript">
+    document.getElementById("segmentation_page").onmousedown = function(e){
+       if(e.button ==2){
+        document.getElementById('light').style.display='block';
+        document.getElementById('fade').style.display='block';
+       }
+    }
 </script>
 {% endblock %}
 

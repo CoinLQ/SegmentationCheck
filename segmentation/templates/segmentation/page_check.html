@@ -4,7 +4,7 @@
 {# 用于在html head部分添加内容，如引入css，js资源等#}
 
 <script type="text/javascript">
-windo.onload = function(){
+window.onload = function(){
    //去掉默认的contextmenu事件，否则会和右键事件同时出现。
    document.oncontextmenu = function(e){
        e.preventDefault();
@@ -13,12 +13,10 @@ windo.onload = function(){
 </script>
 
 <style type="text/css">
-<!-- 
-.tnt {Writing-mode:tb-rl;Text-align:left;font-size:9pt}
--- >
-.black_overlay{  display: none;  position: absolute;  top: 0%;  left: 0%;  width: 100%;  height: 100%;  background-color: black;  z-index:1001;  -moz-opacity: 0.5;  opacity:0.5;  filter: alpha(opacity=50);  }  
-.white_content {  display: none;  position: absolute;  top: 25%;  left: 25%;  width: 50%;  height: 50%;  padding: 16px;  border: 16px solid orange;  background-color: white;  z-index:1002;  overflow: auto;  -moz-opacity: 0.8;  opacity:0.8;  filter: alpha(opacity=80); }  
-.flow{width:370px;height:185px;float:left;margin:5px;margin-top:20px;border:1px solid blue;}
+.tnt {Writing-mode:tb-rl;Text-align:left;font-size:16pt}
+.black_overlay{  display: none;  position: absolute;  top: 0%;  left: 0%;  width: 100%;  height: 100%;  background-color: black;  z-index:1001;  -moz-opacity: 0.3;  opacity:0.3; }  
+.white_content {  display: none;  position: absolute;  top: 10%;  left: 10%;  padding: 16px;  border: 16px solid grey;  background-color: white;  z-index:1002;  overflow: auto;  -moz-opacity: 0.8;  opacity:0.8; }  
+.flow{width:560px;height:285px;float:left;margin:5px;margin-top:20px;border:1px solid blue;}
 .flow img{width:100%;}
 .error-char {
 background-color: pink;
@@ -39,8 +37,7 @@ z-index: 99;
     </div>
 
         <div id="light{{page.id}}" class="white_content tnt"> 
-            {{page.text}}  
-
+            {{page.text}}
         <form  enctype="multipart/form-data" action="{% url 'segmentation:uploadimg'  page.id%}" method="POST" > 
             {% csrf_token %}
             <input id='file1' type="file" name="uploadimg"/>
@@ -49,7 +46,6 @@ z-index: 99;
 
         <a href='/page_images/{{page.image}} '> 下载原图 </a>
          <a href="javascript:void(0)" onclick="document.getElementById('light{{page.id}}').style.display='none';document.getElementById('fade').style.display='none'"> Close</a> 
-
     </div> 
     {%endfor%}
 

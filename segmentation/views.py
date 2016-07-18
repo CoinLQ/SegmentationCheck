@@ -14,6 +14,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
 
 import Image #use to cut charImg
+import re
 
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -47,13 +48,18 @@ class CharacterLine:
         self.char_lst = char_lst
 
 # Create your views here.
-@login_required(login_url='/segmentation/login/')
 def index(request):
     return render(request, 'segmentation/index.html')
 
 @login_required(login_url='/segmentation/login/')
 def page_detail(request, page_id):
     page = get_object_or_404(Page, pk=page_id)
+    text_line_lst = []
+    for line in page.text.split(u'\n'):
+        pos = line.find(u';')
+        line=line[pos+1:]
+        text_line_lst.append(line.lstrip())
+
     characters = Character.objects.filter(page_id=page.id).order_by('line_no')
     temp_lst = []
     line_lst = []
@@ -73,12 +79,7 @@ def page_detail(request, page_id):
         line = CharacterLine(cur_line_no, temp_lst[0].left, temp_lst[0].right, temp_lst)
         line_lst.append(line)
 
-    print '----------------------'
-    print page
-    #print line_lst
-    print '----------------------'
-    return render(request, 'segmentation/page_detail.html',
-                  {'page': page, 'line_lst': line_lst})
+    return render(request, 'segmentation/page_detail.html', {'page': page, 'line_lst': line_lst, 'text': text_line_lst})
 
 
 class PageCheckView(generic.ListView):
@@ -92,6 +93,7 @@ class PageCheckView(generic.ListView):
         return super(PageCheckView, self).dispatch(*args, **kwargs)
 
 
+#@login_required(login_url='/segmentation/login/')
 def set_page_correct(request):
     if 'id' in request.POST:
         page_id = request.POST['id']
@@ -106,6 +108,7 @@ def set_page_correct(request):
         data = {'status': 'error'}
     return JsonResponse(data)
 
+#@login_required(login_url='/segmentation/login/')
 def uploadimg(request,pk):
     def handle_uploaded_file(f):
         #PAGE_IMAGE_ROOT = '/home/share/dzj_characters/page_images/'
@@ -121,6 +124,7 @@ def uploadimg(request,pk):
         return JsonResponse(data)
 
 
+#@login_required(login_url='/segmentation/login/')
 def cut_char_img( page_id,char_id):
     ch = Character.objects.filter(id=char_id)
     pageimg_file = '/home/share/dzj_characters/page_images/'+page_id+'.jpg'
@@ -130,6 +134,7 @@ def cut_char_img( page_id,char_id):
     cropimg = pageimg.crop(regin)
     cropimg.save(charimg_file)
 
+#@login_required(login_url='/segmentation/login/')
 def page_modify(request, page_id):
     data = {}
     if request.method == 'POST':
@@ -230,6 +235,7 @@ def character_check(request, char):
     return render(request, 'segmentation/character_check.html', {'char': char, 'characters': characters})
 
 
+#@login_required(login_url='/segmentation/login/')
 def set_correct(request):
     if 'id' in request.POST:
         char_id = request.POST['id']
