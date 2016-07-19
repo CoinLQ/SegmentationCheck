@@ -7,4 +7,9 @@ char,
   0
 FROM 
   public.segmentation_character
-  group by char;
+  group by char
+ON CONFLICT (char)
+DO UPDATE SET 
+total_cnt=EXCLUDED.total_cnt,
+uncheck_cnt=EXCLUDED.uncheck_cnt,
+err_cnt =EXCLUDED.err_cnt;
