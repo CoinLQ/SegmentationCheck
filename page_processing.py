@@ -653,7 +653,7 @@ def process_page(image, text, page_id):
     line_regions = []
     for i in range(len(new_bins) - 2, -1, -1):
         line_width = last_x - new_bins[i]
-        if line_width < 15:
+        if line_width < 25:
             last_x = new_bins[i]
             continue
         line_image = binary[:, new_bins[i]:last_x]
@@ -682,6 +682,9 @@ def process_page(image, text, page_id):
     if line_regions[0].width > avg_width * 1.2:
         print 'the width of the first line > avg_width * 1.2'
         line_regions[0].set_right( int(line_regions[0].left + avg_width) )
+    if line_regions[-1].width > avg_width * 1.2:
+        print 'the width of the last line > avg_width * 1.2'
+        line_regions[-1].set_left(int(line_regions[-2].left - avg_width))
 
     for line_region in line_regions:
         line_no = line_no + 1
