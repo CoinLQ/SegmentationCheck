@@ -50,7 +50,11 @@ def run_segmentation_loop():
         if True:
             logging.info('page: %s', page.id)
             if page.image:
-                segment_one_page(page.id, u'/home/share/dzj_characters/page_images/%s' % page.image, page.text)
+                try:
+                    segment_one_page(page.id, u'/home/share/dzj_characters/page_images/%s' % page.image, page.text)
+                except Exception, e:
+                    logging.error('exception: %s', e)
+                    pass
 
 if __name__ == '__main__':
     run_segmentation_loop()
