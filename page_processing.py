@@ -76,6 +76,11 @@ class WhiteRegion:
         self.bottom = bottom
         self.height = self.bottom - self.top + 1
 
+    def set_top_bottom(self, top, bottom):
+        self.top = top
+        self.bottom = bottom
+        self.height = self.bottom - self.top + 1
+
 def get_space_region_count(line_chars):
     count = 0
     char_regions = []
@@ -120,6 +125,10 @@ def process_whole_line(line_image, binary_line_vertical,
             white_regions.sort(key=attrgetter('height'), reverse=True)  # 按高度从大到小排序
             selected_white_regions = white_regions[0:space_region_count]
             selected_white_regions.sort(key=attrgetter('top'))
+            for white_region in selected_white_regions:  # 调整空白区的top,bottom坐标，不要紧贴着字形区
+                if white_region.height > 20:
+                    white_region.set_top_bottom( white_region.top + 10, white_region.bottom - 10 )
+
             line_image_regions = []
             cur_image_region_top = 0
             for white_region in selected_white_regions:
