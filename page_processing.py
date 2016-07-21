@@ -93,7 +93,6 @@ def get_space_region_count(line_chars):
     count = 0
     char_regions = []
     char_count = len(line_chars)
-    print 'char_count: ', char_count, line_chars
     cur_region_begin = 0
     for i in range(char_count):
         if line_chars[i] != u' ':
@@ -246,14 +245,13 @@ def process_line(line_image, binary_line_vertical,
 
             #if line_chars[char_idx] in [u'三']:
             #    ignore_ratio = 0.55
-            if height_width_ratio < ignore_ratio and line_char_lst:
-                if j == len(line_bins):
+            if height_width_ratio < ignore_ratio:
+                if line_char_lst and j == len(line_bins):
                     line_new_bins.pop()
                     line_new_data.pop()
                     line_new_bins.append(y)
                     line_new_data.append(binary_line_vertical[y])
                     line_char_lst[-1].bottom = y
-                pass
             elif height_width_ratio > 1.4 and height_width_ratio < 2.1:  # 2 chars
                 #print '2 chars'
                 # find cut line between [y0 + char_height / 4, y - char_height / 4]
@@ -550,7 +548,6 @@ def process_page(image, text, page_id):
 
     # 如果首行、最后一行的宽度是否大于平均宽度的1.2倍，则分别将其设定为平均宽度
     avg_width = np.average( map(attrgetter('width'), line_regions[1:-2]) )
-    print 'avg_width: ', avg_width
     if line_regions[0].width > avg_width * 1.2:
         print 'the width of the first line > avg_width * 1.2'
         line_regions[0].set_right( int(line_regions[0].left + avg_width) )
