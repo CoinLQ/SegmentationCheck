@@ -81,6 +81,14 @@ class WhiteRegion:
         self.bottom = bottom
         self.height = self.bottom - self.top + 1
 
+    def set_top(self, top):
+        self.top = top
+        self.height = self.bottom - self.top + 1
+
+    def set_bottom(self, bottom):
+        self.bottom = bottom
+        self.height = self.bottom - self.top + 1
+
 def get_space_region_count(line_chars):
     count = 0
     char_regions = []
@@ -119,7 +127,7 @@ def process_whole_line(line_image, binary_line_vertical,
                 if binary_line_vertical[i - 1] != 0: # i is the begin of a new white region
                     cur_white_region_top = i
             else:
-                if binary_line_vertical[i - 1] == 0: # i is the begion of a new non-white region
+                if binary_line_vertical[i - 1] == 0: # i is the begin of a new non-white region
                     white_regions.append( WhiteRegion(cur_white_region_top, i - 1) )
         if len(white_regions) >= space_region_count:
             white_regions.sort(key=attrgetter('height'), reverse=True)  # 按高度从大到小排序
@@ -485,6 +493,39 @@ def get_line_regions(binary):
         last_x = new_bins[i]
     return line_regions
 
+def find_line_bottom(binary_line_vertical, image_height):
+    white_regions = []
+    cur_white_region_bottom = image_height - 1
+    cur_dark_region_bottom = image_height - 1
+    for j in xrange(image_height - 2, 0, -1):
+        if binary_line_vertical[j] == 0:
+            if binary_line_vertical[j + 1] != 0:  # j is the bottom of a new white region
+                cur_white_region_bottom = j
+                dark_region_height = cur_dark_region_bottom - j
+                if dark_region_height > 20:
+                    break
+        else:
+            if binary_line_vertical[j + 1] == 0:  # j is the bottom of a new non-white region
+                white_regions.append(WhiteRegion(j + 1, cur_white_region_bottom))
+                cur_dark_region_bottom = j
+    if len(white_regions) > 1:  # 将中间相隔很短的空白区域连起来
+        pop_index = []
+        for j in xrange(len(white_regions) - 1):
+            if white_regions[j].height > 20 and white_regions[j + 1].height > 20 and \
+                                    white_regions[j].top - white_regions[j + 1].bottom < 10:
+                white_regions[j + 1].set_bottom(white_regions[j].bottom)
+                pop_index.append(j)
+        new_white_regions = []
+        for j in range(len(white_regions)):
+            if j not in pop_index:
+                new_white_regions.append(white_regions[j])
+        white_regions = new_white_regions
+    line_bottom = image_height - 1
+    if len(white_regions) > 0 and (image_height - 1 - white_regions[0].bottom < 10):
+        if white_regions[0].height > 20:
+            line_bottom = white_regions[0].top
+    return line_bottom
+
 def process_page(image, text, page_id):
     thresh = filters.threshold_otsu(image)
     binary = (image > thresh).astype('ubyte')
@@ -545,14 +586,10 @@ def process_page(image, text, page_id):
             line_top = line_top - 10
         else:
             line_top = 0
-        for j in xrange(image_height-1, 0, -1):
-            if binary_line_vertical[j] > 0:
-                break
-            line_bottom = j
-        if line_bottom <= image_height-11:
-            line_bottom = line_bottom + 10
-        else:
-            line_bottom = image_height-1
+
+        # 找line_bottom
+        line_bottom = find_line_bottom(binary_line_vertical, image_height)
+
         line_image_new = line_image[line_top:line_bottom+1]
         binary_line_vertical_new = binary_line_vertical[line_top:line_bottom+1]
 
