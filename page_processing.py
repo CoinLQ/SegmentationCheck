@@ -353,11 +353,6 @@ def process_line(line_image, binary_line_vertical,
         if len(line_char_lst) >= 1:
             last_char = line_char_lst[-1]
             line_char_lst.remove(last_char)
-            # 对char_no > last_char.char_no的字调整字符、char_no
-            for ch in line_char_lst:
-                if ch.char_no > last_char.char_no:
-                    ch.char_no = ch.char_no + 1
-                    ch.char = line_chars[ch.char_no - 1]
             char_height = last_char.bottom - last_char.top
             #print 'remained cut: ', char_height
             char_idx = last_char.char_no - 1
@@ -624,6 +619,20 @@ def process_page(image, text, page_id):
 
         # 找line_bottom
         line_bottom = find_line_bottom(binary_line_vertical, image_height)
+        if line_no == 1 and line_bottom >= image_height / 2 and len(line_chars) == 2:
+            line_no = line_no + 1
+            if line_no > line_count:
+                break
+            line_id = page_id + u'%02dL' % line_no
+            #print u'#### new line %s: %s ####' % (line_no, line_id)
+            line_text = line_texts[line_no - 1]
+            if line_text.find(u'<') != -1:  # 这一行有<，表示有小字，不处理
+                continue
+            space_pos = line_text.find(u';')
+            if space_pos != -1:
+                line_chars = line_text[space_pos + 1:].strip()
+            else:
+                line_chars = line_text
 
         line_image_new = line_image[line_top:line_bottom+1]
         binary_line_vertical_new = binary_line_vertical[line_top:line_bottom+1]
