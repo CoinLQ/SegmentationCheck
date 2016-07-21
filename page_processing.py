@@ -32,6 +32,14 @@ class Char:
         self.bottom = bottom
         self.height = self.bottom - self.top
 
+    def set_top(self, top):
+        self.top = top
+        self.height = self.bottom - self.top
+
+    def set_bottom(self, bottom):
+        self.bottom = bottom
+        self.height = self.bottom - self.top
+
     def set_char_no(self, char_no):
         self.char_no = char_no
 
@@ -243,15 +251,19 @@ def process_line(line_image, binary_line_vertical,
             height_width_ratio = (char_height * 1.0) / line_width
             ignore_ratio = 0.45
 
-            #if line_chars[char_idx] in [u'三']:
-            #    ignore_ratio = 0.55
             if height_width_ratio < ignore_ratio:
-                if line_char_lst and j == len(line_bins):
-                    line_new_bins.pop()
-                    line_new_data.pop()
-                    line_new_bins.append(y)
-                    line_new_data.append(binary_line_vertical[y])
-                    line_char_lst[-1].bottom = y
+                ch = Char(u'', line_left, line_right, line_new_bins[-1], y, line_no, char_idx + 1,
+                          line_id + u'%02d' % (char_idx + 1))
+                line_char_lst.append(ch)
+                char_idx += 1
+                line_new_bins.append(y)
+                line_new_data.append(binary_line_vertical[y])
+                # if line_char_lst and j == len(line_bins):
+                #     line_new_bins.pop()
+                #     line_new_data.pop()
+                #     line_new_bins.append(y)
+                #     line_new_data.append(binary_line_vertical[y])
+                #     line_char_lst[-1].bottom = y
             elif height_width_ratio > 1.4 and height_width_ratio < 2.1:  # 2 chars
                 #print '2 chars'
                 # find cut line between [y0 + char_height / 4, y - char_height / 4]
@@ -308,6 +320,32 @@ def process_line(line_image, binary_line_vertical,
                 line_new_bins.append(y)
                 line_new_data.append(binary_line_vertical[y])
 
+    pop_index = []
+    line_char_lst_length = len(line_char_lst)
+    for i in range(line_char_lst_length):
+        height_width_ratio = (line_char_lst[i].height * 1.0) / line_width
+        ignore_ratio = 0.45
+
+        if height_width_ratio < ignore_ratio:
+            if i == 0: # 第一个字，只能合并到下一个字
+                pop_index.append(i)
+                line_char_lst[i+1].set_top(line_char_lst[i].top)
+            elif i == line_char_lst_length - 1: # 最后一个字，只能合并到前一个字
+                pop_index.append(i)
+                line_char_lst[i - 1].set_bottom(line_char_lst[i].bottom)
+            else:
+                if line_char_lst[i - 1].height > line_char_lst[i+1].height:
+                    pop_index.append(i)
+                    line_char_lst[i + 1].set_top(line_char_lst[i].top)
+                else:
+                    pop_index.append(i)
+                    line_char_lst[i - 1].set_bottom(line_char_lst[i].bottom)
+    new_line_char_lst = []
+    for i in range(line_char_lst_length):
+        if i not in pop_index:
+            new_line_char_lst.append(line_char_lst[i])
+    line_char_lst = new_line_char_lst
+
     remained_count = len(line_chars) - len(line_char_lst)
     for j in range(remained_count):
         # 找到切分图像高度最大的字
@@ -328,10 +366,10 @@ def process_line(line_image, binary_line_vertical,
             #print 'add cut_y: ', cut_y
             line_new_bins.append(cut_y)
             line_new_data.append(binary_line_vertical[cut_y])
-            ch = Char(line_chars[char_idx], last_char.left, last_char.right, last_char.top, cut_y, last_char.line_no,
+            ch = Char(u'', last_char.left, last_char.right, last_char.top, cut_y, last_char.line_no,
                       char_idx + 1, line_id + u'%02d' % (char_idx + 1))
             line_char_lst.append(ch)
-            ch = Char(line_chars[char_idx + 1], last_char.left, last_char.right, cut_y, last_char.bottom, last_char.line_no,
+            ch = Char(u'', last_char.left, last_char.right, cut_y, last_char.bottom, last_char.line_no,
                       char_idx + 2, line_id + u'%02d' % (char_idx + 2))
             line_char_lst.append(ch)
 
