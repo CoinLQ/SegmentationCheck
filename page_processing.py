@@ -181,6 +181,10 @@ def process_line(line_image, binary_line_vertical,
 
             line_bins.append(j)
             line_data.append(binary_line_vertical[j])
+    if line_bins[0] > 20:
+        line_bins.insert(0, 0)
+    if line_height - 1 - line_bins[-1] > 20:
+        line_bins.append(line_height-1)
     line_new_bins = []
     line_new_data = []
     last_y = 0
