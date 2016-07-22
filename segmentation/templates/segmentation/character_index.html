@@ -2,7 +2,11 @@
 {% block head %}
 <title>字索引</title>
 
+<link href="/static/css/jquery-ui.min.css" rel="stylesheet">
 <style>
+label {
+    display: inline-block;
+  } /*for tooltip*/
   .error-char {
     background-color: pink;
   }
@@ -71,6 +75,7 @@
 </div><!-- /.container -->
 {% endblock %}
 {% block foot  %}
+<script src="/static/js/jquery-ui.min.js"></script>
 <!--for index-->
 <script>
 $(function(){
@@ -86,6 +91,7 @@ $(function(){
                     obj= $.parseJSON(result.charArr); 
                     renderCharArea("#charBrowseArea",obj);
                     binding_char_check();
+                    $( document ).tooltip();
                 });
             });
 
@@ -127,7 +133,7 @@ function renderCharArea(area,charArr){
         else if (field.is_correct == 1){
             txt += "correct-char ";
         }
-        txt +="char-image' title='aaaa'><img src='/character_images/"+field.image+"' alt='加载中'></div>"
+        txt +="char-image' title='"+field.id+"'><img src='/character_images/"+field.image+"' alt='加载中'></div>"
         $(area).append(txt);
       });
 }
@@ -149,18 +155,6 @@ function paginationFun(total,curr){
             },
         });
 }
-</script>
-<script>
-/*$(function(){
-    $('#browsebtn').click(function () {
-                $.getJSON("/segmentation/charactercheck/"+window.char+"?mode=browse",function(result){
-                    paginationFun(result.totalPage,result.currPage);
-                    obj= $.parseJSON(result.charArr); 
-                    renderCharArea("#charBrowseArea",obj);
-                    binding_char_check();
-                });
-    });
-})*/
 </script>
 <!--for check mode-->
 <script>
