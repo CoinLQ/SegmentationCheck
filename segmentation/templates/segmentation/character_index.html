@@ -1,9 +1,22 @@
 {% extends "base.html" %}
 {% block head %}
 <title>字索引</title>
+
+<style>
+  .error-char {
+    background-color: pink;
+  }
+  .correct-char {
+    background-color: green;
+  }
+  .flow {float:left; min-width:80px; min-height:80px; margin:5px;border:solid blue 1px;}
+</style>
 {% endblock %}
 {% block mainbody %}
 <div class="container">
+    <div class='row show-grid'>
+        <div class='col-md-3' >
+            <div style='height:80%;overflow:auto;position:relative;max-height:800px'>
     <table class="table table-bordered table-striped table-hover">
         <caption>已经切分出的字列表</caption>
         <thead>
@@ -15,13 +28,160 @@
           </tr>
         </thead>
       <tbody>
-        {% for char in characterstatistics_list %}
-      <tr>
-          <td ><a href="/segmentation/charactercheck/{{char.char}}">{{char.char}}</td><td>{{char.total_cnt}}</td><td>{{char.uncheck_cnt}}</td><td>{{char.err_cnt}}</td>
+        {% for ch in characterstatistics_list %}
+      <tr >
+          <td value='{{ch.char}}'>{{ch.char}}</td><td>{{ch.total_cnt}}</td><td>{{ch.uncheck_cnt}}</td><td >{{ch.err_cnt}}</td>
 
         {% endfor %}
       </tbody>
     </table>
+</div>
+        </div>
+        <div class='col-md-9'>
+            <ul id="myTab" class="nav nav-tabs" style = "margin:20px 0px;">
+               <li class="active" id='checkbtn'>
+                  <a href="#check_tab" data-toggle="tab">审核模式 </a>
+               </li>
+               <li id='browsebtn'><a href="#browse_tab" data-toggle="tab">浏览模式</a></li>
+            </ul>
+<div id="myTabContent" class="tab-content">
+   <div class="tab-pane fade in active" id="check_tab">
+        <div id='charlistArea'>
+        </div><!--end charlistArea -->
+        <div style="clear:both;"> </div>
+        <div  class="btn btn-primary batch-check" >批量审核通过(除了有错误标记的都会通过)</div>
+
+
+   </div><!--end check_tab -->
+   <div class="tab-pane fade" id="browse_tab">
+        <div id='charBrowseArea'>
+        </div>
+        <div style="clear:both;"> </div>
+        <div class="pagec" id="pagearea">
+            <ul class="pagination">
+            </ul>
+        </div>
+   </div><!--end browse_tab -->
+</div>
+ 
+        </div>
+    </div><!--endrow-->
 
 </div><!-- /.container -->
 {% endblock %}
+{% block foot  %}
+<!--for index-->
+<script>
+$(function(){
+    $('tr').click(function (e) {
+        var _char = $(e.target).attr('value');
+        window.char = _char;
+        /*$("#check_tab").load("/segmentation/charactercheck/"+_char,function(_char){*/
+            $.getJSON("/segmentation/charactercheck/"+window.char+"?mode=check",function(result){
+                renderCharArea("#charlistArea",result);
+                binding_batch_check();
+                $.getJSON("/segmentation/charactercheck/"+window.char+"?mode=browse",function(result){
+                    paginationFun(result.totalPage,result.currPage);
+                    obj= $.parseJSON(result.charArr); 
+                    renderCharArea("#charBrowseArea",obj);
+                    binding_char_check();
+                });
+            });
+
+    })
+})
+</script>
+<!--for browse&check-->
+<script>
+function binding_char_check(){
+    $('.char-image').click(function(){
+      var data = {'id': this.id};
+      data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+      data['char'] = window.char;
+      if ($(this).hasClass('error-char')) {
+        $(this).removeClass('error-char');
+        $(this).addClass('correct-char');
+        data['is_correct'] = 1;
+        $.post('/segmentation/set_correct', data, function() {
+        });
+      } else {
+        $(this).removeClass('correct-char');
+        $(this).addClass('error-char');
+        data['is_correct'] = -1;
+        $.post('/segmentation/set_correct', data, function() {
+        });
+      }
+    });
+}
+</script>
+<script>
+function renderCharArea(area,charArr){
+    $(area).empty();
+    txt =''
+    $.each(charArr, function(i, field){
+        txt = "<div id="+field.id+" class='flow "
+        if (field.is_correct == -1){
+            txt += "error-char ";
+        }
+        else if (field.is_correct == 1){
+            txt += "correct-char ";
+        }
+        txt +="char-image' title='aaaa'><img src='/character_images/"+field.image+"' alt='加载中'></div>"
+        $(area).append(txt);
+      });
+}
+</script>
+<!-- for browse mode-->
+<script src="/static/js/pagination.js" charset="utf-8"></script>
+<script>
+function paginationFun(total,curr){
+    $(".pagination").createPage({
+        totalPage:total,
+        currPage:curr,
+        turndown:'true',
+        backFn:function(p){
+            $.getJSON("/segmentation/charactercheck/"+window.char+"?mode=browse&page="+p,function(result){
+                obj= $.parseJSON(result.charArr); 
+                renderCharArea("#charBrowseArea",obj);
+                binding_char_check();
+            });
+            },
+        });
+}
+</script>
+<script>
+/*$(function(){
+    $('#browsebtn').click(function () {
+                $.getJSON("/segmentation/charactercheck/"+window.char+"?mode=browse",function(result){
+                    paginationFun(result.totalPage,result.currPage);
+                    obj= $.parseJSON(result.charArr); 
+                    renderCharArea("#charBrowseArea",obj);
+                    binding_char_check();
+                });
+    });
+})*/
+</script>
+<!--for check mode-->
+<script>
+function binding_batch_check(){
+    $('.batch-check').click(function(){
+            var arr =[];
+            var charlist = $("#charlistArea").children();
+            for (var i=0;i<charlist.length;i++){
+                var tmp = charlist[i];
+                arr.push(tmp.id);
+            }
+            var data = {'charArr':arr};
+            data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+            data['char'] = window.char;
+            $.post('/segmentation/set_correct', data, function() {
+                $.getJSON("/segmentation/charactercheck/"+window.char+"?mode=check",function(result){
+                    renderCharArea("#charlistArea",result);
+                });
+            });
+    } );
+}
+</script>
+
+{% endblock %}
+

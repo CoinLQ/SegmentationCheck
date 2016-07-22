@@ -2,6 +2,10 @@ from operator import attrgetter
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 
+from django.http import QueryDict
+from django.db.models.query import QuerySet
+from django.core.paginator import Page as paginatorPageType
+
 from django.utils.functional import Promise
 from django.utils.encoding import force_text
 from django.core.serializers.json import DjangoJSONEncoder
@@ -12,9 +16,9 @@ from django.views import generic
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
+import json
 
 import Image #use to cut charImg
-import re
 
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -39,6 +43,19 @@ class MyJsonEncoder(DjangoJSONEncoder):
                 u'is_correct': obj.is_correct,
             }
         return super(MyJsonEncoder, self).default(obj)
+
+class charJsonEncoder(DjangoJSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, QuerySet) or isinstance(obj, paginatorPageType):
+            arr = []
+            for ch in obj:
+                arr.append({
+                u'id': ch.id,
+                u'image': ch.image,
+                u'is_correct': ch.is_correct,
+                            })
+            return arr
+        return super(charJsonEncoder, self).default(obj)
 
 class CharacterLine:
     def __init__(self, line_no, left, right, char_lst):
@@ -221,18 +238,27 @@ class ErrPageIndex(generic.ListView):
 
 @login_required(login_url='/segmentation/login/')
 def character_check(request, char):
-    characters_list = Character.objects.filter(char=char).filter(is_correct=0)
-    paginator = Paginator(characters_list, 30) # Show 30 characters per page
-    page = request.GET.get('page')
-    try:
-        characters = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        characters = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        characters = paginator.page(paginator.num_pages)
-    return render(request, 'segmentation/character_check.html', {'char': char, 'characters': characters})
+    mode = request.GET.get('mode')
+    if mode == 'browse':  #browse mode  display all characters
+        characters_list = Character.objects.filter(char=char)
+        paginator = Paginator(characters_list, 30) # Show 30 characters per page
+        page = request.GET.get('page')
+        try:
+            characters = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            characters = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            characters = paginator.page(paginator.num_pages)
+        charArr = json.dumps(characters,cls=charJsonEncoder)
+        totalPage = paginator.num_pages
+        currPage = characters.number
+        return JsonResponse({u'charArr':charArr, u'totalPage':totalPage,u'currPage':currPage,}, safe=False)
+    else :        #check mode only display the unchecked characters (is_correct=0)
+        characters = Character.objects.filter(char=char).filter(is_correct=0)[:30]
+        return JsonResponse(characters, safe=False, encoder=charJsonEncoder)
+
 
 
 #@login_required(login_url='/segmentation/login/')
@@ -245,8 +271,6 @@ def set_correct(request):
         page_id = char_id[:14]
         Character.objects.filter(id__startswith=page_id).filter(is_correct=0).update(is_correct=-2)
 #bug cant recover the status
-        #cs = CharacterStatistics.objects.filter(char=char)
-        #CharacterStatistics.objects.filter(char=char).update(uncheck_cnt=cs.uncheck_cnt-1)
         data = {'status': 'ok'}
     elif 'charArr[]' in request.POST:
         charArr = request.POST.getlist('charArr[]')
@@ -255,11 +279,3 @@ def set_correct(request):
     else:
         data = {'status': 'error'}
     return JsonResponse(data)
-
-def page_image(request, page_id):
-    try:
-        page = Page.objects.get(id=page_id)
-    except Page.DoesNotExist:
-        raise Http404("Page does not exist")
-    return render(request, 'segmentation/page_detail.html',
-                  {'page': page})
