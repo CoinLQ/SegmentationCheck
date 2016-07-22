@@ -86,11 +86,12 @@ $(function(){
             $.getJSON("/segmentation/charactercheck/"+window.char+"?mode=check",function(result){
                 renderCharArea("#charlistArea",result);
                 binding_batch_check();
+                binding_char_check('#charlistArea');
                 $.getJSON("/segmentation/charactercheck/"+window.char+"?mode=browse",function(result){
                     paginationFun(result.totalPage,result.currPage);
                     obj= $.parseJSON(result.charArr); 
                     renderCharArea("#charBrowseArea",obj);
-                    binding_char_check();
+                    binding_char_check('#charBrowseArea');
                     $( document ).tooltip();
                 });
             });
@@ -100,8 +101,9 @@ $(function(){
 </script>
 <!--for browse&check-->
 <script>
-function binding_char_check(){
-    $('.char-image').click(function(){
+function binding_char_check(area){
+    var selector = area + ' .char-image'
+    $(selector).click(function(){
       var data = {'id': this.id};
       data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
       data['char'] = window.char;
@@ -150,7 +152,8 @@ function paginationFun(total,curr){
             $.getJSON("/segmentation/charactercheck/"+window.char+"?mode=browse&page="+p,function(result){
                 obj= $.parseJSON(result.charArr); 
                 renderCharArea("#charBrowseArea",obj);
-                binding_char_check();
+                binding_char_check('#charBrowseArea');
+                binding_char_check('#charlistArea');
             });
             },
         });
