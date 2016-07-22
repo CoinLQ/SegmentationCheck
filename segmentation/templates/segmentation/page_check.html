@@ -36,7 +36,7 @@ z-index: 99;
 <button class="btn btn-default image_size_control"  value="flow_large" >大</button>
 <button class="btn btn-default image_size_control"  value="flow_medium">中</button>
 <button class="btn btn-default image_size_control"  value="flow_small">小</button>
-<div style="clear:both"></br>
+<div style="clear:both"></div>
     {%for page in page_list%}
     <div id="{{ page.id }}" class="page-image flow {% if page.is_correct == -1 %}error-char{% endif %}"> 
         <img id="page{{page.id}}" src='/page_images/{{page.image}} ' />
