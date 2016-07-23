@@ -252,9 +252,10 @@ def character_check(request, char):
             # If page is out of range (e.g. 9999), deliver last page of results.
             characters = paginator.page(paginator.num_pages)
         charArr = json.dumps(characters,cls=charJsonEncoder)
-        totalPage = paginator.num_pages
-        currPage = characters.number
-        return JsonResponse({u'charArr':charArr, u'totalPage':totalPage,u'currPage':currPage,}, safe=False)
+        #totalPage = paginator.num_pages
+        #currPage = characters.number
+        items = paginator.count
+        return JsonResponse({u'charArr':charArr, u'items':items,u'itemsOnPage':30,}, safe=False)
     else :        #check mode only display the unchecked characters (is_correct=0)
         characters = Character.objects.filter(char=char).filter(is_correct=0)[:30]
         return JsonResponse(characters, safe=False, encoder=charJsonEncoder)
