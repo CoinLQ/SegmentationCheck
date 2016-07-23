@@ -3,6 +3,7 @@
 <title>字索引</title>
 
 <link href="/static/css/jquery-ui.min.css" rel="stylesheet">
+<link href="/static/css/simplePagination.css" rel="stylesheet">
 <style>
 label {
     display: inline-block;
@@ -82,13 +83,11 @@ $(function(){
     $('tr').click(function (e) {
         var _char = $(e.target).attr('value');
         window.char = _char;
-        /*$("#check_tab").load("/segmentation/charactercheck/"+_char,function(_char){*/
             $.getJSON("/segmentation/charactercheck/"+window.char+"?mode=check",function(result){
                 renderCharArea("#charlistArea",result);
-                binding_batch_check();
                 binding_char_check('#charlistArea');
                 $.getJSON("/segmentation/charactercheck/"+window.char+"?mode=browse",function(result){
-                    paginationFun(result.totalPage,result.currPage);
+                    paginationFun(result.items,result.itemsOnPage);
                     obj= $.parseJSON(result.charArr); 
                     renderCharArea("#charBrowseArea",obj);
                     binding_char_check('#charBrowseArea');
@@ -141,27 +140,29 @@ function renderCharArea(area,charArr){
 }
 </script>
 <!-- for browse mode-->
-<script src="/static/js/pagination.js" charset="utf-8"></script>
+<script src="/static/js/jquery.simplePagination.js" charset="utf-8"></script>
 <script>
-function paginationFun(total,curr){
-    $(".pagination").createPage({
-        totalPage:total,
-        currPage:curr,
-        turndown:'true',
-        backFn:function(p){
-            $.getJSON("/segmentation/charactercheck/"+window.char+"?mode=browse&page="+p,function(result){
-                obj= $.parseJSON(result.charArr); 
-                renderCharArea("#charBrowseArea",obj);
-                binding_char_check('#charBrowseArea');
-                binding_char_check('#charlistArea');
-            });
+function paginationFun(_items,_itemsOnpage){ 
+    $('#pagearea').pagination({
+        items: _items,
+        itemsOnPage: _itemsOnpage,
+        cssStyle: 'light-theme',
+    onPageClick: function(pageNumber, event) {
+                // Callback triggered when a page is clicked
+                // Page number is given as an optional parameter
+                $.getJSON("/segmentation/charactercheck/"+window.char+"?mode=browse&page="+pageNumber,function(result){
+                    obj= $.parseJSON(result.charArr); 
+                    renderCharArea("#charBrowseArea",obj);
+                    binding_char_check('#charBrowseArea');
+                    binding_char_check('#charlistArea');
+                });
             },
-        });
+    });
 }
 </script>
 <!--for check mode-->
 <script>
-function binding_batch_check(){
+$(function(){
     $('.batch-check').click(function(){
             var arr =[];
             var charlist = $("#charlistArea").children();
@@ -178,7 +179,7 @@ function binding_batch_check(){
                 });
             });
     } );
-}
+})
 </script>
 
 {% endblock %}
