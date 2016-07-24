@@ -15,7 +15,7 @@ from .models import Page, Character, CharacterStatistics
 from django.views import generic
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db.models import Count
+from django.db.models import Count,F
 import json
 
 from PIL import Image#use to cut charImg
@@ -258,9 +258,11 @@ def character_check(request, char):
         return JsonResponse({u'charArr':charArr, u'items':items,u'itemsOnPage':30,}, safe=False)
     else :        #check mode only display the unchecked characters (is_correct=0)
         characters = Character.objects.filter(char=char).filter(is_correct=0)[:30]
-        checkedNum = Character.objects.filter(char=char).exclude(is_correct=0).count()
+        qs = CharacterStatistics.objects.filter(char=char).values('uncheck_cnt')
+        uncheck_cnt = qs[0]['uncheck_cnt']
+        print uncheck_cnt
         charArr = json.dumps(characters,cls=charJsonEncoder)
-        return JsonResponse({u'charArr':charArr, u'checkedNum':checkedNum,}, safe=False)
+        return JsonResponse({u'charArr':charArr, u'uncheck_cnt':uncheck_cnt,}, safe=False)
 
 
 
@@ -270,13 +272,19 @@ def set_correct(request):
         char_id = request.POST['id']
         is_correct = int(request.POST['is_correct'])
         char = request.POST['char']
+        if  Character.objects.filter(id=char_id).filter(is_correct=0).exists():
+            CharacterStatistics.objects.filter(char=char).update(uncheck_cnt=F('uncheck_cnt')-1)
         Character.objects.filter(id=char_id).update(is_correct=is_correct)
+        CharacterStatistics.objects.filter(char=char).update(err_cnt=F('err_cnt')-is_correct)
         page_id = char_id[:14]
         #Character.objects.filter(id__startswith=page_id).filter(is_correct=0).update(is_correct=-2) bug cant recover the status
         data = {'status': 'ok'}
     elif 'charArr[]' in request.POST:
         charArr = request.POST.getlist('charArr[]')
+        char = request.POST['char']
+        updateNum = int(request.POST['updateNum'])
         Character.objects.filter(id__in = charArr ).filter(is_correct=0).update(is_correct=1)
+        CharacterStatistics.objects.filter(char=char).update(uncheck_cnt=F('uncheck_cnt')-updateNum)
         data = {'status': 'ok'}
     else:
         data = {'status': 'error'}
