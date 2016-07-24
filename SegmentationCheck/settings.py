@@ -37,7 +37,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-#    'bootstrapform',
     'segmentation',
 )
 
@@ -82,7 +81,6 @@ DATABASES = {
         'NAME': 'dzj_characters',
         'USER': 'dzj',
         'PASSWORD': 'dzjsql',
-   #    'HOST': '192.168.16.3',
         'HOST': 'localhost',
         'PORT': '5432',
     }

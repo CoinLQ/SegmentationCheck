@@ -18,7 +18,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
 import json
 
-import Image #use to cut charImg
+from PIL import Image#use to cut charImg
 
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -258,7 +258,9 @@ def character_check(request, char):
         return JsonResponse({u'charArr':charArr, u'items':items,u'itemsOnPage':30,}, safe=False)
     else :        #check mode only display the unchecked characters (is_correct=0)
         characters = Character.objects.filter(char=char).filter(is_correct=0)[:30]
-        return JsonResponse(characters, safe=False, encoder=charJsonEncoder)
+        checkedNum = Character.objects.filter(char=char).exclude(is_correct=0).count()
+        charArr = json.dumps(characters,cls=charJsonEncoder)
+        return JsonResponse({u'charArr':charArr, u'checkedNum':checkedNum,}, safe=False)
 
 
 
@@ -270,8 +272,7 @@ def set_correct(request):
         char = request.POST['char']
         Character.objects.filter(id=char_id).update(is_correct=is_correct)
         page_id = char_id[:14]
-        Character.objects.filter(id__startswith=page_id).filter(is_correct=0).update(is_correct=-2)
-#bug cant recover the status
+        #Character.objects.filter(id__startswith=page_id).filter(is_correct=0).update(is_correct=-2) bug cant recover the status
         data = {'status': 'ok'}
     elif 'charArr[]' in request.POST:
         charArr = request.POST.getlist('charArr[]')
