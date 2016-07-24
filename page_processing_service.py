@@ -4,6 +4,7 @@ import skimage.io as io
 from page_processing import process_page
 import subprocess
 import os, sys, redis, logging, cPickle
+import traceback
 
 FORMAT = '%(asctime)-15s - %(levelname)s - %(message)s'
 logging.basicConfig(filename='logs/page_processing_service.log', level=logging.INFO, format=FORMAT)
@@ -50,7 +51,11 @@ def run_segmentation_loop():
         if True:
             logging.info('page: %s', page.id)
             if page.image:
-                segment_one_page(page.id, u'/home/share/dzj_characters/page_images/%s' % page.image, page.text)
+                try:
+                    segment_one_page(page.id, u'/home/share/dzj_characters/page_images/%s' % page.image, page.text)
+                except Exception, e:
+                    logging.error('exception: %s', e)
+                    traceback.print_exc()
 
 if __name__ == '__main__':
     run_segmentation_loop()
