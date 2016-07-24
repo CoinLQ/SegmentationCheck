@@ -12,7 +12,7 @@ label {
     background-color: pink;
   }
   .correct-char {
-    background-color: green;
+    background-color: #9AFF9A;
   }
   .flow {float:left; min-width:80px; min-height:80px; margin:5px;border:solid blue 1px;}
 
@@ -47,7 +47,7 @@ label {
              <th>错误字形数</th>
           </tr>
         </thead>
-      <tbody>
+      <tbody id='charindextbody'>
         {% for ch in characterstatistics_list %}
       <tr >
           <td value='{{ch.char}}'>{{ch.char}}</td><td>{{ch.total_cnt}}</td><td>{{ch.uncheck_cnt}}</td><td >{{ch.err_cnt}}</td>
@@ -67,7 +67,7 @@ label {
 <div id="myTabContent" class="tab-content">
    <div class="tab-pane fade in active" id="check_tab">
         <div class="unchecked-box hidden">
-          <div class="progress">
+          <div class="progress progress-striped">
               <div class="progress-bar " role="progressbar" data-transitiongoal="0" aria-valuemax="0"></div>
           </div>
         </div>
@@ -102,11 +102,11 @@ label {
 <!--for index-->
 <script>
 $(function(){
-    $('tr').click(function (e) {
+    $('#charindextbody tr').click(function (e) {
         $('.unchecked-box').removeClass('hidden');
-        var _char = $(e.target).attr('value');
         $('tr').removeClass("selected");
         $(this).addClass("selected");
+        var _char = $("tr.selected td:first").text();
         window.char = _char;
             $.getJSON("/segmentation/charactercheck/"+window.char+"?mode=check",function(result){
                 obj= $.parseJSON(result.charArr);
@@ -117,10 +117,10 @@ $(function(){
                 var _checked = _total_num - result.uncheck_cnt
                 $(".progress .progress-bar").attr("data-transitiongoal", Math.ceil(_checked/30));
                 $(".progress .progress-bar").attr("aria-valuemax",Math.ceil(_total_num/30));
-                $('.progress .progress-bar').progressbar({display_text: 'fill', use_percentage: false});
+                $('.progress .progress-bar').progressbar({display_text:'center', use_percentage: false});
                   $('.progress .progress-bar').progressbar({
                         update: function(current_percentage, $this) {
-                            $this.css('background-color', 'rgb(0,' + Math.round(current_percentage / 100 * 255) + ', 0)');
+                            $this.css('background-color', 'rgb(175,' + Math.round(current_percentage / 100 * 255) + ', 120)');
                         }
                     });
 
