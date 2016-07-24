@@ -136,9 +136,11 @@ def process_whole_line(line_image, binary_line_vertical,
             else:
                 if binary_line_vertical[i - 1] == 0: # i is the begin of a new non-white region
                     white_regions.append( WhiteRegion(cur_white_region_top, i - 1) )
+        # TODO: 相邻空白区，如果中间只隔一小空白区，将此两相邻空白区连接起来
         if len(white_regions) >= space_region_count:
             white_regions.sort(key=attrgetter('height'), reverse=True)  # 按高度从大到小排序
-            selected_white_regions = white_regions[0:space_region_count]
+            #selected_white_regions = white_regions[0:space_region_count]
+            selected_white_regions = white_regions
             selected_white_regions.sort(key=attrgetter('top'))
             for white_region in selected_white_regions:  # 调整空白区的top,bottom坐标，不要紧贴着字形区
                 if white_region.height > 20:
@@ -146,11 +148,17 @@ def process_whole_line(line_image, binary_line_vertical,
 
             line_image_regions = []
             cur_image_region_top = 0
+            white_region_count = 0
             for white_region in selected_white_regions:
-                line_image_region = LineImageRegion( line_image[cur_image_region_top : white_region.top],
-                                 cur_image_region_top + line_top,
-                                 white_region.top + line_top)
-                line_image_regions.append( line_image_region )
+                if white_region_count < space_region_count:
+                    if (white_region.top - cur_image_region_top) >= 35:
+                        line_image_region = LineImageRegion( line_image[cur_image_region_top : white_region.top],
+                                         cur_image_region_top + line_top,
+                                         white_region.top + line_top)
+                        line_image_regions.append( line_image_region )
+                        white_region_count = white_region_count + 1
+                else:
+                    break
                 cur_image_region_top = white_region.bottom + 1
             if cur_image_region_top < line_bottom - line_top + 1 - 10:
                 line_image_region = LineImageRegion(line_image[cur_image_region_top: ],
@@ -173,8 +181,6 @@ def process_line(line_image, binary_line_vertical,
                  image_height,
                  start_char_no = 1):
     line_chars = filter(lambda x: x != u' ', line_chars)
-    if line_chars[0] == u'婆':
-        print line_chars
     char_idx = 0
 
     line_bins = []
@@ -633,8 +639,8 @@ def find_line_bottom(binary_line_vertical, image_height):
     if len(white_regions) > 1:  # 将中间相隔很短的空白区域连起来
         pop_index = []
         for j in xrange(len(white_regions) - 1):
-            if white_regions[j].height > 20 and white_regions[j + 1].height > 20 and \
-                                    white_regions[j].top - white_regions[j + 1].bottom < 10:
+            if (white_regions[j].height > 20 or image_height-1-white_regions[j].bottom < 20) and white_regions[j + 1].height > 20 and \
+                                    white_regions[j].top - white_regions[j + 1].bottom < 20:
                 white_regions[j + 1].set_bottom(white_regions[j].bottom)
                 pop_index.append(j)
         new_white_regions = []
@@ -648,6 +654,45 @@ def find_line_bottom(binary_line_vertical, image_height):
             line_bottom = white_regions[0].top + 10
     return line_bottom
 
+def find_line_top(binary_line_vertical, image_height):
+    white_regions = []
+    cur_white_region_top = 0
+    cur_dark_region_top = 0
+    for j in xrange(image_height - 1):
+        if binary_line_vertical[j] == 0:
+            if binary_line_vertical[j + 1] != 0:  # j + 1 is the top of a new non-white region
+                cur_dark_region_top = j + 1
+                white_regions.append(WhiteRegion(cur_white_region_top, j))
+
+        else:
+            if binary_line_vertical[j + 1] == 0:  # j + 1 is the top of a new white region
+                cur_white_region_top = j + 1
+                dark_region_height = j - cur_dark_region_top + 1
+                if dark_region_height > 20:
+                    break
+    if len(white_regions) > 1:  # 将中间相隔很短的空白区域连起来
+        pop_index = []
+        for j in xrange(len(white_regions) - 1):
+            if (white_regions[j].height > 20 or white_regions[j].top < 20) and white_regions[j + 1].height > 20 and \
+                                    white_regions[j + 1].top - white_regions[j].bottom < 20:
+                white_regions[j + 1].set_top(white_regions[j].top)
+                pop_index.append(j)
+        new_white_regions = []
+        for j in range(len(white_regions)):
+            if j not in pop_index:
+                new_white_regions.append(white_regions[j])
+        white_regions = new_white_regions
+    line_top = 0
+    if len(white_regions) > 0 and white_regions[0].top < 10:
+        if white_regions[0].height > 20:
+            line_top = white_regions[0].bottom - 10
+    return line_top
+
+def find_line_region_top(binary, line_region, image_height):
+    line_image = binary[:, line_region.left: line_region.right]
+    binary_line_vertical = line_image.sum(axis=1)
+    return find_line_top(binary_line_vertical, image_height)
+
 def process_page(image, text, page_id):
     thresh = filters.threshold_otsu(image)
     binary = (image > thresh).astype('ubyte')
@@ -656,6 +701,21 @@ def process_page(image, text, page_id):
     binary = 1 - binary
     image_height, image_width = binary.shape
     line_regions = get_line_regions(binary)
+
+    if len(line_regions) >= 2:
+        line_region_top_1 = find_line_region_top(binary, line_regions[1], image_height)
+        line_region_top_0 = find_line_region_top(binary, line_regions[0], image_height)
+        line_region_top_last = find_line_region_top(binary, line_regions[-1], image_height)
+        if line_region_top_0 - line_region_top_1 > 140:
+            line_regions.pop(0)
+        elif line_region_top_last - line_region_top_1 > 140:
+            line_regions.pop()
+
+    avg_width = np.average(map(attrgetter('width'), line_regions[1:-2]))
+    if line_regions[0].width < avg_width * 0.6:
+        line_regions.pop(0)
+    elif line_regions[-1].width < avg_width * 0.6:
+        line_regions.pop()
 
     # char segmentation for each line
     line_texts = text.rstrip().split(u'\n')
@@ -671,7 +731,6 @@ def process_page(image, text, page_id):
             #new_bins.pop(0)
 
     # 如果首行、最后一行的宽度是否大于平均宽度的1.2倍，则分别将其设定为平均宽度
-    avg_width = np.average( map(attrgetter('width'), line_regions[1:-2]) )
     if line_regions[0].width > avg_width * 1.2:
         print 'the width of the first line > avg_width * 1.2'
         line_regions[0].set_right( int(line_regions[0].left + avg_width) )
