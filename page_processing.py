@@ -8,7 +8,7 @@ try:
 except ImportError:
     from skimage import filter as filters
 import numpy as np
-from operator import attrgetter
+from operator import attrgetter, itemgetter
 import traceback
 
 matplotlib.rcParams['font.size'] = 9
@@ -173,6 +173,8 @@ def process_line(line_image, binary_line_vertical,
                  image_height,
                  start_char_no = 1):
     line_chars = filter(lambda x: x != u' ', line_chars)
+    if line_chars[0] == u'婆':
+        print line_chars
     char_idx = 0
 
     line_bins = []
@@ -211,6 +213,7 @@ def process_line(line_image, binary_line_vertical,
         if binary_line_vertical[j] > line_min_v:
             break
         line_region_max = j
+    line_region_max = min(line_height-1, line_region_max + 10)
 
     for j in range(len(line_bins) + 1):
         process_cut_lines = False
@@ -219,7 +222,7 @@ def process_line(line_image, binary_line_vertical,
         if j == len(line_bins):
             #print line_top + line_bins[white_region[0]], line_top + line_bins[white_region[-1]]
             if len(white_region) > 0:
-                y = line_bins[white_region[0]] + (line_bins[white_region[-1]] - line_bins[white_region[0]]) / 25
+                y = min(line_bins[white_region[0]] + 10, line_height-1) # (line_bins[white_region[-1]] - line_bins[white_region[0]]) / 25
                 process_cut_lines = True
         elif (line_bins[j] - last_y) <= 1:
             # print 'add white_region line:', line_bins[j]
@@ -322,24 +325,112 @@ def process_line(line_image, binary_line_vertical,
 
     pop_index = []
     line_char_lst_length = len(line_char_lst)
-    for i in range(line_char_lst_length):
-        height_width_ratio = (line_char_lst[i].height * 1.0) / line_width
-        ignore_ratio = 0.45
 
-        if height_width_ratio < ignore_ratio:
-            if i == 0: # 第一个字，只能合并到下一个字
+    may_cutoff_height = int(line_width * 0.75)
+    may_cutoff_lst = []
+    for ch in line_char_lst:
+        if ch.height >= may_cutoff_height:
+            ch.is_correct = True
+        else:
+            ch.is_correct = None
+    last_correct_index = None
+    new_line_char_lst = []
+    i = 0
+    for i in range(line_char_lst_length):
+        if line_char_lst[i].is_correct:
+            if last_correct_index is not None:
+                if len(new_line_char_lst) -1 > last_correct_index:
+                    height = line_char_lst[i].top - new_line_char_lst[last_correct_index + 1].top
+                    if height < 0.98 * line_width and height > 0.57 * line_width: # 合并成一个字
+                        top = new_line_char_lst[last_correct_index + 1].top
+                        bottom = new_line_char_lst[-1].bottom
+                        new_line_char_lst[last_correct_index + 1].set_top_bottom(top, bottom)
+                        new_line_char_lst[last_correct_index + 1].is_correct = True
+                        del new_line_char_lst[last_correct_index + 2 : ]
+                        last_correct_index = last_correct_index + 1
+            last_correct_index = len(new_line_char_lst)
+            new_line_char_lst.append( line_char_lst[i] )
+        else:
+            new_line_char_lst.append( line_char_lst[i] )
+
+    line_char_lst = new_line_char_lst
+    line_char_lst_length = len(line_char_lst)
+    # 将两正确区域中的小区域合并
+    for i in range(line_char_lst_length):
+        if line_char_lst[i].is_correct or line_char_lst[i].height > 0.44*line_width:
+            continue
+        if i == 0:
+            if i+1 <= line_char_lst_length-1 and line_char_lst[i+1].is_correct:
+                line_char_lst[i + 1].set_top(line_char_lst[i].top)
                 pop_index.append(i)
-                line_char_lst[i+1].set_top(line_char_lst[i].top)
-            elif i == line_char_lst_length - 1: # 最后一个字，只能合并到前一个字
-                pop_index.append(i)
+        elif i == line_char_lst_length - 1:
+            if i-1 >= 0 and line_char_lst[i-1].is_correct:
                 line_char_lst[i - 1].set_bottom(line_char_lst[i].bottom)
-            else:
-                if line_char_lst[i - 1].height > line_char_lst[i+1].height:
-                    pop_index.append(i)
-                    line_char_lst[i + 1].set_top(line_char_lst[i].top)
-                else:
-                    pop_index.append(i)
+                pop_index.append(i)
+        else:
+            if line_char_lst[i-1].is_correct and line_char_lst[i+1].is_correct:
+                if line_char_lst[i-1].height < line_char_lst[i+1].height:
                     line_char_lst[i - 1].set_bottom(line_char_lst[i].bottom)
+                else:
+                    line_char_lst[i + 1].set_top(line_char_lst[i].top)
+                pop_index.append(i)
+    new_line_char_lst = []
+    for i in range(line_char_lst_length):
+        if i not in pop_index:
+            new_line_char_lst.append(line_char_lst[i])
+    line_char_lst = new_line_char_lst
+    line_char_lst_length = len(line_char_lst)
+    pop_index = []
+
+    correct_count = 0
+    for i in range(line_char_lst_length):
+        if line_char_lst[i].is_correct:
+            correct_count = correct_count + 1
+            may_cutoff_lst.append(False)
+        else:
+            may_cutoff_lst.append(True)
+
+    area_lst = []
+    for i in range(line_char_lst_length - 1):
+        if may_cutoff_lst[i] and may_cutoff_lst[i + 1] and line_char_lst[i].bottom == line_char_lst[i+1].top:
+            area_top = line_char_lst[i].bottom - 4
+            area_bottom = line_char_lst[i].bottom + 5
+            area = np.sum( line_image[area_top:area_bottom, :] )
+            area_lst.append( (i, area) )
+    area_lst.sort(key=itemgetter(1), reverse=True)
+    #area_lst = area_lst[:len(line_chars)-1-correct_count]
+    #area_lst.sort(key=itemgetter(0))
+    merge_index_lst = map(itemgetter(0), area_lst)
+    new_line_char_lst = []
+    merge_count = 0
+    for i in merge_index_lst:
+        if hasattr(line_char_lst[i], 'merge_index'):
+            index = line_char_lst[i].merge_index
+        else:
+            index = i
+        height = line_char_lst[index].height + line_char_lst[i + 1].height
+        if height < 0.98 * line_width:  # and height > 0.57 * line_width:  # 合并成一个字
+            line_char_lst[index].set_bottom(line_char_lst[i + 1].bottom)
+            pop_index.append(i + 1)
+            line_char_lst[i+1].merge_index = index
+            merge_count = merge_count + 1
+            if line_char_lst_length - merge_count == len(line_chars):
+                break
+
+    # for i in range(line_char_lst_length):
+    #     if line_char_lst[i].is_correct:
+    #         new_line_char_lst.append(line_char_lst[i])
+    #     else:
+    #         if new_line_char_lst and not new_line_char_lst[-1].is_correct and (i-1) not in keep_index_lst:
+    #             new_line_char_lst[-1].set_bottom( line_char_lst[i].bottom )
+    #             if i in keep_index_lst:
+    #                 new_line_char_lst[-1].is_correct = True
+    #         else:
+    #             new_line_char_lst.append(line_char_lst[i])
+    #print '-----------------'
+    #for area in area_lst:
+    #    print 'area:', area, line_char_lst[area[0]].bottom + 14
+
     new_line_char_lst = []
     for i in range(line_char_lst_length):
         if i not in pop_index:
@@ -374,7 +465,7 @@ def process_line(line_image, binary_line_vertical,
         correct_char_lst = []
         short_char_lst = []
         for ch in line_char_lst:
-            if ch.height <= 0.65 * line_width:
+            if not ch.is_correct: #ch.height <= 0.65 * line_width:
                 short_char_lst.append(ch)
             else:
                 correct_char_lst.append(ch)
@@ -554,7 +645,7 @@ def find_line_bottom(binary_line_vertical, image_height):
     line_bottom = image_height - 1
     if len(white_regions) > 0 and (image_height - 1 - white_regions[0].bottom < 10):
         if white_regions[0].height > 20:
-            line_bottom = white_regions[0].top
+            line_bottom = white_regions[0].top + 10
     return line_bottom
 
 def process_page(image, text, page_id):
