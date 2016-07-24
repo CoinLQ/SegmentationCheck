@@ -404,8 +404,6 @@ def process_line(line_image, binary_line_vertical,
             area = np.sum( line_image[area_top:area_bottom, :] )
             area_lst.append( (i, area) )
     area_lst.sort(key=itemgetter(1), reverse=True)
-    #area_lst = area_lst[:len(line_chars)-1-correct_count]
-    #area_lst.sort(key=itemgetter(0))
     merge_index_lst = map(itemgetter(0), area_lst)
     new_line_char_lst = []
     merge_count = 0
@@ -415,27 +413,13 @@ def process_line(line_image, binary_line_vertical,
         else:
             index = i
         height = line_char_lst[index].height + line_char_lst[i + 1].height
-        if height < 0.98 * line_width:  # and height > 0.57 * line_width:  # 合并成一个字
+        if height < 0.98 * line_width: # 合并成一个字
             line_char_lst[index].set_bottom(line_char_lst[i + 1].bottom)
             pop_index.append(i + 1)
             line_char_lst[i+1].merge_index = index
             merge_count = merge_count + 1
             if line_char_lst_length - merge_count == len(line_chars):
                 break
-
-    # for i in range(line_char_lst_length):
-    #     if line_char_lst[i].is_correct:
-    #         new_line_char_lst.append(line_char_lst[i])
-    #     else:
-    #         if new_line_char_lst and not new_line_char_lst[-1].is_correct and (i-1) not in keep_index_lst:
-    #             new_line_char_lst[-1].set_bottom( line_char_lst[i].bottom )
-    #             if i in keep_index_lst:
-    #                 new_line_char_lst[-1].is_correct = True
-    #         else:
-    #             new_line_char_lst.append(line_char_lst[i])
-    #print '-----------------'
-    #for area in area_lst:
-    #    print 'area:', area, line_char_lst[area[0]].bottom + 14
 
     new_line_char_lst = []
     for i in range(line_char_lst_length):
