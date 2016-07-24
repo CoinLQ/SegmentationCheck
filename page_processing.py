@@ -753,7 +753,7 @@ def process_page(image, text, page_id):
 
         # 找line_bottom
         line_bottom = find_line_bottom(binary_line_vertical, image_height)
-        if line_no == 1 and line_bottom >= image_height / 2 and len(line_chars) == 2:
+        if line_no == 1 and line_bottom >= image_height / 2 and len(line_chars) <= 2:
             line_no = line_no + 1
             if line_no > line_count:
                 break
