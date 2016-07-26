@@ -50,7 +50,7 @@ def run_segmentation_loop():
         #if not check_if_segment(page.id):
         if True:
             logging.info('page: %s', page.id)
-            if page.image:
+            if page.image and page.height < 1000:
                 try:
                     segment_one_page(page.id, u'/home/share/dzj_characters/page_images/%s' % page.image, page.text)
                 except Exception, e:
