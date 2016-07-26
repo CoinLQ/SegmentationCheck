@@ -68,6 +68,11 @@ class CharacterLine:
 def index(request):
     return render(request, 'segmentation/index.html')
 
+# use to demo UI compoent
+def demo(request):
+    return render(request, 'segmentation/demo.html')
+
+
 @login_required(login_url='/segmentation/login/')
 def page_detail(request, page_id):
     page = get_object_or_404(Page, pk=page_id)

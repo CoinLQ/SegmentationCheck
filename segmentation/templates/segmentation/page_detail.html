@@ -3,6 +3,7 @@
 {# 用于在html head部分添加内容，如引入css，js资源等#}
 <title>切分调整</title>
 <link rel="stylesheet" type="text/css" media="screen" href="/static/css/svg.select.css">
+<link href="/static/css/bootstrap-slider.min.css" rel="stylesheet">
 <script type="text/javascript">
 window.onload = function(){
    //去掉默认的contextmenu事件，否则会和右键事件同时出现。
@@ -27,18 +28,40 @@ window.onload = function(){
 .tnt {Writing-mode:tb-rl;Text-align:left;font-size:16pt}
 .black_overlay{  display: none;  position: absolute;  top: 0%;  left: 0%;  width: 100%;  height: 100%;  background-color: black;  z-index:1001;  -moz-opacity: 0.3;  opacity:0.3; }  
 .white_content {  display: none;  position: absolute;  top: 10%;  left: 10%;  padding: 16px;  border: 16px solid grey;  background-color: white;  z-index:1002;  overflow: auto;  -moz-opacity: 0.8;  opacity:0.8; }  
+
+    .toolbar { 
+        margin:20px;
+        padding:10px;
+        background-color:#40E0D0;
+        box-shadow: 0 2px 3px rgba(0,0,0,0.2);
+    }
+
+#ex1Slider .slider-selection {
+    background: #BABABA;
+}
+
 </style>
 {% endblock %}
 
 
 {% block mainbody %}
 
-<div class="container">
+<div class="container-fluid">
 {# 主内容区 #}
     <div>
-        <p>切分审核</p>
+        <div class="btn-toolbar toolbar" role="toolbar" aria-label="test" style=''>
+            <input id="ex1" data-slider-id='ex1Slider' type="text" data-slider-min="30" data-slider-max="100" data-slider-step="1" data-slider-value="50"/>
+          <div id='setPageTag_btn' class="btn-group" style='' role="group" aria-label="错误标记">
+                <label for="radio-1">行对应错误</label>
+                <input type="radio" name="settag" value="-3">
+                <label for="radio-2">页面对应错误</label>
+                <input type="radio" name="settag" value="-4">
+                <label for="radio-3">正常</label>
+                <input type="radio" name="settag" value="1">
+          </div>
+          <button class="btn btn-default" id="save_button">保存人工调整</button>
+        </div>
       <div id="segmentation_page"></div>
-      <button class="btn btn-default" id="save_button">保存</button>
     <div id="light" class="white_content tnt"> 
         {% for line in text %}
         <div>{{line}}</div>
@@ -52,11 +75,27 @@ window.onload = function(){
 
 {% block foot %}
 {# 用于在body标签闭合前添加代码，如引入js代码等 #}
-<script src="/static/js/jquery-2.2.4.min.js"></script>
-<script src="/static/js/bootstrap.min.js"></script>
-<script src="/static/js/ie10-viewport-bug-workaround.js"></script>
+<!--<script src="/static/js/jquery-ui.min.js"></script>-->
+<script type='text/javascript' src="/static/js/bootstrap-slider.min.js"></script>
 <script src="/static/js/svg.min.js"></script>
 <script src="/static/js/svg.draggable.min.js"></script>
+<script>
+// With JQuery
+$('#ex1').slider({
+    formatter: function(value) {
+        return 'Current value: ' + value;
+    }
+});
+$('#ex1').on('slideStop',function(value){
+           console.log(value.value);
+            var factor = value.value/100;
+            var _width = image.width();
+            var _height = image.height();
+            console.log(_width);
+            draw.size(_width*factor,_height*factor);
+            draw.viewbox({ x: 0, y: 0, width: _width, height: _height })
+        });
+</script>
 <script type="text/javascript">
 /*var image=new Image();
 image.src="/page_images/{{ page.id }}.jpg";
@@ -65,9 +104,19 @@ var draw = new SVG('segmentation_page').size(image.width, image.height);
 {% if page.width %}
 var draw = new SVG('segmentation_page').size('{{ page.width }}', '{{ page.height }}');
 {% else %}
-var draw = new SVG('segmentation_page').size('1200', '800');
+var draw = new SVG('segmentation_page').size('200', '300');
 {% endif %}
-draw.style('background:url(/page_images/{{ page.id }}.jpg) no-repeat;');
+//draw.style('background:url(/page_images/{{ page.id }}.jpg) no-repeat;');
+var image = draw.image('/page_images/{{ page.id }}.jpg').loaded(function(loader) {
+    this.size(loader.width, loader.height);
+    var factor = 0.5;
+    //draw.size(loader.width,loader.height);
+    draw.size(loader.width*factor,loader.height*factor);
+    draw.viewbox({ x: 0, y: 0, width: loader.width, height: loader.height })
+    //draw.viewbox({ x: 0, y: 0, width: loader.width*2, height: loader.height*2 })
+    //draw.size(1200,image.height);
+    //draw.scale(factor);
+})
 
 var lines = [];
 var moves = {};
@@ -134,13 +183,23 @@ $('#save_button').on('click', function(){
   });
 });
 </script>
-<script type="text/javascript">
+<script>
     document.getElementById("segmentation_page").onmousedown = function(e){
        if(e.button ==2){
         document.getElementById('light').style.display='block';
         document.getElementById('fade').style.display='block';
        }
     }
+</script>
+<script>
+$('#setPageTag_btn input').on('click', function(){
+    var tag = $('#setPageTag_btn input[name="settag"]:checked ').val(); 
+    console.log(tag);
+    var data = {'id': '{{ page.id }}' };
+    data['is_correct'] = tag;
+    data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+    $.post('/segmentation/set_page_correct', data, function() { });
+});
 </script>
 {% endblock %}
 
