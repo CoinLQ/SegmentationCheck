@@ -107,8 +107,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 LOGIN_URL = '/segmentation/login/'
 STATIC_URL = '/static/'
-PAGE_IMAGE_ROOT = '/home/share/dzj_characters/page_images/'
-CHARACTER_IMAGE_ROOT = '/home/share/dzj_characters/character_images/'
+PAGE_IMAGE_ROOT = '/opt/share/dzj_characters/page_images/'
+CHARACTER_IMAGE_ROOT = '/opt/share/dzj_characters/character_images/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )

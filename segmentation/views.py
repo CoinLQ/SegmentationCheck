@@ -128,8 +128,8 @@ def set_page_correct(request):
 #@login_required(login_url='/segmentation/login/')
 def uploadimg(request,pk):
     def handle_uploaded_file(f):
-        #PAGE_IMAGE_ROOT = '/home/share/dzj_characters/page_images/'
-        destination_file = '/home/share/dzj_characters/page_images/'+pk+'.jpg'
+        #PAGE_IMAGE_ROOT = '/opt/share/dzj_characters/page_images/'
+        destination_file = '/opt/share/dzj_characters/page_images/'+pk+'.jpg'
         destination = open(destination_file, 'wb')
         for chunk in f.chunks():
             destination.write(chunk)
@@ -144,8 +144,8 @@ def uploadimg(request,pk):
 #@login_required(login_url='/segmentation/login/')
 def cut_char_img( page_id,char_id):
     ch = Character.objects.filter(id=char_id)
-    pageimg_file = '/home/share/dzj_characters/page_images/'+page_id+'.jpg'
-    charimg_file = '/home/share/dzj_characters/character_images/'+char_id+'.jpg'
+    pageimg_file = '/opt/share/dzj_characters/page_images/'+page_id+'.jpg'
+    charimg_file = '/opt/share/dzj_characters/character_images/'+char_id+'.jpg'
     regin = (ch[0].left,ch[0].top,ch[0].right,ch[0].bottom)
     pageimg=Image.open(pageimg_file)
     cropimg = pageimg.crop(regin)

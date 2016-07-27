@@ -1,6 +1,6 @@
 # coding: utf-8
 
-import skimage.io as io
+from skimage import io
 from page_processing import process_page
 import subprocess
 import os, sys, redis
@@ -56,33 +56,37 @@ def test_file():
 def segment_one_page(page_id, image_name, text):
     if text == text1:
         print 'equal----'
-    image = io.imread(image_name, 0)
-    total_char_lst = process_page(image, text, page_id)
-    character_lst = []
-    for ch in total_char_lst:
-        character = Character(id=ch.char_id.strip(), page_id=page_id, char=ch.char,
-                              image=ch.char_id.strip() + u'.jpg',
-                              left=ch.left, right=ch.right,
-                              top=ch.top, bottom=ch.bottom,
-                              line_no=ch.line_no, char_no=ch.char_no,
-                              is_correct=False)
-        #character_lst.append(character)
-        print character
-        character.save()
-        #Character.objects.bulk_create(character_lst)
+    try:
+        image = io.imread(image_name, 0)
+        total_char_lst = process_page(image, text, page_id)
+        character_lst = []
+        for ch in total_char_lst:
+            character = Character(id=ch.char_id.strip(), page_id=page_id, char=ch.char,
+                                  image=ch.char_id.strip() + u'.jpg',
+                                  left=ch.left, right=ch.right,
+                                  top=ch.top, bottom=ch.bottom,
+                                  line_no=ch.line_no, char_no=ch.char_no,
+                                  is_correct=False)
+            #character_lst.append(character)
+            print character
+            character.save()
+            #Character.objects.bulk_create(character_lst)
+    except:
+        print 'missing image file'
 
 def check_if_segment(page_id):
-    cmd = u'ls /home/share/dzj_characters/character_images/%s* 2>/dev/null |head -n1' % page_id
+    cmd = u'ls /opt/share/dzj_characters/character_images/%s* 2>/dev/null |head -n1' % page_id
     output = subprocess.check_output(cmd, shell=True)
     return (output != '')
 
 def run_segmentation_for_all_pages():
     iter = Page.objects.iterator()
     for page in iter:
+        print page.id
         if check_if_segment(page.id):
             continue
         print 'page.id: ', page.id.encode('utf-8')
-        segment_one_page(page.id, u'/home/share/dzj_characters/page_images/%s' % page.image, page.text)
+        segment_one_page(page.id, u'/opt/share/dzj_characters/page_images/%s' % page.image, page.text)
 
 def add_page_task(page_id):
     page = Page.objects.get(id=page_id)

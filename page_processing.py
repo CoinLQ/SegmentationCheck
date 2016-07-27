@@ -1,7 +1,7 @@
 # coding: utf-8
 import matplotlib
 import matplotlib.pyplot as plt
-import skimage.io as io
+from skimage import io
 
 try:
     from skimage import filters
@@ -45,7 +45,7 @@ class Char:
         char_image = 1 - line_image[self.top:self.bottom, :]
         image = np.tile(char_image[:, :, np.newaxis], [1, 1, 3]) * 255
         image = image.astype('ubyte')
-        io.imsave(u'/home/share/dzj_characters/character_images/%s.jpg' % self.char_id.strip(), image)
+        io.imsave(u'/opt/share/dzj_characters/character_images/%s.jpg' % self.char_id.strip(), image)
 
 class LineRegion:
     def __init__(self, left, right):

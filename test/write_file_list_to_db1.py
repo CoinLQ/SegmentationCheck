@@ -14,7 +14,7 @@ def write_file_list_to_db():
     page_lst = []
     for _id in file_lst:
         text = u''
-        text_file = '/home/share/dzj_characters/page_images/'+_id+'.txt'
+        text_file = '/opt/share/dzj_characters/page_images/'+_id+'.txt'
         with open(text_file, 'r') as f_text:
             text = f_text.read()
             text = text.decode('utf-8')

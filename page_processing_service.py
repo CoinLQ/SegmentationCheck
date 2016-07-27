@@ -1,9 +1,11 @@
 # coding: utf-8
 
-import skimage.io as io
+#from skimage import io
 from page_processing import process_page
 import subprocess
-import os, sys, redis, logging, cPickle
+import os, sys, logging, cPickle
+import redis
+
 
 FORMAT = '%(asctime)-15s - %(levelname)s - %(message)s'
 logging.basicConfig(filename='logs/page_processing_service.log', level=logging.INFO, format=FORMAT)
@@ -33,7 +35,7 @@ def segment_one_page(page_id, image_name, text):
     #redis_client.rpush('characters', character_data)
 
 def check_if_segment(page_id):
-    #cmd = u'ls /home/share/dzj_characters/character_images/%s* 2>/dev/null |head -n1' % page_id
+    #cmd = u'ls /opt/share/dzj_characters/character_images/%s* 2>/dev/null |head -n1' % page_id
     #output = subprocess.check_output(cmd, shell=True)
     #return (output != '')
     try:
@@ -50,7 +52,7 @@ def run_segmentation_loop():
         if True:
             logging.info('page: %s', page.id)
             if page.image:
-                segment_one_page(page.id, u'/home/share/dzj_characters/page_images/%s' % page.image, page.text)
+                segment_one_page(page.id, u'/opt/share/dzj_characters/page_images/%s' % page.image, page.text)
 
 if __name__ == '__main__':
     run_segmentation_loop()
