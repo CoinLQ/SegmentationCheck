@@ -103,6 +103,6 @@ def add_segmentation_task(filename):
 
 if __name__ == '__main__':
     #test_file()
-    #run_segmentation_for_all_pages()
-    add_segmentation_task(sys.argv[1])
+    run_segmentation_for_all_pages()
+    #add_segmentation_task(sys.argv[1])
 

@@ -48,7 +48,7 @@
 
 7. 准备本地测试数据
 
-        待完善。。。
+        $ python manage.py loaddata fixtures/page.json
 
 8. 运行本地开发服务器.
 

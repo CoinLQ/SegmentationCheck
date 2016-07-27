@@ -18,7 +18,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
 import json
 
-import Image #use to cut charImg
+from PIL import Image #use to cut charImg
 
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
