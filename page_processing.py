@@ -55,6 +55,10 @@ class Char:
         image = image.astype('ubyte')
         io.imsave(u'/home/share/dzj_characters/character_images/%s.jpg' % self.char_id.strip(), image)
 
+    def cut_char_from_page(self, page_image, path):
+        char_image = page_image[self.top:self.bottom, self.left:self.right]
+        io.imsave(path, char_image)
+
 class LineRegion:
     def __init__(self, left, right):
         self.left = left
@@ -513,7 +517,7 @@ def process_line(line_image, binary_line_vertical,
             line_char_lst[i + 1].top = middle
 
     for ch in line_char_lst:
-        ch.cut_char_image(line_image)
+        #ch.cut_char_image(line_image)
         ch.top = ch.top + line_top
         ch.bottom = ch.bottom + line_top
     total_char_lst.extend(line_char_lst)
@@ -753,7 +757,7 @@ def process_page(image, text, page_id):
 
         # 找line_bottom
         line_bottom = find_line_bottom(binary_line_vertical, image_height)
-        if line_no == 1 and line_bottom >= image_height / 2 and len(line_chars) == 2:
+        if line_no == 1 and line_bottom >= image_height / 2 and len(line_chars) <= 2:
             line_no = line_no + 1
             if line_no > line_count:
                 break
