@@ -101,7 +101,10 @@ def page_detail(request, page_id):
         line = CharacterLine(cur_line_no, temp_lst[0].left, temp_lst[0].right, temp_lst)
         line_lst.append(line)
 
-    return render(request, 'segmentation/page_detail.html', {'page': page, 'line_lst': line_lst, 'text': text_line_lst})
+
+    json_line_lst = json.dumps(line_lst,cls=MyJsonEncoder)
+    return JsonResponse({ u'line_lst': json_line_lst, u'text': text_line_lst}, safe=False)
+    #return render(request, 'segmentation/page_detail.html', {'page': page, 'line_lst': line_lst, 'text': text_line_lst})
 
 
 class PageCheckView(generic.ListView):
@@ -170,15 +173,15 @@ def page_modify(request, page_id):
                     char_no = int(char_no)
                     if char_no == 0:
                         char_id = page_id + u'%02dL%02d' % (line_no, 1)
-                        Character.objects.filter(id=char_id).update(top=pos,is_correct=1)
+                        Character.objects.filter(id=char_id).update(top=pos,is_correct=2)
                         cut_char_img(page_id,char_id)
                     else:
                         char_id = page_id + u'%02dL%02d' % (line_no, char_no)
-                        Character.objects.filter(id=char_id).update(bottom=pos,is_correct=1)
+                        Character.objects.filter(id=char_id).update(bottom=pos,is_correct=2)
                         cut_char_img(page_id,char_id)
 
                         char_id = page_id + u'%02dL%02d' % (line_no, char_no + 1)
-                        Character.objects.filter(id=char_id).update(top=pos,is_correct=1)
+                        Character.objects.filter(id=char_id).update(top=pos,is_correct=2)
                         cut_char_img(page_id,char_id)
                 else:
                     typ, line_no = segs
