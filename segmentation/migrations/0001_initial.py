@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ('bottom', models.SmallIntegerField()),
                 ('line_no', models.SmallIntegerField()),
                 ('char_no', models.SmallIntegerField()),
-                ('is_correct', models.BooleanField()),
+                ('is_correct', models.SmallIntegerField(default=0)),
             ],
         ),
         migrations.CreateModel(
