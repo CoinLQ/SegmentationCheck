@@ -69,7 +69,13 @@ window.onload = function(){
 {% block mainbody %}
 <div class="container-fluid">
     <div class='row show-grid'>
-        <div class='col-md-2 sidecol' >
+        <div class='col-md-2 sidecol' > 
+            <div class="input-group">
+              <input id="gopage_id" type="text" class="form-control" placeholder="pageid for...">
+              <span class="input-group-btn">
+                <button id = "goPage_btn" class="btn btn-default" type="button">Go!</button>
+              </span>
+            </div><!-- /input-group -->
             <table id='pageindextbody' class="table table-bordered table-striped table-hover">
                 <caption>已经切分出的字列表</caption>
                 <thead>
@@ -165,41 +171,52 @@ function renderSegmentGrid(draw,result){
 </script>
 <script>
 var moves = {};
+function renderPage(_pageid){
+    window._pageid = _pageid;
+    $('#segmentation_page').empty();
+    var draw = new SVG('segmentation_page').size('200', '300');
+    window.draw = draw;
+    var _img_path = '/page_images/'+window._pageid+'.jpg'
+    var image = draw.image(_img_path).loaded(function(loader) {
+        this.size(loader.width, loader.height);
+        var factor = 0.5;
+        draw.size(loader.width*factor,loader.height*factor);
+        draw.viewbox({ x: 0, y: 0, width: loader.width, height: loader.height })
+        _width = image.width();
+        _height = image.height();
+        $('#ex1').on('slideStop',function(value){
+           //console.log(value.value);
+            var factor = value.value/100;
+            draw.size(_width*factor,_height*factor);
+            draw.viewbox({ x: 0, y: 0, width: _width, height: _height })
+        });
+       $.getJSON("/segmentation/"+_pageid+'/',function(result){ 
+           page_content = ''
+           $.each(result.text,function(k,textline){
+               //console.log(textline);
+               page_content += "<div class='tnt'>"+textline+"</dive>";
+               })
+           window._page_content = page_content;
+           renderSegmentGrid(draw,result);
+        });
+
+    })
+}
 $(function(){
     $('#pageindextbody tr').click(function (e) {
         $('.unchecked-box').removeClass('hidden');
         $('tr').removeClass("selected");
         $(this).addClass("selected");
         var _pageid = $("tr.selected td:first").text();
-        window._pageid = _pageid;
-        $('#segmentation_page').empty();
-        var draw = new SVG('segmentation_page').size('200', '300');
-        window.draw = draw;
-        var _img_path = '/page_images/'+window._pageid+'.jpg'
-        var image = draw.image(_img_path).loaded(function(loader) {
-            this.size(loader.width, loader.height);
-            var factor = 0.5;
-            draw.size(loader.width*factor,loader.height*factor);
-            draw.viewbox({ x: 0, y: 0, width: loader.width, height: loader.height })
-            _width = image.width();
-            _height = image.height();
-            $('#ex1').on('slideStop',function(value){
-               //console.log(value.value);
-                var factor = value.value/100;
-                draw.size(_width*factor,_height*factor);
-                draw.viewbox({ x: 0, y: 0, width: _width, height: _height })
-            });
-           $.getJSON("/segmentation/"+_pageid+'/',function(result){ 
-               page_content = ''
-               $.each(result.text,function(k,textline){
-                   //console.log(textline);
-                   page_content += "<div class='tnt'>"+textline+"</dive>";
-                   })
-               window._page_content = page_content;
-               renderSegmentGrid(draw,result);
-            });
+        renderPage(_pageid);
+    });
 
-        })
+})
+$(function(){
+    $('#goPage_btn').click(function () {
+        $('.unchecked-box').removeClass('hidden');
+        var _pageid = $("#gopage_id").val();
+        renderPage(_pageid);
     });
 
 })
