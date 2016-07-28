@@ -31,13 +31,19 @@ label {
 .m-b-10 {
 	margin-bottom: 10px;
 }
+.sidecol {
+    height:80%;
+    overflow:auto;
+    position:relative;
+    max-height:800px;
+}
 </style>
 {% endblock %}
 {% block mainbody %}
 <div class="container">
     <div class='row show-grid'>
         <div class='col-md-3' >
-            <div style='height:80%;overflow:auto;position:relative;max-height:800px'>
+            <div class='sidecol'>
     <table class="table table-bordered table-striped table-hover">
         <caption>已经切分出的字列表</caption>
         <thead>

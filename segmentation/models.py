@@ -8,6 +8,8 @@ class Page(models.Model):
     text = models.TextField()
     width = models.SmallIntegerField(default=0)
     height = models.SmallIntegerField(default=0)
+    left = models.SmallIntegerField(default=0)
+    right = models.SmallIntegerField(default=0)
     is_correct = models.SmallIntegerField(default=0)
     erro_char_cnt = models.IntegerField(default=0)
 #is_correct value

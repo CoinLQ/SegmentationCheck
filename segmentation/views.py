@@ -18,6 +18,10 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count,F
 import json
 
+import skimage.io as io
+from page_processing import process_page
+
+#TODO change to skimage
 from PIL import Image#use to cut charImg
 
 from django.contrib.auth.decorators import login_required
@@ -133,10 +137,47 @@ def set_page_correct(request):
         data = {'status': 'error'}
     return JsonResponse(data)
 
+#TODO doing
+def runSegment(request,page_id):
+    #page_id = request.POST['id']
+    page = Page.objects.get(id=page_id)
+    PAGE_IMAGE_ROOT = '/home/share/dzj_characters/page_images/'
+    image_name = PAGE_IMAGE_ROOT + page.image
+    text = page.text
+    image = io.imread(image_name, 0)
+    total_char_lst = process_page(image, text, page_id)
+    character_lst = []
+    temp_lst = []
+    line_lst = []
+    cur_line_no = 0
+    for ch in total_char_lst:
+        character = Character(id=ch.char_id.strip(), page_id=page_id, char=ch.char,
+                              image=ch.char_id.strip() + u'.jpg',
+                              left=ch.left, right=ch.right,
+                              top=ch.top, bottom=ch.bottom,
+                              line_no=ch.line_no, char_no=ch.char_no,
+                              is_correct=False)
+        character.width = character.right - character.left
+        character.height = character.bottom - character.top
+        if character.line_no != cur_line_no:
+            if temp_lst:
+                line = CharacterLine(cur_line_no, temp_lst[0].left, temp_lst[0].right, temp_lst)
+                line_lst.append(line)
+            cur_line_no = character.line_no
+            temp_lst = [character]
+        else:
+            temp_lst.append(character)
+    if temp_lst:
+        line = CharacterLine(cur_line_no, temp_lst[0].left, temp_lst[0].right, temp_lst)
+        line_lst.append(line)
+
+    json_line_lst = json.dumps(line_lst,cls=MyJsonEncoder)
+
+    return JsonResponse({ u'line_lst': json_line_lst}, safe=False)
+
 #@login_required(login_url='/segmentation/login/')
 def uploadimg(request,pk):
     def handle_uploaded_file(f):
-        #PAGE_IMAGE_ROOT = '/home/share/dzj_characters/page_images/'
         destination_file = '/home/share/dzj_characters/page_images/'+pk+'.jpg'
         destination = open(destination_file, 'wb')
         for chunk in f.chunks():

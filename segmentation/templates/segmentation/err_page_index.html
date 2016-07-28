@@ -28,7 +28,12 @@ window.onload = function(){
       stroke: #FF00FF;
       stroke-width: 6;
     }
-.tnt {Writing-mode:tb-rl;Text-align:left;font-size:16pt}
+    .tnt {
+        Writing-mode:tb-rl;
+        Text-align:left;
+        font-size:16pt;
+        border: 1px solid #ddd;
+    }
 
     .toolbar { 
         margin:20px;
@@ -53,18 +58,24 @@ window.onload = function(){
     background: #BABABA;
 }
 
+.sidecol {
+    height:80%;
+    overflow:auto;
+    position:relative;
+    max-height:800px;
+}
 </style>
 {% endblock %}
 {% block mainbody %}
 <div class="container-fluid">
     <div class='row show-grid'>
-        <div class='col-md-2' >
+        <div class='col-md-2 sidecol' >
             <table id='pageindextbody' class="table table-bordered table-striped table-hover">
                 <caption>已经切分出的字列表</caption>
                 <thead>
                   <tr>
                      <th>页面号</th>
-                     <th>含且错字形总数</th>
+                     <th>含切错字形总数</th>
                   </tr>
                 </thead>
               <tbody>
@@ -72,6 +83,7 @@ window.onload = function(){
               <tr>
                   <td >{{page.page}}</td>
                   <td>{{page.dcount}}</td>
+              </tr>
                 {% endfor %}
               </tbody>
             </table>
@@ -89,6 +101,7 @@ window.onload = function(){
                         <input type="radio" name="settag" value="1">
                   </div>
                   <button class="btn btn-default" id="save_button">保存人工调整</button>
+                  <button class="btn btn-default" id="resegmentpage_btn">重新切分页面</button>
                 </div> <!--end toolbar-->
             </div><!--end hidden-->
 
@@ -103,6 +116,54 @@ window.onload = function(){
 <script src="/static/js/svg.min.js"></script>
 <script src="/static/js/svg.draggable.min.js"></script>
 <script>
+function renderSegmentGrid(draw,result){
+    obj= $.parseJSON(result.line_lst);
+    $.each(obj, function(i, field){
+        /*draw the column*/
+        if(field.line_no == 1){
+            var _column = draw.line(field.right, 0, field.right, _height).addClass('segment-line');
+        }
+        var _column = draw.line(field.left, 0, field.left, _height).addClass('segment-line');
+        $.each(field.char_lst,function(j,item){
+            //draw row
+            if(item.char_no==1){
+                var _row = draw.line(
+                    field.left,
+                    item.top,
+                    field.right,
+                    item.top).addClass('segment-line cursor_ns');
+            }
+            var _row = draw.line(
+                field.left,
+                item.bottom,
+                field.right,
+                item.bottom).addClass('segment-line cursor_ns');
+            if(item.is_correct==-1){
+                _row.addClass('error-char').removeClass('segment-line');
+            }
+            _row.draggable({
+                minX: 10,
+                minY: 30,
+                maxX: _width-10,
+                maxY: _height-10
+                })
+            .on('dragmove', function(e){
+              e.preventDefault();
+              this.y(e.detail.p.y);
+            })
+            .on('dragend', function(e){ 
+              var key = 'char-' + field.line_no + '-' +item.char_no;
+              console.log(key + ': y=' + this.y());
+              this.addClass('highlight')
+              .removeClass('error-char')
+              .removeClass('segment-line');
+              moves[key] = this.y();
+            })
+        })
+    })
+}
+</script>
+<script>
 var moves = {};
 $(function(){
     $('#pageindextbody tr').click(function (e) {
@@ -113,6 +174,7 @@ $(function(){
         window._pageid = _pageid;
         $('#segmentation_page').empty();
         var draw = new SVG('segmentation_page').size('200', '300');
+        window.draw = draw;
         var _img_path = '/page_images/'+window._pageid+'.jpg'
         var image = draw.image(_img_path).loaded(function(loader) {
             this.size(loader.width, loader.height);
@@ -134,50 +196,7 @@ $(function(){
                    page_content += "<div class='tnt'>"+textline+"</dive>";
                    })
                window._page_content = page_content;
-                obj= $.parseJSON(result.line_lst);
-                $.each(obj, function(i, field){
-                    /*draw the column*/
-                    if(field.line_no == 1){
-                        var _column = draw.line(field.right, 0, field.right, _height).addClass('segment-line');
-                    }
-                    var _column = draw.line(field.left, 0, field.left, _height).addClass('segment-line');
-                    $.each(field.char_lst,function(j,item){
-                        //draw row
-                        if(item.char_no==1){
-                            var _row = draw.line(
-                                field.left,
-                                item.top,
-                                field.right,
-                                item.top).addClass('segment-line cursor_ns');
-                        }
-                        var _row = draw.line(
-                            field.left,
-                            item.bottom,
-                            field.right,
-                            item.bottom).addClass('segment-line cursor_ns');
-                        if(item.is_correct==-1){
-                            _row.addClass('error-char').removeClass('segment-line');
-                        }
-                        _row.draggable({
-                            minX: 10,
-                            minY: 30,
-                            maxX: _width-10,
-                            maxY: _height-10
-                            })
-                        .on('dragmove', function(e){
-                          e.preventDefault();
-                          this.y(e.detail.p.y);
-                        })
-                        .on('dragend', function(e){ 
-                          var key = 'char-' + field.line_no + '-' +item.char_no;
-                          console.log(key + ': y=' + this.y());
-                          this.addClass('highlight')
-                          .removeClass('error-char')
-                          .removeClass('segment-line');
-                          moves[key] = this.y();
-                        })
-                    })
-                })
+               renderSegmentGrid(draw,result);
             });
 
         })
@@ -220,7 +239,17 @@ $('#setPageTag_btn input').on('click', function(){
     $.post('/segmentation/set_page_correct', data, function() { });
 });
 </script>
-<script type="text/javascript">
+<script>
+$('#resegmentpage_btn').on('click', function(){
+    var data = {'id': window._pageid };
+    data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+    //$.post('/segmentation/run_segment', data, function() { });
+    //$.getJSON("/segmentation/charactercheck/"+window.char+"?mode=check",function(result){
+    $.getJSON("/segmentation/run_segment/"+window._pageid,function(result){ 
+            $("#segmentation_page line").remove()
+            renderSegmentGrid(window.draw,result); 
+    });
+});
 </script>
 </body>
 </html>
