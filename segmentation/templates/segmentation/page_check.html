@@ -86,22 +86,6 @@ $('.batch-check').click(function(){
             });
 } );
 </script>
-
-<script>
-$('.page-image').click(function(){
-  var data = {'id': this.id};
-  data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
-  if ($(this).hasClass('error-char')) {
-    $(this).removeClass('error-char');
-    data['is_correct'] = 1;
-  } else {
-    $(this).addClass('error-char');
-    data['is_correct'] = -1;
-  }
-    $.post('/segmentation/set_page_correct', data, function() { });
-});
-</script>
-
 <script>
 $('.setPageTag_btn').on('click', function(){
     var tag =$(this).val(); 
