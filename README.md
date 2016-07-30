@@ -24,15 +24,7 @@
 
 4. 假定你已经安装了postgres，下面进行初步的数据库设置
 
-        $psql -d postgres
-
-        CREATE DATABASE dzj_characters;
-        CREATE USER dzj WITH PASSWORD 'dzjsql';
-        ALTER ROLE dzj SET client_encoding TO 'utf8';
-        ALTER ROLE dzj SET default_transaction_isolation TO 'read committed';
-        ALTER ROLE dzj SET timezone TO 'UTC';
-        GRANT ALL PRIVILEGES ON DATABASE dzj_characters TO dzj;
-        \q
+        $psql -d postgres -a -f utils/setup_db.sql
 
         **Note**: 如果psql执行报错，请参考postgres手册，使用正确的超级用户口令。
 
@@ -47,10 +39,15 @@
 
 7. 准备本地测试数据
 
-        $ python manage.py loaddata fixtures/page.json
+        $ python manage.py loaddata segmentation/fixtures/page.json
+        $ python manage.py loaddata segmentation/fixtures/character.json
 
-8. 运行本地开发服务器.
+8. 运行本地开发服务器
 
-        $ python manage.py createsuperuser
+        $ python manage.py runserver
+
+9. 自动化部署
+
+        $ fab segmentation_check deploy
 
 

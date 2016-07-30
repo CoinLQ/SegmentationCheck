@@ -86,3 +86,53 @@ def segmentation_check():
     env.supervisor_stdout_logfile = '%(django_user_home)s/logs/projects/supervisord_%(project)s.log' % env
     env.supervisord_conf_file = '%(django_user_home)s/configs/supervisord/%(project)s.conf' % env
     ### END supervisor settings ###
+
+
+@task
+def deploy():
+    #import code; code.interact(local=dict(globals(), **locals()))
+    #  test configuration start
+    if not test_configuration():
+        if not console.confirm("Configuration test %s! Do you want to continue?" % red_bg('failed'), default=False):
+            abort("Aborting at user request.")
+    #  test configuration end
+    _verify_sudo()
+    if env.ask_confirmation:
+        if not console.confirm("Are you sure you want to deploy in %s?" % red_bg(env.project.upper()), default=False):
+            abort("Aborting at user request.")
+    puts(green_bg('Start deploy...'))
+    start_time = datetime.now()
+
+    hg_pull()
+    _install_requirements()
+    _supervisor_restart()
+
+    end_time = datetime.now()
+    finish_message = '[%s] Correctly deployed in %i seconds' % \
+    (green_bg(end_time.strftime('%H:%M:%S')), (end_time - start_time).seconds)
+    puts(finish_message)
+
+
+def _verify_sudo():
+    ''' we just check if the user is sudoers '''
+    sudo('cd .')
+
+
+def _install_requirements():
+    ''' you must have a file called requirements.txt in your project root'''
+    if 'requirements_file' in env and env.requirements_file:
+        virtenvsudo('pip install -r %s' % env.requirements_file)
+
+
+def _reload_supervisorctl():
+    sudo('%(supervisorctl)s reread' % env)
+    sudo('%(supervisorctl)s reload' % env)
+
+
+def _supervisor_restart():
+    with settings(hide('running', 'stdout', 'stderr', 'warnings'), warn_only=True):
+        res = sudo('%(supervisorctl)s restart %(supervisor_program_name)s' % env)
+    if 'ERROR' in res:
+        print red_bg("%s NOT STARTED!" % env.supervisor_program_name)
+    else:
+        print green_bg("%s correctly started!" % env.supervisor_program_name)
