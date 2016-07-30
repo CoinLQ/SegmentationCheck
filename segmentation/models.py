@@ -8,7 +8,17 @@ class Page(models.Model):
     text = models.TextField()
     width = models.SmallIntegerField(default=0)
     height = models.SmallIntegerField(default=0)
+    left = models.SmallIntegerField(default=0)
+    right = models.SmallIntegerField(default=0)
     is_correct = models.SmallIntegerField(default=0)
+    erro_char_cnt = models.IntegerField(default=0)
+#is_correct value
+## 0 unchecked(initial value )
+## 1 correct
+## -1 erro
+## -2 Character erro
+## -3 line erro
+## -4 page  erro
 
     def __unicode__(self):
         return self.id
@@ -33,6 +43,14 @@ class Character(models.Model):
     line_no = models.SmallIntegerField()
     char_no = models.SmallIntegerField()
     is_correct = models.SmallIntegerField(default=0,db_index=True)
+#is_correct value
+## 0 unchecked(initial value )
+## 1 correct
+## 2 manual correct
+## -1 erro
+## -2 with/height erro
+## -3 line erro
+## -4 page  erro
     verification_user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
 
     def __unicode__(self):

@@ -15,10 +15,14 @@ from .models import Page, Character, CharacterStatistics
 from django.views import generic
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db.models import Count
+from django.db.models import Count,F
 import json
 
-from PIL import Image #use to cut charImg
+from skimage import io
+from page_processing import process_page
+
+#TODO change to skimage
+from PIL import Image#use to cut charImg
 
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -68,6 +72,11 @@ class CharacterLine:
 def index(request):
     return render(request, 'segmentation/index.html')
 
+# use to demo UI compoent
+def demo(request):
+    return render(request, 'segmentation/demo.html')
+
+
 @login_required(login_url='/segmentation/login/')
 def page_detail(request, page_id):
     page = get_object_or_404(Page, pk=page_id)
@@ -96,7 +105,10 @@ def page_detail(request, page_id):
         line = CharacterLine(cur_line_no, temp_lst[0].left, temp_lst[0].right, temp_lst)
         line_lst.append(line)
 
-    return render(request, 'segmentation/page_detail.html', {'page': page, 'line_lst': line_lst, 'text': text_line_lst})
+
+    json_line_lst = json.dumps(line_lst,cls=MyJsonEncoder)
+    return JsonResponse({ u'line_lst': json_line_lst, u'text': text_line_lst}, safe=False)
+    #return render(request, 'segmentation/page_detail.html', {'page': page, 'line_lst': line_lst, 'text': text_line_lst})
 
 
 class PageCheckView(generic.ListView):
@@ -125,11 +137,48 @@ def set_page_correct(request):
         data = {'status': 'error'}
     return JsonResponse(data)
 
+#TODO doing
+def runSegment(request,page_id):
+    #page_id = request.POST['id']
+    page = Page.objects.get(id=page_id)
+    PAGE_IMAGE_ROOT = '/home/share/dzj_characters/page_images/'
+    image_name = PAGE_IMAGE_ROOT + page.image
+    text = page.text
+    image = io.imread(image_name, 0)
+    total_char_lst = process_page(image, text, page_id)
+    character_lst = []
+    temp_lst = []
+    line_lst = []
+    cur_line_no = 0
+    for ch in total_char_lst:
+        character = Character(id=ch.char_id.strip(), page_id=page_id, char=ch.char,
+                              image=ch.char_id.strip() + u'.jpg',
+                              left=ch.left, right=ch.right,
+                              top=ch.top, bottom=ch.bottom,
+                              line_no=ch.line_no, char_no=ch.char_no,
+                              is_correct=False)
+        character.width = character.right - character.left
+        character.height = character.bottom - character.top
+        if character.line_no != cur_line_no:
+            if temp_lst:
+                line = CharacterLine(cur_line_no, temp_lst[0].left, temp_lst[0].right, temp_lst)
+                line_lst.append(line)
+            cur_line_no = character.line_no
+            temp_lst = [character]
+        else:
+            temp_lst.append(character)
+    if temp_lst:
+        line = CharacterLine(cur_line_no, temp_lst[0].left, temp_lst[0].right, temp_lst)
+        line_lst.append(line)
+
+    json_line_lst = json.dumps(line_lst,cls=MyJsonEncoder)
+
+    return JsonResponse({ u'line_lst': json_line_lst}, safe=False)
+
 #@login_required(login_url='/segmentation/login/')
 def uploadimg(request,pk):
     def handle_uploaded_file(f):
-        #PAGE_IMAGE_ROOT = '/opt/share/dzj_characters/page_images/'
-        destination_file = '/opt/share/dzj_characters/page_images/'+pk+'.jpg'
+        destination_file = '/home/share/dzj_characters/page_images/'+pk+'.jpg'
         destination = open(destination_file, 'wb')
         for chunk in f.chunks():
             destination.write(chunk)
@@ -165,15 +214,15 @@ def page_modify(request, page_id):
                     char_no = int(char_no)
                     if char_no == 0:
                         char_id = page_id + u'%02dL%02d' % (line_no, 1)
-                        Character.objects.filter(id=char_id).update(top=pos,is_correct=1)
+                        Character.objects.filter(id=char_id).update(top=pos,is_correct=2)
                         cut_char_img(page_id,char_id)
                     else:
                         char_id = page_id + u'%02dL%02d' % (line_no, char_no)
-                        Character.objects.filter(id=char_id).update(bottom=pos,is_correct=1)
+                        Character.objects.filter(id=char_id).update(bottom=pos,is_correct=2)
                         cut_char_img(page_id,char_id)
 
                         char_id = page_id + u'%02dL%02d' % (line_no, char_no + 1)
-                        Character.objects.filter(id=char_id).update(top=pos,is_correct=1)
+                        Character.objects.filter(id=char_id).update(top=pos,is_correct=2)
                         cut_char_img(page_id,char_id)
                 else:
                     typ, line_no = segs
@@ -258,7 +307,11 @@ def character_check(request, char):
         return JsonResponse({u'charArr':charArr, u'items':items,u'itemsOnPage':30,}, safe=False)
     else :        #check mode only display the unchecked characters (is_correct=0)
         characters = Character.objects.filter(char=char).filter(is_correct=0)[:30]
-        return JsonResponse(characters, safe=False, encoder=charJsonEncoder)
+        qs = CharacterStatistics.objects.filter(char=char).values('uncheck_cnt')
+        uncheck_cnt = qs[0]['uncheck_cnt']
+        print uncheck_cnt
+        charArr = json.dumps(characters,cls=charJsonEncoder)
+        return JsonResponse({u'charArr':charArr, u'uncheck_cnt':uncheck_cnt,}, safe=False)
 
 
 
@@ -268,14 +321,19 @@ def set_correct(request):
         char_id = request.POST['id']
         is_correct = int(request.POST['is_correct'])
         char = request.POST['char']
+        if  Character.objects.filter(id=char_id).filter(is_correct=0).exists():
+            CharacterStatistics.objects.filter(char=char).update(uncheck_cnt=F('uncheck_cnt')-1)
         Character.objects.filter(id=char_id).update(is_correct=is_correct)
+        CharacterStatistics.objects.filter(char=char).update(err_cnt=F('err_cnt')-is_correct)
         page_id = char_id[:14]
-        Character.objects.filter(id__startswith=page_id).filter(is_correct=0).update(is_correct=-2)
-#bug cant recover the status
+        #Character.objects.filter(id__startswith=page_id).filter(is_correct=0).update(is_correct=-2) bug cant recover the status
         data = {'status': 'ok'}
     elif 'charArr[]' in request.POST:
         charArr = request.POST.getlist('charArr[]')
+        char = request.POST['char']
+        updateNum = int(request.POST['updateNum'])
         Character.objects.filter(id__in = charArr ).filter(is_correct=0).update(is_correct=1)
+        CharacterStatistics.objects.filter(char=char).update(uncheck_cnt=F('uncheck_cnt')-updateNum)
         data = {'status': 'ok'}
     else:
         data = {'status': 'error'}

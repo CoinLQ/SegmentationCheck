@@ -1,24 +1,275 @@
 {% extends "base.html" %}
 {% block head %}
 <title>切错页面索引</title>
+<link rel="stylesheet" type="text/css" media="screen" href="/static/css/svg.select.css">
+<link href="/static/css/bootstrap-slider.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/tingle.min.css" media="all">
+<script type="text/javascript">
+window.onload = function(){
+   //去掉默认的contextmenu事件，否则会和右键事件同时出现。
+   document.oncontextmenu = function(e){
+       e.preventDefault();
+   };
+}
+</script>
+<style>
+    .highlight {
+      stroke: red;
+      stroke-width: 6;
+    }
+    .segment-line {
+      stroke: blue;
+      stroke-width: 6;
+    }
+    .cursor_ns {
+      cursor:ns-resize;
+    }
+    .error-char {
+      stroke: #FF00FF;
+      stroke-width: 6;
+    }
+    .tnt {
+        Writing-mode:tb-rl;
+        Text-align:left;
+        font-size:16pt;
+        border: 1px solid #ddd;
+    }
+
+    .toolbar { 
+        margin:20px;
+        padding:10px;
+        background-color:#40E0D0;
+        box-shadow: 0 2px 3px rgba(0,0,0,0.2);
+    }
+
+  .selected {
+      background-color: #aaa !important; 
+  }
+
+.unchecked-box{
+    position: relative;
+    padding: 25px 15px 15px;
+    background-color: #fafafa;
+    border: 1px solid #ddd;
+    border-bottom-width: 0;
+}
+
+#ex1Slider .slider-selection {
+    background: #BABABA;
+}
+
+.sidecol {
+    height:80%;
+    overflow:auto;
+    position:relative;
+    max-height:800px;
+}
+</style>
 {% endblock %}
 {% block mainbody %}
-<div class="container">
-    <table class="table table-bordered table-striped table-hover">
-        <caption>已经切分出的字列表</caption>
-        <thead>
-          <tr>
-             <th>页面号</th>
-             <th>含且错字形总数</th>
-          </tr>
-        </thead>
-      <tbody>
-        {% for page in character_list %}
-      <tr>
-          <td ><a href="/segmentation/{{page.page}}">{{page.page}}</td><td>{{page.dcount}}</td>
-        {% endfor %}
-      </tbody>
-    </table>
+<div class="container-fluid">
+    <div class='row show-grid'>
+        <div class='col-md-2 sidecol' > 
+            <div class="input-group">
+              <input id="gopage_id" type="text" class="form-control" placeholder="pageid for...">
+              <span class="input-group-btn">
+                <button id = "goPage_btn" class="btn btn-default" type="button">Go!</button>
+              </span>
+            </div><!-- /input-group -->
+            <table id='pageindextbody' class="table table-bordered table-striped table-hover">
+                <caption>已经切分出的字列表</caption>
+                <thead>
+                  <tr>
+                     <th>页面号</th>
+                     <th>含切错字形总数</th>
+                  </tr>
+                </thead>
+              <tbody>
+                {% for page in character_list %}
+              <tr>
+                  <td >{{page.page}}</td>
+                  <td>{{page.dcount}}</td>
+              </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+        </div><!--end col-md--->
+        <div class='col-md-10'>
+            <div class="unchecked-box hidden">
+                <div class="btn-toolbar toolbar" role="toolbar" aria-label="test" style=''>
+                    <input id="ex1" data-slider-id='ex1Slider' type="text" data-slider-min="30" data-slider-max="100" data-slider-step="1" data-slider-value="50"/>
+                  <div id='setPageTag_btn' class="btn-group" style='' role="group" aria-label="错误标记">
+                        <label for="radio-1">行对应错误</label>
+                        <input type="radio" name="settag" value="-3">
+                        <label for="radio-2">页面对应错误</label>
+                        <input type="radio" name="settag" value="-4">
+                        <label for="radio-3">正常</label>
+                        <input type="radio" name="settag" value="1">
+                  </div>
+                  <button class="btn btn-default" id="save_button">保存人工调整</button>
+                  <button class="btn btn-default" id="resegmentpage_btn">重新切分页面</button>
+                </div> <!--end toolbar-->
+            </div><!--end hidden-->
+
+            <div id="segmentation_page"></div>
+        </div><!--end col-md-9-->
+    </div><!--end row -->
 
 </div><!-- /.container -->
 {% endblock %}
+{% block foot  %}
+<script type='text/javascript' src="/static/js/bootstrap-slider.min.js"></script>
+<script src="/static/js/svg.min.js"></script>
+<script src="/static/js/svg.draggable.min.js"></script>
+<script>
+function renderSegmentGrid(draw,result){
+    obj= $.parseJSON(result.line_lst);
+    $.each(obj, function(i, field){
+        /*draw the column*/
+        if(field.line_no == 1){
+            var _column = draw.line(field.right, 0, field.right, _height).addClass('segment-line');
+        }
+        var _column = draw.line(field.left, 0, field.left, _height).addClass('segment-line');
+        $.each(field.char_lst,function(j,item){
+            //draw row
+            if(item.char_no==1){
+                var _row = draw.line(
+                    field.left,
+                    item.top,
+                    field.right,
+                    item.top).addClass('segment-line cursor_ns');
+            }
+            var _row = draw.line(
+                field.left,
+                item.bottom,
+                field.right,
+                item.bottom).addClass('segment-line cursor_ns');
+            if(item.is_correct==-1){
+                _row.addClass('error-char').removeClass('segment-line');
+            }
+            _row.draggable({
+                minX: 10,
+                minY: 30,
+                maxX: _width-10,
+                maxY: _height-10
+                })
+            .on('dragmove', function(e){
+              e.preventDefault();
+              this.y(e.detail.p.y);
+            })
+            .on('dragend', function(e){ 
+              var key = 'char-' + field.line_no + '-' +item.char_no;
+              console.log(key + ': y=' + this.y());
+              this.addClass('highlight')
+              .removeClass('error-char')
+              .removeClass('segment-line');
+              moves[key] = this.y();
+            })
+        })
+    })
+}
+</script>
+<script>
+var moves = {};
+function renderPage(_pageid){
+    window._pageid = _pageid;
+    $('#segmentation_page').empty();
+    var draw = new SVG('segmentation_page').size('200', '300');
+    window.draw = draw;
+    var _img_path = '/page_images/'+window._pageid+'.jpg'
+    var image = draw.image(_img_path).loaded(function(loader) {
+        this.size(loader.width, loader.height);
+        var factor = 0.5;
+        draw.size(loader.width*factor,loader.height*factor);
+        draw.viewbox({ x: 0, y: 0, width: loader.width, height: loader.height })
+        _width = image.width();
+        _height = image.height();
+        $('#ex1').on('slideStop',function(value){
+           //console.log(value.value);
+            var factor = value.value/100;
+            draw.size(_width*factor,_height*factor);
+            draw.viewbox({ x: 0, y: 0, width: _width, height: _height })
+        });
+       $.getJSON("/segmentation/"+_pageid+'/',function(result){ 
+           page_content = ''
+           $.each(result.text,function(k,textline){
+               //console.log(textline);
+               page_content += "<div class='tnt'>"+textline+"</dive>";
+               })
+           window._page_content = page_content;
+           renderSegmentGrid(draw,result);
+        });
+
+    })
+}
+$(function(){
+    $('#pageindextbody tr').click(function (e) {
+        $('.unchecked-box').removeClass('hidden');
+        $('tr').removeClass("selected");
+        $(this).addClass("selected");
+        var _pageid = $("tr.selected td:first").text();
+        renderPage(_pageid);
+    });
+
+})
+$(function(){
+    $('#goPage_btn').click(function () {
+        $('.unchecked-box').removeClass('hidden');
+        var _pageid = $("#gopage_id").val();
+        renderPage(_pageid);
+    });
+
+})
+$('#ex1').slider({
+    formatter: function(value) {
+        return 'factor: ' + value + '%';
+    }
+});
+$('#save_button').on('click', function(){
+  moves['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+  $.post('/segmentation/'+window._pageid+'/modify', moves,
+  function(d) {
+    console.log('ok');
+    $('#segmentation_page .highlight').removeClass('highlight').addClass('segment-line');
+  });
+});
+</script>
+<script src="/static/js/tingle.min.js"></script>
+<script>
+var text_layer = new tingle.modal({
+    cssClass: [ ]
+});
+$("#segmentation_page").mousedown(function(e){ 
+    if(e.button ==2){ 
+        text_layer.open();
+        text_layer.setContent(window._page_content);
+    }
+}); 
+</script>
+<script>
+$('#setPageTag_btn input').on('click', function(){
+    var tag = $('#setPageTag_btn input[name="settag"]:checked ').val(); 
+    console.log(tag);
+    var data = {'id': window._pageid };
+    data['is_correct'] = tag;
+    data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+    $.post('/segmentation/set_page_correct', data, function() { });
+});
+</script>
+<script>
+$('#resegmentpage_btn').on('click', function(){
+    var data = {'id': window._pageid };
+    data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+    //$.post('/segmentation/run_segment', data, function() { });
+    //$.getJSON("/segmentation/charactercheck/"+window.char+"?mode=check",function(result){
+    $.getJSON("/segmentation/run_segment/"+window._pageid,function(result){ 
+            $("#segmentation_page line").remove()
+            renderSegmentGrid(window.draw,result); 
+    });
+});
+</script>
+</body>
+</html>
+{% endblock %}
+
+
