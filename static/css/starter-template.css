@@ -2,6 +2,50 @@ body {
   padding-top: 50px;
 }
 .starter-template {
-  padding: 40px 15px;
+  padding: 5% 10% 5% 10%;
   text-align: center;
+}
+
+*, *::after, *::before {
+  box-sizing: border-box;
+}
+
+svg {
+  width: 100%;
+}
+pre[rel]::before {
+    font-size: 0.75rem;
+    content: attr(rel);
+    color: white;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: #a89494 -webkit-linear-gradient(80deg, #a89494 0%, #a89494 10%, #9f8d8d 10%, #9f8d8d 20%, #948383 19%, #978686 21%, #978686 20%, #978686 30%, #8b7b7b 29%, #8f7e7e 31%, #8f7e7e 30%, #8f7e7e 40%, #837474 39%, #867777 41%, #867777 40%, #867777 50%, #7a6c6c 49%, #7e6f6f 51%, #7e6f6f 50%, #7e6f6f 60%, #726565 59%, #756868 61%, #756868 60%, #756868 70%, #6a5d5d 69%, #6d6060 71%, #6d6060 70%, #6d6060 80%, #615656 79%, #655959 81%, #655959 80%, #655959 90%, #594f4f 89%, #5c5252 91%, #5c5252 90%, #5c5252 100%);
+    background: #a89494 linear-gradient(10deg, #a89494 0%, #a89494 10%, #9f8d8d 10%, #9f8d8d 20%, #948383 19%, #978686 21%, #978686 20%, #978686 30%, #8b7b7b 29%, #8f7e7e 31%, #8f7e7e 30%, #8f7e7e 40%, #837474 39%, #867777 41%, #867777 40%, #867777 50%, #7a6c6c 49%, #7e6f6f 51%, #7e6f6f 50%, #7e6f6f 60%, #726565 59%, #756868 61%, #756868 60%, #756868 70%, #6a5d5d 69%, #6d6060 71%, #6d6060 70%, #6d6060 80%, #615656 79%, #655959 81%, #655959 80%, #655959 90%, #594f4f 89%, #5c5252 91%, #5c5252 90%, #5c5252 100%);
+    font-family: 'Source Sans Pro', sans-serif;
+    padding: 1px 0;
+    text-indent: 15px;
+}
+pre[rel="REEL"]::before {
+    background: #43b74d -webkit-linear-gradient(80deg, #43b74d 0%, #43b74d 10%, #3fae49 10%, #3fae49 20%, #3ba144 19%, #3ca546 21%, #3ca546 20%, #3ca546 30%, #379840 29%, #399c42 31%, #399c42 30%, #399c42 40%, #348f3c 39%, #35933e 41%, #35933e 40%, #35933e 50%, #318638 49%, #328a3a 51%, #328a3a 50%, #328a3a 60%, #2d7d35 59%, #2f8036 61%, #2f8036 60%, #2f8036 70%, #2a7431 69%, #2b7732 71%, #2b7732 70%, #2b7732 80%, #276a2d 79%, #286e2e 81%, #286e2e 80%, #286e2e 90%, #236129 89%, #25652b 91%, #25652b 90%, #25652b 100%);
+    background: #43b74d linear-gradient(10deg, #43b74d 0%, #43b74d 10%, #3fae49 10%, #3fae49 20%, #3ba144 19%, #3ca546 21%, #3ca546 20%, #3ca546 30%, #379840 29%, #399c42 31%, #399c42 30%, #399c42 40%, #348f3c 39%, #35933e 41%, #35933e 40%, #35933e 50%, #318638 49%, #328a3a 51%, #328a3a 50%, #328a3a 60%, #2d7d35 59%, #2f8036 61%, #2f8036 60%, #2f8036 70%, #2a7431 69%, #2b7732 71%, #2b7732 70%, #2b7732 80%, #276a2d 79%, #286e2e 81%, #286e2e 80%, #286e2e 90%, #236129 89%, #25652b 91%, #25652b 90%, #25652b 100%);
+}
+.tnt {Writing-mode:tb-rl;Text-align:left;
+    font-size: 14px;
+    padding-top: 15px;
+    line-height: 26px;
+    font-size: 1.5vw;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    }
+.reel {
+  max-height: 360px;
+}
+.action_buttons {
+  position: relative;
+  z-index: 80;
+  left:10px;
+  top:-260px;
 }
