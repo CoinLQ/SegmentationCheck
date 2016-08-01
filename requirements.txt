@@ -11,3 +11,7 @@ scikit-image==0.12.3
 scipy==0.18.0
 matplotlib==1.5.1
 redis==2.10.5
+qiniu==7.0.7
+django-qiniu-storage==2.3.0
+
+django_fagungis==0.1

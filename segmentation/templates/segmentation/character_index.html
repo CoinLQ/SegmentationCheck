@@ -17,7 +17,7 @@ label {
   .flow {float:left; min-width:80px; min-height:80px; margin:5px;border:solid blue 1px;}
 
   .selected {
-      background-color: #aaa !important; 
+      background-color: #aaa !important;
   }
 
 .unchecked-box{
@@ -41,7 +41,7 @@ label {
 {% block mainbody %}
 <div class="container">
     <div class='row show-grid'>
-        <div class='col-md-3' >
+        <div class='col-md-3 col-xs-3' >
             <div class='sidecol'>
     <table class="table table-bordered table-striped table-hover">
         <caption>已经切分出的字列表</caption>
@@ -63,7 +63,7 @@ label {
     </table>
 </div>
         </div>
-        <div class='col-md-9'>
+        <div class='col-md-9 col-xs-9'>
             <ul id="myTab" class="nav nav-tabs" style = "margin:20px 0px;">
                <li class="active" id='checkbtn'>
                   <a href="#check_tab" data-toggle="tab">审核模式 </a>

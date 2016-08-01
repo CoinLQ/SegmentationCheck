@@ -3,7 +3,7 @@
 <title>页面检查</title>
 {# 用于在html head部分添加内容，如引入css，js资源等#}
 <style type="text/css">
-    .tnt {Writing-mode:tb-rl;Text-align:left;font-size:1.5em}
+
     .flow{width:65%;height:65%;float:left;margin:5px;margin-top:20px;border:1px solid blue;}
     .flow img{width:100%;}
     .error-char {
@@ -15,7 +15,7 @@
       stroke: blue;
       stroke-width: 3;
     }
-</style> 
+</style>
 
 {% endblock %}
 
@@ -24,22 +24,32 @@
 {# 主内容区 #}
 <div class="container">
     {%for page in page_list%}
-<div class="row" style='border:1px solid gray'>
-    <div id="img{{ page.id }}">  </div>
-    <div id="right_text_{{page.id}}" class="tnt">  </div> 
-    
-    <div class="col-md-6 col-md-offset-6">
-        <button id="{{page.id}}" class="btn btn-default setPageTag_btn"  value="1">正确</button>
-        <button id="{{page.id}}" class="btn btn-default setPageTag_btn"  value="-3" >行错</button>
-        <button id="{{page.id}}" class="btn btn-default setPageTag_btn" value="-4">页面错</button>
+    <div class="row">
+        <div class="col-md-2">&nbsp;</div>
+        <div class="col-md-8 gallery">
+            <div id="img{{ page.id }}"></div>
+        </div>
+        <div class="col-md-12 reel">
+        <pre rel="经文" class=" language-markup">
+        <div id="right_text_{{page.id}}" class="tnt"> </div>
+        </pre>
+        <div class="btn-group-vertical action_buttons">
+            <button class="btn btn-primary">初校</button>
+            <button id="{{page.id}}" class="btn btn-default  setPageTag_btn"  value="1">正确</button>
+            <button id="{{page.id}}" class="btn btn-default  setPageTag_btn"  value="-3" >行错</button>
+            <button id="{{page.id}}" class="btn btn-default setPageTag_btn" value="-4">页面错</button>
+        </div>
     </div>
-</div>
+
+
+
+    </div>
 
     {%endfor%}
-
-    <div id="fade" class="black_overlay"> </div> 
+</div>
+    <div id="fade" class="black_overlay"> </div>
     <div style="clear:both;"> </div>
-    <div  class="btn btn-primary batch-check" >批量审核通过(除了有错误标记的都会通过)</div>
+  {#   <div  class="btn btn-primary batch-check" >批量审核通过(除了有错误标记的都会通过)</div> #}
 
 
 </div><!-- /.container -->
@@ -58,7 +68,7 @@ $(function(){
     //var _img_path = 'http://ob21oo6fl.bkt.clouddn.com/page_images/{{page.image}}'
     var _img_path = '{{page.image.url}}'
     //var _img_path = 'page_images/{{page.image}}'
-    
+
     var image = draw.image(_img_path)
     draw.viewbox({ x: 0, y: 0, width:{{page.width }} , height:  {{page.height }}})
     var leftline = draw.line({{page.left}},0,{{page.left}},900).addClass('segment-line');
@@ -81,12 +91,19 @@ $('.batch-check').click(function(){
 </script>
 <script>
 $('.setPageTag_btn').on('click', function(){
-    var tag =$(this).val(); 
-    console.log(tag); 
+    var tag =$(this).val();
+    $that = $(this);
+    console.log(tag);
+
     var data = {'id': this.id};
     data['is_correct'] = tag;
     data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
-    $.post('/segmentation/set_page_correct', data, function() { });
+    $.post('/segmentation/set_page_correct', data, function() {
+        $that.parent().parent().parent().animate({
+            height: 'toggle'
+        });
+
+    });
 });
 </script>
 {% endblock %}
