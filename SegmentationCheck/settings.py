@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'segmentation',
+    'qiniustorage'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -81,6 +82,7 @@ DATABASES = {
         'NAME': 'dzj_characters',
         'USER': 'dzj',
         'PASSWORD': 'dzjsql',
+        #'HOST': '192.168.16.3',
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -105,11 +107,25 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 LOGIN_URL = '/segmentation/login/'
 STATIC_URL = '/static/'
-PAGE_IMAGE_ROOT = '/opt/share/dzj_characters/page_images/'
-CHARACTER_IMAGE_ROOT = '/opt/share/dzj_characters/character_images/'
+#MEDIA_ROOT = '/opt/share/dzj_characters/'
+MEDIA_ROOT = '/home/feixeyes/dzj_characters/'
+#MEDIA_ROOT = '/home/share/dzj_characters/'
+MEDIA_URL = 'http://127.0.0.1:8000/'
+PAGE_IMAGE_ROOT = MEDIA_ROOT+'page_images/'
+CHARACTER_IMAGE_ROOT = MEDIA_ROOT+'character_images/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
+DEFAULT_FILE_STORAGE = 'qiniustorage.backends.QiniuStorage'
+#STATICFILES_STORAGE = 'qiniustorage.backends.QiniuStaticStorage'
+
+QINIU_ACCESS_KEY= 'LZZ8G_jmYDPu9HGQdyK_n4gkzlVFCjjbaU0POU1M'
+QINIU_SECRET_KEY= 'goKrEsUW5bmuiP6vke4Qn4RRGEHwDJLhLBiYLLCL'
+QINIU_BUCKET_DOMAIN= 'ob21oo6fl.bkt.clouddn.com'
+QINIU_BUCKET_NAME= 'dzj-characters'
+
+QINIU_SECURE_URL = False
+
 
 LOGGING = {
     'version': 1,

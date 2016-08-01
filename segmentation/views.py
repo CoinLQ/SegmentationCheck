@@ -19,13 +19,19 @@ from django.db.models import Count,F
 import json
 
 from skimage import io
-from page_processing import process_page
-
-#TODO change to skimage
-from PIL import Image#use to cut charImg
+from page_processing import process_page,Char
 
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.db import connection,transaction
+from django.conf import settings
+from django.core.files.images import ImageFile
+from django.core.files import File
+import cStringIO #for output memory file for save cut image
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+#DEFAULT_FILE_STORAGE = 'qiniustorage.backends.QiniuStorage'
+
 
 class MyJsonEncoder(DjangoJSONEncoder):
     def default(self, obj):
@@ -55,7 +61,7 @@ class charJsonEncoder(DjangoJSONEncoder):
             for ch in obj:
                 arr.append({
                 u'id': ch.id,
-                u'image': ch.image,
+                u'image': ch.image.url,
                 u'is_correct': ch.is_correct,
                             })
             return arr
@@ -77,7 +83,7 @@ def demo(request):
     return render(request, 'segmentation/demo.html')
 
 
-@login_required(login_url='/segmentation/login/')
+#@login_required(login_url='/segmentation/login/')
 def page_detail(request, page_id):
     page = get_object_or_404(Page, pk=page_id)
     text_line_lst = []
@@ -85,6 +91,7 @@ def page_detail(request, page_id):
         pos = line.find(u';')
         line=line[pos+1:]
         text_line_lst.append(line.lstrip())
+    image_url = page.image.url
 
     characters = Character.objects.filter(page_id=page.id).order_by('line_no')
     temp_lst = []
@@ -107,7 +114,7 @@ def page_detail(request, page_id):
 
 
     json_line_lst = json.dumps(line_lst,cls=MyJsonEncoder)
-    return JsonResponse({ u'line_lst': json_line_lst, u'text': text_line_lst}, safe=False)
+    return JsonResponse({ u'line_lst': json_line_lst, u'image_url':image_url, u'text': text_line_lst}, safe=False)
     #return render(request, 'segmentation/page_detail.html', {'page': page, 'line_lst': line_lst, 'text': text_line_lst})
 
 
@@ -115,9 +122,10 @@ class PageCheckView(generic.ListView):
     template_name = 'segmentation/page_check.html'
     def get_queryset(self):
         pk = self.kwargs['pk']
-        return Page.objects.filter(id__startswith=pk).filter(is_correct=0)[:9]
+        #only show the page had been segment(right field is not equal 0),and had not been check
+        return Page.objects.filter(id__startswith=pk).exclude(right=0).filter(is_correct=0)[:9]
 
-    @method_decorator(login_required)
+    #@method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(PageCheckView, self).dispatch(*args, **kwargs)
 
@@ -128,6 +136,32 @@ def set_page_correct(request):
         page_id = request.POST['id']
         is_correct = int(request.POST['is_correct'])
         Page.objects.filter(id=page_id).update(is_correct=is_correct)
+        if is_correct == 1:
+#TODO cut the char image
+
+#update char is_correct state
+            Character.objects.filter(page_id=page_id).update(is_correct=0)
+#update the CharacterStatistics
+            cursor = connection.cursor()
+            raw_sql = '''
+                INSERT INTO public.segmentation_characterstatistics (char,total_cnt, uncheck_cnt,err_cnt,uncertainty_cnt)
+                SELECT
+                char,
+                  count(segmentation_character."char") as total_cnt,
+                  sum(case when is_correct= 0 then 1 else 0 end) as uncheck_cnt,
+                  sum(case when is_correct=-1 then 1 else 0 end) as err_cnt,
+                  0
+                FROM
+                  public.segmentation_character
+                WHERE is_correct != -9
+                  group by char
+                ON CONFLICT (char)
+                DO UPDATE SET
+                total_cnt=EXCLUDED.total_cnt,
+                uncheck_cnt=EXCLUDED.uncheck_cnt,
+                err_cnt =EXCLUDED.err_cnt;
+            '''
+            cursor.execute(raw_sql)
         data = {'status': 'ok'}
     elif 'pageArr[]' in request.POST:
         pageArr = request.POST.getlist('pageArr[]')
@@ -137,12 +171,13 @@ def set_page_correct(request):
         data = {'status': 'error'}
     return JsonResponse(data)
 
-#TODO doing
+#TODO reSegment
 def runSegment(request,page_id):
     #page_id = request.POST['id']
     page = Page.objects.get(id=page_id)
-    PAGE_IMAGE_ROOT = '/home/share/dzj_characters/page_images/'
-    image_name = PAGE_IMAGE_ROOT + page.image
+    settings.PAGE_IMAGE_ROOT
+    image_name = page.image.url
+    print image_name
     text = page.text
     image = io.imread(image_name, 0)
     total_char_lst = process_page(image, text, page_id)
@@ -175,30 +210,41 @@ def runSegment(request,page_id):
 
     return JsonResponse({ u'line_lst': json_line_lst}, safe=False)
 
-#@login_required(login_url='/segmentation/login/')
-def uploadimg(request,pk):
-    def handle_uploaded_file(f):
-        destination_file = '/home/share/dzj_characters/page_images/'+pk+'.jpg'
-        destination = open(destination_file, 'wb')
-        for chunk in f.chunks():
-            destination.write(chunk)
-        destination.close()
-        Page.objects.filter(id=pk).update(is_correct=2)
-    if request.method == 'POST':
-        handle_uploaded_file(request.FILES['uploadimg'])
-        data = {'status': 'ok'}
-        return JsonResponse(data)
-
 
 #@login_required(login_url='/segmentation/login/')
 def cut_char_img( page_id,char_id):
-    ch = Character.objects.filter(id=char_id)
-    pageimg_file = '/opt/share/dzj_characters/page_images/'+page_id+'.jpg'
-    charimg_file = '/opt/share/dzj_characters/character_images/'+char_id+'.jpg'
-    regin = (ch[0].left,ch[0].top,ch[0].right,ch[0].bottom)
-    pageimg=Image.open(pageimg_file)
-    cropimg = pageimg.crop(regin)
-    cropimg.save(charimg_file)
+    ch = Character.objects.get(id=char_id)
+    page = Page.objects.get(id = page_id)
+    pageimg_file = page.image.url
+    charimg_file = 'character_images/'+page_id+"/"+char_id+'.png'
+    #charimg_file = char_id+'.png'
+    #char = Char(
+    #        char = ch.char,
+    #        left = ch.left,
+    #        right = ch.right,
+    #        top = ch.top,
+    #        bottom = ch.bottom,
+    #        line_no = ch.line_no,
+    #        char_no = ch.char_no
+    #        )
+    page_image = io.imread(pageimg_file, 0)
+    #char.cut_char_from_page(image, charimg_file)
+    char_image = page_image[ch.top:ch.bottom, ch.left:ch.right]
+#TODO doing  cut char img save
+    memfile = cStringIO.StringIO()
+    io.imsave(memfile, char_image)
+    contents = memfile.getvalue()
+    path = default_storage.save(charimg_file, memfile)
+    print path
+    #with open('a.png', 'w') as f:
+    #    #img = ImageFile(f)
+    #    img = File(f)
+    #    img.write(contents)
+
+
+
+    #img = ImageFile(char_image)
+
 
 #@login_required(login_url='/segmentation/login/')
 def page_modify(request, page_id):
@@ -266,7 +312,7 @@ def page_segmentation_line(request, page_id):
 class CharacterIndex(generic.ListView):
     template_name = 'segmentation/character_index.html'
 
-    @method_decorator(login_required)
+    #@method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(CharacterIndex, self).dispatch(*args, **kwargs)
 
@@ -280,16 +326,16 @@ class ErrPageIndex(generic.ListView):
     def get_queryset(self):
         return Character.objects.filter(is_correct=-1).values('page').annotate(dcount=Count('page'))
 
-    @method_decorator(login_required)
+    #@method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(ErrPageIndex, self).dispatch(*args, **kwargs)
 
 
-@login_required(login_url='/segmentation/login/')
+#@login_required(login_url='/segmentation/login/')
 def character_check(request, char):
     mode = request.GET.get('mode')
     if mode == 'browse':  #browse mode  display all characters
-        characters_list = Character.objects.filter(char=char)
+        characters_list = Character.objects.filter(char=char).exclude(is_correct=-9)
         paginator = Paginator(characters_list, 30) # Show 30 characters per page
         page = request.GET.get('page')
         try:
@@ -326,7 +372,6 @@ def set_correct(request):
         Character.objects.filter(id=char_id).update(is_correct=is_correct)
         CharacterStatistics.objects.filter(char=char).update(err_cnt=F('err_cnt')-is_correct)
         page_id = char_id[:14]
-        #Character.objects.filter(id__startswith=page_id).filter(is_correct=0).update(is_correct=-2) bug cant recover the status
         data = {'status': 'ok'}
     elif 'charArr[]' in request.POST:
         charArr = request.POST.getlist('charArr[]')

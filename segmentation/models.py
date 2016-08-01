@@ -4,7 +4,8 @@ from django.contrib.auth.models import User
 # Create your models here.
 class Page(models.Model):
     id = models.CharField(max_length=32, primary_key=True)
-    image = models.CharField(max_length=512)
+    #image = models.CharField(max_length=512)
+    image = models.ImageField(upload_to = 'page_images',max_length=512,null=True)
     text = models.TextField()
     width = models.SmallIntegerField(default=0)
     height = models.SmallIntegerField(default=0)
@@ -35,7 +36,8 @@ class Character(models.Model):
     id = models.CharField(max_length=32, primary_key=True)
     page = models.ForeignKey(Page)
     char = models.CharField(max_length=4, db_index=True)
-    image = models.CharField(max_length=512)
+    #image = models.CharField(max_length=512)
+    image = models.ImageField(upload_to = 'character_images',max_length=512,null=True)
     left = models.SmallIntegerField()
     right = models.SmallIntegerField()
     top = models.SmallIntegerField()

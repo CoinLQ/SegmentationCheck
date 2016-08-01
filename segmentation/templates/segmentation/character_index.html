@@ -177,7 +177,7 @@ function renderCharArea(area,charArr){
         else if (field.is_correct == 1){
             txt += "correct-char ";
         }
-        txt +="char-image' title='"+field.id+"'><img src='/character_images/"+field.image.substr(0,14)+"/"+field.image+"' alt='加载中'></div>"
+        txt +="char-image' title='"+field.id+"'><img src='"+field.image+"' alt='加载中'></div>"
         $(area).append(txt);
       });
 }
