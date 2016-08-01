@@ -99,7 +99,7 @@ $('.setPageTag_btn').on('click', function(){
     data['is_correct'] = tag;
     data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
     $.post('/segmentation/set_page_correct', data, function() {
-        $that.parent().parent().animate({
+        $that.parent().parent().parent().animate({
             height: 'toggle'
         });
 
