@@ -135,12 +135,27 @@ def set_page_correct(request):
     if 'id' in request.POST:
         page_id = request.POST['id']
         is_correct = int(request.POST['is_correct'])
-        Page.objects.filter(id=page_id).update(is_correct=is_correct)
+        page = Page.objects.get(id = page_id)
+        page.is_correct = is_correct
+        page.save()
         if is_correct == 1:
 #TODO cut the char image
+            pageimg_file = page.image.url
+            page_image = io.imread(pageimg_file, 0)
 
+            char_lst = Character.objects.filter(page_id=page_id)
+            for ch in char_lst:
+                #TODO crop field outside the page_image can throug out: ValueError... tile cannot extend outside image
+                char_image = page_image[ch.top:ch.bottom, ch.left:ch.right]
+                memfile = cStringIO.StringIO()
+                io.imsave(memfile, char_image)
+#save char image file
+                charimg_file = 'character_images/'+ch.page_id+"/"+ch.id+'.png'
+                default_storage.save(charimg_file, memfile)
+                ch.image = charimg_file #if the field has not been set,then uncomment this line
 #update char is_correct state
-            Character.objects.filter(page_id=page_id).update(is_correct=0)
+                ch.is_correct = 0
+                ch.save()
 #update the CharacterStatistics
             cursor = connection.cursor()
             raw_sql = '''
@@ -163,10 +178,10 @@ def set_page_correct(request):
             '''
             cursor.execute(raw_sql)
         data = {'status': 'ok'}
-    elif 'pageArr[]' in request.POST:
-        pageArr = request.POST.getlist('pageArr[]')
-        Page.objects.filter(id__in = pageArr ).filter(is_correct=0).update(is_correct=1)
-        data = {'status': 'ok'}
+#    elif 'pageArr[]' in request.POST:
+#        pageArr = request.POST.getlist('pageArr[]')
+#        Page.objects.filter(id__in = pageArr ).filter(is_correct=0).update(is_correct=1)
+#        data = {'status': 'ok'}
     else:
         data = {'status': 'error'}
     return JsonResponse(data)
@@ -211,47 +226,21 @@ def runSegment(request,page_id):
     return JsonResponse({ u'line_lst': json_line_lst}, safe=False)
 
 
-#@login_required(login_url='/segmentation/login/')
-def cut_char_img( page_id,char_id):
+def cut_char_img( page_id,page_image,char_id):
     ch = Character.objects.get(id=char_id)
-    page = Page.objects.get(id = page_id)
-    pageimg_file = page.image.url
     charimg_file = 'character_images/'+page_id+"/"+char_id+'.png'
-    #charimg_file = char_id+'.png'
-    #char = Char(
-    #        char = ch.char,
-    #        left = ch.left,
-    #        right = ch.right,
-    #        top = ch.top,
-    #        bottom = ch.bottom,
-    #        line_no = ch.line_no,
-    #        char_no = ch.char_no
-    #        )
-    page_image = io.imread(pageimg_file, 0)
-    #char.cut_char_from_page(image, charimg_file)
     char_image = page_image[ch.top:ch.bottom, ch.left:ch.right]
-#TODO doing  cut char img save
     memfile = cStringIO.StringIO()
     io.imsave(memfile, char_image)
-    contents = memfile.getvalue()
-    path = default_storage.save(charimg_file, memfile)
-    print path
-    #with open('a.png', 'w') as f:
-    #    #img = ImageFile(f)
-    #    img = File(f)
-    #    img.write(contents)
-
-
-
-    #img = ImageFile(char_image)
-
+#    contents = memfile.getvalue()
+    default_storage.save(charimg_file, memfile)
 
 #@login_required(login_url='/segmentation/login/')
 def page_modify(request, page_id):
     data = {}
     if request.method == 'POST':
         for key, position in request.POST.iteritems():
-            if u'-' in key:
+            if u'-' in key:#adjust by chars
                 pos = int(float(position))
                 segs = key.split(u'-')
                 if len(segs) == 3:
@@ -265,23 +254,28 @@ def page_modify(request, page_id):
                     else:
                         char_id = page_id + u'%02dL%02d' % (line_no, char_no)
                         Character.objects.filter(id=char_id).update(bottom=pos,is_correct=2)
-                        cut_char_img(page_id,char_id)
+                        #get page image
+                        page = Page.objects.get(id = page_id)
+                        pageimg_file = page.image.url
+                        page_image = io.imread(pageimg_file, 0)
+
+                        cut_char_img(page_id,page_image,char_id)
 
                         char_id = page_id + u'%02dL%02d' % (line_no, char_no + 1)
                         Character.objects.filter(id=char_id).update(top=pos,is_correct=2)
-                        cut_char_img(page_id,char_id)
-                else:
-                    typ, line_no = segs
-                    line_no = int(line_no)
-                    if line_no == 0:
-                        line_no = 1
-                        # update right
-                        Character.objects.filter(page_id=page_id, line_no=line_no).update(right=pos)
-                    else:
-                        # update left
-                        Character.objects.filter(page_id=page_id, line_no=line_no).update(left=pos)
-                        Character.objects.filter(page_id=page_id, line_no=line_no+1).update(right=pos)
-
+                        cut_char_img(page_id,page_image,char_id)
+#                else: # adjust by colume
+#                    typ, line_no = segs
+#                    line_no = int(line_no)
+#                    if line_no == 0:
+#                        line_no = 1
+#                        # update right
+#                        Character.objects.filter(page_id=page_id, line_no=line_no).update(right=pos)
+#                    else:
+#                        # update left
+#                        Character.objects.filter(page_id=page_id, line_no=line_no).update(left=pos)
+#                        Character.objects.filter(page_id=page_id, line_no=line_no+1).update(right=pos)
+#
         data = {'status': 'ok'}
     return JsonResponse(data)
 

@@ -131,13 +131,17 @@ function renderSegmentGrid(draw,result){
                 field.right, 
                 0, 
                 field.right, 
-                window._height).addClass('segment-line');
+                //window._height
+                900
+                ).addClass('segment-line');
         }
         var _column = draw.line(
             field.left, 
             0, 
             field.left, 
-            window._height).addClass('segment-line');
+            //window._height
+            900
+            ).addClass('segment-line');
         $.each(field.char_lst,function(j,item){
             //draw row
             if(item.char_no==1){
@@ -155,6 +159,7 @@ function renderSegmentGrid(draw,result){
             if(item.is_correct==-1){
                 _row.addClass('error-char').removeClass('segment-line');
             }
+            //TODO why not effect
             _row.draggable({
                 minX: 10,
                 minY: 30,
