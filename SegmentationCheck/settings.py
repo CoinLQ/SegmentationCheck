@@ -116,7 +116,7 @@ CHARACTER_IMAGE_ROOT = MEDIA_ROOT+'character_images/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
-#DEFAULT_FILE_STORAGE = 'qiniustorage.backends.QiniuStorage'
+DEFAULT_FILE_STORAGE = 'qiniustorage.backends.QiniuStorage'
 #STATICFILES_STORAGE = 'qiniustorage.backends.QiniuStaticStorage'
 
 QINIU_ACCESS_KEY= ''
