@@ -82,6 +82,37 @@ def index(request):
 def demo(request):
     return render(request, 'segmentation/demo.html')
 
+#TODO  offline batch segment
+@login_required(login_url='/segmentation/login/')
+def run_batchsegment(request,number):
+    if not number:
+        number =1
+    pages = Page.objects.filter(is_correct=-9)[:number]
+    for page in pages:
+        print 'page.id: ', page.id.encode('utf-8')
+        image_name = page.image.url
+        text = page.text
+        image = io.imread(image_name, 0)
+        total_char_lst = process_page(image, text, page.id)
+        character_lst = []
+        temp_lst = []
+        line_lst = []
+        cur_line_no = 0
+        for ch in total_char_lst:
+            character = Character(id=ch.char_id.strip(), page_id=page.id, char=ch.char,
+                                  image='',
+                                  left=ch.left, right=ch.right,
+                                  top=ch.top, bottom=ch.bottom,
+                                  line_no=ch.line_no, char_no=ch.char_no,
+                                  is_correct=-9)
+            print Character
+            character.save()
+        page.is_correct = 0
+        page.save()
+    data = {'status': 'ok'}
+    return JsonResponse(data)
+
+
 
 #@login_required(login_url='/segmentation/login/')
 def page_detail(request, page_id):
@@ -129,7 +160,6 @@ class PageCheckView(generic.ListView):
     def dispatch(self, *args, **kwargs):
         return super(PageCheckView, self).dispatch(*args, **kwargs)
 
-
 #@login_required(login_url='/segmentation/login/')
 def set_page_correct(request):
     if 'id' in request.POST:
@@ -154,7 +184,7 @@ def set_page_correct(request):
                 default_storage.save(charimg_file, memfile)
                 ch.image = charimg_file #if the field has not been set,then uncomment this line
 #update char is_correct state
-                ch.is_correct = 0
+                ch.is_correct = 0 # is_correct set to 0 then the char will be show
                 ch.save()
 #update the CharacterStatistics
             cursor = connection.cursor()
@@ -187,10 +217,9 @@ def set_page_correct(request):
     return JsonResponse(data)
 
 #TODO reSegment
+
 def runSegment(request,page_id):
-    #page_id = request.POST['id']
     page = Page.objects.get(id=page_id)
-    settings.PAGE_IMAGE_ROOT
     image_name = page.image.url
     print image_name
     text = page.text

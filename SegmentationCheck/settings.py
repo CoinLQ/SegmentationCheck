@@ -119,10 +119,10 @@ STATICFILES_DIRS = (
 #DEFAULT_FILE_STORAGE = 'qiniustorage.backends.QiniuStorage'
 #STATICFILES_STORAGE = 'qiniustorage.backends.QiniuStaticStorage'
 
-QINIU_ACCESS_KEY= 'LZZ8G_jmYDPu9HGQdyK_n4gkzlVFCjjbaU0POU1M'
-QINIU_SECRET_KEY= 'goKrEsUW5bmuiP6vke4Qn4RRGEHwDJLhLBiYLLCL'
-QINIU_BUCKET_DOMAIN= 'ob21oo6fl.bkt.clouddn.com'
-QINIU_BUCKET_NAME= 'dzj-characters'
+QINIU_ACCESS_KEY= ''
+QINIU_SECRET_KEY= ''
+QINIU_BUCKET_DOMAIN= ''
+QINIU_BUCKET_NAME= ''
 
 QINIU_SECURE_URL = False
 

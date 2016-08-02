@@ -6,6 +6,7 @@ urlpatterns = [
     #url('^', include('django.contrib.auth.urls')),
     url(r'^$', views.index, name='index'),
     url(r'^demo/$', views.demo, name='demo'),
+    url(r'^run_batchsegment/(?P<number>[0-9]*)$', views.run_batchsegment, name='run_batchsegment'),
     url(r'^login/$', auth_views.login, {'template_name':'login.html'},name='login'),
     url(r'^logout/$', auth_views.logout,{'template_name':'logout.html'},name='logout'),
     url(r'^pagecheck/(?P<pk>[0-9A-Za-z]*)$', views.PageCheckView.as_view(), name='page_check'),
