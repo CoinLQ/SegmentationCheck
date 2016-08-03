@@ -189,22 +189,27 @@ def set_page_correct(request):
 #update the CharacterStatistics
             cursor = connection.cursor()
             raw_sql = '''
-                INSERT INTO public.segmentation_characterstatistics (char,total_cnt, uncheck_cnt,err_cnt,uncertainty_cnt)
-                SELECT
+            INSERT INTO public.segmentation_characterstatistics (char,total_cnt, uncheck_cnt,err_cnt,uncertainty_cnt)
+            SELECT
                 char,
-                  count(segmentation_character."char") as total_cnt,
-                  sum(case when is_correct= 0 then 1 else 0 end) as uncheck_cnt,
-                  sum(case when is_correct=-1 then 1 else 0 end) as err_cnt,
-                  0
-                FROM
-                  public.segmentation_character
-                WHERE is_correct != -9
-                  group by char
-                ON CONFLICT (char)
-                DO UPDATE SET
-                total_cnt=EXCLUDED.total_cnt,
-                uncheck_cnt=EXCLUDED.uncheck_cnt,
-                err_cnt =EXCLUDED.err_cnt;
+                count(segmentation_character."char") as total_cnt,
+                count(segmentation_character."char") as uncheck_cnt,
+                0,
+                0
+            FROM
+              public.segmentation_character where page_id='
+            '''
+            raw_sql += page_id
+            raw_sql+= '''
+              '
+              group by char
+            ON CONFLICT (char)
+            DO UPDATE SET
+            total_cnt=public.segmentation_characterstatistics.total_cnt + EXCLUDED.total_cnt,
+            uncheck_cnt=public.segmentation_characterstatistics.uncheck_cnt + EXCLUDED.uncheck_cnt,
+            err_cnt=public.segmentation_characterstatistics.err_cnt + EXCLUDED.err_cnt;
+
+
             '''
             cursor.execute(raw_sql)
         data = {'status': 'ok'}
