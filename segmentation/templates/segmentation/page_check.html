@@ -49,7 +49,9 @@
 </div>
     <div id="fade" class="black_overlay"> </div>
     <div style="clear:both;"> </div>
-  {#   <div  class="btn btn-primary batch-check" >批量审核通过(除了有错误标记的都会通过)</div> #}
+ <!-- 
+    <div  class="btn btn-primary batch-check" >批量审核通过(除了有错误标记的都会通过)</div>
+    -->
 
 
 </div><!-- /.container -->
@@ -65,10 +67,7 @@ $(function(){
     txt = txt.replace(/K[0-9A-Za-z]*L;\ /g,'');
     $('#right_text_{{page.id}}').append(txt);
     var draw = new SVG('img{{ page.id }}').size('650', '325');
-    //var _img_path = 'http://ob21oo6fl.bkt.clouddn.com/page_images/{{page.image}}'
     var _img_path = '{{page.image.url}}'
-    //var _img_path = 'page_images/{{page.image}}'
-
     var image = draw.image(_img_path)
     draw.viewbox({ x: 0, y: 0, width:{{page.width }} , height:  {{page.height }}})
     var leftline = draw.line({{page.left}},0,{{page.left}},900).addClass('segment-line');
@@ -76,6 +75,7 @@ $(function(){
     {%endfor%}
 })
 </script>
+<!--
 <script>
 $('.batch-check').click(function(){
         var arr =[];
@@ -89,6 +89,7 @@ $('.batch-check').click(function(){
             });
 } );
 </script>
+-->
 <script>
 $('.setPageTag_btn').on('click', function(){
     var tag =$(this).val();

@@ -88,6 +88,28 @@ DATABASES = {
     }
 }
 
+LOGIN_URL = '/segmentation/login/'
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.8/howto/static-files/
+STATIC_URL = '/static/'
+MEDIA_ROOT = '/opt/share/dzj_characters/'
+MEDIA_URL = 'http://112.74.23.141/'
+#MEDIA_URL = 'http://127.0.0.1:8000/'
+
+#DEFAULT_FILE_STORAGE = 'qiniustorage.backends.QiniuStorage'
+#STATICFILES_STORAGE = 'qiniustorage.backends.QiniuStaticStorage'
+PAGE_IMAGE_ROOT = MEDIA_ROOT+'page_images/'
+CHARACTER_IMAGE_ROOT = MEDIA_ROOT+'character_images/'
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+)
+
+QINIU_ACCESS_KEY= ''
+QINIU_SECRET_KEY= ''
+QINIU_BUCKET_DOMAIN= ''
+QINIU_BUCKET_NAME= ''
+
+QINIU_SECURE_URL = False
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -101,30 +123,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.8/howto/static-files/
-LOGIN_URL = '/segmentation/login/'
-STATIC_URL = '/static/'
-#MEDIA_ROOT = '/opt/share/dzj_characters/'
-MEDIA_ROOT = '/home/feixeyes/dzj_characters/'
-#MEDIA_ROOT = '/home/share/dzj_characters/'
-MEDIA_URL = 'http://127.0.0.1:8000/'
-PAGE_IMAGE_ROOT = MEDIA_ROOT+'page_images/'
-CHARACTER_IMAGE_ROOT = MEDIA_ROOT+'character_images/'
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "static"),
-)
-DEFAULT_FILE_STORAGE = 'qiniustorage.backends.QiniuStorage'
-#STATICFILES_STORAGE = 'qiniustorage.backends.QiniuStaticStorage'
-
-QINIU_ACCESS_KEY= ''
-QINIU_SECRET_KEY= ''
-QINIU_BUCKET_DOMAIN= ''
-QINIU_BUCKET_NAME= ''
-
-QINIU_SECURE_URL = False
 
 
 LOGGING = {

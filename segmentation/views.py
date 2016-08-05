@@ -197,20 +197,15 @@ def set_page_correct(request):
                 0,
                 0
             FROM
-              public.segmentation_character where page_id='
-            '''
-            raw_sql += page_id
-            raw_sql+= '''
-              '
+              public.segmentation_character where page_id='%s'
               group by char
             ON CONFLICT (char)
             DO UPDATE SET
             total_cnt=public.segmentation_characterstatistics.total_cnt + EXCLUDED.total_cnt,
             uncheck_cnt=public.segmentation_characterstatistics.uncheck_cnt + EXCLUDED.uncheck_cnt,
             err_cnt=public.segmentation_characterstatistics.err_cnt + EXCLUDED.err_cnt;
-
-
-            '''
+            '''%(page_id)
+            print raw_sql
             cursor.execute(raw_sql)
         data = {'status': 'ok'}
 #    elif 'pageArr[]' in request.POST:
