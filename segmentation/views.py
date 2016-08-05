@@ -90,7 +90,7 @@ def run_batchsegment(request,number):
     pages = Page.objects.filter(is_correct=-9)[:number]
     for page in pages:
         print 'page.id: ', page.id.encode('utf-8')
-        image_name = page.image.url
+        image_name = page.image.path
         text = page.text
         image = io.imread(image_name, 0)
         total_char_lst = process_page(image, text, page.id)
@@ -170,7 +170,7 @@ def set_page_correct(request):
         page.save()
         if is_correct == 1:
 #TODO cut the char image
-            pageimg_file = page.image.url
+            pageimg_file = page.image.path
             page_image = io.imread(pageimg_file, 0)
 
             char_lst = Character.objects.filter(page_id=page_id)

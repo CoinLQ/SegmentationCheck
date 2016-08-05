@@ -93,8 +93,7 @@ LOGIN_URL = '/segmentation/login/'
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 STATIC_URL = '/static/'
 MEDIA_ROOT = '/opt/share/dzj_characters/'
-MEDIA_URL = 'http://112.74.23.141/'
-#MEDIA_URL = 'http://127.0.0.1:8000/'
+MEDIA_URL = '/'
 
 #DEFAULT_FILE_STORAGE = 'qiniustorage.backends.QiniuStorage'
 #STATICFILES_STORAGE = 'qiniustorage.backends.QiniuStaticStorage'
