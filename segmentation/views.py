@@ -1,7 +1,6 @@
 from operator import attrgetter
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
-
 from django.http import QueryDict
 from django.db.models.query import QuerySet
 from django.core.paginator import Page as paginatorPageType
@@ -30,7 +29,6 @@ from django.core.files import File
 import cStringIO #for output memory file for save cut image
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
-#DEFAULT_FILE_STORAGE = 'qiniustorage.backends.QiniuStorage'
 
 
 class MyJsonEncoder(DjangoJSONEncoder):
@@ -61,7 +59,7 @@ class charJsonEncoder(DjangoJSONEncoder):
             for ch in obj:
                 arr.append({
                 u'id': ch.id,
-                u'image': ch.image.url,
+                u'image': '/character_images/'+ch.page_id+'/'+ch.image,
                 u'is_correct': ch.is_correct,
                             })
             return arr
@@ -85,6 +83,8 @@ def demo(request):
 #TODO  offline batch segment
 @login_required(login_url='/segmentation/login/')
 def run_batchsegment(request,number):
+    data = {'status': 'pause service now'}
+    return JsonResponse(data) #
     if not number:
         number =1
     pages = Page.objects.filter(is_correct=-9)[:number]
@@ -168,46 +168,47 @@ def set_page_correct(request):
         page = Page.objects.get(id = page_id)
         page.is_correct = is_correct
         page.save()
-        if is_correct == 1:
-#TODO cut the char image
-            pageimg_file = page.image.path
-            page_image = io.imread(pageimg_file, 0)
-
-            char_lst = Character.objects.filter(page_id=page_id)
-            for ch in char_lst:
-                #TODO crop field outside the page_image can throug out: ValueError... tile cannot extend outside image
-                char_image = page_image[ch.top:ch.bottom, ch.left:ch.right]
-                memfile = cStringIO.StringIO()
-                io.imsave(memfile, char_image)
-#save char image file
-                charimg_file = 'character_images/'+ch.page_id+"/"+ch.id+'.png'
-                default_storage.save(charimg_file, memfile)
-                ch.image = charimg_file #if the field has not been set,then uncomment this line
-#update char is_correct state
-                ch.is_correct = 0 # is_correct set to 0 then the char will be show
-                ch.save()
-#update the CharacterStatistics
-            cursor = connection.cursor()
-            raw_sql = '''
-            INSERT INTO public.segmentation_characterstatistics (char,total_cnt, uncheck_cnt,err_cnt,uncertainty_cnt)
-            SELECT
-                char,
-                count(segmentation_character."char") as total_cnt,
-                count(segmentation_character."char") as uncheck_cnt,
-                0,
-                0
-            FROM
-              public.segmentation_character where page_id='%s'
-              group by char
-            ON CONFLICT (char)
-            DO UPDATE SET
-            total_cnt=public.segmentation_characterstatistics.total_cnt + EXCLUDED.total_cnt,
-            uncheck_cnt=public.segmentation_characterstatistics.uncheck_cnt + EXCLUDED.uncheck_cnt,
-            err_cnt=public.segmentation_characterstatistics.err_cnt + EXCLUDED.err_cnt;
-            '''%(page_id)
-            print raw_sql
-            cursor.execute(raw_sql)
         data = {'status': 'ok'}
+#        if is_correct == 1:
+##TODO cut the char image
+#            pageimg_file = page.image.path
+#            page_image = io.imread(pageimg_file, 0)
+#
+#            char_lst = Character.objects.filter(page_id=page_id)
+#            for ch in char_lst:
+#                #TODO crop field outside the page_image can throug out: ValueError... tile cannot extend outside image
+#                char_image = page_image[ch.top:ch.bottom, ch.left:ch.right]
+#                memfile = cStringIO.StringIO()
+#                io.imsave(memfile, char_image)
+##save char image file
+#                charimg_file = 'character_images/'+ch.page_id+"/"+ch.id+'.png'
+#                default_storage.save(charimg_file, memfile)
+#                ch.image = charimg_file #if the field has not been set,then uncomment this line
+##update char is_correct state
+#                ch.is_correct = 0 # is_correct set to 0 then the char will be show
+#                ch.save()
+##update the CharacterStatistics
+#            cursor = connection.cursor()
+#            raw_sql = '''
+#            INSERT INTO public.segmentation_characterstatistics (char,total_cnt, uncheck_cnt,err_cnt,uncertainty_cnt)
+#            SELECT
+#                char,
+#                count(segmentation_character."char") as total_cnt,
+#                count(segmentation_character."char") as uncheck_cnt,
+#                0,
+#                0
+#            FROM
+#              public.segmentation_character where page_id='%s'
+#              group by char
+#            ON CONFLICT (char)
+#            DO UPDATE SET
+#            total_cnt=public.segmentation_characterstatistics.total_cnt + EXCLUDED.total_cnt,
+#            uncheck_cnt=public.segmentation_characterstatistics.uncheck_cnt + EXCLUDED.uncheck_cnt,
+#            err_cnt=public.segmentation_characterstatistics.err_cnt + EXCLUDED.err_cnt;
+#            '''%(page_id)
+#            print raw_sql
+#            cursor.execute(raw_sql)
+#                data = {'status': 'ok'}
 #    elif 'pageArr[]' in request.POST:
 #        pageArr = request.POST.getlist('pageArr[]')
 #        Page.objects.filter(id__in = pageArr ).filter(is_correct=0).update(is_correct=1)
@@ -256,6 +257,8 @@ def runSegment(request,page_id):
 
 
 def cut_char_img( page_id,page_image,char_id):
+    data = {'status': 'pause service now'}
+    return JsonResponse(data)
     ch = Character.objects.get(id=char_id)
     charimg_file = 'character_images/'+page_id+"/"+char_id+'.png'
     char_image = page_image[ch.top:ch.bottom, ch.left:ch.right]
@@ -263,9 +266,13 @@ def cut_char_img( page_id,page_image,char_id):
     io.imsave(memfile, char_image)
 #    contents = memfile.getvalue()
     default_storage.save(charimg_file, memfile)
+    data = {'status': 'ok'}
+    return JsonResponse(data)
 
 #@login_required(login_url='/segmentation/login/')
 def page_modify(request, page_id):
+    data = {'status': 'pause service now'}
+    return JsonResponse(data)
     data = {}
     if request.method == 'POST':
         for key, position in request.POST.iteritems():
