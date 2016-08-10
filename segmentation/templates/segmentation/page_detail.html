@@ -107,7 +107,8 @@ var draw = new SVG('segmentation_page').size('{{ page.width }}', '{{ page.height
 var draw = new SVG('segmentation_page').size('200', '300');
 {% endif %}
 //draw.style('background:url(/page_images/{{ page.id }}.jpg) no-repeat;');
-var image = draw.image('/page_images/{{ page.id }}.jpg').loaded(function(loader) {
+//var image = draw.image('/page_images/{{ page.id }}.jpg').loaded(function(loader) {
+var image = draw.image('http://ob21oo6fl.bkt.clouddn.com/page_images/{{ page.id }}.jpg').loaded(function(loader) {
     this.size(loader.width, loader.height);
     var factor = 0.5;
     //draw.size(loader.width,loader.height);

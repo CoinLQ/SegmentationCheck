@@ -82,8 +82,8 @@ DATABASES = {
         'NAME': 'dzj_characters',
         'USER': 'dzj',
         'PASSWORD': 'dzjsql',
-        #'HOST': '192.168.16.100',
-        'HOST': 'localhost',
+        'HOST': '192.168.16.100',
+        #'HOST': 'localhost',
         'PORT': '5432',
     }
 }
@@ -92,8 +92,7 @@ LOGIN_URL = '/segmentation/login/'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 STATIC_URL = '/static/'
-#MEDIA_ROOT = '/opt/share/dzj_characters/'
-MEDIA_ROOT = '/home/can/dzj_characters/'
+MEDIA_ROOT = '/data/share/dzj_characters/'
 MEDIA_URL = '/'
 
 #DEFAULT_FILE_STORAGE = 'qiniustorage.backends.QiniuStorage'

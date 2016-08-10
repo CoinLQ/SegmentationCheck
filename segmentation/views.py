@@ -59,7 +59,7 @@ class charJsonEncoder(DjangoJSONEncoder):
             for ch in obj:
                 arr.append({
                 u'id': ch.id,
-                u'image': '/character_images/'+ch.page_id+'/'+ch.image,
+                u'image': ch.image,
                 u'is_correct': ch.is_correct,
                             })
             return arr
@@ -122,7 +122,8 @@ def page_detail(request, page_id):
         pos = line.find(u';')
         line=line[pos+1:]
         text_line_lst.append(line.lstrip())
-    image_url = page.image.url
+    #image_url = page.image.url
+    image_url = page.image
 
     characters = Character.objects.filter(page_id=page.id).order_by('line_no')
     temp_lst = []

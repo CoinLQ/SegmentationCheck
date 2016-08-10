@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 # Create your models here.
 class Page(models.Model):
     id = models.CharField(max_length=32, primary_key=True)
-    #image = models.CharField(max_length=512)
-    image = models.ImageField(upload_to = 'page_images',max_length=512,null=True)
+    image = models.CharField(max_length=512)
+    #image = models.ImageField(upload_to = 'page_images',max_length=512,null=True)
     text = models.TextField()
     width = models.SmallIntegerField(default=0)
     height = models.SmallIntegerField(default=0)

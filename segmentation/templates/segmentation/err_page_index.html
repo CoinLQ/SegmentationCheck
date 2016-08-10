@@ -192,7 +192,8 @@ function renderPage(_pageid){
         var draw = new SVG('segmentation_page').size('200', '300');
         window.draw = draw;
         //var img_path = '/page_images/'+window._pageid+'.jpg'
-        var img_path = result.image_url;
+        //var img_path = result.image_url;
+        var img_path = 'http://ob21oo6fl.bkt.clouddn.com/page_images/'+result.image_url;
         var image = draw.image(img_path).loaded(function(loader) {
             this.size(loader.width, loader.height);
             var factor = 0.5;
