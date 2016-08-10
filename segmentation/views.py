@@ -59,7 +59,7 @@ class charJsonEncoder(DjangoJSONEncoder):
             for ch in obj:
                 arr.append({
                 u'id': ch.id,
-                u'image': ch.image,
+                u'image': '/character_images/'+ch.page_id+'/'+ch.image,
                 u'is_correct': ch.is_correct,
                             })
             return arr
