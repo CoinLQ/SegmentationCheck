@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 from operator import attrgetter
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
@@ -29,6 +30,8 @@ from django.core.files import File
 import cStringIO #for output memory file for save cut image
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+
+import random
 
 
 class MyJsonEncoder(DjangoJSONEncoder):
@@ -383,12 +386,19 @@ def character_check(request, char):
         items = paginator.count
         return JsonResponse({u'charArr':charArr, u'items':items,u'itemsOnPage':30,}, safe=False)
     else :        #check mode only display the unchecked characters (is_correct=0)
+        if not char:
+            #char_list =[u'無','不','是','薩','若','如',u"力"]
+            with open('static/alternative_char_list.txt') as f:
+                txt = f.read()
+                char_list = txt.split(',')
+            print char_list
+            char = random.choice(char_list).strip()
         characters = Character.objects.filter(char=char).filter(is_correct=0)[:30]
         qs = CharacterStatistics.objects.filter(char=char).values('uncheck_cnt')
         uncheck_cnt = qs[0]['uncheck_cnt']
         print uncheck_cnt
         charArr = json.dumps(characters,cls=charJsonEncoder)
-        return JsonResponse({u'charArr':charArr, u'uncheck_cnt':uncheck_cnt,}, safe=False)
+        return JsonResponse({u'charArr':charArr, u'uncheck_cnt':uncheck_cnt,u'char':char}, safe=False)
 
 
 
