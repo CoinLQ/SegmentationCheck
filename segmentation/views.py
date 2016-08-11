@@ -392,11 +392,12 @@ def character_check(request, char):
                 char_list = txt.split(',')
             char = random.choice(char_list).strip()
         characters = Character.objects.filter(char=char).filter(is_correct=0)[:30]
-        qs = CharacterStatistics.objects.filter(char=char).values('uncheck_cnt')
+        qs = CharacterStatistics.objects.filter(char=char).values('uncheck_cnt','total_cnt')
+        total_cnt = qs[0]['total_cnt']
         uncheck_cnt = qs[0]['uncheck_cnt']
         print uncheck_cnt
         charArr = json.dumps(characters,cls=charJsonEncoder)
-        return JsonResponse({u'charArr':charArr, u'uncheck_cnt':uncheck_cnt,u'char':char}, safe=False)
+        return JsonResponse({u'charArr':charArr, u'total_cnt':total_cnt,u'uncheck_cnt':uncheck_cnt,u'char':char}, safe=False)
 
 
 
