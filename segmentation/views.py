@@ -387,11 +387,9 @@ def character_check(request, char):
         return JsonResponse({u'charArr':charArr, u'items':items,u'itemsOnPage':30,}, safe=False)
     else :        #check mode only display the unchecked characters (is_correct=0)
         if not char:
-            #char_list =[u'無','不','是','薩','若','如',u"力"]
             with open('static/alternative_char_list.txt') as f:
                 txt = f.read()
                 char_list = txt.split(',')
-            print char_list
             char = random.choice(char_list).strip()
         characters = Character.objects.filter(char=char).filter(is_correct=0)[:30]
         qs = CharacterStatistics.objects.filter(char=char).values('uncheck_cnt')
