@@ -344,7 +344,7 @@ def page_segmentation_line(request, page_id):
     return JsonResponse(line_lst, safe=False, encoder=MyJsonEncoder)
 
 class CharacterIndex(generic.ListView):
-    template_name = 'segmentation/character_index.html'
+    template_name = 'segmentation/characters.html'
 
     #@method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -352,6 +352,9 @@ class CharacterIndex(generic.ListView):
 
     def get_queryset(self):
         return CharacterStatistics.objects.order_by('-uncheck_cnt')
+
+    def sample(self):
+        return CharacterStatistics.objects.order_by('-uncheck_cnt')[0]
 
 class ErrPageIndex(generic.ListView):
     model = Character
