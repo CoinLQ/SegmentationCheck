@@ -102,7 +102,7 @@ canvas.addEventListener('touchend',function(e){
 });
 
 var maxLineWidth = 15;
-var minLineWidth = 5;
+var minLineWidth = 3;
 var maxStrokeV = 2;
 var minStrokeV = 0.01;
 function calcLineWidth( t , s ){
