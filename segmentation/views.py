@@ -170,51 +170,29 @@ def set_page_correct(request):
         page = Page.objects.get(id = page_id)
         page.is_correct = is_correct
         page.save()
+        if is_correct == -4:#页面错误
+            Character.objects.filter(page_id = page_id).update(is_correct=-4)
+#update the CharacterStatistics
+            cursor = connection.cursor()
+            raw_sql = '''
+            INSERT INTO public.segmentation_characterstatistics (char,total_cnt, uncheck_cnt,err_cnt,uncertainty_cnt)
+            SELECT
+                char,
+                0,
+                0,
+                count(segmentation_character."char") as err_cnt,
+                0
+            FROM
+              public.segmentation_character where page_id='%s'
+              group by char
+            ON CONFLICT (char)
+            DO UPDATE SET
+            uncheck_cnt=public.segmentation_characterstatistics.uncheck_cnt - EXCLUDED.err_cnt,
+            err_cnt=public.segmentation_characterstatistics.err_cnt + EXCLUDED.err_cnt;
+            '''%(page_id)
+            print raw_sql
+            cursor.execute(raw_sql)
         data = {'status': 'ok'}
-#        if is_correct == 1:
-##TODO cut the char image
-#            pageimg_file = page.image.path
-#            page_image = io.imread(pageimg_file, 0)
-#
-#            char_lst = Character.objects.filter(page_id=page_id)
-#            for ch in char_lst:
-#                #TODO crop field outside the page_image can throug out: ValueError... tile cannot extend outside image
-#                char_image = page_image[ch.top:ch.bottom, ch.left:ch.right]
-#                memfile = cStringIO.StringIO()
-#                io.imsave(memfile, char_image)
-##save char image file
-#                charimg_file = 'character_images/'+ch.page_id+"/"+ch.id+'.png'
-#                default_storage.save(charimg_file, memfile)
-#                ch.image = charimg_file #if the field has not been set,then uncomment this line
-##update char is_correct state
-#                ch.is_correct = 0 # is_correct set to 0 then the char will be show
-#                ch.save()
-##update the CharacterStatistics
-#            cursor = connection.cursor()
-#            raw_sql = '''
-#            INSERT INTO public.segmentation_characterstatistics (char,total_cnt, uncheck_cnt,err_cnt,uncertainty_cnt)
-#            SELECT
-#                char,
-#                count(segmentation_character."char") as total_cnt,
-#                count(segmentation_character."char") as uncheck_cnt,
-#                0,
-#                0
-#            FROM
-#              public.segmentation_character where page_id='%s'
-#              group by char
-#            ON CONFLICT (char)
-#            DO UPDATE SET
-#            total_cnt=public.segmentation_characterstatistics.total_cnt + EXCLUDED.total_cnt,
-#            uncheck_cnt=public.segmentation_characterstatistics.uncheck_cnt + EXCLUDED.uncheck_cnt,
-#            err_cnt=public.segmentation_characterstatistics.err_cnt + EXCLUDED.err_cnt;
-#            '''%(page_id)
-#            print raw_sql
-#            cursor.execute(raw_sql)
-#                data = {'status': 'ok'}
-#    elif 'pageArr[]' in request.POST:
-#        pageArr = request.POST.getlist('pageArr[]')
-#        Page.objects.filter(id__in = pageArr ).filter(is_correct=0).update(is_correct=1)
-#        data = {'status': 'ok'}
     else:
         data = {'status': 'error'}
     return JsonResponse(data)
