@@ -170,8 +170,8 @@ def set_page_correct(request):
         page = Page.objects.get(id = page_id)
         page.is_correct = is_correct
         page.save()
-        if is_correct == -4:#页面错误
-            Character.objects.filter(page_id = page_id).update(is_correct=-4)
+        if is_correct == -4 or is_correct == -3:#页面错误
+            Character.objects.filter(page_id = page_id).update(is_correct=is_correct)
 #update the CharacterStatistics
             cursor = connection.cursor()
             raw_sql = '''
