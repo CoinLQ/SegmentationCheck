@@ -101,10 +101,10 @@ canvas.addEventListener('touchend',function(e){
     endStroke()
 });
 
-var maxLineWidth = 30;
+var maxLineWidth = 20;
 var minLineWidth = 1;
 var maxStrokeV = 10;
-var minStrokeV = 0.1;
+var minStrokeV = 0.01;
 function calcLineWidth( t , s ){
 
     var v = s / t;
