@@ -92,7 +92,6 @@ def run_batchsegment(request,number):
         number =1
     pages = Page.objects.filter(is_correct=-9)[:number]
     for page in pages:
-        print 'page.id: ', page.id.encode('utf-8')
         image_name = page.image.path
         text = page.text
         image = io.imread(image_name, 0)
@@ -108,7 +107,6 @@ def run_batchsegment(request,number):
                                   top=ch.top, bottom=ch.bottom,
                                   line_no=ch.line_no, char_no=ch.char_no,
                                   is_correct=-9)
-            print Character
             character.save()
         page.is_correct = 0
         page.save()
@@ -226,7 +224,7 @@ def set_page_correct(request):
 def runSegment(request,page_id):
     page = Page.objects.get(id=page_id)
     image_name = page.image.url
-    print image_name
+    #print image_name
     text = page.text
     image = io.imread(image_name, 0)
     total_char_lst = process_page(image, text, page_id)
@@ -398,7 +396,6 @@ def character_check(request, char):
         qs = CharacterStatistics.objects.filter(char=char).values('uncheck_cnt','total_cnt')
         total_cnt = qs[0]['total_cnt']
         uncheck_cnt = qs[0]['uncheck_cnt']
-        print uncheck_cnt
         charArr = json.dumps(characters,cls=charJsonEncoder)
         return JsonResponse({u'charArr':charArr, u'total_cnt':total_cnt,u'uncheck_cnt':uncheck_cnt,u'char':char}, safe=False)
 
@@ -410,12 +407,11 @@ def set_correct(request):
         char_id = request.POST['id']
         is_correct = int(request.POST['is_correct'])
         char = request.POST['char']
+        char.encode('utf-8')
         if  Character.objects.filter(id=char_id).filter(is_correct=0).exists():
             CharacterStatistics.objects.filter(char=char).update(uncheck_cnt=F('uncheck_cnt')-1)
         Character.objects.filter(id=char_id).update(is_correct=is_correct)
         CharacterStatistics.objects.filter(char=char).update(err_cnt=F('err_cnt')-is_correct)
-        print char
-        print is_correct
         data = {'status': 'ok'}
     elif 'charArr[]' in request.POST:
         charArr = request.POST.getlist('charArr[]')
