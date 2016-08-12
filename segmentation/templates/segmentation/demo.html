@@ -1,56 +1,31 @@
 {% extends "base.html" %}
 {% block head %}
 {# 用于在html head部分添加内容，如引入css，js资源等#}
-<link rel="stylesheet" type="text/css" media="screen" href="/static/css/svg.select.css">
-<script type='text/javascript' src="js/bootstrap-slider.js"></script>
-<style>
-    .highlight {
-      stroke: red;
-      stroke-width: 4;
-    }
-    .segment-line {
-      stroke: blue;
-      stroke-width: 4;
-    }
-    .error-char {
-      stroke: #FF00FF;
-      stroke-width: 4;
-    }
-</style>
+<link href="/static/css/handwriting.css" rel="stylesheet" type="text/css"/>
 {% endblock %}
-
-
 {% block mainbody %}
 {# 主内容区 #}
 <div class="container">
-  <div id="drawing"></div>
+    <canvas id="canvas">
+        您的浏览器不支持canvas
+    </canvas>
+    <div id="controller">
+        <div id="black_btn" class="color_btn color_btn_selected"></div>
+        <div id="blue_btn" class="color_btn"></div>
+        <div id="green_btn" class="color_btn"></div>
+        <div id="red_btn" class="color_btn"></div>
+        <div id="orange_btn" class="color_btn"></div>
+        <div id="yellow_btn" class="color_btn"></div>
+
+        <div id="clear_btn" class="op_btn">清 除</div>
+        <div class="clearfix"></div>
+    </div>
+
+
 </div><!-- /.container -->
 {% endblock %}
 
 {% block foot %}
 {# 用于在body标签闭合前添加代码，如引入js代码等 #}
-<script src="/static/js/svg.min.js"></script>
-<script src="/static/js/svg.draggable.min.js"></script>
-<script>
-var draw = new SVG('drawing').size(1600,900);
- // create image
-var image = draw.image('/static/K0001V01P0425a.jpg').loaded(function(loader) {
-    this.size(loader.width, loader.height);
-})
-line1 = draw.line(10, 300, 900, 300).addClass('segment-line')
-line1.draggable().on('dragmove', function(e){
-  e.preventDefault();
-  this.y(e.detail.p.y);
-}).on('dragend', function(e){
-  var key = 'char-' + 1 + '-' + 5;
-  console.log(key + ': y=' + this.y());
-  this.addClass('highlight').removeClass('segment-line');
-  moves[key] = this.y();
-});
-
-
-draw.scale(0.5,0.5);
-
-//draw.style('background:url(/static/K0001V01P0425a.jpg) no-repeat;');
-</script>
+<script src = "/static/js/handwriting.js"></script>
 {% endblock %}

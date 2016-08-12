@@ -5,23 +5,14 @@
 <link href="/static/css/simplePagination.css" rel="stylesheet">
 <link href="/static/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
 <style>
-label {
-    display: inline-block;
-  } /*for tooltip*/
   .error-char {
     background-color: pink;
     border:solid red 2px !important;
-
   }
   .correct-char {
-    /*background-color: #9AFF9A;*/
     border:solid blue 2px !important;
   }
   .flow {float:left; min-width:80px; min-height:80px; margin:5px;border:solid blue 1px;}
-
-  .selected {
-      background-color: #aaa !important;
-  }
 
 .unchecked-box{
     position: relative;
@@ -30,54 +21,39 @@ label {
     border: 1px solid #ddd;
     border-bottom-width: 0;
 }
-.m-b-10 {
-  margin-bottom: 10px;
-}
-.sidecol {
-    height:80%;
-    overflow:auto;
-    position:relative;
-    max-height:800px;
-}
 </style>
 {% endblock %}
 {% block mainbody %}
 <div class="container">
     <div class='row show-grid'>
         <div class='col-md-9 col-xs-9'>
-            <ul id="myTab" class="nav nav-tabs" style = "margin:20px 0px;">
-               <li class="active" id='checkbtn'>
-                  <a href="#check_tab" data-toggle="tab">审核模式 </a>
-               </li>
-               <li class="hidden" id='browsebtn'><a href="#browse_tab" data-toggle="tab">浏览模式</a></li>
-            </ul>
-<div id="myTabContent" class="tab-content">
-   <div class="tab-pane fade in active" id="check_tab">
-        <div class="unchecked-box hidden">
+        <div class="unchecked-box">
           <div class="progress progress-striped">
               <div class="progress-bar " role="progressbar" data-transitiongoal="{{view.sample.uncheck_cnt}}" aria-valuemax="{{view.sample.total_cnt}}"></div>
           </div>
         </div>
+        <strong id='checkchar' style='font-size:36px; margin:10px;padding:8px;color:#483D8B;'>{{view.sample.char.strip}}</strong> 点选字形不正确或切错的字(详细说明见下方)
         <div id='charlistArea'>
             <p class="bg-info" style='margin:20px;padding:10px;'>审核模式只显示未审核的字形，浏览模式分页显示所有字形。</p>
         </div><!--end charlistArea -->
         <div style="clear:both;"> </div>
         <span class="hidden" id="total_num">{{view.sample.total_cnt}}</span>
-        <strong id='checkchar' style='font-size:36px; margin:10px;padding:8px;color:#483D8B;'>{{view.sample.char.strip}}</strong>
 
         <div  class="btn btn-primary batch-check" >批量审核通过(除了有错误标记的都会通过)</div>
 
+        <blockquote style="margin:5px">
+            <p>通过鼠标左键点选字形不正确或切错的字，
+            然后点击【批量审核通过按钮】，之后页面会自动弹出新的一页；
+            请大家仔细认真核查，按以下标准点选：
+              </p>
+              <ol>
+                  <li>保留完全正确的字形，就是没有明显的少切、多切、切错等现象；</li>
+                  <li>异体字属于正确字形，比如无、無，都是正确的；</li>
+                  <li>跟正确字形相差非常小的，比如字的边上多了或少一个点等，可以算是正确的；</li>
+                  <li>无认识的字形，尽量保留。</li>
+              </ol>
 
-   </div><!--end check_tab -->
-   <div class="tab-pane fade" id="browse_tab">
-        <div id='charBrowseArea'>
-        </div>
-        <div style="clear:both;"> </div>
-        <div class="pagec" id="pagearea">
-            <ul class="pagination">
-            </ul>
-        </div>
-   </div><!--end browse_tab -->
+        </blockquote>
 </div>
 
         </div>
@@ -89,11 +65,6 @@ label {
 <!--for index-->
 <script>
 $(function(){
-    //$('#charindextbody tr').click(function (e) {
-        $('.unchecked-box').removeClass('hidden');
-        $('tr').removeClass("selected");
-        $(this).addClass("selected");
-        var _char = $("tr.selected td:first").text();
         var _char = $('#checkchar').text();
         window.char = _char;
             $.getJSON("/segmentation/charactercheck/"+window.char+"?mode=check",function(result){
@@ -125,7 +96,7 @@ function binding_char_check(area){
     $(selector).click(function(){
       var data = {'id': this.id};
       data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
-      data['char'] = window.char;
+      data['char'] = $('#checkchar').text();
       if ($(this).hasClass('error-char')) {
         $(this).removeClass('error-char');
         $(this).addClass('correct-char');
@@ -159,26 +130,6 @@ function renderCharArea(area,charArr){
       });
 }
 </script>
-<!-- for browse mode-->
-<script src="/static/js/jquery.simplePagination.js" charset="utf-8"></script>
-<script>
-function paginationFun(_items,_itemsOnpage){
-    $('#pagearea').pagination({
-        items: _items,
-        itemsOnPage: _itemsOnpage,
-        cssStyle: 'light-theme',
-    onPageClick: function(pageNumber, event) {
-                // Callback triggered when a page is clicked
-                // Page number is given as an optional parameter
-                $.getJSON("/segmentation/charactercheck/"+window.char+"?mode=browse&page="+pageNumber,function(result){
-                    obj= $.parseJSON(result.charArr);
-                    renderCharArea("#charBrowseArea",obj);
-                    binding_char_check('#charBrowseArea');
-                });
-            },
-    });
-}
-</script>
 <!--for check mode-->
 <script>
 $(function(){
@@ -193,9 +144,9 @@ function handler() {
                 arr.push(tmp.id);
             }
             var data = {'charArr':arr};
-            var updateNum = $('#check_tab .char-image').length - $('#check_tab .correct-char').length - $('#check_tab .error-char').length;
+            var updateNum = $('.char-image').length - $('.correct-char').length - $('.error-char').length;
             data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
-            data['char'] = window.char;
+            data['char'] = $('#checkchar').text();
             data['updateNum'] = updateNum;
             $('.batch-check').addClass('btn-warning');
             $('.batch-check').off('click');
@@ -215,6 +166,7 @@ function handler() {
                       location.reload();
                     }
                     $(".progress .progress-bar").attr("data-transitiongoal", Math.ceil(_checked/30));
+                    $(".progress .progress-bar").attr("aria-valuemax", Math.ceil(_total_num/30));
                       $('.progress .progress-bar').progressbar({
                             update: function(current_percentage, $this) {
                                 $this.css('background-color', 'rgb(0,' + Math.round(current_percentage / 100 * 255) + ', 0)');
@@ -227,7 +179,6 @@ function handler() {
 <script type="text/javascript" src="/static/js/bootstrap-progressbar.min.js"></script>
 <!--插件简介/演示地址 http://www.htmleaf.com/Demo/201505121817.html
 官网  http://www.minddust.com/project/bootstrap-progressbar/
-
 -->
 
 

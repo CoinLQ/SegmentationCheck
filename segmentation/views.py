@@ -414,7 +414,8 @@ def set_correct(request):
             CharacterStatistics.objects.filter(char=char).update(uncheck_cnt=F('uncheck_cnt')-1)
         Character.objects.filter(id=char_id).update(is_correct=is_correct)
         CharacterStatistics.objects.filter(char=char).update(err_cnt=F('err_cnt')-is_correct)
-        page_id = char_id[:14]
+        print char
+        print is_correct
         data = {'status': 'ok'}
     elif 'charArr[]' in request.POST:
         charArr = request.POST.getlist('charArr[]')
