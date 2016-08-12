@@ -330,7 +330,11 @@ class CharacterIndex(generic.ListView):
         return CharacterStatistics.objects.order_by('-uncheck_cnt')
 
     def sample(self):
-        return CharacterStatistics.objects.order_by('-uncheck_cnt')[0]
+        with open('static/alternative_char_list.txt') as f:
+            txt = f.read()
+            char_list = txt.split(',')
+        char = random.choice(char_list).strip()
+        return CharacterStatistics.objects.filter(char=char)
 
 class ErrPageIndex(generic.ListView):
     model = Character
