@@ -1,8 +1,11 @@
 from django.conf.urls import include, url
 from . import views
 from django.contrib.auth import views as auth_views
+from django.contrib import admin
+admin.autodiscover()
 
 urlpatterns = [
+    url(r'^admin/', include(admin.site.urls)),
     #url('^', include('django.contrib.auth.urls')),
     url(r'^$', views.index, name='index'),
     url(r'^demo/$', views.demo, name='demo'),

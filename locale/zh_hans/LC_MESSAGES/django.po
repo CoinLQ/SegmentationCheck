@@ -1,0 +1,92 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-08-15 06:58+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: segmentation/models.py:7
+msgid "Tripitaka|no"
+msgstr "藏经编号"
+
+#: segmentation/models.py:8
+msgid "Tripitaka|name"
+msgstr "藏经名称"
+
+#: segmentation/models.py:9
+msgid "Tripitaka|n_volumes"
+msgstr "藏经总册数"
+
+#: segmentation/models.py:10
+msgid "Tripitaka|start"
+msgstr "起始页"
+
+#: segmentation/models.py:11
+msgid "Tripitaka|end"
+msgstr "终止页"
+
+#: segmentation/models.py:17
+msgid "tripitaka"
+msgstr "藏经"
+
+#: segmentation/models.py:18
+msgid "tripitakas"
+msgstr "藏经"
+
+#: segmentation/models.py:22
+msgid "Segmentation|volume"
+msgstr "册"
+
+#: segmentation/models.py:23
+msgid "Segmentation|volumes"
+msgstr "册"
+
+#: segmentation/models.py:24
+msgid "Volume|no"
+msgstr "册编号"
+
+#: segmentation/models.py:25
+msgid "Volume|tripitaka"
+msgstr "所属藏经"
+
+#: segmentation/models.py:26
+msgid "Volume|name"
+msgstr "册名称"
+
+#: segmentation/models.py:27
+msgid "Volume|number"
+msgstr "册编号"
+
+#: segmentation/models.py:28
+msgid "Volume|n_pages"
+msgstr "册总页数"
+
+#: segmentation/models.py:29
+msgid "Volume|start"
+msgstr "起始页"
+
+#: segmentation/models.py:30
+msgid "Volume|end"
+msgstr "终止页"
+
+#, fuzzy
+#~| msgid "Volume"
+#~ msgid "Volume"
+#~ msgstr "册"
+
+#, fuzzy
+#~| msgid "Volumes"
+#~ msgid "Volumes"
+#~ msgstr "册"
