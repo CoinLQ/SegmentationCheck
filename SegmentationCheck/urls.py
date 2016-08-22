@@ -22,11 +22,18 @@ import segmentation.views
 urlpatterns = [
     url(r'^$', segmentation.views.index, name='main_index'),
     url(r'^segmentation/', include('segmentation.urls',namespace='segmentation')),
+    url(r'^preprocess/', include('preprocess.urls',namespace='preprocess')),
     url(r'^admin/', include(admin.site.urls)),
 ]
 
 if settings.DEBUG:
     urlpatterns += [
+        url(r'^cover/(?P<path>.*)$', serve, {
+            'document_root': settings.COVER_IMAGE_ROOT,
+        }),
+        url(r'^opage_images/(?P<path>.*)$', serve, {
+            'document_root': settings.OPAGE_IMAGE_ROOT,
+        }),
         url(r'^page_images/(?P<path>.*)$', serve, {
             'document_root': settings.PAGE_IMAGE_ROOT,
         }),

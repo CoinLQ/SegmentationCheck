@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block head %}
+<title>页面检查</title>
+{# 用于在html head部分添加内容，如引入css，js资源等#}
+
+<script type="text/javascript">
+
+</script>
+<link rel="stylesheet" type="text/css" media="screen" href="/static/css/svg.select.css">
+<style type="text/css">
+  #bookpage_cut {
+    margin-top: 30px;
+  }
+</style> 
+
+{% endblock %}
+
+
+{% block mainbody %}
+{# 主内容区 #}
+<div class="container">
+  <div>
+    <h3>{{ bookpage.version.name }} 第{{ bookpage.volume }}册 第{{ bookpage.page_no }}页</h3>
+    <button class="btn btn-primary" id="bar1">栏1</button>
+    <button class="btn btn-primary" id="bar2">栏2</button>
+    <button class="btn btn-primary" id="save">保存</button>
+  </div>
+<div id="bookpage_cut"></div>
+
+</div><!-- /.container -->
+{% endblock %}
+
+{% block foot %}
+{# 用于在body标签闭合前添加代码，如引入js代码等 #}
+<script src="/static/js/svg.min.js"></script>
+<script src="/static/js/svg.draw.min.js"></script>
+<script src="/static/js/svg.select.js"></script>
+<script src="/static/js/svg.resize.js"></script>
+<script src="/static/js/svg.draggable.min.js"></script>
+<script>
+var drawing = SVG('bookpage_cut').size({{ bookpage.width }}, {{ bookpage.height }});
+var image = drawing.image('{{ bookpage.image.url }}');
+image.size({{ bookpage.width }}, {{ bookpage.height }});
+var rect1 = null;
+var rect2 = null;
+{% if bookpage.version.bar_count == 3 %}
+var rect3 = null;
+{% endif %}
+$('#bar1').click(function() {
+  if (rect1 != null) {
+    return ;
+  }
+  var rect = drawing.rect();
+  rect.draw().attr('stroke', 'red').attr('stroke-width', 1).attr('fill', 'none');
+  rect.selectize().resize().on('resizedone', function(e){
+  });
+  rect1 = rect;
+});
+$('#bar2').click(function() {
+  if (rect2 != null) {
+    return ;
+  }
+  var rect = drawing.rect();
+  rect.draw().attr('stroke', 'red').attr('stroke-width', 1).attr('fill', 'none');
+  rect.selectize().resize().on('resizedone', function(e){
+  });
+  rect2 = rect;
+});
+{% if bookpage.version.bar_count == 3 %}
+$('#bar3').click(function() {
+  if (rect3 != null) {
+    return ;
+  }
+  var rect = drawing.rect();
+  rect.draw().attr('stroke', 'red').attr('stroke-width', 1).attr('fill', 'none');
+  rect.selectize().resize().on('resizedone', function(e){
+  });
+  rect3 = rect;
+});
+{% endif %}
+$('#save').click(function(){
+  if (rect1 == null) {
+    return ;
+  }
+  console.log(rect1.x() + ', ' + rect1.y());
+  console.log('w-h:' + rect1.width() + ', ' + rect1.height());
+  var data = {
+    'bar1': {
+      'top': rect1.y(),
+      'left': rect1.x(),
+      'width': rect1.width(),
+      'height': rect1.height()
+    }
+  };
+  if (rect2 != null) {
+    data.bar2 = {
+      'top': rect2.y(),
+      'left': rect2.x(),
+      'width': rect2.width(),
+      'height': rect2.height()
+    };
+  }
+  {% if bookpage.version.bar_count == 3 %}
+  data.bar3 = {
+      'top': rect3.y(),
+      'left': rect3.x(),
+      'width': rect3.width(),
+      'height': rect3.height()
+  };
+  {% endif %}
+  var post_data = {
+    'data': JSON.stringify(data),
+    'csrfmiddlewaretoken': '{{ csrf_token }}'
+  }
+  $.post('', post_data,
+  function(d) {
+    console.log('ok');
+  });
+});
+</script>
+{% endblock %}
+
+
+

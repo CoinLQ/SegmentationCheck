@@ -37,8 +37,14 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'django_extensions',
+
+
     'segmentation',
+    'catalogue',
+    'managerawdata',
+    'preprocess',
 #   'qiniustorage'
 )
 
@@ -99,6 +105,8 @@ MEDIA_URL = '/'
 
 #DEFAULT_FILE_STORAGE = 'qiniustorage.backends.QiniuStorage'
 #STATICFILES_STORAGE = 'qiniustorage.backends.QiniuStaticStorage'
+COVER_IMAGE_ROOT = MEDIA_ROOT+'cover/'
+OPAGE_IMAGE_ROOT = MEDIA_ROOT+'opage_images/'
 PAGE_IMAGE_ROOT = MEDIA_ROOT+'page_images/'
 CHARACTER_IMAGE_ROOT = MEDIA_ROOT+'character_images/'
 STATICFILES_DIRS = (
