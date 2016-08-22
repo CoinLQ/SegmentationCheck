@@ -3,6 +3,17 @@ from django.http import JsonResponse
 from managerawdata.models import OPage
 from django.views import generic
 
+from rest_framework import viewsets
+from .serializers import PreprocessSerializer
+
+
+class PreprocessViewSet(viewsets.ModelViewSet):
+    serializer_class = PreprocessSerializer
+    queryset = OPage.objects.all()
+    search_fields = ('pages_no', 'tripitaka')
+
+
+
 class PreprocessIndex(generic.ListView):
     model = OPage
     template_name = 'preprocess/preprocess.html'

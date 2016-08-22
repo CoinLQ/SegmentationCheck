@@ -26,7 +26,7 @@ window.onload = function(){
       cursor:ns-resize;
     }
 
-    .toolbar { 
+    .toolbar {
         margin:20px;
         padding:10px;
         background-color:#40E0D0;
@@ -34,7 +34,7 @@ window.onload = function(){
     }
 
   .selected {
-      background-color: #aaa !important; 
+      background-color: #aaa !important;
   }
 
 .unchecked-box{
@@ -56,7 +56,7 @@ window.onload = function(){
 {% block mainbody %}
 <div class="container-fluid">
     <div class='row show-grid'>
-        <div class='col-md-2 sidecol' > 
+        <div class='col-md-2 sidecol' >
             <div class="input-group">
               <input id="gopage_id" type="text" class="form-control" placeholder="pageid for...">
               <span class="input-group-btn">
@@ -81,7 +81,7 @@ window.onload = function(){
         </div><!--end col-md--->
         <div class='col-md-10'>
             <div class="unchecked-box hidden">
-                <div class="btn-toolbar toolbar" role="toolbar" aria-label="test" style=''> 
+                <div class="btn-toolbar toolbar" role="toolbar" aria-label="test" style=''>
                     <h3>{{ page.tripitaka.name }} 第{{ page.volume }}册 第{{ page.page_no }}页</h3>
                     <button class="btn btn-primary" id="bar1">栏1</button>
                     <button class="btn btn-primary" id="bar2">栏2</button>
@@ -105,12 +105,12 @@ window.onload = function(){
 function renderPage(_pageid){
     window._pageid = _pageid;
     $('#bookpage_cut').empty();
-   $.getJSON("/preprocess/cut/"+_pageid,function(result){ 
+   $.getJSON("/preprocess/cut/"+_pageid,function(result){
        console.log(result.opage);
-        obj= $.parseJSON(result);
+        obj= result;
         var draw = new SVG('bookpage_cut').size('200', '300');
         window.draw = draw;
-        var img_path = obj.image_url;
+        var img_path = obj.image;
         var image = draw.image(img_path).loaded(function(loader) {
             this.size(loader.width, loader.height);
             var factor = 0.5;
