@@ -32,7 +32,7 @@ class Tripitaka(models.Model):
         verbose_name_plural = _('tripitakas')
 
 class Volume(models.Model):
-    tripitaka = models.ForeignKey(Tripitaka, null=False, verbose_name = _('Volume|tripitaka'))
+    tripitaka = models.ForeignKey(Tripitaka, null=False, related_name='volumes', verbose_name = _('Volume|tripitaka'))
     number = models.SmallIntegerField(verbose_name = _('Volume|number'))
     pages_count = models.SmallIntegerField(verbose_name = _('Volume|pages_count'))
 

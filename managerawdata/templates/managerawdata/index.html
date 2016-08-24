@@ -1,23 +1,29 @@
 {% extends "base.html" %}
 {% block head %}
 <title>原始数据管理</title>
-<link href="/static/css/bootstrap-select.min.css" media="all" rel="stylesheet" type="text/css" />	
-<link href="/static/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />	
+<link href="/static/css/bootstrap-select.min.css" media="all" rel="stylesheet" type="text/css" />
+<link href="/static/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
 {% endblock %}
 {% block mainbody %}
 <div class="container">
 
-     <form class="form-inline">
+
           <select id='Tripitaka' class="selectpicker" data-live-search="true" >
             {% for tri in tripitaka_list%}
-            <option value='{{tri.code}}'>{{ tri.name}}</option>
+            <option value='{{tri.id}}'>{{ tri.name}}</option>
             {% endfor %}
           </select>
-    </form>
 
-    <form enctype="multipart/form-data">
+
+          <select id='Volume' class="selectpicker" data-live-search="true" >
+          </select>
+    <form enctype="multipart/form-data" class="hidden">
+        <div class="form-group">
+          <label for="page">起始页:</label>
+          <input type="number" class="form-control" id="start_page">
+        </div>
         {% csrf_token %}
-        <input id="imagefile" class="file" type="file" multiple >
+        <input id="imagefile" class="file hidden" type="file" multiple >
     </form>
 </div>
 
@@ -41,12 +47,45 @@
 
 
 <script>
+var tripitaka_id = $('#Tripitaka').find("option:selected").attr("value");
+var volume_id, start_page;
+
 $('#imagefile').fileinput({
     language: 'zh',
     uploadUrl: 'opage/upload',
     //allowedFileExtensions : ['jpg', 'png','gif'],
-    uploadExtraData: {Tripitaka:'H'},
+
+    uploadExtraData: {tripitaka_id: tripitaka_id,
+        volume_id: volume_id, start_page: start_page},
 });
+
+$('#Tripitaka').on('changed.bs.select', function (e) {
+  var request = $.getJSON({
+        type: 'GET',
+        url: '/api/tripitaka/' + e.target.value + '/',
+    });
+  request.done(function(data){
+
+        $("#Volume").empty();
+        $("#Volume").append(
+                $("<option></option>").attr(
+                    "value", "").text("--- Select One ---")
+            );
+        var volumes = data.volumes;
+       for (var i = 0; i < data.volumes.length; i++) {
+            $("#Volume").append(
+                $("<option></option>").attr(
+                    "value", volumes[i].id).text(volumes[i].number)
+            );
+        }
+        $("#start_page").val("56");
+        $('#Volume').selectpicker('refresh');
+    });
+});
+
+$('#Volume').on('changed.bs.select', function (e) {
+    $("form").removeClass("hidden");
+    });
 </script>
 
 
