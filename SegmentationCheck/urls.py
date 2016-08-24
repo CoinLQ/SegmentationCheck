@@ -21,9 +21,11 @@ import segmentation.views
 
 urlpatterns = [
     url(r'^$', segmentation.views.index, name='main_index'),
-    url(r'^segmentation/', include('segmentation.urls',namespace='segmentation')),
-    url(r'^preprocess/', include('preprocess.urls',namespace='preprocess')),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^managerawdata/', include('managerawdata.urls',namespace='managerawdata')),
+    url(r'^preprocess/', include('preprocess.urls',namespace='preprocess')),
+    url(r'^segmentation/', include('segmentation.urls',namespace='segmentation')),
+    url(r'^api/', include('api.urls',namespace='api')),
 ]
 
 if settings.DEBUG:

@@ -6,5 +6,5 @@ class PreprocessSerializer(serializers.ModelSerializer):
     class Meta:
         model = OPage
         image = serializers.URLField
-        fields = ('id', 'tripitaka', 'pages_no', 'height', 'width',
+        fields = ('id', 'tripitaka','volume', 'pages_no', 'height', 'width',
             'image')

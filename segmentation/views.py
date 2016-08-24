@@ -50,9 +50,7 @@ class MyJsonEncoder(DjangoJSONEncoder):
                 u'line_no': obj.line_no,
                 u'char_no': obj.char_no,
                 u'top': obj.top,
-                u'bottom': obj.bottom,
-                u'is_correct': obj.is_correct,
-            }
+                u'bottom': obj.bottom, u'is_correct': obj.is_correct, }
         return super(MyJsonEncoder, self).default(obj)
 
 class charJsonEncoder(DjangoJSONEncoder):
