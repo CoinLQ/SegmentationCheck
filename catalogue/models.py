@@ -34,7 +34,9 @@ class Tripitaka(models.Model):
 class Volume(models.Model):
     tripitaka = models.ForeignKey(Tripitaka, null=False, related_name='volumes', verbose_name = _('Volume|tripitaka'))
     number = models.SmallIntegerField(verbose_name = _('Volume|number'))
-    pages_count = models.SmallIntegerField(verbose_name = _('Volume|pages_count'))
+    pages_count = models.SmallIntegerField(default=0,verbose_name = _('Volume|pages_count'))
+    start_page = models.SmallIntegerField(default=0,verbose_name = _('Volume|start_page'))
+    end_page = models.SmallIntegerField(default=0,verbose_name = _('Volume|end_page'))
 
     class Meta:
         verbose_name = _('Segmentation|volume')

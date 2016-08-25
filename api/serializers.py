@@ -13,7 +13,7 @@ class OPageSerializer(serializers.ModelSerializer):
 class VolumeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Volume
-        fields = ('id', 'number')
+        fields = ('id', 'number','start_page','end_page')
 
 class TripitakaSerializer(serializers.ModelSerializer):
     volumes = VolumeSerializer(many=True, read_only=True)
