@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block head %}
+<title>文字处理</title>
+<link rel="stylesheet" type="text/css" media="screen" href="/static/redactor/css/redactor.css">
+
+<style>
+.redactor-in {
+    padding: 24px;
+    border: 1px dashed rgba(0, 0, 0, .15);
+    border-top: none;
+    background: #f6f9fe;
+}
+</style>
+{% endblock %}
+
+
+{% block mainbody %}
+<p>
+    <button id="btn-save" style="display: none;" type="primary" outline>保存</button>
+    <button id="btn-cancel" style="display: none;" outline>Cancel</button>
+
+    <button id="btn-corner" style="display: inline-block;" type="primary" onclick="containSelectedText('<', '>')">夹注</button>
+    <button id="btn-dollar" style="display: inline-block;" type="primary" onclick="containSelectedText('【', '】')">增字</button>
+    <button style="display: inline-block;" type="primary" onclick="markSelectedText('@')">题记</button>
+    <button style="display: inline-block;" type="primary" onclick="containSelectedText('(', ')')">非正文内容</button>
+    <button style="display: inline-block;" type="primary" onclick="markSelectedText('$')">衍文</button>
+    <button style="display: inline-block;" type="primary" onclick="containSelectedText('{', '}')">有缺损</button>
+    <button style="display: inline-block;" type="primary" onclick="replaceSelectedText('?')">有疑问</button>
+</p>
+
+<div id="redactor">{{ text }}</div>
+{% endblock %}
+{% block foot  %}
+<script src="/static/redactor/redactor.js"></script>
+<script>
+function replaceSelectedText(replacementText) {
+    var sel, range, text;
+    if (window.getSelection) {
+        sel = window.getSelection();
+        text = window.getSelection().toString();
+        if (sel.rangeCount) {
+            range = sel.getRangeAt(0);
+            range.deleteContents();
+            range.insertNode(document.createTextNode(replacementText));
+        }
+    } else if (document.selection && document.selection.createRange) {
+        range = document.selection.createRange();
+        text = range.text;
+        range.text = replacementText;
+    }
+}
+
+
+function markSelectedText(mark) {
+    var sel, range, text;
+    if (window.getSelection) {
+        sel = window.getSelection();
+        text = sel.toString();
+        if (text == "")
+            return;
+        if (sel.rangeCount) {
+            range = sel.getRangeAt(0);
+            range.deleteContents();
+            range.insertNode(document.createTextNode(mark.concat(text).concat(mark)));
+        }
+    } else if (document.selection && document.selection.createRange) {
+        range = document.selection.createRange();
+        text = range.text;
+        range.text = mark.concat(text).concat(mark);
+    }
+}
+
+function containSelectedText(con1,con2) {
+    var sel, range, text;
+    if (window.getSelection) {
+        sel = window.getSelection();
+        text = sel.toString();
+        if (text == "")
+            return;
+        if (sel.rangeCount) {
+            range = sel.getRangeAt(0);
+            range.deleteContents();
+            range.insertNode(document.createTextNode(con1.concat(text).concat(con2)));
+        }
+    } else if (document.selection && document.selection.createRange) {
+        range = document.selection.createRange();
+        text = range.text;
+        range.text = con1.concat(text).concat(con2);
+    }
+}
+
+$(function()
+{
+    window.n = $('#redactor').redactor({
+        clickToEdit: true,
+        clickToCancel: '#btn-cancel',
+        clickToSave: '#btn-save',
+        callbacks: {
+            save: function(html)
+            {
+                console.log('save', html);
+            },
+            cancel: function(html)
+            {
+                console.log('cancel', html);
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

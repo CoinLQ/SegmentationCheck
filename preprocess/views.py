@@ -1,6 +1,7 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, render_to_response
 from django.http import JsonResponse
 from managerawdata.models import OPage
+from segmentation.models import Page
 from django.views import generic
 import json
 
@@ -33,3 +34,8 @@ def opage_cut(request, opage_id):
 
         data = {'status': 'ok'}
     return JsonResponse(data)
+
+def text_process(request, page_id):
+    page = get_object_or_404(Page, pk=page_id)
+    text = page.text
+    return render_to_response('preprocess/text_process.html', {'text': text})
