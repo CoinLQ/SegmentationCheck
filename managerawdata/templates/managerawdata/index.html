@@ -8,22 +8,22 @@
 <div class="container">
 
 
-          <select id='Tripitaka' class="selectpicker" data-live-search="true" >
+          <select id='Tripitaka' class="selectpicker show-menu-arrow" data-live-search="true" >
+            <option >====大藏经===</option>
             {% for tri in tripitaka_list%}
             <option value='{{tri.id}}'>{{ tri.name}}</option>
             {% endfor %}
           </select>
 
 
-          <select id='Volume' class="selectpicker" data-live-search="true" >
+          <select id='Volume' class="selectpicker show-menu-arrow" data-live-search="true" >
           </select>
     <form enctype="multipart/form-data" class="hidden">
         <div class="form-group">
           <label for="page">起始页:</label>
           <input type="number" class="form-control" id="start_page">
         </div>
-        {% csrf_token %}
-        <input id="imagefile" class="file hidden" type="file" multiple >
+        <input id="imagefile" class="file" type="file" multiple >
     </form>
 </div>
 
@@ -47,17 +47,16 @@
 
 
 <script>
-var tripitaka_id = $('#Tripitaka').find("option:selected").attr("value");
-var volume_id, start_page;
+var volumes = [];
 
 $('#imagefile').fileinput({
     language: 'zh',
     uploadUrl: 'opage/upload',
     //allowedFileExtensions : ['jpg', 'png','gif'],
-
-    uploadExtraData: {tripitaka_id: tripitaka_id,
-        volume_id: volume_id, start_page: start_page},
+    //uploadExtraData: {'tripitaka_id': 1, 'volume_id': 2, 'start_page': 3},
 });
+
+
 
 $('#Tripitaka').on('changed.bs.select', function (e) {
   var request = $.getJSON({
@@ -69,23 +68,47 @@ $('#Tripitaka').on('changed.bs.select', function (e) {
         $("#Volume").empty();
         $("#Volume").append(
                 $("<option></option>").attr(
-                    "value", "").text("--- Select One ---")
+                    "value", "").text("--- 册` ---")
             );
-        var volumes = data.volumes;
+        volumes = data.volumes;
        for (var i = 0; i < data.volumes.length; i++) {
             $("#Volume").append(
                 $("<option></option>").attr(
-                    "value", volumes[i].id).text(volumes[i].number)
+                    "value", i).text(volumes[i].number)
             );
         }
-        $("#start_page").val("56");
         $('#Volume').selectpicker('refresh');
     });
 });
 
+function setExtraData(){
+    var tripitaka_id = $('#Tripitaka').find("option:selected").attr("value");
+    var volume_idx = $('#Volume').find("option:selected").attr("value");
+    var volume_id = volumes[volume_idx].id;
+    var start_page = $('#start_page').val();
+    $('#imagefile').fileinput('refresh', 
+        {
+            allowedFileExtensions : ['jpg', 'png','gif'],
+            uploadExtraData: {
+                'tripitaka_id': tripitaka_id, 
+                'volume_id': volume_id, 
+                'start_page': start_page,
+            },
+        }
+    );
+}
+
 $('#Volume').on('changed.bs.select', function (e) {
+    var volume_idx = $('#Volume').find("option:selected").attr("value");
+    var start_page = parseInt(volumes[volume_idx].start_page);
+    var end_page = parseInt(volumes[volume_idx].end_page);
+    console.log(end_page);
+    $("#start_page").val(start_page);
+    $("#start_page").attr("min",start_page);
+    $("#start_page").attr("max",end_page);
     $("form").removeClass("hidden");
-    });
+    setExtraData();
+});
 </script>
 
 
