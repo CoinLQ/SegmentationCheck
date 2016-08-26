@@ -56,10 +56,8 @@ pre[rel="REEL"]::before {
   max-height: 36vw;
 }
 .action_buttons {
-  position: relative;
   z-index: 80;
   left:10px;
-  top:-25vw;
 }
 
 @media screen and (max-width: 414px) {

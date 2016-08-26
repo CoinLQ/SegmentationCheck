@@ -15,29 +15,119 @@
 
 
 {% block mainbody %}
+<div class="container">
+<div class="h3">文本预处理</div>
+<div id="be_saved" class="alert alert-success" style="display: none">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    保存成功.
+  </div>
+    <div class="row">
+        <div class="col-md-2 col-xs-2">&nbsp;</div>
+        <div class="col-md-8 col-xs-8 gallery">
+            <div id="img{{ page.id }}"></div>
+        </div>
+        <div class="col-md-12 col-xs-12">
+        <div class="btn-group action_buttons">
+        <button class="btn btn-primary" onclick="containSelectedText('<', '>')">夹注</button>
+        <button class="btn btn-primary" onclick="markSelectedText('@')">题记</button>
+        <button class="btn btn-primary" onclick="markSelectedText('$')">衍文</button>
+        <button id="btn-dollar" class="btn btn-default" onclick="containSelectedText('【', '】')">增字</button>
+        <button class="btn btn-default" onclick="containSelectedText('(', ')')">非正文内容</button>
+        <button class="btn btn-warning" onclick="containSelectedText('{', '}')">有缺损</button>
+        <button class="btn btn-warning" onclick="replaceSelectedText('?')">有疑问</button>
+
+        </div>
+                <button class="btn btn-warning pull-right" onclick="toggle_view()">切换版式</button>
+                <button id="btn-save" class="btn btn-primary pull-right" onclick="save_to_page()">保存</button>
+        </div>
+        <div class="col-md-12 col-xs-12 reel">
+        <pre rel="经文" class=" language-markup">
+        <div id="redactor" class="tnt">{{page.text|escape|linebreaks}}</div>
+        </pre>
+
+    </div>
+</div>
+
+
+    </div>
 <p>
-    <button id="btn-save" style="display: none;" type="primary" outline>保存</button>
+
     <button id="btn-cancel" style="display: none;" outline>Cancel</button>
 
-    <button id="btn-corner" style="display: inline-block;" type="primary" onclick="containSelectedText('<', '>')">夹注</button>
-    <button id="btn-dollar" style="display: inline-block;" type="primary" onclick="containSelectedText('【', '】')">增字</button>
-    <button style="display: inline-block;" type="primary" onclick="markSelectedText('@')">题记</button>
-    <button style="display: inline-block;" type="primary" onclick="containSelectedText('(', ')')">非正文内容</button>
-    <button style="display: inline-block;" type="primary" onclick="markSelectedText('$')">衍文</button>
-    <button style="display: inline-block;" type="primary" onclick="containSelectedText('{', '}')">有缺损</button>
-    <button style="display: inline-block;" type="primary" onclick="replaceSelectedText('?')">有疑问</button>
 </p>
 
-<div id="redactor">{{ text }}</div>
+
 {% endblock %}
 {% block foot  %}
+<script src="/static/js/svg.min.js"></script>
 <script src="/static/redactor/redactor.js"></script>
+<script src="http://static.runoob.com/assets/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script>
+
+// using jQuery
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+function sameOrigin(url) {
+    // test that a given url is a same-origin URL
+    // url could be relative or scheme relative or absolute
+    var host = document.location.host; // host + port
+    var protocol = document.location.protocol;
+    var sr_origin = '//' + host;
+    var origin = protocol + sr_origin;
+    // Allow absolute or scheme relative URLs to same origin
+    return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+        (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+        // or any other URL that isn't scheme relative or absolute i.e relative.
+        !(/^(\/\/|http:|https:).*/.test(url));
+}
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+var $page_id = "{{page.id}}";
+
+$(function(){
+
+    var draw = new SVG("img{{ page.id }}").size('650', '325');
+    var _img_path = 'http://ob21oo6fl.bkt.clouddn.com/{{ page.image}}'
+    var image = draw.image(_img_path)
+    draw.viewbox({ x: 0, y: 0, width:{{page.width }} , height:  {{page.height }}})
+    var leftline = draw.line({{page.left}},0,{{page.left}},900).addClass('segment-line');
+    var rightline = draw.line({{page.right}},0,{{page.right}},900).addClass('segment-line');
+
+})
 function replaceSelectedText(replacementText) {
     var sel, range, text;
     if (window.getSelection) {
         sel = window.getSelection();
         text = window.getSelection().toString();
+        if (text == "")
+            return;
         if (sel.rangeCount) {
             range = sel.getRangeAt(0);
             range.deleteContents();
@@ -91,7 +181,7 @@ function containSelectedText(con1,con2) {
 
 $(function()
 {
-    window.n = $('#redactor').redactor({
+    $('#redactor').redactor({
         clickToEdit: true,
         clickToCancel: '#btn-cancel',
         clickToSave: '#btn-save',
@@ -107,5 +197,40 @@ $(function()
         }
     });
 });
+
+function toggle_view(){
+    if ($("#redactor").hasClass("tnt")){
+        $("#redactor").removeClass("tnt")
+    } else {
+        $("#redactor").addClass("tnt")
+    }
+}
+
+function unescapeHtml(safe) {
+    return safe.replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#039;/g, "'");
+}
+
+function save_to_page(){
+    var text = $("#redactor p").html();
+    text = text.replace(/<br>/g,"\r\n");
+    text = unescapeHtml(text);
+    var post_data = {'id': $page_id,'text': text};
+    $.ajax({
+    url: '/api/page/'+ $page_id,
+    type: 'PUT',
+    dataType: "json",
+    contentType: "application/json",
+    data: JSON.stringify(post_data),
+    success: function(result) {
+        $("#be_saved").fadeIn();
+        $("#be_saved").fadeOut();
+        }
+    });
+
+}
 </script>
 {% endblock %}

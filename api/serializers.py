@@ -1,6 +1,7 @@
 from managerawdata.models import OPage
 from rest_framework import serializers
 from catalogue.models import Tripitaka, Volume
+from segmentation.models import Page
 
 
 class OPageSerializer(serializers.ModelSerializer):
@@ -9,6 +10,10 @@ class OPageSerializer(serializers.ModelSerializer):
         fields = ('id', 'tripitaka','volume', 'page_no','page_type','height', 'width',
             'image')
 
+class PageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Page
+        fields = ('id', 'text', 'is_correct')
 
 class VolumeSerializer(serializers.ModelSerializer):
     class Meta:

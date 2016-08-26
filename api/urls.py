@@ -3,10 +3,11 @@ from . import views
 from rest_framework import routers
 
 from rest_framework.routers import DefaultRouter
-from .views import OPageViewSet, TripitakaViewSet
+from .views import PageViewSet, OPageViewSet, TripitakaViewSet
 
-router = routers.SimpleRouter(trailing_slash=True)
+router = routers.SimpleRouter(trailing_slash=False)
 router.register(r'opage', OPageViewSet)
+router.register(r'page', PageViewSet)
 router.register(r'tripitaka', TripitakaViewSet)
 urlpatterns = router.urls
 

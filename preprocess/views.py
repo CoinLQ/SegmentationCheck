@@ -39,5 +39,5 @@ def opage_cut(request, opage_id):
 
 def text_process(request, page_id):
     page = get_object_or_404(Page, pk=page_id)
-    text = page.text
-    return render_to_response('preprocess/text_process.html', {'text': text})
+    return render_to_response('preprocess/text_process.html', {'page': page})
+
