@@ -6,7 +6,7 @@ from catalogue.models import Tripitaka, Volume
 class OPageSerializer(serializers.ModelSerializer):
     class Meta:
         model = OPage
-        fields = ('id', 'tripitaka','volume', 'pages_no', 'height', 'width',
+        fields = ('id', 'tripitaka','volume', 'page_no','page_type','height', 'width',
             'image')
 
 

@@ -27,7 +27,10 @@ def opage_upload(request):
         tripitaka_id = request.POST['tripitaka_id']
         volume_id = request.POST['volume_id']
         start_page = request.POST['start_page']
-        page_no = int(start_page) + int(request.POST['file_id'])
+        page_type = int(request.POST['page_type'])
+
+        page_no = int(start_page) + int(request.POST['file_id'])*page_type
+
         tripitaka = Tripitaka.objects.get(pk = tripitaka_id)
         volume = Volume.objects.get(pk = volume_id)
         page_id = '{0}-v{1:05}p{2:05}'.format(tripitaka.code,volume.number,page_no)
@@ -38,7 +41,8 @@ def opage_upload(request):
                 id = page_id,
                 tripitaka = tripitaka,
                 volume = volume,
-                pages_no = page_no,
+                page_type = page_type,
+                page_no = page_no,
                 image = image
             )
         opage.save()

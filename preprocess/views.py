@@ -33,6 +33,8 @@ def opage_cut(request, opage_id):
 #            page.save()
 
         data = {'status': 'ok'}
+    else:
+        data = {'status': 'error'}
     return JsonResponse(data)
 
 def text_process(request, page_id):

@@ -15,11 +15,11 @@ window.onload = function(){
 <style>
     .highlight {
       stroke: red;
-      stroke-width: 2;
+      stroke-width: 6;
     }
     .segment-line {
       stroke: blue;
-      stroke-width: 2;
+      stroke-width: 6;
     }
 
     .cursor_ns {
@@ -82,6 +82,8 @@ window.onload = function(){
             <div class="unchecked-box hidden">
                 <div class="btn-toolbar toolbar" role="toolbar" aria-label="test" style=''>
                     <h3>{{ page.tripitaka.name }} 第{{ page.volume }}册 第{{ page.page_no }}页</h3>
+                    <button class="btn btn-primary" id="bar1">栏1</button>
+                    <button class="btn btn-primary" id="bar2">栏2</button>
                     <button class="btn btn-primary" id="save">保存</button>
                 </div> <!--end toolbar-->
             </div><!--end hidden-->
@@ -99,56 +101,77 @@ window.onload = function(){
 <script src="/static/js/svg.resize.js"></script>
 <script src="/static/js/svg.draggable.min.js"></script>
 <script>
-var rects = [];
-var texts = [];
 function renderPage(_pageid){
-    var bars_count = 2;
     window._pageid = _pageid;
     $('#bookpage_cut').empty();
-   $.getJSON("/api/opage/"+_pageid+"/",function(result){ 
+   $.getJSON("/api/opage/"+_pageid,function(result){ 
+        console.log(result);
+        console.log(result['pages_no']);
         var factor = 0.5;
         width = result.width * factor;
         height = result.height * factor;
-        var draw = new SVG('bookpage_cut')
-            .size(width, height);
-        var image = draw.image(result.image)
+        var drawing = new SVG('bookpage_cut')
+            .size(width, height)
+            .viewbox({ x: 0, y: 0, width: width, height: height });
+        var image = drawing.image(result.image)
             .size(width,height); 
+        var rect = drawing.rect(100,100).fill('none'); 
+        rect.draw().attr('stroke', 'red').attr('stroke-width', 1);
 
-        page_no = result['page_no'];
-        page_type = result['page_type'];
-        page_height = result['height'];
-        var offset = 20;
-        bars_width = (result['width']/page_type - offset)*factor;
-        bars_height = (page_height/bars_count - offset)*factor;
+        var rect1 = null;
+        var rect2 = null;
+        $('#bar1').click(function() {
+          if (rect1 != null) {
+            return ;
+          }
+          var rect = drawing.rect();
+          rect.draw().attr('stroke', 'red').attr('stroke-width', 1).attr('fill', 'none');
+          rect.selectize().resize().on('resizedone', function(e){
+          });
+          rect1 = rect;
+        });
+        $('#bar2').click(function() {
+          if (rect2 != null) {
+            return ;
+          }
+          var rect = drawing.rect();
+          rect.draw().attr('stroke', 'red').attr('stroke-width', 1).attr('fill', 'none');
+          rect.selectize().resize().on('resizedone', function(e){
+          });
+          rect2 = rect;
+        });//end bar2
+        $('#save').click(function(){
+                console.log('save');
+              if (rect1 == null) {
+                return ;
+              }
+              console.log(rect1.x() + ', ' + rect1.y());
+              console.log('w-h:' + rect1.width() + ', ' + rect1.height());
+              var data = {
+                'bar1': {
+                  'top': rect1.y(),
+                  'left': rect1.x(),
+                  'width': rect1.width(),
+                  'height': rect1.height()
+                }
+              };
+              if (rect2 != null) {
+                data.bar2 = {
+                  'top': rect2.y(),
+                  'left': rect2.x(),
+                  'width': rect2.width(),
+                  'height': rect2.height()
+                };
+              }
+              var post_data = {
+                'data': JSON.stringify(data),
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+              }
+              $.post('/preprocess/opage_cut/'+_pageid, post_data, function(d) {
+                    console.log('ok');
+                  });
+        });//end save
 
-
-        for(var j=0;j<page_type;j++){
-            for(var i=0;i<bars_count;i++){
-               var rect = draw
-                    .rect(bars_width,bars_height)
-                    .move((offset + bars_width)*j,(offset+bars_height)*i)
-                    .fill('none')
-                    .addClass('segment-line'); 
-                var id = rect.node.id;
-                rects[id] = rect;
-                lable = 'p'+(page_no+j) + 'b'+(i+1);
-                texts[id] = draw
-                    .text(lable)
-                    .fill('red')
-                    .move(rect.x(),rect.y());
-                rect.selectize().resize().on('resizedone', function(e){ 
-                    rect = e.target;
-                    console.log(rect.id);
-                    var id = rect.id;
-                    texts[id].move(rects[id].x(),rects[id].y());
-                });
-            }
-        }
-
-        draw.viewbox({ x: 0, y: 0, width: width, height: height });
-        
-        
-       
     });
 }
 $(function(){

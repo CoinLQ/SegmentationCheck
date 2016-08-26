@@ -3,6 +3,78 @@
 <title>原始数据管理</title>
 <link href="/static/css/bootstrap-select.min.css" media="all" rel="stylesheet" type="text/css" />
 <link href="/static/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+
+    <style>
+/* .slideThree */
+.slideThree {
+  width: 80px;
+  height: 26px;
+  background: #333;
+  margin: 20px auto;
+  position: relative;
+  -moz-border-radius: 50px;
+  -webkit-border-radius: 50px;
+  border-radius: 50px;
+  -moz-box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 0.2);
+  -webkit-box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 0.2);
+  box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 0.2);
+}
+.slideThree:after {
+  content: '单页';
+  color: #000;
+  position: absolute;
+  right: 10px;
+  z-index: 0;
+  font: 12px/26px Arial, sans-serif;
+  font-weight: bold;
+  text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.15);
+}
+.slideThree:before {
+  content: '双页';
+  color: #00bf00;
+  position: absolute;
+  left: 10px;
+  z-index: 0;
+  font: 12px/26px Arial, sans-serif;
+  font-weight: bold;
+}
+.slideThree label {
+  display: block;
+  width: 34px;
+  height: 20px;
+  cursor: pointer;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  z-index: 1;
+  background: #fcfff4;
+  background: -moz-linear-gradient(top, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+  background: -webkit-linear-gradient(top, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+  background: linear-gradient(to bottom, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+  -moz-border-radius: 50px;
+  -webkit-border-radius: 50px;
+  border-radius: 50px;
+  -moz-transition: all 0.4s ease;
+  -o-transition: all 0.4s ease;
+  -webkit-transition: all 0.4s ease;
+  transition: all 0.4s ease;
+  -moz-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
+}
+.slideThree input[type=checkbox] {
+  visibility: hidden;
+}
+.slideThree input[type=checkbox]:checked + label {
+  left: 43px;
+}
+
+/* end .slideThree */
+
+
+
+</style>
+
 {% endblock %}
 {% block mainbody %}
 <div class="container">
@@ -20,7 +92,12 @@
           </select>
     <form enctype="multipart/form-data" class="hidden">
         <div class="form-group">
-          <label for="page">起始页:</label>
+			
+		<div class="slideThree">  
+		  <input type="checkbox" value="None" id="slideThree" name="page_type"  />
+		  <label for="slideThree"></label>
+		</div>
+          <label for="start_page">起始页:</label>
           <input type="number" class="form-control" id="start_page">
         </div>
         <input id="imagefile" class="file" type="file" multiple >
@@ -85,7 +162,14 @@ function setExtraData(){
     var tripitaka_id = $('#Tripitaka').find("option:selected").attr("value");
     var volume_idx = $('#Volume').find("option:selected").attr("value");
     var volume_id = volumes[volume_idx].id;
-    var start_page = $('#start_page').val();
+    var start_page = $('#start_page').val() ;
+    var page_type ;
+    if(true == $("input[name='page_type']").prop('checked')){
+        page_type = 2;
+    }
+    else{
+        page_type = 1;
+    }
     $('#imagefile').fileinput('refresh', 
         {
             allowedFileExtensions : ['jpg', 'png','gif'],
@@ -93,6 +177,7 @@ function setExtraData(){
                 'tripitaka_id': tripitaka_id, 
                 'volume_id': volume_id, 
                 'start_page': start_page,
+                'page_type': page_type,
             },
         }
     );
@@ -102,11 +187,12 @@ $('#Volume').on('changed.bs.select', function (e) {
     var volume_idx = $('#Volume').find("option:selected").attr("value");
     var start_page = parseInt(volumes[volume_idx].start_page);
     var end_page = parseInt(volumes[volume_idx].end_page);
-    console.log(end_page);
     $("#start_page").val(start_page);
     $("#start_page").attr("min",start_page);
     $("#start_page").attr("max",end_page);
     $("form").removeClass("hidden");
+});
+$('#imagefile').on('change', function(event) {
     setExtraData();
 });
 </script>
