@@ -28,7 +28,7 @@ from PIL import Image
 class OPage(models.Model):
     id = models.CharField(max_length=32,primary_key = True )
     tripitaka = models.ForeignKey(Tripitaka)
-    volume = models.ForeignKey(Volume)
+    volume = models.ForeignKey(Volume, related_name='o_pages')
     page_no = models.SmallIntegerField(default = 0)
     page_type = models.SmallIntegerField(default =1 ) #1single 2 dual
     image = models.ImageField(upload_to = 'opage_images',max_length=512,null=True,blank=True)

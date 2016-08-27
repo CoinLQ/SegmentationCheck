@@ -2,15 +2,16 @@
 {% block head %}
 <title>切错页面索引</title>
 <link rel="stylesheet" type="text/css" media="screen" href="/static/css/svg.select.css">
+<link href="/static/css/bootstrap-select.min.css" media="all" rel="stylesheet" type="text/css" />
 <link href="/static/css/bootstrap-slider.min.css" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/tingle.min.css" media="all">
 <script type="text/javascript">
-window.onload = function(){
-   //去掉默认的contextmenu事件，否则会和右键事件同时出现。
-   document.oncontextmenu = function(e){
-       e.preventDefault();
-   };
-}
+// window.onload = function(){
+//    //去掉默认的contextmenu事件，否则会和右键事件同时出现。
+//    document.oncontextmenu = function(e){
+//        e.preventDefault();
+//    };
+// }
 </script>
 <style>
     .highlight {
@@ -55,6 +56,18 @@ window.onload = function(){
 {% endblock %}
 {% block mainbody %}
 <div class="container-fluid">
+    <div class="select_panel">
+        <div class="h4">选择藏经所在册</div>
+              <select id='Tripitaka' class="selectpicker show-menu-arrow" data-live-search="true" >
+                <option >====大藏经===</option>
+                {% for tri in tripitaka_list%}
+                <option value='{{tri.id}}'>{{ tri.name}}</option>
+                {% endfor %}
+              </select>
+              <select id='Volume' class="selectpicker show-menu-arrow" data-live-search="true" >
+              </select>
+
+    </div>
     <div class='row show-grid'>
         <div class='col-md-2 sidecol' >
             <div class="input-group">
@@ -93,6 +106,7 @@ window.onload = function(){
 </div><!-- /.container -->
 {% endblock %}
 {% block foot  %}
+<script src="/static/js/bootstrap-select.min.js"></script>
 <script src="/static/js/svg.min.js"></script>
 <script src="/static/js/svg.draw.min.js"></script>
 <script src="/static/js/svg.select.js"></script>
@@ -102,10 +116,12 @@ window.onload = function(){
 var rects = [];
 var texts = [];
 function renderPage(_pageid){
-    var bars_count = 2;
+    var volume_idx = $('#Volume').find("option:selected").data("idx");
+    debugger;
+    var bars_count = $volumes[volume_idx].bars_count;
     window._pageid = _pageid;
     $('#bookpage_cut').empty();
-   $.getJSON("/api/opage/"+_pageid+"/",function(result){
+   $.getJSON("/api/o_page/"+_pageid,function(result){
         var factor = 0.5;
         width = result.width * factor;
         height = result.height * factor;
@@ -151,7 +167,7 @@ function renderPage(_pageid){
 
     });
 }
-$(function(){
+function binding_opage(){
     $('#pageindext tbody tr').click(function (e) {
         $('.unchecked-box').removeClass('hidden');
         $('tr').removeClass("selected");
@@ -160,7 +176,7 @@ $(function(){
         renderPage(_pageid);
     });
 
-})
+}
 $(function(){
     $('#goPage_btn').click(function () {
         $('.unchecked-box').removeClass('hidden');
@@ -169,6 +185,47 @@ $(function(){
     });
 
 })
+
+$('#Tripitaka').on('changed.bs.select', function (e) {
+  var request = $.getJSON({
+        type: 'GET',
+        url: '/api/tripitaka/' + e.target.value ,
+    });
+  request.done(function(data){
+
+        $("#Volume").empty();
+        $("#Volume").append(
+                $("<option></option>").attr(
+                    "value", "").text("--- 册 ---")
+            );
+        $volumes = data.volumes;
+       for (var i = 0; i < data.volumes.length; i++) {
+            $("#Volume").append(
+                $("<option></option>").attr(
+                    "value", $volumes[i].id).text($volumes[i].number).attr('data-idx', i)
+            );
+        }
+        $('#Volume').selectpicker('refresh');
+    });
+});
+
+$('#Volume').on('changed.bs.select', function (e) {
+    var request = $.getJSON({
+        type: 'GET',
+        url: '/api/volume/' + e.target.value ,
+    });
+  request.done(function(data){
+
+        $("#pageindext tbody").empty();
+
+        opages = data.o_pages;
+        for (var i = 0; i < data.o_pages.length; i++) {
+            $("#pageindext tbody").append(
+                $("<tr></tr>").append($("<td></td>").html(opages[i].id)));
+        }
+        binding_opage();
+    });
+});
 </script>
 
 {% endblock %}

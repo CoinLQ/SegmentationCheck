@@ -16,9 +16,11 @@ class PageSerializer(serializers.ModelSerializer):
         fields = ('id', 'text', 'is_correct')
 
 class VolumeSerializer(serializers.ModelSerializer):
+    o_pages = OPageSerializer(many=True, read_only=True)
+    bars_count = serializers.CharField(read_only=True, source="tripitaka.bars_count")
     class Meta:
         model = Volume
-        fields = ('id', 'number','start_page','end_page')
+        fields = ('id', 'number','start_page','end_page','o_pages', 'bars_count')
 
 class TripitakaSerializer(serializers.ModelSerializer):
     volumes = VolumeSerializer(many=True, read_only=True)
