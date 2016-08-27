@@ -1,13 +1,13 @@
 from django.shortcuts import get_object_or_404, render, render_to_response
 from django.http import JsonResponse
+from catalogue.models import Tripitaka,Volume
 from managerawdata.models import OPage
-from segmentation.models import Page
 from django.views import generic
 import json
 
 
 class PreprocessIndex(generic.ListView):
-    model = OPage
+    model = Tripitaka
     template_name = 'preprocess/preprocess.html'
 
 #@login_required(login_url='/segmentation/login/')

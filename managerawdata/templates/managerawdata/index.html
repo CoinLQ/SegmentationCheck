@@ -138,7 +138,7 @@ $('#imagefile').fileinput({
 $('#Tripitaka').on('changed.bs.select', function (e) {
   var request = $.getJSON({
         type: 'GET',
-        url: '/api/tripitaka/' + e.target.value + '/',
+        url: '/api/tripitaka/' + e.target.value,
     });
   request.done(function(data){
 
