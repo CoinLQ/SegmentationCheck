@@ -35,5 +35,3 @@ class VolumeViewSet(viewsets.ModelViewSet):
     serializer_class = VolumeSerializer
     queryset = Volume.objects.all()
 
-
-

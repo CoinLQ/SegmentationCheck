@@ -1,18 +1,21 @@
 {% extends "base.html" %}
 {% block head %}
 <title>切错页面索引</title>
+<link href="/static/css/bootstrap-select.min.css" media="all" rel="stylesheet" type="text/css" />
+
 <link rel="stylesheet" type="text/css" media="screen" href="/static/css/svg.select.css">
 <link href="/static/css/bootstrap-select.min.css" media="all" rel="stylesheet" type="text/css" />
 <link href="/static/css/bootstrap-slider.min.css" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/tingle.min.css" media="all">
 <script type="text/javascript">
-// window.onload = function(){
-//    //去掉默认的contextmenu事件，否则会和右键事件同时出现。
-//    document.oncontextmenu = function(e){
-//        e.preventDefault();
-//    };
-// }
+window.onload = function(){
+   //去掉默认的contextmenu事件，否则会和右键事件同时出现。
+   document.oncontextmenu = function(e){
+       e.preventDefault();
+   };
+}
 </script>
+<link rel="stylesheet" href="/static/css/tingle.min.css" media="all">
 <style>
     .highlight {
       stroke: red;
@@ -67,15 +70,10 @@
               <select id='Volume' class="selectpicker show-menu-arrow" data-live-search="true" >
               </select>
 
+
     </div>
     <div class='row show-grid'>
         <div class='col-md-2 sidecol' >
-            <div class="input-group">
-              <input id="gopage_id" type="text" class="form-control" placeholder="pageid for...">
-              <span class="input-group-btn">
-                <button id = "goPage_btn" class="btn btn-default" type="button">Go!</button>
-              </span>
-            </div><!-- /input-group -->
             <table id='pageindext' class="table table-bordered table-striped table-hover">
                 <thead>
                   <tr>
@@ -94,7 +92,7 @@
         <div class='col-md-10'>
             <div class="unchecked-box hidden">
                 <div class="btn-toolbar toolbar" role="toolbar" aria-label="test" style=''>
-                    <h3>{{ page.tripitaka.name }} 第{{ page.volume }}册 第{{ page.page_no }}页</h3>
+                    <div class="h3" id="page_desc"></div>
                     <button class="btn btn-primary" id="save">保存</button>
                 </div>
             </div><!--end hidden-->
@@ -112,12 +110,45 @@
 <script src="/static/js/svg.select.js"></script>
 <script src="/static/js/svg.resize.js"></script>
 <script src="/static/js/svg.draggable.min.js"></script>
+
+
+<script>
+var volumes = [];
+
+$('#Tripitaka').on('changed.bs.select', function (e) {
+  var request = $.getJSON({
+        type: 'GET',
+        url: '/api/tripitaka/' + e.target.value,
+    });
+  request.done(function(data){
+
+        $("#Volume").empty();
+        $("#Volume").append(
+                $("<option></option>").attr(
+                    "value", "").text("--- 册` ---")
+            );
+        volumes = data.volumes;
+       for (var i = 0; i < data.volumes.length; i++) {
+            $("#Volume").append(
+                $("<option></option>").attr(
+                    "value", i).text(volumes[i].number)
+            );
+        }
+        $('#Volume').selectpicker('refresh');
+    });
+});
+
+$('#Volume').on('changed.bs.select', function (e) {
+    var volume_idx = $('#Volume').find("option:selected").attr("value");
+});
+</script>
+
+
 <script>
 var rects = [];
 var texts = [];
 function renderPage(_pageid){
     var volume_idx = $('#Volume').find("option:selected").data("idx");
-    debugger;
     var bars_count = $volumes[volume_idx].bars_count;
     window._pageid = _pageid;
     $('#bookpage_cut').empty();
@@ -129,7 +160,7 @@ function renderPage(_pageid){
             .size(width, height);
         var image = draw.image(result.image)
             .size(width,height);
-
+        $("#page_desc").text(result['description']);
         page_no = result['page_no'];
         page_type = result['page_type'];
         page_height = result['height'];
@@ -162,9 +193,6 @@ function renderPage(_pageid){
         }
 
         draw.viewbox({ x: 0, y: 0, width: width, height: height });
-
-
-
     });
 }
 function binding_opage(){
@@ -175,6 +203,7 @@ function binding_opage(){
         var _pageid = $("tr.selected td:first").text();
         renderPage(_pageid);
     });
+
 
 }
 $(function(){
@@ -229,5 +258,4 @@ $('#Volume').on('changed.bs.select', function (e) {
 </script>
 
 {% endblock %}
-
 

@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404, render, render_to_response
 from django.http import JsonResponse
+from catalogue.models import Tripitaka,Volume
 from managerawdata.models import OPage
 from catalogue.models import Tripitaka
 from segmentation.models import Page
