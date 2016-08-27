@@ -77,13 +77,13 @@ window.onload = function(){
                 {% endfor %}
               </tbody>
             </table>
-        </div><!--end col-md--->
+        </div>
         <div class='col-md-10'>
             <div class="unchecked-box hidden">
                 <div class="btn-toolbar toolbar" role="toolbar" aria-label="test" style=''>
                     <h3>{{ page.tripitaka.name }} 第{{ page.volume }}册 第{{ page.page_no }}页</h3>
                     <button class="btn btn-primary" id="save">保存</button>
-                </div> <!--end toolbar-->
+                </div>
             </div><!--end hidden-->
 
             <div id="bookpage_cut"></div>
@@ -105,14 +105,14 @@ function renderPage(_pageid){
     var bars_count = 2;
     window._pageid = _pageid;
     $('#bookpage_cut').empty();
-   $.getJSON("/api/opage/"+_pageid+"/",function(result){ 
+   $.getJSON("/api/opage/"+_pageid+"/",function(result){
         var factor = 0.5;
         width = result.width * factor;
         height = result.height * factor;
         var draw = new SVG('bookpage_cut')
             .size(width, height);
         var image = draw.image(result.image)
-            .size(width,height); 
+            .size(width,height);
 
         page_no = result['page_no'];
         page_type = result['page_type'];
@@ -128,7 +128,7 @@ function renderPage(_pageid){
                     .rect(bars_width,bars_height)
                     .move((offset + bars_width)*j,(offset+bars_height)*i)
                     .fill('none')
-                    .addClass('segment-line'); 
+                    .addClass('segment-line');
                 var id = rect.node.id;
                 rects[id] = rect;
                 lable = 'p'+(page_no+j) + 'b'+(i+1);
@@ -136,7 +136,7 @@ function renderPage(_pageid){
                     .text(lable)
                     .fill('red')
                     .move(rect.x(),rect.y());
-                rect.selectize().resize().on('resizedone', function(e){ 
+                rect.selectize().resize().on('resizedone', function(e){
                     rect = e.target;
                     console.log(rect.id);
                     var id = rect.id;
@@ -146,9 +146,9 @@ function renderPage(_pageid){
         }
 
         draw.viewbox({ x: 0, y: 0, width: width, height: height });
-        
-        
-       
+
+
+
     });
 }
 $(function(){
