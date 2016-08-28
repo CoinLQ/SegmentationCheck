@@ -1,20 +1,12 @@
 {% extends "base.html" %}
 {% block head %}
-<title>图片预处理</title>
+<title>页面预处理</title>
 <link href="/static/css/bootstrap-select.min.css" media="all" rel="stylesheet" type="text/css" />
 
 <link rel="stylesheet" type="text/css" media="screen" href="/static/css/svg.select.css">
 <link href="/static/css/bootstrap-select.min.css" media="all" rel="stylesheet" type="text/css" />
 <link href="/static/css/bootstrap-slider.min.css" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/tingle.min.css" media="all">
-<script type="text/javascript">
-window.onload = function(){
-   //去掉默认的contextmenu事件，否则会和右键事件同时出现。
-   document.oncontextmenu = function(e){
-       e.preventDefault();
-   };
-}
-</script>
 <link rel="stylesheet" href="/static/css/tingle.min.css" media="all">
 <style>
     .highlight {
@@ -241,7 +233,7 @@ $('#Tripitaka').on('changed.bs.select', function (e) {
 $('#Volume').on('changed.bs.select', function (e) {
     var request = $.getJSON({
         type: 'GET',
-        url: '/api/volume/' + e.target.value ,
+        url: '/api/page?volume=' + e.target.value ,
     });
   request.done(function(data){
 

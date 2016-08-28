@@ -43,3 +43,6 @@ def text_process(request, page_id):
     page = get_object_or_404(Page, pk=page_id)
     return render_to_response('preprocess/text_process.html', {'page': page})
 
+
+def preprocess_page(request):
+    return render_to_response('preprocess/preprocess_page.html', {'tripitaka_list': Tripitaka.objects.all()})

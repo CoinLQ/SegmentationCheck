@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 from .serializers import PageSerializer, OPageSerializer, TripitakaSerializer, VolumeSerializer
 from managerawdata.models import OPage
 from catalogue.models import Tripitaka, Volume
@@ -8,9 +8,11 @@ from segmentation.models import Page
 from rest_framework.response import Response
 
 
-class PageViewSet(viewsets.ModelViewSet):
+class PageViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     serializer_class = PageSerializer
     queryset = Page.objects.all()
+    filter_fields = ('id', 'text', 'volume')
+
 
     def update(self, request, pk=None):
         instance = Page.objects.get(pk=pk)
