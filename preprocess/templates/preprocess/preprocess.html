@@ -1,20 +1,10 @@
 {% extends "base.html" %}
 {% block head %}
-<title>切错页面索引</title>
+<title>图片预处理</title>
 <link href="/static/css/bootstrap-select.min.css" media="all" rel="stylesheet" type="text/css" />
 
 <link rel="stylesheet" type="text/css" media="screen" href="/static/css/svg.select.css">
 <link href="/static/css/bootstrap-select.min.css" media="all" rel="stylesheet" type="text/css" />
-<link href="/static/css/bootstrap-slider.min.css" rel="stylesheet">
-<link rel="stylesheet" href="/static/css/tingle.min.css" media="all">
-<script type="text/javascript">
-window.onload = function(){
-   //去掉默认的contextmenu事件，否则会和右键事件同时出现。
-   document.oncontextmenu = function(e){
-       e.preventDefault();
-   };
-}
-</script>
 <link rel="stylesheet" href="/static/css/tingle.min.css" media="all">
 <style>
     .highlight {
@@ -61,16 +51,14 @@ window.onload = function(){
 <div class="container-fluid">
     <div class="select_panel">
         <div class="h4">选择藏经所在册</div>
-              <select id='Tripitaka' class="selectpicker show-menu-arrow" data-live-search="true" >
-                <option >====大藏经===</option>
-                {% for tri in tripitaka_list%}
-                <option value='{{tri.id}}'>{{ tri.name}}</option>
-                {% endfor %}
-              </select>
-              <select id='Volume' class="selectpicker show-menu-arrow" data-live-search="true" >
-              </select>
-
-
+          <select id='Tripitaka' class="selectpicker show-menu-arrow" data-live-search="true" >
+            <option >====大藏经===</option>
+            {% for tri in tripitaka_list%}
+            <option value='{{tri.id}}'>{{ tri.name}}</option>
+            {% endfor %}
+          </select>
+          <select id='Volume' class="selectpicker show-menu-arrow" data-live-search="true" >
+          </select>
     </div>
     <div class='row show-grid'>
         <div class='col-md-2 sidecol' >
@@ -81,11 +69,6 @@ window.onload = function(){
                   </tr>
                 </thead>
               <tbody>
-                {% for page in opage_list %}
-              <tr>
-                  <td >{{page.id}}</td>
-              </tr>
-                {% endfor %}
               </tbody>
             </table>
         </div>
@@ -113,40 +96,9 @@ window.onload = function(){
 
 
 <script>
-var volumes = [];
-
-$('#Tripitaka').on('changed.bs.select', function (e) {
-  var request = $.getJSON({
-        type: 'GET',
-        url: '/api/tripitaka/' + e.target.value,
-    });
-  request.done(function(data){
-
-        $("#Volume").empty();
-        $("#Volume").append(
-                $("<option></option>").attr(
-                    "value", "").text("--- 册` ---")
-            );
-        volumes = data.volumes;
-       for (var i = 0; i < data.volumes.length; i++) {
-            $("#Volume").append(
-                $("<option></option>").attr(
-                    "value", i).text(volumes[i].number)
-            );
-        }
-        $('#Volume').selectpicker('refresh');
-    });
-});
-
-$('#Volume').on('changed.bs.select', function (e) {
-    var volume_idx = $('#Volume').find("option:selected").attr("value");
-});
-</script>
-
-
-<script>
 var rects = [];
 var texts = [];
+var page_id;
 function renderPage(_pageid){
     var volume_idx = $('#Volume').find("option:selected").data("idx");
     var bars_count = $volumes[volume_idx].bars_count;
@@ -200,21 +152,10 @@ function binding_opage(){
         $('.unchecked-box').removeClass('hidden');
         $('tr').removeClass("selected");
         $(this).addClass("selected");
-        var _pageid = $("tr.selected td:first").text();
-        renderPage(_pageid);
+        page_id = $("tr.selected td:first").text();
+        renderPage(page_id);
     });
-
-
 }
-$(function(){
-    $('#goPage_btn').click(function () {
-        $('.unchecked-box').removeClass('hidden');
-        var _pageid = $("#gopage_id").val();
-        renderPage(_pageid);
-    });
-
-})
-
 $('#Tripitaka').on('changed.bs.select', function (e) {
   var request = $.getJSON({
         type: 'GET',
@@ -255,7 +196,26 @@ $('#Volume').on('changed.bs.select', function (e) {
         binding_opage();
     });
 });
+var data=[];
+$('#save').click(function(){
+    for(rect in rects){
+        data.push({
+                'page_id': page_id,
+                'bar_id': texts[rect].text(),
+                'top': rects[rect].y(), 
+                'left': rects[rect].x(), 
+                'width': rects[rect].width(), 
+                'height': rects[rect].height(),
+        });
+    }
+   var post_data = {
+    'data': JSON.stringify(data),
+    'csrfmiddlewaretoken': '{{ csrf_token }}'
+  }
+  $.post('/preprocess/opage_cut', post_data,
+  function(d) {
+    console.log('ok');
+  });
+});
 </script>
-
 {% endblock %}
-

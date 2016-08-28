@@ -13,12 +13,12 @@ class PreprocessIndex(generic.ListView):
     template_name = 'preprocess/preprocess.html'
 
 #@login_required(login_url='/segmentation/login/')
-def opage_cut(request, opage_id):
+def opage_cut(request):
     if request.method == 'POST':
-        opage = get_object_or_404(OPage, pk=opage_id)
         data = request.POST['data']
         d = json.loads(data)
         print d
+        #opage = get_object_or_404(OPage, pk=opage_id)
 #        bookpage_image_path = settings.BOOKPAGE_IMAGE_ROOT + bookpage.image
 #        bookpage_image = io.imread(bookpage_image_path, 0)
 #        for k, v in d.iteritems():
