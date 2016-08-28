@@ -104,7 +104,7 @@ function renderPage(_pageid){
     var bars_count = $volumes[volume_idx].bars_count;
     window._pageid = _pageid;
     $('#bookpage_cut').empty();
-   $.getJSON("/api/o_page/"+_pageid,function(result){
+   $.getJSON("/api/o_page/"+_pageid+'?status=0',function(result){
         var factor = 0.5;
         width = result.width * factor;
         height = result.height * factor;

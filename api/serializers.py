@@ -8,7 +8,7 @@ class OPageSerializer(serializers.ModelSerializer):
     class Meta:
         model = OPage
         fields = ('id', 'description', 'tripitaka','volume', 'page_no','page_type','height', 'width',
-            'image')
+            'image','status')
 
 class PageSerializer(serializers.ModelSerializer):
     class Meta:

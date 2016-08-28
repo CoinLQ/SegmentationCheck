@@ -6,13 +6,14 @@ from managerawdata.models import OPage
 from catalogue.models import Tripitaka, Volume
 from segmentation.models import Page
 from rest_framework.response import Response
+from rest_framework import generics,filters
+
 
 
 class PageViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     serializer_class = PageSerializer
     queryset = Page.objects.all()
     filter_fields = ('id', 'text', 'volume')
-
 
     def update(self, request, pk=None):
         instance = Page.objects.get(pk=pk)
@@ -26,6 +27,8 @@ class OPageViewSet(viewsets.ModelViewSet):
     serializer_class = OPageSerializer
     queryset = OPage.objects.all()
     search_fields = ('pages_no', 'tripitaka')
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = ('status','id','volume')
 
 
 class TripitakaViewSet(viewsets.ModelViewSet):
