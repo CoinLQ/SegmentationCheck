@@ -99,26 +99,29 @@
 var rects = [];
 var texts = [];
 var page_id;
+var volume_id;
 function renderPage(_pageid){
+    rects = [];
+    texts = [];
     var volume_idx = $('#Volume').find("option:selected").data("idx");
     var bars_count = $volumes[volume_idx].bars_count;
-    window._pageid = _pageid;
     $('#bookpage_cut').empty();
    $.getJSON("/api/o_page/"+_pageid+'?status=0',function(result){
         var factor = 0.5;
-        width = result.width * factor;
-        height = result.height * factor;
+        width = result.width;
+        height = result.height;
         var draw = new SVG('bookpage_cut')
-            .size(width, height);
+            .size(width*factor, height*factor);
         var image = draw.image(result.image)
             .size(width,height);
+        draw.viewbox({ x: 0, y: 0, width: width, height: height });
         $("#page_desc").text(result['description']);
         page_no = result['page_no'];
         page_type = result['page_type'];
         page_height = result['height'];
         var offset = 20;
-        bars_width = (result['width']/page_type - offset)*factor;
-        bars_height = (page_height/bars_count - offset)*factor;
+        bars_width = (result['width']/page_type - offset);
+        bars_height = (page_height/bars_count - offset);
 
 
         for(var j=0;j<page_type;j++){
@@ -144,7 +147,6 @@ function renderPage(_pageid){
             }
         }
 
-        draw.viewbox({ x: 0, y: 0, width: width, height: height });
     });
 }
 function binding_opage(){
@@ -180,9 +182,10 @@ $('#Tripitaka').on('changed.bs.select', function (e) {
 });
 
 $('#Volume').on('changed.bs.select', function (e) {
+        volume_id = e.target.value;
     var request = $.getJSON({
         type: 'GET',
-        url: '/api/volume/' + e.target.value ,
+        url: '/api/volume/' + volume_id ,
     });
   request.done(function(data){
 
@@ -196,11 +199,12 @@ $('#Volume').on('changed.bs.select', function (e) {
         binding_opage();
     });
 });
-var data=[];
 $('#save').click(function(){
+    var data=[];
     for(rect in rects){
         data.push({
-                'page_id': page_id,
+                'opage_id': page_id,
+                'volume_id': volume_id,
                 'bar_id': texts[rect].text(),
                 'top': rects[rect].y(), 
                 'left': rects[rect].x(), 
