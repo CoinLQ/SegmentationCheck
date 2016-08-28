@@ -45,4 +45,5 @@ def text_process(request, page_id):
 
 
 def preprocess_page(request):
-    return render_to_response('preprocess/preprocess_page.html', {'tripitaka_list': Tripitaka.objects.all()})
+    user = request.user
+    return render_to_response('preprocess/preprocess_page.html', {'tripitaka_list': Tripitaka.objects.all(), 'user': user})

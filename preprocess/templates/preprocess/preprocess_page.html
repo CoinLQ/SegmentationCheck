@@ -69,7 +69,7 @@
             <table id='pageindext' class="table table-bordered table-striped table-hover">
                 <thead>
                   <tr>
-                     <th>opage编号</th>
+                     <th>Page编号</th>
                   </tr>
                 </thead>
               <tbody>
@@ -83,10 +83,6 @@
         </div>
         <div class='col-md-10'>
             <div class="unchecked-box hidden">
-                <div class="btn-toolbar toolbar" role="toolbar" aria-label="test" style=''>
-                    <div class="h3" id="page_desc"></div>
-                    <button class="btn btn-primary" id="save">保存</button>
-                </div>
             </div><!--end hidden-->
 
             <div id="bookpage_cut"></div>
@@ -130,82 +126,20 @@ $('#Tripitaka').on('changed.bs.select', function (e) {
     });
 });
 
-$('#Volume').on('changed.bs.select', function (e) {
-    var volume_idx = $('#Volume').find("option:selected").attr("value");
-});
-</script>
 
-
-<script>
-var rects = [];
 var texts = [];
-function renderPage(_pageid){
-    var volume_idx = $('#Volume').find("option:selected").data("idx");
-    var bars_count = $volumes[volume_idx].bars_count;
-    window._pageid = _pageid;
-    $('#bookpage_cut').empty();
-   $.getJSON("/api/o_page/"+_pageid,function(result){
-        var factor = 0.5;
-        width = result.width * factor;
-        height = result.height * factor;
-        var draw = new SVG('bookpage_cut')
-            .size(width, height);
-        var image = draw.image(result.image)
-            .size(width,height);
-        $("#page_desc").text(result['description']);
-        page_no = result['page_no'];
-        page_type = result['page_type'];
-        page_height = result['height'];
-        var offset = 20;
-        bars_width = (result['width']/page_type - offset)*factor;
-        bars_height = (page_height/bars_count - offset)*factor;
 
-
-        for(var j=0;j<page_type;j++){
-            for(var i=0;i<bars_count;i++){
-               var rect = draw
-                    .rect(bars_width,bars_height)
-                    .move((offset + bars_width)*j,(offset+bars_height)*i)
-                    .fill('none')
-                    .addClass('segment-line');
-                var id = rect.node.id;
-                rects[id] = rect;
-                lable = 'p'+(page_no+j) + 'b'+(i+1);
-                texts[id] = draw
-                    .text(lable)
-                    .fill('red')
-                    .move(rect.x(),rect.y());
-                rect.selectize().resize().on('resizedone', function(e){
-                    rect = e.target;
-                    console.log(rect.id);
-                    var id = rect.id;
-                    texts[id].move(rects[id].x(),rects[id].y());
-                });
-            }
-        }
-
-        draw.viewbox({ x: 0, y: 0, width: width, height: height });
-    });
-}
-function binding_opage(){
+function binding_page(){
     $('#pageindext tbody tr').click(function (e) {
-        $('.unchecked-box').removeClass('hidden');
+        $('.unchecked-box').removeClass("hidden");
         $('tr').removeClass("selected");
         $(this).addClass("selected");
         var _pageid = $("tr.selected td:first").text();
-        renderPage(_pageid);
+        $('.unchecked-box').load("/preprocess/text_process/" + _pageid);
     });
 
 
 }
-$(function(){
-    $('#goPage_btn').click(function () {
-        $('.unchecked-box').removeClass('hidden');
-        var _pageid = $("#gopage_id").val();
-        renderPage(_pageid);
-    });
-
-})
 
 $('#Tripitaka').on('changed.bs.select', function (e) {
   var request = $.getJSON({
@@ -239,12 +173,12 @@ $('#Volume').on('changed.bs.select', function (e) {
 
         $("#pageindext tbody").empty();
 
-        opages = data.o_pages;
-        for (var i = 0; i < data.o_pages.length; i++) {
+        opages = data.models;
+        for (var i = 0; i < opages.length; i++) {
             $("#pageindext tbody").append(
                 $("<tr></tr>").append($("<td></td>").html(opages[i].id)));
         }
-        binding_opage();
+        binding_page();
     });
 });
 </script>

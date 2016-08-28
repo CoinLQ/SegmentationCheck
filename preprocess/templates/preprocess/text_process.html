@@ -22,11 +22,11 @@
     保存成功.
   </div>
     <div class="row">
-        <div class="col-md-2 col-xs-2">&nbsp;</div>
-        <div class="col-md-8 col-xs-8 gallery">
+
+        <div class="col-md-10 col-xs-10 gallery">
             <div id="img{{ page.id }}"></div>
         </div>
-        <div class="col-md-12 col-xs-12">
+        <div class="col-md-10 col-xs-10">
         <div class="btn-group action_buttons">
         <button class="btn btn-primary" onclick="containSelectedText('<', '>')">夹注</button>
         <button class="btn btn-primary" onclick="markSelectedText('@')">题记</button>
@@ -40,7 +40,7 @@
                 <button class="btn btn-warning pull-right" onclick="toggle_view()">切换版式</button>
                 <button id="btn-save" class="btn btn-primary pull-right" onclick="save_to_page()">保存</button>
         </div>
-        <div class="col-md-12 col-xs-12 reel">
+        <div class="col-md-10 col-xs-10 reel">
         <pre rel="经文" class=" language-markup">
         <div id="redactor" class="tnt">{{page.text|escape|linebreaks}}</div>
         </pre>
