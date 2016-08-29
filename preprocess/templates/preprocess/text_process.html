@@ -1,4 +1,3 @@
-{% extends "base.html" %}
 {% block head %}
 <title>文字处理</title>
 <link rel="stylesheet" type="text/css" media="screen" href="/static/redactor/css/redactor.css">
@@ -114,7 +113,8 @@ var $page_id = "{{page.id}}";
 $(function(){
 
     var draw = new SVG("img{{ page.id }}").size('650', '325');
-    var _img_path = 'http://ob21oo6fl.bkt.clouddn.com/{{ page.image}}'
+    //var _img_path = 'http://ob21oo6fl.bkt.clouddn.com/{{ page.image}}'
+    var _img_path = '/page_images/{{ page.image}}'
     var image = draw.image(_img_path)
     draw.viewbox({ x: 0, y: 0, width:{{page.width }} , height:  {{page.height }}})
     var leftline = draw.line({{page.left}},0,{{page.left}},900).addClass('segment-line');

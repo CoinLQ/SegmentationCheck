@@ -17,10 +17,10 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.conf import settings
 from django.views.static import serve
-import segmentation.views
+import home.views
 
 urlpatterns = [
-    url(r'^$', segmentation.views.index, name='main_index'),
+    url(r'^$', home.views.index, name='main_index'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^managerawdata/', include('managerawdata.urls',namespace='managerawdata')),
     url(r'^preprocess/', include('preprocess.urls',namespace='preprocess')),

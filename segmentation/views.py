@@ -73,9 +73,6 @@ class CharacterLine:
         self.right = right
         self.char_lst = char_lst
 
-# Create your views here.
-def index(request):
-    return render(request, 'segmentation/index.html')
 
 # use to demo UI compoent
 def demo(request):
@@ -403,3 +400,8 @@ def set_correct(request):
     else:
         data = {'status': 'error'}
     return JsonResponse(data)
+
+
+def text_process(request, page_id):
+    page = get_object_or_404(Page, pk=page_id)
+    return render_to_response('preprocess/text_process.html', {'page': page})

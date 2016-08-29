@@ -6,7 +6,6 @@ admin.autodiscover()
 
 urlpatterns = [
     #url('^', include('django.contrib.auth.urls')),
-    url(r'^$', views.index, name='index'),
     url(r'^demo/$', views.demo, name='demo'),
 #url(r'^run_batchsegment/(?P<number>[0-9]*)$', views.run_batchsegment, name='run_batchsegment'),
     url(r'^login/$', auth_views.login, {'template_name':'login.html'},name='login'),
