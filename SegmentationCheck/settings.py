@@ -128,7 +128,8 @@ DATABASES = {
     }
 }
 
-LOGIN_URL = '/segmentation/login/'
+LOGIN_URL = '/account/login/'
+LOGIN_REDIRECT_URL = '/' # It means home view
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 STATIC_URL = '/static/'

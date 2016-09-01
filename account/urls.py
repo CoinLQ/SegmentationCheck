@@ -1,9 +1,13 @@
 from django.conf.urls import include, url
 from django.contrib.auth import views as auth_views
+from . import views
 from django.contrib import admin
+from django.contrib import auth
 admin.autodiscover()
 
 urlpatterns = [
-    url(r'^login/$', auth_views.login, {'template_name':'login.html'},name='login'),
-    url(r'^logout/$', auth_views.logout,{'template_name':'logout.html'},name='logout'),
+    url(r'^logout/$', auth_views.logout, {'next_page': '/account/login'}),
+    url('', include('django.contrib.auth.urls')),
+    url(r'^register/$', views.register),
+    url(r'^register/success/$', views.register_success),
 ]

@@ -4,7 +4,6 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = [
-    #url('^', include('django.contrib.auth.urls')),
     url(r'^$', views.Index.as_view(), name='index'),
 #url(r'^run_batchsegment/(?P<number>[0-9]*)$', views.run_batchsegment, name='run_batchsegment'),
 #===segment modify
