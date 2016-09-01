@@ -12,6 +12,7 @@ from skimage import io
 
 import cStringIO #for output memory file for save cut image
 from django.core.files.storage import default_storage
+from SegmentationCheck.storage import internal_storage
 
 class PreprocessIndex(generic.ListView):
     model = Tripitaka
@@ -46,7 +47,7 @@ def opage_cut(request):
             page_image = opage_image[top:top + height, left:left + width]
             memfile = cStringIO.StringIO()
             #io.imsave(memfile, page_image)
-            #default_storage.save(page_image_path, memfile)
+            internal_storage.save(page_image_path, memfile)
             io.imsave(page_image_path, page_image)
             page = Page(
                     id=page_id,
