@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% block head %}
+<title>字索引</title>
+
+<link href="/static/css/simplePagination.css" rel="stylesheet">
+<link href="/static/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
+<style>
+  .error-char {
+    background-color: pink;
+    border:solid red 2px !important;
+  }
+  .correct-char {
+    border:solid blue 2px !important;
+  }
+  .flow {float:left; min-width:80px; min-height:80px; margin:5px;border:solid blue 1px;}
+
+.unchecked-box{
+    position: relative;
+    padding: 25px 15px 15px;
+    background-color: #fafafa;
+    border: 1px solid #ddd;
+    border-bottom-width: 0;
+}
+</style>
+{% endblock %}
+{% block mainbody %}
+<div class="container">
+    <div class='row show-grid'>
+        <div class='col-md-12 col-xs-12'>
+        <div class="unchecked-box">
+          <div class="progress progress-striped">
+              <div class="progress-bar " role="progressbar" data-transitiongoal="{{view.sample.uncheck_cnt}}" aria-valuemax="{{view.sample.total_cnt}}"></div>
+          </div>
+        </div>
+        <strong id='checkchar' style='font-size:36px; margin:10px;padding:8px;color:#483D8B;'>{{view.sample.char.strip}}</strong> 点选字形不正确或切错的字(详细说明见下方)
+        <div id='charlistArea'>
+            <p class="bg-info" style='margin:20px;padding:10px;'>审核模式只显示未审核的字形，浏览模式分页显示所有字形。</p>
+        </div><!--end charlistArea -->
+        <div style="clear:both;"> </div>
+        <span class="hidden" id="total_num">{{view.sample.total_cnt}}</span>
+
+        <div  class="btn btn-primary batch-check" >批量审核通过(除了有错误标记的都会通过)</div>
+
+        <blockquote style="margin:5px">
+            <p>通过鼠标左键点选字形不正确或切错的字，
+            然后点击【批量审核通过按钮】，之后页面会自动弹出新的一页；
+            请大家仔细认真核查，按以下标准点选：
+              </p>
+              <ol>
+                  <li>不要点选正确字形，即没有明显的少切、多切、切错等现象的字形；</li>
+                  <li>不要点选异体字字形，比如无、無，都算是正确的；</li>
+                  <li>不要点选跟正确字形相差非常小的字形，比如字的边缘存在多余的小黑点（而不是笔划）；</li>
+                  <li>不要点选不认识的生僻字形，除非经过准确的考证后可以认定并非本字的异体字形的情况。</li>
+              </ol>
+
+        </blockquote>
+</div>
+
+        </div>
+    </div><!--endrow-->
+
+</div><!-- /.container -->
+{% endblock %}
+{% block foot  %}
+<!--for index-->
+<script>
+$(function(){
+        var _char = $('#checkchar').text();
+        window.char = _char;
+            $.getJSON("/segmentation/charactercheck/"+window.char+"?mode=check",function(result){
+                obj= $.parseJSON(result.charArr);
+                renderCharArea("#charlistArea",obj);
+                binding_char_check('#charlistArea');
+                $('#checkchar').text(result.char);
+                var _total_num = result.total_cnt;
+                var _checked = _total_num - result.uncheck_cnt;
+
+                $(".progress .progress-bar").attr("data-transitiongoal", Math.ceil(_checked/30));
+                $(".progress .progress-bar").attr("aria-valuemax",Math.ceil(_total_num/30));
+                $('.progress .progress-bar').progressbar({display_text:'center', use_percentage: false});
+                  $('.progress .progress-bar').progressbar({
+                        update: function(current_percentage, $this) {
+                            $this.css('background-color', 'rgb(175,' + Math.round(current_percentage / 100 * 255) + ', 120)');
+                        }
+                    });
+            });
+
+    //});
+
+})
+</script>
+<!--for browse&check-->
+<script>
+function binding_char_check(area){
+    var selector = area + ' .char-image'
+    $(selector).click(function(){
+      var data = {'id': this.id};
+      data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+      data['char'] = $('#checkchar').text();
+      if ($(this).hasClass('error-char')) {
+        $(this).removeClass('error-char');
+        $(this).addClass('correct-char');
+        data['is_correct'] = 1;
+        $.post('/segmentation/set_correct', data, function() {
+        });
+      } else {
+        $(this).removeClass('correct-char');
+        $(this).addClass('error-char');
+        data['is_correct'] = -1;
+        $.post('/segmentation/set_correct', data, function() {
+        });
+      }
+    });
+}
+</script>
+<script>
+function renderCharArea(area,charArr){
+    $(area).empty();
+    txt =''
+    $.each(charArr, function(i, field){
+        txt = "<div id="+field.id+" class='flow "
+        if (field.is_correct == -1){
+            txt += "error-char ";
+        }
+        else if (field.is_correct == 1){
+            txt += "correct-char ";
+        }
+        txt +="char-image' title='"+field.id+"'><img src='"+field.image+"' alt='加载中'></div>"
+        $(area).append(txt);
+      });
+}
+</script>
+<!--for check mode-->
+<script>
+$(function(){
+    $('.batch-check').click(handler);
+})
+
+function handler() {
+            var arr =[];
+            var charlist = $("#charlistArea").children();
+            for (var i=0;i<charlist.length;i++){
+                var tmp = charlist[i];
+                arr.push(tmp.id);
+            }
+            var data = {'charArr':arr};
+            var updateNum = $('.char-image').length - $('.correct-char').length - $('.error-char').length;
+            data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+            data['char'] = $('#checkchar').text();
+            data['updateNum'] = updateNum;
+            $('.batch-check').addClass('btn-warning');
+            $('.batch-check').off('click');
+            setTimeout(function(){
+              $('.batch-check').removeClass('btn-warning');
+              $('.batch-check').click(handler)}, 2000);
+            $.post('/segmentation/set_correct', data, function() {
+                $.getJSON("/segmentation/charactercheck/"+"?mode=check",function(result){
+                    obj= $.parseJSON(result.charArr);
+                    renderCharArea("#charlistArea",obj);
+                    binding_char_check('#charlistArea');
+                    $('#checkchar').text(result.char);
+                    var _total_num = result.total_cnt;
+                    var _checked = _total_num - result.uncheck_cnt
+                    if (result.uncheck_cnt == 0)
+                    {
+                      location.reload();
+                    }
+                    $(".progress .progress-bar").attr("data-transitiongoal", Math.ceil(_checked/30));
+                    $(".progress .progress-bar").attr("aria-valuemax", Math.ceil(_total_num/30));
+                      $('.progress .progress-bar').progressbar({
+                            update: function(current_percentage, $this) {
+                                $this.css('background-color', 'rgb(0,' + Math.round(current_percentage / 100 * 255) + ', 0)');
+                            }
+                    });
+                });
+            });
+    }
+</script>
+<script type="text/javascript" src="/static/js/bootstrap-progressbar.min.js"></script>
+<!--插件简介/演示地址 http://www.htmleaf.com/Demo/201505121817.html
+官网  http://www.minddust.com/project/bootstrap-progressbar/
+-->
+
+
+{% endblock %}
+

@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+{% block head %}
+<title>页面预处理</title>
+<link href="/static/css/bootstrap-select.min.css" media="all" rel="stylesheet" type="text/css" />
+
+<link rel="stylesheet" type="text/css" media="screen" href="/static/css/svg.select.css">
+<link href="/static/css/bootstrap-select.min.css" media="all" rel="stylesheet" type="text/css" />
+<link href="/static/css/bootstrap-slider.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/tingle.min.css" media="all">
+<link rel="stylesheet" href="/static/css/tingle.min.css" media="all">
+<style>
+    .highlight {
+      stroke: red;
+      stroke-width: 2;
+    }
+    .segment-line {
+      stroke: blue;
+      stroke-width: 2;
+    }
+
+    .cursor_ns {
+      cursor:ns-resize;
+    }
+
+  .selected {
+      background-color: #aaa !important;
+  }
+
+.unchecked-box{
+    position: relative;
+    padding: 25px 15px 15px;
+    background-color: #fafafa;
+    border: 1px solid #ddd;
+    border-bottom-width: 0;
+}
+
+.sidecol {
+    height:80%;
+    overflow:auto;
+    position:relative;
+    max-height:800px;
+}
+</style>
+{% endblock %}
+{% block mainbody %}
+<div class="container-fluid">
+    <div class="select_panel">
+        <div class="h4">选择藏经所在册</div>
+              <select id='Tripitaka' class="selectpicker show-menu-arrow" data-live-search="true" >
+                <option >====大藏经===</option>
+                {% for tri in tripitaka_list%}
+                <option value='{{tri.id}}'>{{ tri.name}}</option>
+                {% endfor %}
+              </select>
+              <select id='Volume' class="selectpicker show-menu-arrow" data-live-search="true" >
+              </select>
+
+
+    </div>
+    <div class='row show-grid'>
+        <div class='col-md-2 sidecol' >
+            <table id='pageindext' class="table table-bordered table-striped table-hover">
+                <thead>
+                  <tr>
+                     <th>Page编号</th>
+                  </tr>
+                </thead>
+              <tbody>
+              </tbody>
+            </table>
+        </div>
+        <div class='col-md-10'>
+            <div class="unchecked-box hidden">
+              <button class="btn btn-default" id="layoutseg_btn">版面划分</button>
+              <button class="btn btn-default" id="save_layout_btn">保存调整</button>
+              <button class="btn btn-default" id="charseg_btn">切字</button>
+              <button class="btn btn-default" id="save_char_btn">保存</button>
+            </div><!--end hidden-->
+            <div id="segmentation_page"></div>
+        </div><!--end col-md-10-->
+    </div><!--end row -->
+
+</div><!-- /.container -->
+{% endblock %}
+{% block foot  %}
+<script src="/static/js/bootstrap-select.min.js"></script>
+<script src="/static/js/svg.min.js"></script>
+<script src="/static/js/svg.draw.min.js"></script>
+<script src="/static/js/svg.select.js"></script>
+<script src="/static/js/svg.resize.js"></script>
+<script src="/static/js/svg.draggable.min.js"></script>
+
+
+<script>
+
+var volumes = [];
+var page_id;
+var draw;
+
+$('#Tripitaka').on('changed.bs.select', function (e) {
+  var request = $.getJSON({
+        type: 'GET',
+        url: '/api/tripitaka/' + e.target.value,
+    });
+  request.done(function(data){
+
+        $("#Volume").empty();
+        $("#Volume").append(
+                $("<option></option>").attr(
+                    "value", "").text("--- 册` ---")
+            );
+        volumes = data.volumes;
+       for (var i = 0; i < data.volumes.length; i++) {
+            $("#Volume").append(
+                $("<option></option>").attr(
+                    "value", i).text(volumes[i].number)
+            );
+        }
+        $('#Volume').selectpicker('refresh');
+    });
+});
+
+function renderPage(_pageid){
+    var volume_idx = $('#Volume').find("option:selected").data("idx");
+    var bars_count = $volumes[volume_idx].bars_count;
+    $('#segmentation_page').empty();
+   $.getJSON("/api/page?id="+_pageid,function(result){ 
+       result = result.models[0];
+        var factor =0.7;
+        width = result.width;
+        height = result.height;
+        draw = new SVG('segmentation_page')
+            .size(width*factor, height*factor);
+        var image_path = '/page_images/'+result.image;
+        var image = draw.image(image_path).size(width,height);
+        draw.viewbox({ x: 0, y: 0, width: width, height: height });
+    });
+}
+function binding_page(){
+    $('#pageindext tbody tr').click(function (e) {
+        $('.unchecked-box').removeClass("hidden");
+        $('tr').removeClass("selected");
+        $(this).addClass("selected");
+        page_id = $("tr.selected td:first").text();
+        //$('.unchecked-box').load("/preprocess/text_process/" + _pageid);
+        renderPage(page_id);
+    });
+
+
+}
+
+function render_region(arr){
+    $.each(arr, function(i, field){
+        console.log(field);
+       var rect = draw
+            .rect(field.right - field.left,field.bottom - field.top)
+            .move(field.left,field.top)
+            .fill('none')
+            .addClass('segment-line');
+    });
+}
+
+$('#layoutseg_btn').on('click', function(){
+    var data = {'id': page_id };
+    data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+    $.getJSON("/layoutseg/"+page_id,function(result){ 
+        render_region(result); 
+    });
+});
+
+$('#Tripitaka').on('changed.bs.select', function (e) {
+  var request = $.getJSON({
+        type: 'GET',
+        url: '/api/tripitaka/' + e.target.value ,
+    });
+  request.done(function(data){
+
+        $("#Volume").empty();
+        $("#Volume").append(
+                $("<option></option>").attr(
+                    "value", "").text("--- 册 ---")
+            );
+        $volumes = data.volumes;
+       for (var i = 0; i < data.volumes.length; i++) {
+            $("#Volume").append(
+                $("<option></option>").attr(
+                    "value", $volumes[i].id).text($volumes[i].number).attr('data-idx', i)
+            );
+        }
+        $('#Volume').selectpicker('refresh');
+    });
+});
+
+$('#Volume').on('changed.bs.select', function (e) {
+    var request = $.getJSON({
+        type: 'GET',
+        url: '/api/page?volume=' + e.target.value ,
+    });
+  request.done(function(data){
+
+        $("#pageindext tbody").empty();
+
+        opages = data.models;
+        for (var i = 0; i < opages.length; i++) {
+            $("#pageindext tbody").append(
+                $("<tr></tr>").append($("<td></td>").html(opages[i].id)));
+        }
+        binding_page();
+    });
+});
+</script>
+
+{% endblock %}
+

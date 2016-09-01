@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block head %}
+{# 用于在html head部分添加内容，如引入css，js资源等#}
+{% endblock %}
+
+
+{% block mainbody %}
+{# 主内容区 #}
+
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="jumbotron">
+  <div class="container">
+    <h1>欢迎来到字切分平台</h1>
+    <p>将书页图片上的文字，按照每个字进行切分。</p>
+    <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
+  </div>
+</div>
+<div class="container">
+     <div class="row">
+        <div class="col-md-4">
+          <h2>页面检查</h2>
+          <p>浏览切分前的页面，从页面级别检查正确性. </p>
+          <p><a class="btn btn-default" href="/pagecheck/" role="button">View details &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+          <h2>切分校对</h2>
+          <p> 对每个字检查切分出的字形，提供切分模式 和 审核模式 两种模式。其中， 审核模式只显示未审核的字形，浏览模式分页显示所有字形。</p>
+          <p><a class="btn btn-default" href="/task_checkchar/characterindex" role="button">View details &raquo;</a></p>
+       </div>
+        <div class="col-md-4">
+          <h2>切分调整</h2>
+          <p>显示出还有切错字形的页面，可以对切分线进行调整，重新切字。</p>
+          <p><a class="btn btn-default" href="/segmentation/errpageindex" role="button">View details &raquo;</a></p>
+        </div>
+      </div>
+</div><!-- /.container -->
+{% endblock %}
+
+{% block foot %}
+{# 用于在body标签闭合前添加代码，如引入js代码等 #}
+{% endblock %}
