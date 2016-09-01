@@ -11,7 +11,7 @@ def run_seg(request,pk):
     text = page.text
     region_lst = layout_seg(img_path, text)
     for region in region_lst:
-        region_id = '{0}l{1:02}r{2:02}'.format(pk,region['line_no'],region['region_no'])
+        region_id = '{0}L{1:02}R{2:02}'.format(pk,region['line_no'],region['region_no'])
         _region = Region(
                 id = region_id,
                 page_id=pk,

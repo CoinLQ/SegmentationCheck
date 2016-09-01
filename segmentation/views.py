@@ -47,41 +47,10 @@ class charJsonEncoder(DjangoJSONEncoder):
                             })
             return arr
         return super(charJsonEncoder, self).default(obj)
+
 class Index(generic.ListView):
     model = Tripitaka
     template_name = 'segmentation/index.html'
-
-
-#TODO  offline batch segment
-@login_required(login_url='/segmentation/login/')
-def run_batchsegment(request,number):
-    data = {'status': 'pause service now'}
-    return JsonResponse(data) #
-    if not number:
-        number =1
-    pages = Page.objects.filter(is_correct=-9)[:number]
-    for page in pages:
-        image_name = page.image.path
-        text = page.text
-        image = io.imread(image_name, 0)
-        total_char_lst = process_page(image, text, page.id)
-        character_lst = []
-        temp_lst = []
-        line_lst = []
-        cur_line_no = 0
-        for ch in total_char_lst:
-            character = Character(id=ch.char_id.strip(), page_id=page.id, char=ch.char,
-                                  image='',
-                                  left=ch.left, right=ch.right,
-                                  top=ch.top, bottom=ch.bottom,
-                                  line_no=ch.line_no, char_no=ch.char_no,
-                                  is_correct=-9)
-            character.save()
-        page.is_correct = 0
-        page.save()
-    data = {'status': 'ok'}
-    return JsonResponse(data)
-
 
 
 #@login_required(login_url='/segmentation/login/')

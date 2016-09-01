@@ -3,6 +3,7 @@ from segmentation.models import Page, Character, CharacterStatistics
 from django.core.serializers.json import DjangoJSONEncoder
 from django.views import generic
 import random
+from django.db.models import F
 
 class MyJsonEncoder(DjangoJSONEncoder):
     def default(self, obj):

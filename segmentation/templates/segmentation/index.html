@@ -171,8 +171,8 @@ $('#layoutseg_btn').on('click', function(){
 $('#charseg_btn').on('click', function(){
     var data = {'id': page_id };
     data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
-    $.getJSON("/layoutseg/"+page_id,function(result){ 
-        //render_region(result); 
+    $.getJSON("/charseg/"+page_id,function(result){ 
+        render_region(result); 
     });
 });
 

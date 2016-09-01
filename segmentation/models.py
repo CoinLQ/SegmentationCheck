@@ -63,6 +63,7 @@ class Character(models.Model):
     bottom = models.SmallIntegerField()
     line_no = models.SmallIntegerField()
     char_no = models.SmallIntegerField()
+    region_no = models.SmallIntegerField(default=0)
     is_correct = models.SmallIntegerField(default=0,db_index=True)
 #is_correct value
 ## 0 unchecked(initial value )
