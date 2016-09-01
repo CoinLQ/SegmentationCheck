@@ -8,9 +8,8 @@ from django.core.paginator import Page as paginatorPageType
 
 from django.utils.functional import Promise
 from django.utils.encoding import force_text
-from django.core.serializers.json import DjangoJSONEncoder
 
-from .models import Page, Character, CharacterStatistics
+from segmentation.models import Page, Character
 
 from django.views import generic
 
@@ -31,27 +30,10 @@ import cStringIO #for output memory file for save cut image
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 
-import random
+from django.core.serializers.json import DjangoJSONEncoder
 
+from catalogue.models import Tripitaka
 
-class MyJsonEncoder(DjangoJSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, CharacterLine):
-            return {
-                u'line_no': obj.line_no,
-                u'left': obj.left,
-                u'right': obj.right,
-                u'char_lst': obj.char_lst,
-            }
-        if isinstance(obj, Character):
-            return {
-                u'id': obj.id,
-                u'char': obj.char,
-                u'line_no': obj.line_no,
-                u'char_no': obj.char_no,
-                u'top': obj.top,
-                u'bottom': obj.bottom, u'is_correct': obj.is_correct, }
-        return super(MyJsonEncoder, self).default(obj)
 
 class charJsonEncoder(DjangoJSONEncoder):
     def default(self, obj):
@@ -65,18 +47,10 @@ class charJsonEncoder(DjangoJSONEncoder):
                             })
             return arr
         return super(charJsonEncoder, self).default(obj)
+class Index(generic.ListView):
+    model = Tripitaka
+    template_name = 'segmentation/index.html'
 
-class CharacterLine:
-    def __init__(self, line_no, left, right, char_lst):
-        self.line_no = line_no
-        self.left = left
-        self.right = right
-        self.char_lst = char_lst
-
-
-# use to demo UI compoent
-def demo(request):
-    return render(request, 'segmentation/demo.html')
 
 #TODO  offline batch segment
 @login_required(login_url='/segmentation/login/')
@@ -143,56 +117,18 @@ def page_detail(request, page_id):
 
     json_line_lst = json.dumps(line_lst,cls=MyJsonEncoder)
     return JsonResponse({ u'line_lst': json_line_lst, u'image_url':image_url, u'text': text_line_lst}, safe=False)
-    #return render(request, 'segmentation/page_detail.html', {'page': page, 'line_lst': line_lst, 'text': text_line_lst})
 
+class ErrPageIndex(generic.ListView):
+    model = Character
+    template_name = 'segmentation/err_page_index.html'
 
-class PageCheckView(generic.ListView):
-    template_name = 'segmentation/page_check.html'
     def get_queryset(self):
-        pk = self.kwargs['pk']
-        #only show the page had been segment(right field is not equal 0),and had not been check
-        return Page.objects.filter(id__startswith=pk).exclude(right=0).filter(is_correct=0)[:9]
+        return Character.objects.filter(is_correct=-1).values('page').annotate(dcount=Count('page'))
 
     #@method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(PageCheckView, self).dispatch(*args, **kwargs)
+        return super(ErrPageIndex, self).dispatch(*args, **kwargs)
 
-#@login_required(login_url='/segmentation/login/')
-def set_page_correct(request):
-    if 'id' in request.POST:
-        page_id = request.POST['id']
-        is_correct = int(request.POST['is_correct'])
-        page = Page.objects.get(id = page_id)
-        page.is_correct = is_correct
-        page.save()
-        if is_correct == -4 or is_correct == -3:#页面错误
-            Character.objects.filter(page_id = page_id).update(is_correct=is_correct)
-#update the CharacterStatistics
-            cursor = connection.cursor()
-            raw_sql = '''
-            INSERT INTO public.segmentation_characterstatistics (char,total_cnt, uncheck_cnt,err_cnt,uncertainty_cnt)
-            SELECT
-                char,
-                0,
-                0,
-                count(segmentation_character."char") as err_cnt,
-                0
-            FROM
-              public.segmentation_character where page_id='%s'
-              group by char
-            ON CONFLICT (char)
-            DO UPDATE SET
-            uncheck_cnt=public.segmentation_characterstatistics.uncheck_cnt - EXCLUDED.err_cnt,
-            err_cnt=public.segmentation_characterstatistics.err_cnt + EXCLUDED.err_cnt;
-            '''%(page_id)
-            print raw_sql
-            cursor.execute(raw_sql)
-        data = {'status': 'ok'}
-    else:
-        data = {'status': 'error'}
-    return JsonResponse(data)
-
-#TODO reSegment
 
 def runSegment(request,page_id):
     page = Page.objects.get(id=page_id)
@@ -289,119 +225,3 @@ def page_modify(request, page_id):
 #
         data = {'status': 'ok'}
     return JsonResponse(data)
-
-def page_segmentation_line(request, page_id):
-    page = get_object_or_404(Page, pk=page_id)
-    characters = Character.objects.filter(page_id=page.id).order_by('line_no')
-    temp_lst = []
-    line_lst = []
-    cur_line_no = 0
-    for character in characters:
-        character.width = character.right - character.left
-        character.height = character.bottom - character.top
-        if character.line_no != cur_line_no:
-            if temp_lst:
-                temp_lst.sort(key=attrgetter('char_no'))
-                line = CharacterLine(cur_line_no, temp_lst[0].left, temp_lst[0].right, temp_lst)
-                line_lst.append(line)
-            cur_line_no = character.line_no
-            temp_lst = [character]
-        else:
-            temp_lst.append(character)
-    if temp_lst:
-        temp_lst.sort(key=attrgetter('char_no'))
-        line = CharacterLine(cur_line_no, temp_lst[0].left, temp_lst[0].right, temp_lst)
-        line_lst.append(line)
-    return JsonResponse(line_lst, safe=False, encoder=MyJsonEncoder)
-
-class CharacterIndex(generic.ListView):
-    template_name = 'segmentation/characters.html'
-
-    #@method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(CharacterIndex, self).dispatch(*args, **kwargs)
-
-    def get_queryset(self):
-        return CharacterStatistics.objects.order_by('-uncheck_cnt')
-
-    def sample(self):
-        with open('static/alternative_char_list.txt') as f:
-            txt = f.read()
-            char_list = txt.split(',')
-        char = random.choice(char_list).strip()
-        return CharacterStatistics.objects.filter(char=char)
-
-class ErrPageIndex(generic.ListView):
-    model = Character
-    template_name = 'segmentation/err_page_index.html'
-
-    def get_queryset(self):
-        return Character.objects.filter(is_correct=-1).values('page').annotate(dcount=Count('page'))
-
-    #@method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(ErrPageIndex, self).dispatch(*args, **kwargs)
-
-
-#@login_required(login_url='/segmentation/login/')
-def character_check(request, char):
-    mode = request.GET.get('mode')
-    if mode == 'browse':  #browse mode  display all characters
-        characters_list = Character.objects.filter(char=char).exclude(is_correct=-9)
-        paginator = Paginator(characters_list, 30) # Show 30 characters per page
-        page = request.GET.get('page')
-        try:
-            characters = paginator.page(page)
-        except PageNotAnInteger:
-            # If page is not an integer, deliver first page.
-            characters = paginator.page(1)
-        except EmptyPage:
-            # If page is out of range (e.g. 9999), deliver last page of results.
-            characters = paginator.page(paginator.num_pages)
-        charArr = json.dumps(characters,cls=charJsonEncoder)
-        #totalPage = paginator.num_pages
-        #currPage = characters.number
-        items = paginator.count
-        return JsonResponse({u'charArr':charArr, u'items':items,u'itemsOnPage':30,}, safe=False)
-    else :        #check mode only display the unchecked characters (is_correct=0)
-        if not char:
-            with open('static/alternative_char_list.txt') as f:
-                txt = f.read()
-                char_list = txt.split(',')
-            char = random.choice(char_list).strip()
-        characters = Character.objects.filter(char=char).filter(is_correct=0)[:30]
-        qs = CharacterStatistics.objects.filter(char=char).values('uncheck_cnt','total_cnt')
-        total_cnt = qs[0]['total_cnt']
-        uncheck_cnt = qs[0]['uncheck_cnt']
-        charArr = json.dumps(characters,cls=charJsonEncoder)
-        return JsonResponse({u'charArr':charArr, u'total_cnt':total_cnt,u'uncheck_cnt':uncheck_cnt,u'char':char}, safe=False)
-
-
-
-#@login_required(login_url='/segmentation/login/')
-def set_correct(request):
-    if 'id' in request.POST:
-        char_id = request.POST['id']
-        is_correct = int(request.POST['is_correct'])
-        char = request.POST['char']
-        char.encode('utf-8')
-        if  Character.objects.filter(id=char_id).filter(is_correct=0).exists():
-            CharacterStatistics.objects.filter(char=char).update(uncheck_cnt=F('uncheck_cnt')-1)
-        Character.objects.filter(id=char_id).update(is_correct=is_correct)
-        CharacterStatistics.objects.filter(char=char).update(err_cnt=F('err_cnt')-is_correct)
-        data = {'status': 'ok'}
-    elif 'charArr[]' in request.POST:
-        charArr = request.POST.getlist('charArr[]')
-        char = request.POST['char']
-        updateNum = int(request.POST['updateNum'])
-        Character.objects.filter(id__in = charArr ).filter(is_correct=0).update(is_correct=1)
-        CharacterStatistics.objects.filter(char=char).update(uncheck_cnt=F('uncheck_cnt')-updateNum)
-        data = {'status': 'ok'}
-    else:
-        data = {'status': 'error'}
-    return JsonResponse(data)
-
-
-def text_process(request, page_id):
-    page = get_object_or_404(Page, pk=page_id)
-    return render_to_response('preprocess/text_process.html', {'page': page})

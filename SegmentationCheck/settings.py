@@ -47,10 +47,14 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
         'home',
-    'segmentation',
+        'account',
     'catalogue',
     'managerawdata',
     'preprocess',
+    'segmentation',
+    'layoutseg',
+    'task_checkchar',
+    'pagecheck',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

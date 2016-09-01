@@ -31,6 +31,9 @@ class OPage(models.Model):
         verbose_name = _('opage')
         verbose_name_plural = _('opages')
 
+    def get_image_path(self):
+        return '/opage_images/'+self.image
+
 
 @receiver(pre_save, sender=OPage)
 def my_handler(sender, instance, **kwargs):

@@ -7,8 +7,8 @@ class PageAdmin(admin.ModelAdmin):
     list_display = ('id', 'short_text', 'image', 'width', 'height')
     #list_filter = ['height']
 
-    def view_on_site(self, obj):
-        return 'http://192.168.16.3:8000' + reverse('segmentation:page_detail', kwargs={'page_id': obj.id})
+#    def view_on_site(self, obj):
+#        return 'http://192.168.16.3:8000' + reverse('segmentation:page_detail', kwargs={'page_id': obj.id})
 
 
 admin.site.register(Page, PageAdmin)

@@ -1,8 +1,8 @@
 from django.db import models
 from catalogue.models import Volume
-from managerawdata.models import OPage
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 
 
 class Text(models.Model):
@@ -18,7 +18,6 @@ class Text(models.Model):
 class Page(models.Model):
     id = models.CharField(max_length=32, primary_key=True)
     image = models.CharField(max_length=512)
-    o_page = models.ForeignKey(OPage, blank=True, null=True)
     volume = models.ForeignKey(Volume, related_name='pages', blank=True, null=True)
     image_upload = models.ImageField(upload_to = 'page_images',max_length=512,null=True)
     text = models.TextField()
@@ -46,6 +45,9 @@ class Page(models.Model):
         if start_pos != -1:
             s_text = self.text[start_pos + 1:pos].strip()
         return s_text
+
+    def get_image_path(self):
+        return settings.PAGE_IMAGE_ROOT+self.image
 
 
 class Character(models.Model):

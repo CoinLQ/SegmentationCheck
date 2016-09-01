@@ -13,7 +13,7 @@ class OPageSerializer(serializers.ModelSerializer):
 class PageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Page
-        fields = ('id', 'text', 'is_correct')
+        fields = ('id', 'text', 'is_correct','image','width','height')
 
 class VolumeSerializer(serializers.ModelSerializer):
     o_pages = OPageSerializer(many=True, read_only=True)

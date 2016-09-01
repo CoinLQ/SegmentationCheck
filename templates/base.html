@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-hans">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -58,8 +58,9 @@
             <li><a href="/preprocess/preprocess_page">文本预处理 </a></li>
           </ul>
         </li>
-            <li><a href="/segmentation/pagecheck">页面检查</a></li>
-            <li><a href="/segmentation/characters">切分校对</a></li>
+            <li><a href="/segmentation/">切分</a></li>
+            <li><a href="/pagecheck/">页面检查</a></li>
+            <li><a href="/task_checkchar/characters">切分校对</a></li>
             <li><a href="/segmentation/errpageindex/">切分调整</a></li>
           </ul>
 
@@ -71,10 +72,10 @@
     <ul class="dropdown-menu">
       <li><a href="#">信息</a></li>
       <li class="divider"></li>
-      <li><a href="{% url 'segmentation:logout' %}">退出</a></li>
+      <li><a href="{% url 'account:logout' %}">退出</a></li>
     </ul>
 {% else %}
-    <a class="btn btn-primary" href="/login"><i class="icon-user icon-white"></i>登录</a>
+<a class="btn btn-primary" href="{% url 'account:login' %}"><i class="icon-user icon-white"></i>登录</a>
 {% endif %}
 </li>
 </ul>
