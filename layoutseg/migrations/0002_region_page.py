@@ -8,6 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('layoutseg', '0001_initial'),
+        ('segmentation', '0001_initial'),
     ]
 
     operations = [
