@@ -7,7 +7,6 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('segmentation', '0003_auto_20160828_0229'),
         ('layoutseg', '0001_initial'),
     ]
 
