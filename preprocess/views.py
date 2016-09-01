@@ -54,7 +54,6 @@ def opage_cut(request):
                     image=page_image_name,
                     width=width,
                     height=height,
-                    o_page=opage,
                     volume = volume
                     )
             page.save()
