@@ -9,7 +9,13 @@ body {
 *, *::after, *::before {
   box-sizing: border-box;
 }
+.m-l-2 {
+  margin-left: 2em;
+}
 
+.m-b-1 {
+  margin-bottom: 1em;
+}
 svg {
   width: 100%;
 }
