@@ -5,5 +5,6 @@ admin.autodiscover()
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
-    url(r'^demo/$', views.demo, name='demo'),
+    url(r'^demo/$', views.demo),
+    url(r'^joinus/$', views.join_us),
 ]

@@ -6,8 +6,7 @@ from managerawdata.models import OPage
 from os.path import splitext
 from django.conf import settings
 from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
-from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import user_passes_test
 
 
 class OpageIndex(generic.ListView):
@@ -15,7 +14,8 @@ class OpageIndex(generic.ListView):
     template_name = 'managerawdata/index.html'
 
     #@method_decorator(login_required)
-    @method_decorator(staff_member_required)
+    #@method_decorator(staff_member_required)
+    @method_decorator(user_passes_test(lambda u:u.is_staff, login_url='/home/joinus'))
     def dispatch(self, *args, **kwargs):
         return super(OpageIndex, self).dispatch(*args, **kwargs)
 

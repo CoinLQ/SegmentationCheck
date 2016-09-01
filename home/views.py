@@ -5,3 +5,6 @@ def index(request):
 
 def demo(request):
     return render(request, 'home/demo.html')
+
+def join_us(request):
+    return render(request, 'home/join_us.html')
