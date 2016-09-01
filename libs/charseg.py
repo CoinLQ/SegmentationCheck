@@ -75,7 +75,10 @@ def find_top(binary_line, region_height, region_width, start):
         top = 0
     return top
 
-def charseg(image, binary_image, region_lst, page_id):
+def charseg(img_path, region_lst, page_id):
+    image = io.imread(img_path, 0)
+    binary = binarisation(image)
+    binary_image = (binary * 255).astype('ubyte')
     char_lst = []
     for region in region_lst:
         region_top = region[u'top']
@@ -143,7 +146,7 @@ def charseg(image, binary_image, region_lst, page_id):
                 char_lst.append(char)
                 char_image = region_image[rel_top: rel_bottom]
                 char_filename = u'%s-%s-%s-%s.jpg' % (page_id, line_no, region_no, char_no)
-                io.imsave(char_filename, char_image)
+                #io.imsave(char_filename, char_image)
         else:
             text_segs = text.split(u'　')
             text_segs_cnt = len(text_segs)
@@ -173,7 +176,7 @@ def charseg(image, binary_image, region_lst, page_id):
                     end_pos = end
                     h = end_pos - cur_pos
                     cur_pos = end
-                print txt
+                #print txt
                 char_count = len(txt)
                 if not char_count:
                     continue
@@ -189,7 +192,7 @@ def charseg(image, binary_image, region_lst, page_id):
                     rel_bottom = rel_top + int(avg_height) #int((i + 1) * avg_height) + start_pos
                     if rel_bottom >= end_pos:
                         rel_bottom = end_pos
-                    print rel_bottom
+                    #print rel_bottom
                     if binary_line[rel_bottom - 1] != 0:
                         min_pos = np.argmin(binary_line[rel_bottom - int(avg_height/3) : rel_bottom + int(avg_height/3)])
                         rel_bottom = min_pos + rel_bottom - int(avg_height/3) + 1
@@ -214,7 +217,7 @@ def charseg(image, binary_image, region_lst, page_id):
                     print rel_top, rel_bottom
                     char_image = region_image[rel_top: rel_bottom]
                     char_filename = u'%s-%s-%s-%s.jpg' % (page_id, line_no, region_no, char_no)
-                    io.imsave(char_filename, char_image)
+                    #io.imsave(char_filename, char_image)
     return char_lst
 
 def binarisation(src_image):

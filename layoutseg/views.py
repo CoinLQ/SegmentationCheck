@@ -1,5 +1,4 @@
 # -*- coding:utf-8 -*-
-from django.shortcuts import render
 from django.http import  JsonResponse
 from libs.layoutseg import layout_seg
 from django.shortcuts import get_object_or_404
@@ -12,7 +11,9 @@ def run_seg(request,pk):
     text = page.text
     region_lst = layout_seg(img_path, text)
     for region in region_lst:
+        region_id = '{0}l{1:02}r{2:02}'.format(pk,region['line_no'],region['region_no'])
         _region = Region(
+                id = region_id,
                 page_id=pk,
                 text=region['text'],
                 left=region['left'],
@@ -24,5 +25,5 @@ def run_seg(request,pk):
                 )
         if u'mark' in region:
             _region.mark = region['mark']
-            _region.save()
+        _region.save()
     return JsonResponse(region_lst, safe=False)

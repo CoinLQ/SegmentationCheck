@@ -53,6 +53,7 @@ LOCAL_APPS = [
     'preprocess',
     'segmentation',
     'layoutseg',
+    'charseg',
     'task_checkchar',
     'pagecheck',
 ]
