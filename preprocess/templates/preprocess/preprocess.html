@@ -223,9 +223,8 @@ $('#save').click(function(){
     'data': JSON.stringify(data),
     'csrfmiddlewaretoken': '{{ csrf_token }}'
   }
-  $.post('/preprocess/opage_cut', post_data,
-  function(d) {
-    $('#save').addClass("disabled");
+  $.post('/preprocess/opage_cut', post_data).always(function() {
+    $('#save').removeClass("disabled");
   });
 });
 </script>
