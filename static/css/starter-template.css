@@ -128,7 +128,7 @@ pre[rel="REEL"]::before {
   box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 0.2);
 }
 .slideThree:after {
-  content: '单页';
+  content: '\5355 \9875 ';
   color: #fff;
   position: absolute;
   right: 10px;
@@ -138,7 +138,7 @@ pre[rel="REEL"]::before {
   text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.15);
 }
 .slideThree:before {
-  content: '双页';
+  content: "\53CC \9875 ";
   color: #000;
   position: absolute;
   left: 10px;

@@ -215,7 +215,7 @@ function unescapeHtml(safe) {
 }
 
 function save_to_page(){
-    var text = $("#redactor p").html();
+    var text = $("#redactor").html();
     text = text.replace(/<br>/g,"\r\n");
     text = unescapeHtml(text);
     var post_data = {'id': $page_id,'text': text};

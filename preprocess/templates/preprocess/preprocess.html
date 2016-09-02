@@ -12,8 +12,8 @@
       stroke-width: 2;
     }
     .segment-line {
-      stroke: blue;
-      stroke-width: 2;
+      stroke: #3371b7;
+      stroke-width: 6;
     }
 
     .cursor_ns {
@@ -74,13 +74,15 @@
         </div>
         <div class='col-md-10'>
             <div class="unchecked-box hidden">
-                <div class="btn-toolbar toolbar" role="toolbar" aria-label="test" style=''>
-                    <div class="h3" id="page_desc"></div>
+
+                    <div class="h3" id="page_desc">
+
+                    </div>
                     <button class="btn btn-primary" id="save">保存</button>
-                </div>
+                <div id="bookpage_cut"></div>
             </div><!--end hidden-->
 
-            <div id="bookpage_cut"></div>
+
         </div><!--end col-md-9-->
     </div><!--end row -->
 
@@ -136,9 +138,9 @@ function renderPage(_pageid){
                 lable = 'p'+(page_no+j) + 'b'+(i+1);
                 texts[id] = draw
                     .text(lable)
-                    .fill('red')
+                    .fill('green')
                     .move(rect.x(),rect.y());
-                rect.selectize().resize().on('resizedone', function(e){
+                rect.selectize({radius:27}).resize().on('resizedone', function(e){
                     rect = e.target;
                     console.log(rect.id);
                     var id = rect.id;
@@ -200,15 +202,20 @@ $('#Volume').on('changed.bs.select', function (e) {
     });
 });
 $('#save').click(function(){
+    if ($('#save').hasClass("disabled"))
+    {
+        return;
+    }
+    $('#save').addClass("disabled");
     var data=[];
     for(rect in rects){
         data.push({
                 'opage_id': page_id,
                 'volume_id': volume_id,
                 'bar_id': texts[rect].text(),
-                'top': rects[rect].y(), 
-                'left': rects[rect].x(), 
-                'width': rects[rect].width(), 
+                'top': rects[rect].y(),
+                'left': rects[rect].x(),
+                'width': rects[rect].width(),
                 'height': rects[rect].height(),
         });
     }
@@ -218,7 +225,7 @@ $('#save').click(function(){
   }
   $.post('/preprocess/opage_cut', post_data,
   function(d) {
-    console.log('ok');
+    $('#save').addClass("disabled");
   });
 });
 </script>
