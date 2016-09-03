@@ -19,7 +19,6 @@ class Page(models.Model):
     id = models.CharField(max_length=32, primary_key=True)
     image = models.CharField(max_length=512)
     volume = models.ForeignKey(Volume, related_name='pages', blank=True, null=True)
-    image_upload = models.ImageField(upload_to = 'page_images',max_length=512,null=True)
     text = models.TextField()
     width = models.SmallIntegerField(default=0)
     height = models.SmallIntegerField(default=0)
@@ -47,7 +46,12 @@ class Page(models.Model):
         return s_text
 
     def get_image_path(self):
-        return settings.PAGE_IMAGE_ROOT+self.image
+        #return settings.PAGE_IMAGE_ROOT+self.image
+        return 'http://ob21oo6fl.bkt.clouddn.com/page_images/'+self.image
+
+    @property
+    def image_url(self):
+        return 'http://ob21oo6fl.bkt.clouddn.com/page_images/'+self.image
 
 
 class Character(models.Model):
@@ -56,7 +60,6 @@ class Character(models.Model):
     text = models.ForeignKey(Text, blank=True, null=True)
     char = models.CharField(max_length=4, db_index=True)
     image = models.CharField(max_length=512)
-    #image = models.ImageField(upload_to = 'character_images',max_length=512,null=True)
     left = models.SmallIntegerField()
     right = models.SmallIntegerField()
     top = models.SmallIntegerField()
@@ -78,13 +81,13 @@ class Character(models.Model):
     def __unicode__(self):
         return u'%s:%s' % (self.id, self.char)
 
+
 class CharacterStatistics(models.Model):
     char = models.CharField(max_length=4,db_index=True,primary_key=True)
     total_cnt = models.IntegerField(default=0)
     uncheck_cnt = models.IntegerField(default=0)
     err_cnt = models.IntegerField(default=0)
     uncertainty_cnt = models.IntegerField(default=0)
-
 
     def __unicode__(self):
         return u'%s:%d' % (self.char,self.total_cnt )

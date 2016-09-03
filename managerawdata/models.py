@@ -34,7 +34,6 @@ class OPage(models.Model):
     def get_image_path(self):
         return '/opage_images/'+self.image
 
-
 @receiver(pre_save, sender=OPage)
 def my_handler(sender, instance, **kwargs):
     # initial image size info

@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% block head %}
+<title>字索引</title>
+
+<link href="/static/css/simplePagination.css" rel="stylesheet">
+<link href="/static/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
+<style>
+label {
+    display: inline-block;
+  } /*for tooltip*/
+  .error-char {
+    background-color: pink;
+  }
+  .correct-char {
+    background-color: #9AFF9A;
+  }
+  .flow {float:left; min-width:80px; min-height:80px; margin:5px;border:solid blue 1px;}
+
+  .selected {
+      background-color: #aaa !important;
+  }
+
+.unchecked-box{
+    position: relative;
+    padding: 25px 15px 15px;
+    background-color: #fafafa;
+    border: 1px solid #ddd;
+    border-bottom-width: 0;
+}
+.m-b-10 {
+	margin-bottom: 10px;
+}
+.sidecol {
+    height:80%;
+    overflow:auto;
+    position:relative;
+    max-height:800px;
+}
+</style>
+{% endblock %}
+{% block mainbody %}
+<div class="container">
+    <div class='row show-grid'>
+        <div class='col-md-3 col-xs-3' >
+            <div class='sidecol'>
+    <table class="table table-bordered table-striped table-hover">
+        <caption>已经切分出的字列表</caption>
+        <thead>
+          <tr>
+             <th>字</th>
+             <th>字形总数</th>
+             <th>未审核字形数</th>
+             <th>错误字形数</th>
+          </tr>
+        </thead>
+      <tbody id='charindextbody'>
+        {% for ch in characterstatistics_list %}
+      <tr >
+          <td value='{{ch.char}}'>{{ch.char}}</td><td>{{ch.total_cnt}}</td><td>{{ch.uncheck_cnt}}</td><td >{{ch.err_cnt}}</td>
+
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+        <div class='col-md-9 col-xs-9'>
+        <div id='charBrowseArea'>
+        </div>
+        <div style="clear:both;"> </div>
+        <div class="pagec" id="pagearea">
+            <ul class="pagination">
+            </ul>
+        </div>
+</div>
+
+        </div>
+    </div><!--endrow-->
+
+</div><!-- /.container -->
+{% endblock %}
+{% block foot  %}
+<!--for index-->
+<script>
+$(function(){
+    $('#charindextbody tr').click(function (e) {
+        $('.unchecked-box').removeClass('hidden');
+        $('tr').removeClass("selected");
+        $(this).addClass("selected");
+        var _char = $("tr.selected td:first").text();
+        window.char = _char;
+        $.getJSON("/characters/charactercheck/"+window.char+"?mode=browse",function(result){
+            paginationFun(result.items,result.itemsOnPage);
+            obj= $.parseJSON(result.charArr);
+            renderCharArea("#charBrowseArea",obj);
+            binding_char_check('#charBrowseArea');
+        });
+    });
+
+})
+</script>
+<!--for browse&check-->
+<script>
+function binding_char_check(area){
+    var selector = area + ' .char-image'
+    $(selector).click(function(){
+      var data = {'id': this.id};
+      data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+      data['char'] = window.char;
+      if ($(this).hasClass('error-char')) {
+        $(this).removeClass('error-char');
+        $(this).addClass('correct-char');
+        data['is_correct'] = 1;
+        $.post('/segmentation/set_correct', data, function() {
+        });
+      } else {
+        $(this).removeClass('correct-char');
+        $(this).addClass('error-char');
+        data['is_correct'] = -1;
+        $.post('/segmentation/set_correct', data, function() {
+        });
+      }
+    });
+}
+</script>
+<script>
+function renderCharArea(area,charArr){
+    $(area).empty();
+    txt =''
+    $.each(charArr, function(i, field){
+        txt = "<div id="+field.id+" class='flow "
+        if (field.is_correct == -1){
+            txt += "error-char ";
+        }
+        else if (field.is_correct == 1){
+            txt += "correct-char ";
+        }
+        txt +="char-image' title='"+field.id+"'><img src='"+field.image+"' alt='加载中'></div>"
+        $(area).append(txt);
+      });
+}
+</script>
+<!-- for browse mode-->
+<script src="/static/js/jquery.simplePagination.js" charset="utf-8"></script>
+<script>
+function paginationFun(_items,_itemsOnpage){
+    $('#pagearea').pagination({
+        items: _items,
+        itemsOnPage: _itemsOnpage,
+        cssStyle: 'light-theme',
+    onPageClick: function(pageNumber, event) {
+                // Callback triggered when a page is clicked
+                // Page number is given as an optional parameter
+                $.getJSON("/segmentation/charactercheck/"+window.char+"?mode=browse&page="+pageNumber,function(result){
+                    obj= $.parseJSON(result.charArr);
+                    renderCharArea("#charBrowseArea",obj);
+                    binding_char_check('#charBrowseArea');
+                });
+            },
+    });
+}
+</script>
+
+{% endblock %}
+

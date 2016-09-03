@@ -1,19 +1,13 @@
 from managerawdata.models import OPage
 from rest_framework import serializers
 from catalogue.models import Tripitaka, Volume
-from segmentation.models import Page
-
+from segmentation.models import Page,Character
 
 class OPageSerializer(serializers.ModelSerializer):
     class Meta:
         model = OPage
         fields = ('id', 'description', 'tripitaka','volume', 'page_no','page_type','height', 'width',
             'image','status')
-
-class PageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Page
-        fields = ('id', 'text', 'is_correct','image','width','height')
 
 class VolumeSerializer(serializers.ModelSerializer):
     o_pages = OPageSerializer(many=True, read_only=True)
@@ -27,3 +21,15 @@ class TripitakaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tripitaka
         fields = ('id', 'name','code', 'volumes_count', 'bars_count', 'volumes')
+
+class PageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Page
+        fields = ('id', 'text', 'is_correct','image','width','height','image_url')
+
+
+class CharacterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Character
+        fields = ('id','page', 'char','image', 'is_correct')
+

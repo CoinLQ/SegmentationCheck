@@ -7,12 +7,11 @@ from segmentation.models import Page
 from django.views import generic
 import json
 import re
-from django.conf import settings
 from skimage import io
 
 import cStringIO #for output memory file for save cut image
-from django.core.files.storage import default_storage
-from SegmentationCheck.storage import internal_storage
+#from django.core.files.storage import default_storage
+from libs.storage import cloud_storage
 
 class PreprocessIndex(generic.ListView):
     model = Tripitaka
@@ -27,7 +26,7 @@ def opage_cut(request):
         opage_id = d[0][u'opage_id']
         volume_id = d[0][u'volume_id']
         volume = get_object_or_404(Volume, pk=volume_id)
-        volume_str = opage_id[0:opage_id.index('p')]
+        volume_str = opage_id[0:opage_id.index('P')]
         opage = get_object_or_404(OPage, pk=opage_id)
         opage_image_path = opage.image.path
         opage_image = io.imread(opage_image_path, 0)
@@ -37,18 +36,20 @@ def opage_cut(request):
             if m:
                 page_no = m.group(1)
                 bar_no = m.group(2)
-            page_id = '{0}p{1:05}b{2}'.format(volume_str,int(page_no),bar_no)
+            page_id = '{0}P{1:05}B{2}'.format(volume_str,int(page_no),bar_no)
             top     = int(bar[u'top'])
             left    = int(bar[u'left'])
             width   = int(bar[u'width'])
             height  = int(bar[u'height'])
             page_image_name = page_id + u'.png'
-            page_image_path = settings.PAGE_IMAGE_ROOT + page_image_name
+            page_image_path = 'page_images/' + page_image_name
             page_image = opage_image[top:top + height, left:left + width]
             memfile = cStringIO.StringIO()
-            #io.imsave(memfile, page_image)
-            internal_storage.save(page_image_path, memfile)
-            io.imsave(page_image_path, page_image)
+            io.imsave(memfile, page_image)
+            if cloud_storage.exists(page_image_path):
+                cloud_storage.delete(page_image_path)
+            cloud_storage.save(page_image_path, memfile)
+            #io.imsave(page_image_path, page_image)
             page = Page(
                     id=page_id,
                     image=page_image_name,

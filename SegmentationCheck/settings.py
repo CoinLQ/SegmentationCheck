@@ -54,7 +54,7 @@ LOCAL_APPS = [
     'segmentation',
     'layoutseg',
     'charseg',
-    'task_checkchar',
+    'characters',
     'pagecheck',
 ]
 
@@ -107,7 +107,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.SessionAuthentication",
     ),
-    "DEFAULT_PAGINATION_CLASS": "SegmentationCheck.pagination.StandardPagination",
+    "DEFAULT_PAGINATION_CLASS": "api.pagination.StandardPagination",
     "DEFAULT_FILTER_BACKENDS": (
         "rest_framework.filters.SearchFilter",
         "rest_framework.filters.DjangoFilterBackend",

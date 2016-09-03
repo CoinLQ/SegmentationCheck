@@ -4,7 +4,6 @@ from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.http import QueryDict
 from django.db.models.query import QuerySet
-from django.core.paginator import Page as paginatorPageType
 
 from django.utils.functional import Promise
 from django.utils.encoding import force_text
@@ -13,7 +12,6 @@ from segmentation.models import Page, Character
 
 from django.views import generic
 
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count,F
 import json
 
@@ -33,20 +31,6 @@ from django.core.files.base import ContentFile
 from django.core.serializers.json import DjangoJSONEncoder
 
 from catalogue.models import Tripitaka
-
-
-class charJsonEncoder(DjangoJSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, QuerySet) or isinstance(obj, paginatorPageType):
-            arr = []
-            for ch in obj:
-                arr.append({
-                u'id': ch.id,
-                u'image': '/character_images/'+ch.page_id+'/'+ch.image,
-                u'is_correct': ch.is_correct,
-                            })
-            return arr
-        return super(charJsonEncoder, self).default(obj)
 
 class Index(generic.ListView):
     model = Tripitaka

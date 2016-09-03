@@ -29,7 +29,7 @@ urlpatterns = [
     url(r'^segmentation/', include('segmentation.urls',namespace='segmentation')),
     url(r'^layoutseg/', include('layoutseg.urls',namespace='layoutseg')),
     url(r'^charseg/', include('charseg.urls',namespace='charseg')),
-    url(r'^task_checkchar/', include('task_checkchar.urls',namespace='task_checkchar')),
+    url(r'^characters/', include('characters.urls',namespace='characters')),
     url(r'^pagecheck/', include('pagecheck.urls',namespace='pagecheck')),
     url(r'^api/', include('api.urls',namespace='api')),
 ]

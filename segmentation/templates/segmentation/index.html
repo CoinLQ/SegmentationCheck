@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block head %}
-<title>页面预处理</title>
+<title>版面字形切分</title>
 <link href="/static/css/bootstrap-select.min.css" media="all" rel="stylesheet" type="text/css" />
 
 <link rel="stylesheet" type="text/css" media="screen" href="/static/css/svg.select.css">
@@ -131,8 +131,7 @@ function renderPage(_pageid){
         height = result.height;
         draw = new SVG('segmentation_page')
             .size(width*factor, height*factor);
-        var image_path = '/page_images/'+result.image;
-        var image = draw.image(image_path).size(width,height);
+        var image = draw.image(result.image_url).size(width,height);
         draw.viewbox({ x: 0, y: 0, width: width, height: height });
     });
 }
@@ -142,11 +141,8 @@ function binding_page(){
         $('tr').removeClass("selected");
         $(this).addClass("selected");
         page_id = $("tr.selected td:first").text();
-        //$('.unchecked-box').load("/preprocess/text_process/" + _pageid);
         renderPage(page_id);
     });
-
-
 }
 
 function render_region(arr){

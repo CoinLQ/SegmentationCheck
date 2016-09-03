@@ -1,28 +1,27 @@
 from django.shortcuts import render
+from django.http import  JsonResponse
 from segmentation.models import Page, Character, CharacterStatistics
 from django.core.serializers.json import DjangoJSONEncoder
 from django.views import generic
 import random
 from django.db.models import F
+from django.core.paginator import Page as paginatorPageType
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+import json
 
-class MyJsonEncoder(DjangoJSONEncoder):
+class charJsonEncoder(DjangoJSONEncoder):
     def default(self, obj):
-        if isinstance(obj, CharacterLine):
-            return {
-                u'line_no': obj.line_no,
-                u'left': obj.left,
-                u'right': obj.right,
-                u'char_lst': obj.char_lst,
-            }
-        if isinstance(obj, Character):
-            return {
-                u'id': obj.id,
-                u'char': obj.char,
-                u'line_no': obj.line_no,
-                u'char_no': obj.char_no,
-                u'top': obj.top,
-                u'bottom': obj.bottom, u'is_correct': obj.is_correct, }
-        return super(MyJsonEncoder, self).default(obj)
+        if isinstance(obj, paginatorPageType):
+            arr = []
+            for ch in obj:
+                arr.append({
+                u'id': ch.id,
+                u'image': '/character_images/'+ch.page_id+'/'+ch.image,
+                u'is_correct': ch.is_correct,
+                            })
+            return arr
+        return super(charJsonEncoder, self).default(obj)
+
 
 class CharacterLine:
     def __init__(self, line_no, left, right, char_lst):
@@ -31,10 +30,13 @@ class CharacterLine:
         self.right = right
         self.char_lst = char_lst
 
-
-
 class CharacterIndex(generic.ListView):
-    template_name = 'task_checkchar/characters.html'
+    model =  CharacterStatistics
+    template_name = 'characters/character_index.html'
+
+
+class Task(generic.ListView):
+    template_name = 'characters/characters.html'
 
     #@method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
