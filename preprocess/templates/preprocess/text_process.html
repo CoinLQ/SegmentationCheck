@@ -213,10 +213,18 @@ function unescapeHtml(safe) {
         .replace(/&#039;/g, "'");
 }
 
+function strip(html)
+{
+   var tmp = document.createElement("DIV");
+   tmp.innerHTML = html;
+   return tmp.textContent || tmp.innerText || "";
+}
+
 function save_to_page(){
-    var text = $("#redactor").html();
+    var text = $("#redactor").redactor('code.get');
     text = text.replace(/<br>/g,"\r\n");
-    text = unescapeHtml(text);
+    text = strip(text);
+    //text = unescapeHtml(text);
     var post_data = {'id': $page_id,'text': text};
     $.ajax({
     url: '/api/page/'+ $page_id,
