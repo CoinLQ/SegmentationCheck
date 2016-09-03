@@ -7,11 +7,12 @@ from catalogue.models import Tripitaka, Volume
 from segmentation.models import Page
 from rest_framework.response import Response
 from rest_framework import generics,filters
-
+from libs.pagination import StandardPagination
 
 
 class PageViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     serializer_class = PageSerializer
+    pagination_class = StandardPagination
     queryset = Page.objects.all()
     filter_fields = ('id', 'text', 'volume')
 
