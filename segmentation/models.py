@@ -1,5 +1,6 @@
 from django.db import models
 from catalogue.models import Volume
+from managerawdata.models import OPage
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
@@ -19,6 +20,7 @@ class Page(models.Model):
     id = models.CharField(max_length=32, primary_key=True)
     image = models.CharField(max_length=512)
     volume = models.ForeignKey(Volume, related_name='pages', blank=True, null=True)
+    o_page = models.ForeignKey(OPage, related_name='pages', blank=True, null=True)
     text = models.TextField()
     width = models.SmallIntegerField(default=0)
     height = models.SmallIntegerField(default=0)

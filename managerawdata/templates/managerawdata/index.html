@@ -123,7 +123,7 @@ $('#Volume').on('changed.bs.select', function (e) {
     var start_page = parseInt(volumes[volume_idx].start_page);
     var end_page = parseInt(volumes[volume_idx].end_page);
     $("#start_page").prev().text("开始页("+start_page+"-"+end_page+")");
-    $("#start_page").val(start_page);
+    $("#start_page").val(start_page + volumes[volume_idx].o_pages_count);
     $("#start_page").attr("min",start_page);
     $("#start_page").attr("max",end_page);
     $("form").removeClass("hidden");

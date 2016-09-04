@@ -167,7 +167,7 @@ $('#Tripitaka').on('changed.bs.select', function (e) {
 $('#Volume').on('changed.bs.select', function (e) {
     var request = $.getJSON({
         type: 'GET',
-        url: '/api/page?volume=' + e.target.value ,
+        url: '/api/page?volume=' + e.target.value + '&is_correct=0' ,
     });
   request.done(function(data){
 

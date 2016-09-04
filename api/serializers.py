@@ -10,11 +10,19 @@ class OPageSerializer(serializers.ModelSerializer):
             'image','status')
 
 class VolumeSerializer(serializers.ModelSerializer):
-    o_pages = OPageSerializer(many=True, read_only=True)
+    o_pages = serializers.SerializerMethodField(read_only=True)
     bars_count = serializers.CharField(read_only=True, source="tripitaka.bars_count")
+    o_pages_count = serializers.IntegerField(source='get_o_pages_count')
+
+    def get_o_pages(self, volume):
+        qs = OPage.objects.filter(status=0, volume=volume).order_by('-id')[:10]
+        serializer = OPageSerializer(instance=qs, many=True, read_only=True)
+        return serializer.data
+
     class Meta:
         model = Volume
-        fields = ('id', 'number','start_page','end_page','o_pages', 'bars_count')
+        fields = ('id', 'number','start_page','end_page', 'o_pages', 'bars_count', 'o_pages_count')
+        read_only_fields = ('o_pages_count')
 
 class TripitakaSerializer(serializers.ModelSerializer):
     volumes = VolumeSerializer(many=True, read_only=True)

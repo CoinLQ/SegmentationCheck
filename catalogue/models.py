@@ -38,6 +38,9 @@ class Volume(models.Model):
     start_page = models.SmallIntegerField(default=0,verbose_name = _('Volume|start_page'))
     end_page = models.SmallIntegerField(default=0,verbose_name = _('Volume|end_page'))
 
+    def get_o_pages_count(self):
+        return self.o_pages.filter(volume=self).count()
+
     class Meta:
         verbose_name = _('Segmentation|volume')
         verbose_name_plural = _('Segmentation|volumes')

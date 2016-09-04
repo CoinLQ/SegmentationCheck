@@ -234,6 +234,13 @@ function save_to_page(){
     success: function(result) {
         $("#be_saved").fadeIn();
         $("#be_saved").fadeOut();
+        $("tr.selected").remove();
+
+        $('#save').removeClass("disabled");
+        if ($("tr").size() < 2) {
+            window.location.reload();
+        }
+        $("tr")[1].click();
         }
     });
 
