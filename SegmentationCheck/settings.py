@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import djcelery
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -30,6 +31,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+
 DJANGO_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -43,6 +45,8 @@ THIRD_PARTY_APPS = [
 #   'qiniustorage',
     'django_extensions',
     'rest_framework',
+    'djcelery',
+#    'kombu.transport.django',
 ]
 
 LOCAL_APPS = [
@@ -59,6 +63,11 @@ LOCAL_APPS = [
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+
+djcelery.setup_loader()
+#BROKER_URL = 'django://'
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -159,7 +168,7 @@ QINIU_SECURE_URL = False
 
 LANGUAGE_CODE = 'zh-hans'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 

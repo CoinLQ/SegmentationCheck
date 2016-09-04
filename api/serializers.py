@@ -31,5 +31,5 @@ class PageSerializer(serializers.ModelSerializer):
 class CharacterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Character
-        fields = ('id','page', 'char','image', 'is_correct')
+        fields = ('id','page', 'char','image', 'is_correct','image_url')
 

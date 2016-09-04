@@ -81,6 +81,10 @@ class Character(models.Model):
     def __unicode__(self):
         return u'%s:%s' % (self.id, self.char)
 
+    @property
+    def image_url(self):
+        return '/character_images/'+self.page_id+'/'+self.image
+
 
 class CharacterStatistics(models.Model):
     char = models.CharField(max_length=4,db_index=True,primary_key=True)

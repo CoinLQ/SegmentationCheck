@@ -54,36 +54,17 @@ class Task(generic.ListView):
 
 #@login_required(login_url='/segmentation/login/')
 def character_check(request, char):
-    mode = request.GET.get('mode')
-    if mode == 'browse':  #browse mode  display all characters
-        characters_list = Character.objects.filter(char=char).exclude(is_correct=-9)
-        paginator = Paginator(characters_list, 30) # Show 30 characters per page
-        page = request.GET.get('page')
-        try:
-            characters = paginator.page(page)
-        except PageNotAnInteger:
-            # If page is not an integer, deliver first page.
-            characters = paginator.page(1)
-        except EmptyPage:
-            # If page is out of range (e.g. 9999), deliver last page of results.
-            characters = paginator.page(paginator.num_pages)
-        charArr = json.dumps(characters,cls=charJsonEncoder)
-        #totalPage = paginator.num_pages
-        #currPage = characters.number
-        items = paginator.count
-        return JsonResponse({u'charArr':charArr, u'items':items,u'itemsOnPage':30,}, safe=False)
-    else :        #check mode only display the unchecked characters (is_correct=0)
-        if not char:
-            with open('static/alternative_char_list.txt') as f:
-                txt = f.read()
-                char_list = txt.split(',')
-            char = random.choice(char_list).strip()
-        characters = Character.objects.filter(char=char).filter(is_correct=0)[:30]
-        qs = CharacterStatistics.objects.filter(char=char).values('uncheck_cnt','total_cnt')
-        total_cnt = qs[0]['total_cnt']
-        uncheck_cnt = qs[0]['uncheck_cnt']
-        charArr = json.dumps(characters,cls=charJsonEncoder)
-        return JsonResponse({u'charArr':charArr, u'total_cnt':total_cnt,u'uncheck_cnt':uncheck_cnt,u'char':char}, safe=False)
+    if not char:
+        with open('static/alternative_char_list.txt') as f:
+            txt = f.read()
+            char_list = txt.split(',')
+        char = random.choice(char_list).strip()
+    characters = Character.objects.filter(char=char).filter(is_correct=0)[:30]
+    qs = CharacterStatistics.objects.filter(char=char).values('uncheck_cnt','total_cnt')
+    total_cnt = qs[0]['total_cnt']
+    uncheck_cnt = qs[0]['uncheck_cnt']
+    charArr = json.dumps(characters,cls=charJsonEncoder)
+    return JsonResponse({u'charArr':charArr, u'total_cnt':total_cnt,u'uncheck_cnt':uncheck_cnt,u'char':char}, safe=False)
 
 
 
@@ -110,3 +91,9 @@ def set_correct(request):
         data = {'status': 'error'}
     return JsonResponse(data)
 
+#from tasks import update_char_stastics
+#
+#def test(request):
+#    update_char_stastics.delay()
+#    data = {'status': 'ok'}
+#    return JsonResponse(data)

@@ -4,3 +4,5 @@
 .idea
 logs/
 qiefenvenv/  
+celerybeat-schedule
+celerybeat.pid

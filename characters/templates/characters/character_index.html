@@ -27,9 +27,6 @@ label {
     border: 1px solid #ddd;
     border-bottom-width: 0;
 }
-.m-b-10 {
-	margin-bottom: 10px;
-}
 .sidecol {
     height:80%;
     overflow:auto;
@@ -43,62 +40,59 @@ label {
     <div class='row show-grid'>
         <div class='col-md-3 col-xs-3' >
             <div class='sidecol'>
-    <table class="table table-bordered table-striped table-hover">
-        <caption>已经切分出的字列表</caption>
-        <thead>
-          <tr>
-             <th>字</th>
-             <th>字形总数</th>
-             <th>未审核字形数</th>
-             <th>错误字形数</th>
-          </tr>
-        </thead>
-      <tbody id='charindextbody'>
-        {% for ch in characterstatistics_list %}
-      <tr >
-          <td value='{{ch.char}}'>{{ch.char}}</td><td>{{ch.total_cnt}}</td><td>{{ch.uncheck_cnt}}</td><td >{{ch.err_cnt}}</td>
+            <table class="table table-bordered table-striped table-hover">
+                <caption>已经切分出的字列表</caption>
+                <thead>
+                  <tr>
+                     <th>字</th>
+                     <th>字形总数</th>
+                     <th>未审核字形数</th>
+                     <th>错误字形数</th>
+                  </tr>
+                </thead>
+              <tbody id='charindextbody'>
+                {% for ch in characterstatistics_list %}
+              <tr >
+                  <td value='{{ch.char}}'>{{ch.char}}</td><td>{{ch.total_cnt}}</td><td>{{ch.uncheck_cnt}}</td><td >{{ch.err_cnt}}</td>
 
-        {% endfor %}
-      </tbody>
-    </table>
-    </div>
+                {% endfor %}
+              </tbody>
+            </table>
+            </div><!--end sidecol-->
+        </div><!--end col-md-3 -->
         <div class='col-md-9 col-xs-9'>
-        <div id='charBrowseArea'>
-        </div>
-        <div style="clear:both;"> </div>
-        <div class="pagec" id="pagearea">
-            <ul class="pagination">
-            </ul>
-        </div>
-</div>
-
-        </div>
+            <div id='charBrowseArea'>
+            </div>
+            <div style="clear:both;"> </div>
+            <div class="pagec" id="pagearea">
+                <ul class="pagination">
+                </ul>
+            </div>
+        </div><!--end col-md-9 -->
     </div><!--endrow-->
-
 </div><!-- /.container -->
 {% endblock %}
 {% block foot  %}
-<!--for index-->
+<script src="/static/js/jquery.simplePagination.js" charset="utf-8"></script>
 <script>
+var _char;
+var page_size = 30;
 $(function(){
     $('#charindextbody tr').click(function (e) {
         $('.unchecked-box').removeClass('hidden');
         $('tr').removeClass("selected");
         $(this).addClass("selected");
-        var _char = $("tr.selected td:first").text();
-        window.char = _char;
-        $.getJSON("/characters/charactercheck/"+window.char+"?mode=browse",function(result){
-            paginationFun(result.items,result.itemsOnPage);
-            obj= $.parseJSON(result.charArr);
-            renderCharArea("#charBrowseArea",obj);
+        _char = $("tr.selected td:first").text();
+        $.getJSON("/api/character?page_size="+page_size+"&char="+_char,function(result){
+            data = result.models;
+            pagination = result.pagination;
+            paginationFun(pagination.total_entries,page_size);
+            renderCharArea("#charBrowseArea",data);
             binding_char_check('#charBrowseArea');
         });
     });
 
 })
-</script>
-<!--for browse&check-->
-<script>
 function binding_char_check(area){
     var selector = area + ' .char-image'
     $(selector).click(function(){
@@ -120,8 +114,7 @@ function binding_char_check(area){
       }
     });
 }
-</script>
-<script>
+
 function renderCharArea(area,charArr){
     $(area).empty();
     txt =''
@@ -133,25 +126,24 @@ function renderCharArea(area,charArr){
         else if (field.is_correct == 1){
             txt += "correct-char ";
         }
-        txt +="char-image' title='"+field.id+"'><img src='"+field.image+"' alt='加载中'></div>"
+        txt +="char-image' title='"+field.id+"'><img src='"+field.image_url+"' alt='加载中'></div>"
         $(area).append(txt);
       });
 }
-</script>
-<!-- for browse mode-->
-<script src="/static/js/jquery.simplePagination.js" charset="utf-8"></script>
-<script>
+
 function paginationFun(_items,_itemsOnpage){
     $('#pagearea').pagination({
         items: _items,
         itemsOnPage: _itemsOnpage,
         cssStyle: 'light-theme',
-    onPageClick: function(pageNumber, event) {
+        onPageClick: function(pageNumber, event) {
                 // Callback triggered when a page is clicked
                 // Page number is given as an optional parameter
-                $.getJSON("/segmentation/charactercheck/"+window.char+"?mode=browse&page="+pageNumber,function(result){
-                    obj= $.parseJSON(result.charArr);
-                    renderCharArea("#charBrowseArea",obj);
+                var url = "/api/character?page_size="+page_size
+                    +"&char="+_char
+                    +"&page="+pageNumber
+                $.getJSON(url,function(result){
+                    renderCharArea("#charBrowseArea",result.models);
                     binding_char_check('#charBrowseArea');
                 });
             },
