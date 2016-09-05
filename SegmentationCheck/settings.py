@@ -64,6 +64,8 @@ LOCAL_APPS = [
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
 djcelery.setup_loader()
 #BROKER_URL = 'django://'
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
@@ -137,6 +139,8 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
+AUTH_PROFILE_MODULE = 'account.UserProfile'
 
 LOGIN_URL = '/account/login/'
 LOGIN_REDIRECT_URL = '/' # It means home view

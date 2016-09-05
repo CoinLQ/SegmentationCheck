@@ -191,9 +191,7 @@ function renderPage(_pageid){
        console.log(result.image_url);
         var draw = new SVG('segmentation_page').size('200', '300');
         window.draw = draw;
-        //var img_path = '/page_images/'+window._pageid+'.jpg'
-        //var img_path = result.image_url;
-        var img_path = 'http://ob21oo6fl.bkt.clouddn.com/page_images/'+result.image_url;
+        var img_path = result.image_url;
         var image = draw.image(img_path).loaded(function(loader) {
             this.size(loader.width, loader.height);
             var factor = 0.5;
@@ -276,8 +274,6 @@ $('#setPageTag_btn input').on('click', function(){
 $('#resegmentpage_btn').on('click', function(){
     var data = {'id': window._pageid };
     data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
-    //$.post('/segmentation/run_segment', data, function() { });
-    //$.getJSON("/segmentation/charactercheck/"+window.char+"?mode=check",function(result){
     $.getJSON("/segmentation/run_segment/"+window._pageid,function(result){ 
             $("#segmentation_page line").remove()
             renderSegmentGrid(window.draw,result); 

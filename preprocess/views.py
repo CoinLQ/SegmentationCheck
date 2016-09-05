@@ -22,13 +22,12 @@ def opage_cut(request):
     if request.method == 'POST':
         data = request.POST['data']
         d = json.loads(data)
-        print d
         opage_id = d[0][u'opage_id']
         volume_id = d[0][u'volume_id']
         volume = get_object_or_404(Volume, pk=volume_id)
-        volume_str = volume_id
+        volume_str = opage_id[0:opage_id.index('P')]
         opage = get_object_or_404(OPage, pk=opage_id)
-        opage_image_path = opage.image.path
+        opage_image_path = opage.get_image_path()
         opage_image = io.imread(opage_image_path, 0)
         for bar in d:
             bar_id = bar[u'bar_id']
@@ -59,10 +58,8 @@ def opage_cut(request):
                     o_page = opage
                     )
             page.save()
-
-
-        opage.status = 1
-        opage.save()
+        #opage.status = 1
+        #opage.save()
         data = {'status': 'ok'}
     else:
         data = {'status': 'error'}

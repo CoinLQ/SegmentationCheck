@@ -1,72 +1,26 @@
+# -*- coding:utf-8 -*-
 from django.shortcuts import render
 from django.http import  JsonResponse
-from segmentation.models import Page, Character, CharacterStatistics
-from django.core.serializers.json import DjangoJSONEncoder
+from segmentation.models import  Character, CharacterStatistics
 from django.views import generic
 import random
 from django.db.models import F
-from django.core.paginator import Page as paginatorPageType
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-import json
-
-class charJsonEncoder(DjangoJSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, paginatorPageType):
-            arr = []
-            for ch in obj:
-                arr.append({
-                u'id': ch.id,
-                u'image': '/character_images/'+ch.page_id+'/'+ch.image,
-                u'is_correct': ch.is_correct,
-                            })
-            return arr
-        return super(charJsonEncoder, self).default(obj)
-
-
-class CharacterLine:
-    def __init__(self, line_no, left, right, char_lst):
-        self.line_no = line_no
-        self.left = left
-        self.right = right
-        self.char_lst = char_lst
+import datetime
 
 class CharacterIndex(generic.ListView):
     model =  CharacterStatistics
     template_name = 'characters/character_index.html'
 
-
-class Task(generic.ListView):
-    template_name = 'characters/characters.html'
-
-    #@method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(CharacterIndex, self).dispatch(*args, **kwargs)
-
-    def get_queryset(self):
-        return CharacterStatistics.objects.order_by('-uncheck_cnt')
-
-    def sample(self):
-        with open('static/alternative_char_list.txt') as f:
-            txt = f.read()
-            char_list = txt.split(',')
-        char = random.choice(char_list).strip()
-        return CharacterStatistics.objects.filter(char=char)
-
-#@login_required(login_url='/segmentation/login/')
-def character_check(request, char):
-    if not char:
-        with open('static/alternative_char_list.txt') as f:
-            txt = f.read()
-            char_list = txt.split(',')
-        char = random.choice(char_list).strip()
-    characters = Character.objects.filter(char=char).filter(is_correct=0)[:30]
-    qs = CharacterStatistics.objects.filter(char=char).values('uncheck_cnt','total_cnt')
-    total_cnt = qs[0]['total_cnt']
-    uncheck_cnt = qs[0]['uncheck_cnt']
-    charArr = json.dumps(characters,cls=charJsonEncoder)
-    return JsonResponse({u'charArr':charArr, u'total_cnt':total_cnt,u'uncheck_cnt':uncheck_cnt,u'char':char}, safe=False)
-
-
+def task(request):
+    today = datetime.datetime.now().strftime("%Y%m%d")
+    checkin_date = request.session.get('checkin_date',0)
+    if checkin_date != today:
+        request.session['check_char_number'] = 0
+        request.session['checkin_date'] = today
+    check_char_number = request.session.get('check_char_number',0)
+    char_lst = CharacterStatistics.objects.filter(uncheck_cnt__gt=0).order_by('-total_cnt')[:30]
+    char = random.choice(char_lst)
+    return render(request,'characters/characters.html',{'char':char,'check_char_number':check_char_number} )
 
 #@login_required(login_url='/segmentation/login/')
 def set_correct(request):
@@ -81,6 +35,8 @@ def set_correct(request):
         CharacterStatistics.objects.filter(char=char).update(err_cnt=F('err_cnt')-is_correct)
         data = {'status': 'ok'}
     elif 'charArr[]' in request.POST:
+        check_char_number = request.session.get('check_char_number',0)
+        request.session['check_char_number'] = check_char_number+1
         charArr = request.POST.getlist('charArr[]')
         char = request.POST['char']
         updateNum = int(request.POST['updateNum'])
@@ -90,10 +46,3 @@ def set_correct(request):
     else:
         data = {'status': 'error'}
     return JsonResponse(data)
-
-#from tasks import update_char_stastics
-#
-#def test(request):
-#    update_char_stastics.delay()
-#    data = {'status': 'ok'}
-#    return JsonResponse(data)

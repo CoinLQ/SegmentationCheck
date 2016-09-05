@@ -114,7 +114,7 @@ function renderPage(_pageid){
         height = result.height;
         var draw = new SVG('bookpage_cut')
             .size(width*factor, height*factor);
-        var image = draw.image(result.image)
+        var image = draw.image(result.image_url)
             .size(width,height);
         draw.viewbox({ x: 0, y: 0, width: width, height: height });
         $("#page_desc").text(result['description']);

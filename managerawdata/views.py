@@ -22,9 +22,9 @@ class OpageIndex(generic.ListView):
 def opage_upload(request):
     def handle_uploaded_file(f,page_id):
         ext = splitext(f.name)[1]
-        file_name = 'opage_images/'+page_id+ext
+        file_name = page_id+ext
 #        cloud_storage.save(file_name, f)
-        destination_file = settings.MEDIA_ROOT+file_name
+        destination_file = settings.OPAGE_IMAGE_ROOT+file_name
         destination = open(destination_file, 'wb')
         for chunk in f.chunks():
             destination.write(chunk)

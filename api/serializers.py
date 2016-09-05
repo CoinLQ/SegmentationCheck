@@ -6,8 +6,7 @@ from segmentation.models import Page,Character
 class OPageSerializer(serializers.ModelSerializer):
     class Meta:
         model = OPage
-        fields = ('id', 'description', 'tripitaka','volume', 'page_no','page_type','height', 'width',
-            'image','status')
+        fields = ('id', 'description', 'tripitaka','volume', 'page_no','page_type','height', 'width', 'image','status','image_url')
 
 class VolumeSerializer(serializers.ModelSerializer):
     o_pages = serializers.SerializerMethodField(read_only=True)

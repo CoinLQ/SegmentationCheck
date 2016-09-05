@@ -95,23 +95,20 @@ $(function(){
 })
 function binding_char_check(area){
     var selector = area + ' .char-image'
-    $(selector).click(function(){
-      var data = {'id': this.id};
-      data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
-      data['char'] = window.char;
-      if ($(this).hasClass('error-char')) {
-        $(this).removeClass('error-char');
-        $(this).addClass('correct-char');
-        data['is_correct'] = 1;
-        $.post('/segmentation/set_correct', data, function() {
-        });
-      } else {
-        $(this).removeClass('correct-char');
-        $(this).addClass('error-char');
-        data['is_correct'] = -1;
-        $.post('/segmentation/set_correct', data, function() {
-        });
-      }
+        $(selector).click(function(){
+          var data = {'id': this.id};
+          data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+          data['char'] =_char;
+          if ($(this).hasClass('error-char')) {
+            $(this).removeClass('error-char');
+            $(this).addClass('correct-char');
+            data['is_correct'] = 1;
+          } else {
+            $(this).removeClass('correct-char');
+            $(this).addClass('error-char');
+            data['is_correct'] = -1;
+          }
+        $.post('/characters/set_correct', data);
     });
 }
 
@@ -120,7 +117,7 @@ function renderCharArea(area,charArr){
     txt =''
     $.each(charArr, function(i, field){
         txt = "<div id="+field.id+" class='flow "
-        if (field.is_correct == -1){
+        if (field.is_correct <0){
             txt += "error-char ";
         }
         else if (field.is_correct == 1){

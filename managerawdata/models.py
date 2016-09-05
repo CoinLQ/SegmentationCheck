@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.db.models.signals import post_save,pre_save
 from django.dispatch import receiver
 from PIL import Image
+from django.conf import settings
 
 
 
@@ -14,7 +15,7 @@ class OPage(models.Model):
     volume = models.ForeignKey(Volume, related_name='o_pages')
     page_no = models.SmallIntegerField(default = 0)
     page_type = models.SmallIntegerField(default =1 ) #1single 2 dual
-    image = models.ImageField(upload_to = 'opage_images',max_length=512,null=True,blank=True)
+    image = models.CharField(max_length=512,null=True,blank=True)
     width = models.SmallIntegerField(default =0 )
     height = models.SmallIntegerField(default = 0)
     status = models.SmallIntegerField(default = 0) #0 inital 1:output page
@@ -32,11 +33,15 @@ class OPage(models.Model):
         verbose_name_plural = _('opages')
 
     def get_image_path(self):
+        return settings.OPAGE_IMAGE_ROOT+self.image
+
+    @property
+    def image_url(self):
         return '/opage_images/'+self.image
 
 @receiver(pre_save, sender=OPage)
 def my_handler(sender, instance, **kwargs):
     # initial image size info
-    img = Image.open(instance.image.path)
+    img = Image.open(instance.get_image_path())
     instance.width = img.width
     instance.height = img.height

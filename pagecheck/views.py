@@ -9,6 +9,7 @@ class PageCheckView(generic.ListView):
         pk = self.kwargs['pk']
         #only show the page had been segment(right field is not equal 0),and had not been check
         return Page.objects.filter(id__startswith=pk).exclude(right=0).filter(is_correct=0)[:9]
+        #return Page.objects.filter(id='LQ-V00001P00001B1')
 
     #@method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
