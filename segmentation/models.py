@@ -6,15 +6,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
 
-class Text(models.Model):
-    display = models.CharField(max_length=16)
-    semanteme = models.ForeignKey("self", blank=True, related_name="Text")
-    is_base = models.BooleanField(default=False)
-
-    def __unicode__(self):
-        return self.display
-
-
 # Create your models here.
 class Page(models.Model):
     id = models.CharField(max_length=32, primary_key=True)
@@ -59,7 +50,6 @@ class Page(models.Model):
 class Character(models.Model):
     id = models.CharField(max_length=32, primary_key=True)
     page = models.ForeignKey(Page)
-    text = models.ForeignKey(Text, blank=True, null=True)
     char = models.CharField(max_length=4, db_index=True)
     image = models.CharField(max_length=512)
     left = models.SmallIntegerField()
