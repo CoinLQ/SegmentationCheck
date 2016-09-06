@@ -41,7 +41,7 @@
         </div>
         <div class="col-md-10 col-xs-10 reel">
         <pre rel="经文" class=" language-markup">
-        <div id="redactor" class="tnt">{{page.text|escape|linebreaks}}</div>
+        <div id="redactor" class="tnt" contenteditable="true">{{page.text|escape|linebreaks}}</div>
         </pre>
 
     </div>
@@ -59,7 +59,6 @@
 {% endblock %}
 {% block foot  %}
 <script src="/static/js/svg.min.js"></script>
-<script src="/static/redactor/redactor.js"></script>
 <script>
 
 // using jQuery
@@ -179,21 +178,21 @@ function containSelectedText(con1,con2) {
 
 $(function()
 {
-    $('#redactor').redactor({
-        clickToEdit: true,
-        clickToCancel: '#btn-cancel',
-        clickToSave: '#btn-save',
-        callbacks: {
-            save: function(html)
-            {
-                console.log('save', html);
-            },
-            cancel: function(html)
-            {
-                console.log('cancel', html);
-            }
-        }
-    });
+    // $('#redactor').redactor({
+    //     clickToEdit: true,
+    //     clickToCancel: '#btn-cancel',
+    //     clickToSave: '#btn-save',
+    //     callbacks: {
+    //         save: function(html)
+    //         {
+    //             console.log('save', html);
+    //         },
+    //         cancel: function(html)
+    //         {
+    //             console.log('cancel', html);
+    //         }
+    //     }
+    // });
 });
 
 function toggle_view(){
