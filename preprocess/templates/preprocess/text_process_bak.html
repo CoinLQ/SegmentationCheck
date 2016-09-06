@@ -1,21 +1,38 @@
+{% block head %}
+<title>文字处理</title>
+<link rel="stylesheet" type="text/css" media="screen" href="/static/redactor/css/redactor.css">
+
+<style>
+.redactor-in {
+    padding: 24px;
+    border: 1px dashed rgba(0, 0, 0, .15);
+    border-top: none;
+    background: #f6f9fe;
+}
+</style>
+{% endblock %}
+
+
+{% block mainbody %}
 <div class="container">
 <div class="h3">文本预处理</div>
-    <div id="be_saved" class="alert alert-success" style="display: none">
+<div id="be_saved" class="alert alert-success" style="display: none">
     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
     保存成功.
-      </div>
+  </div>
     <div class="row">
+
         <div class="col-md-10 col-xs-10 gallery">
             <div id="img{{ page.id }}"></div>
         </div>
         <div class="col-md-10 col-xs-10">
         <div class="btn-group action_buttons">
-        <button class="btn btn-primary" onclick="markSelectedText('<', '>')">夹注</button>
-        <button class="btn btn-primary" onclick="markSelectedText('@','@')">题记</button>
-        <button class="btn btn-primary" onclick="markSelectedText('$','@')">衍文</button>
-        <button id="btn-dollar" class="btn btn-default" onclick="markSelectedText('【', '】')">增字</button>
-        <button class="btn btn-default" onclick="markSelectedText('(', ')')">非正文内容</button>
-        <button class="btn btn-warning" onclick="markSelectedText('{', '}')">有缺损</button>
+        <button class="btn btn-primary" onclick="containSelectedText('<', '>')">夹注</button>
+        <button class="btn btn-primary" onclick="markSelectedText('@')">题记</button>
+        <button class="btn btn-primary" onclick="markSelectedText('$')">衍文</button>
+        <button id="btn-dollar" class="btn btn-default" onclick="containSelectedText('【', '】')">增字</button>
+        <button class="btn btn-default" onclick="containSelectedText('(', ')')">非正文内容</button>
+        <button class="btn btn-warning" onclick="containSelectedText('{', '}')">有缺损</button>
         <button class="btn btn-warning" onclick="replaceSelectedText('?')">有疑问</button>
 
         </div>
@@ -23,16 +40,28 @@
                 <button id="btn-save" class="btn btn-primary pull-right" onclick="save_to_page()">保存</button>
         </div>
         <div class="col-md-10 col-xs-10 reel">
-        <pre rel="经文" class="language-markup">
-        <div id="redactor" class="tnt" contenteditable="true">{{page.text|escape|linebreaks}}</div>
+        <pre rel="经文" class=" language-markup">
+        <div id="redactor" class="tnt">{{page.text|escape|linebreaks}}</div>
         </pre>
+
     </div>
 </div>
+
+
     </div>
+<p>
+
+    <button id="btn-cancel" style="display: none;" outline>Cancel</button>
+
+</p>
 
 
+{% endblock %}
+{% block foot  %}
 <script src="/static/js/svg.min.js"></script>
+<script src="/static/redactor/redactor.js"></script>
 <script>
+
 // using jQuery
 function getCookie(name) {
     var cookieValue = null;
@@ -78,15 +107,15 @@ $.ajaxSetup({
         }
     }
 });
-
 var $page_id = "{{page.id}}";
+
 $(function(){
+
     var draw = new SVG("img{{ page.id }}").size('650', '325');
     var _img_url = '{{ page.image_url}}'
     var image = draw.image(_img_url)
     draw.viewbox({ x: 0, y: 0, width:{{page.width }} , height:  {{page.height }}})
 })
-
 function replaceSelectedText(replacementText) {
     var sel, range, text;
     if (window.getSelection) {
@@ -106,7 +135,27 @@ function replaceSelectedText(replacementText) {
     }
 }
 
-function markSelectedText(con1,con2) {
+
+function markSelectedText(mark) {
+    var sel, range, text;
+    if (window.getSelection) {
+        sel = window.getSelection();
+        text = sel.toString();
+        if (text == "")
+            return;
+        if (sel.rangeCount) {
+            range = sel.getRangeAt(0);
+            range.deleteContents();
+            range.insertNode(document.createTextNode(mark.concat(text).concat(mark)));
+        }
+    } else if (document.selection && document.selection.createRange) {
+        range = document.selection.createRange();
+        text = range.text;
+        range.text = mark.concat(text).concat(mark);
+    }
+}
+
+function containSelectedText(con1,con2) {
     var sel, range, text;
     if (window.getSelection) {
         sel = window.getSelection();
@@ -125,6 +174,25 @@ function markSelectedText(con1,con2) {
     }
 }
 
+$(function()
+{
+    $('#redactor').redactor({
+        clickToEdit: true,
+        clickToCancel: '#btn-cancel',
+        clickToSave: '#btn-save',
+        callbacks: {
+            save: function(html)
+            {
+                console.log('save', html);
+            },
+            cancel: function(html)
+            {
+                console.log('cancel', html);
+            }
+        }
+    });
+});
+
 function toggle_view(){
     if ($("#redactor").hasClass("tnt")){
         $("#redactor").removeClass("tnt")
@@ -133,9 +201,26 @@ function toggle_view(){
     }
 }
 
+function unescapeHtml(safe) {
+    return safe.replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#039;/g, "'");
+}
+
+function strip(html)
+{
+   var tmp = document.createElement("DIV");
+   tmp.innerHTML = html;
+   return tmp.textContent || tmp.innerText || "";
+}
 
 function save_to_page(){
-    var text = $("#redactor").text();
+    var text = $("#redactor").redactor('code.get');
+    //text = text.replace(/<br>/g,"");
+    //text = strip(text);
+    //text = unescapeHtml(text);
     var post_data = {'id': $page_id,'text': text};
     $.ajax({
     url: '/api/page/'+ $page_id,
@@ -158,3 +243,4 @@ function save_to_page(){
 
 }
 </script>
+{% endblock %}
