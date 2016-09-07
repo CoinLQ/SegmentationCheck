@@ -122,6 +122,7 @@ window.onload = function(){
 <script src="/static/js/svg.min.js"></script>
 <script src="/static/js/svg.draggable.min.js"></script>
 <script>
+var moves = {};
 function renderSegmentGrid(draw,result){
     obj= $.parseJSON(result.line_lst);
     $.each(obj, function(i, field){
@@ -176,14 +177,11 @@ function renderSegmentGrid(draw,result){
               this.addClass('highlight')
               .removeClass('error-char')
               .removeClass('segment-line');
-              mo[i]ge_typeves[key] = this.y();
+              moves[key] = this.y();
             })
         })
     })
 }
-</script>
-<script>
-var moves = {};
 function renderPage(_pageid){
     window._pageid = _pageid;
     $('#segmentation_page').empty();
