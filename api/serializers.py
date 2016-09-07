@@ -1,7 +1,7 @@
 from managerawdata.models import OPage
 from rest_framework import serializers
 from catalogue.models import Tripitaka, Volume
-from segmentation.models import Page,Character
+from segmentation.models import Page,Character,CharacterStatistics
 
 class OPageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -40,3 +40,7 @@ class CharacterSerializer(serializers.ModelSerializer):
         model = Character
         fields = ('id','page', 'char','image', 'is_correct','image_url')
 
+class CharacterStatisticsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CharacterStatistics
+        fields = ('char','total_cnt', 'uncheck_cnt','err_cnt', 'uncertainty_cnt')

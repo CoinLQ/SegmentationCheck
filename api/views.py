@@ -4,11 +4,11 @@ from rest_framework import viewsets, mixins
 from rest_framework.response import Response
 from rest_framework import generics,filters
 
-from .serializers import PageSerializer, OPageSerializer, TripitakaSerializer, VolumeSerializer,CharacterSerializer
+from .serializers import PageSerializer, OPageSerializer, TripitakaSerializer, VolumeSerializer,CharacterSerializer,CharacterStatisticsSerializer
 
 from managerawdata.models import OPage
 from catalogue.models import Tripitaka, Volume
-from segmentation.models import Page, Character
+from segmentation.models import Page, Character,CharacterStatistics
 
 class TripitakaViewSet(viewsets.ModelViewSet):
     serializer_class = TripitakaSerializer
@@ -45,3 +45,6 @@ class CharacterViewSet(viewsets.ModelViewSet):
     queryset = Character.objects.all()
     filter_fields = ('page_id', 'char', 'is_correct')
 
+class CharacterStatisticsViewSet(viewsets.ModelViewSet):
+    serializer_class = CharacterStatisticsSerializer
+    queryset = CharacterStatistics.objects.all()

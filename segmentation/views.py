@@ -32,6 +32,36 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 from catalogue.models import Tripitaka
 
+
+class MyJsonEncoder(DjangoJSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, CharacterLine):
+            return {
+                u'line_no': obj.line_no,
+                u'left': obj.left,
+                u'right': obj.right,
+                u'char_lst': obj.char_lst,
+            }
+        if isinstance(obj, Character):
+            return {
+                u'id': obj.id,
+                u'char': obj.char,
+                u'line_no': obj.line_no,
+                u'char_no': obj.char_no,
+                u'top': obj.top,
+                u'bottom': obj.bottom,
+                u'is_correct': obj.is_correct,
+            }
+        return super(MyJsonEncoder, self).default(obj)
+
+class CharacterLine:
+    def __init__(self, line_no, left, right, char_lst):
+        self.line_no = line_no
+        self.left = left
+        self.right = right
+        self.char_lst = char_lst
+
+
 class Index(generic.ListView):
     model = Tripitaka
     template_name = 'segmentation/index.html'
@@ -46,7 +76,7 @@ def page_detail(request, page_id):
         line=line[pos+1:]
         text_line_lst.append(line.lstrip())
     #image_url = page.image.url
-    image_url = page.image
+    image_url = page.image_url
 
     characters = Character.objects.filter(page_id=page.id).order_by('line_no')
     temp_lst = []

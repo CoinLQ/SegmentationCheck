@@ -62,7 +62,7 @@
 <script>
 $(function(){
     var _char = $('#checkchar').text();
-    $.getJSON("/api/character?is_correct=0&char="+_char,function(result){
+    $.getJSON("/api/character?page_size=30&is_correct=0&char="+_char,function(result){
         renderCharArea("#charlistArea",result.models);
         binding_char_check('#charlistArea');
         $('.progress .progress-bar').progressbar({display_text:'center', use_percentage: false});
