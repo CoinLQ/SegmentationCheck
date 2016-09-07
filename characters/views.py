@@ -9,7 +9,11 @@ import datetime
 
 class CharacterIndex(generic.ListView):
     model =  CharacterStatistics
-    template_name = 'characters/character_index.html'
+
+def index(request):
+    characterstatistics_list = CharacterStatistics.objects.all().order_by('-total_cnt')[:20]
+    return render(request, 'characters/character_index.html', {'characterstatistics_list': characterstatistics_list})
+
 
 def task(request):
     today = datetime.datetime.now().strftime("%Y%m%d")
