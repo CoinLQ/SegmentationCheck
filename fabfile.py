@@ -105,6 +105,8 @@ def deploy():
 
     hg_pull()
     _install_requirements()
+    _prepare_django_project()
+    _prepare_media_path()
     _supervisor_restart()
 
     end_time = datetime.now()
@@ -128,6 +130,16 @@ def _reload_supervisorctl():
     sudo('%(supervisorctl)s reread' % env)
     sudo('%(supervisorctl)s reload' % env)
 
+def _prepare_django_project():
+    with cd(env.django_project_root):
+        if env.south_used:
+            virtenvrun('python manage.py migrate --noinput --verbosity=1')
+        virtenvsudo('python manage.py collectstatic --noinput')
+
+def _prepare_media_path():
+    path = env.django_media_path.rstrip('/')
+    sudo('mkdir -p %s' % path)
+    sudo('chmod -R 775 %s' % path)
 
 def _supervisor_restart():
     with settings(hide('running', 'stdout', 'stderr', 'warnings'), warn_only=True):

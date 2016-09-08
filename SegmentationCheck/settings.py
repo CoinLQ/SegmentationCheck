@@ -156,10 +156,9 @@ COVER_IMAGE_ROOT = MEDIA_ROOT+'cover/'
 OPAGE_IMAGE_ROOT = MEDIA_ROOT+'opage_images/'
 PAGE_IMAGE_ROOT = MEDIA_ROOT+'page_images/'
 CHARACTER_IMAGE_ROOT = MEDIA_ROOT+'character_images/'
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "static"),
-)
 
+
+STATIC_ROOT = os.path.join(BASE_DIR,"static")
 QINIU_ACCESS_KEY= ''
 QINIU_SECRET_KEY= ''
 QINIU_BUCKET_DOMAIN= ''
