@@ -157,7 +157,6 @@ OPAGE_IMAGE_ROOT = MEDIA_ROOT+'opage_images/'
 PAGE_IMAGE_ROOT = MEDIA_ROOT+'page_images/'
 CHARACTER_IMAGE_ROOT = MEDIA_ROOT+'character_images/'
 
-
 STATIC_ROOT = os.path.join(BASE_DIR,"static")
 QINIU_ACCESS_KEY= ''
 QINIU_SECRET_KEY= ''

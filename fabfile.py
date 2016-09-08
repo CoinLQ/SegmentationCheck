@@ -41,7 +41,8 @@ def segmentation_check():
     env.django_media_root = env.code_root
     #  django static url and root dir
     env.django_static_url = '/site_media/static/'
-    env.django_static_root = env.code_root
+    #env.django_static_root = env.code_root
+    env.django_static_root = join(env.code_root, 'static')
     #  do you use south in your django project?
     env.south_used = False
     #  virtualenv root
@@ -114,6 +115,9 @@ def deploy():
     (green_bg(end_time.strftime('%H:%M:%S')), (end_time - start_time).seconds)
     puts(finish_message)
 
+def _deploy_static():
+    with cd(env.code_root):
+        run('python manage.py collectstatic -v0 --noinput')
 
 def _verify_sudo():
     ''' we just check if the user is sudoers '''
