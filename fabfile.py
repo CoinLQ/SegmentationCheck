@@ -44,7 +44,7 @@ def segmentation_check():
     #env.django_static_root = env.code_root
     env.django_static_root = join(env.code_root, 'static')
     #  do you use south in your django project?
-    env.south_used = False
+    env.south_used = True
     #  virtualenv root
     env.virtenv = join(env.django_user_home, 'envs', env.project)
     #  some virtualenv options, must have at least one
