@@ -95,6 +95,7 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
+                'django.core.context_processors.static',
                 'django.contrib.messages.context_processors.messages',
             ],
         },
@@ -157,7 +158,11 @@ OPAGE_IMAGE_ROOT = MEDIA_ROOT+'opage_images/'
 PAGE_IMAGE_ROOT = MEDIA_ROOT+'page_images/'
 CHARACTER_IMAGE_ROOT = MEDIA_ROOT+'character_images/'
 
-STATIC_ROOT = os.path.join(BASE_DIR,"static")
+STATIC_ROOT = "/site_media/static"
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+)
+
 QINIU_ACCESS_KEY= ''
 QINIU_SECRET_KEY= ''
 QINIU_BUCKET_DOMAIN= ''
