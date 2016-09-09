@@ -31,9 +31,12 @@
           <input type="number" data-parsley-type="number" class="form-control" id="start_page" required>
         </div>
           </div>
-    <form data-parsley-validate enctype="multipart/form-data" class="hidden" >
+    <form data-parsley-validate enctype="multipart/form-data" class="hidden1" >
 
         <input id="imagefile" class="file" type="file" multiple >
+        <div id="kv-success" class="alert alert-success fade in" style="margin-top:10px;display:none">
+            <ul></ul>
+        </div>
     </form>
 </div>
 
@@ -64,11 +67,7 @@ var volumes = [];
 $('#imagefile').fileinput({
     language: 'zh',
     uploadUrl: 'opage/upload',
-    //allowedFileExtensions : ['jpg', 'png','gif'],
-    //uploadExtraData: {'tripitaka_id': 1, 'volume_id': 2, 'start_page': 3},
 });
-
-
 
 $('#Tripitaka').on('changed.bs.select', function (e) {
   var request = $.getJSON({
@@ -130,6 +129,18 @@ $('#Volume').on('changed.bs.select', function (e) {
 });
 $('#imagefile').on('change', function(event) {
     setExtraData();
+});
+
+$('#imagefile').on('fileuploaded', function(event, data, previewId, index) {
+    var fname = data.files[index].name,
+        out = '<li>' + '文件# ' + (index + 1) + ' - '  +
+            fname + ' 已被成功上传.' + '</li>';
+            debugger;
+    $('#kv-success ul').append(out);
+    $('#kv-success').fadeIn('slow');
+    $('#kv-success').delay(1000).fadeOut(100);
+
+    setTimeout(function(){$('#imagefile').fileinput('clear');}, 500);
 });
 
 // $('#start_page').parsley().on('field:success', function() {
