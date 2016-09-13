@@ -9,6 +9,29 @@
     border-top: none;
     background: #f6f9fe;
 }
+#contextMenu {
+  position: absolute;
+  display:none;
+}
+
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+    background-image:none !important;
+}
+
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+    background-color:#dff0d8;
+}
+
+.dropdown-menu{
+background-color: #fcf8e3;
+border: 1px solid #428BCA;
+padding: 0px;
+min-width: 60px
+}
+
+.divider{
+border: 1px dashed #fcf8e3;
+}
 </style>
 {% endblock %}
 
@@ -26,14 +49,28 @@
             <div id="img{{ page.id }}"></div>
         </div>
         <div class="col-md-10 col-xs-10">
+        <ul id="contextMenu" class="dropdown-menu" role="menu">
+      <div class="btn-group-vertical">
+
+        <button class="btn btn-primary" onclick="containSelectedText('<', '>');$('#contextMenu').hide();">&lt;夹注&gt;</button>
+        <button class="btn btn-primary" onclick="markSelectedText('@');$('#contextMenu').hide();">@题记@</button>
+        <button class="btn btn-primary" onclick="markSelectedText('$');$('#contextMenu').hide();">$衍文$</button>
+        <button id="btn-dollar" class="btn btn-default" onclick="containSelectedText('【', '】');$('#contextMenu').hide();">【增字】</button>
+        <button class="btn btn-default" onclick="containSelectedText('(', ')');$('#contextMenu').hide();">(非正文内容)</button>
+        <button class="btn btn-warning" onclick="containSelectedText('{', '}');$('#contextMenu').hide();">{有缺损}</button>
+        <button class="btn btn-warning" onclick="replaceSelectedText('?');$('#contextMenu').hide();">有疑问?</button>
+
+        </div>
+</ul>
         <div class="btn-group action_buttons">
-        <button class="btn btn-primary" onclick="containSelectedText('<', '>')">夹注</button>
-        <button class="btn btn-primary" onclick="markSelectedText('@')">题记</button>
-        <button class="btn btn-primary" onclick="markSelectedText('$')">衍文</button>
-        <button id="btn-dollar" class="btn btn-default" onclick="containSelectedText('【', '】')">增字</button>
-        <button class="btn btn-default" onclick="containSelectedText('(', ')')">非正文内容</button>
-        <button class="btn btn-warning" onclick="containSelectedText('{', '}')">有缺损</button>
-        <button class="btn btn-warning" onclick="replaceSelectedText('?')">有疑问</button>
+
+        <button class="btn btn-primary" onclick="containSelectedText('<', '>')">&lt;夹注&gt;</button>
+        <button class="btn btn-primary" onclick="markSelectedText('@')">@题记@</button>
+        <button class="btn btn-primary" onclick="markSelectedText('$')">$衍文$</button>
+        <button id="btn-dollar" class="btn btn-default" onclick="containSelectedText('【', '】')">【增字】</button>
+        <button class="btn btn-default" onclick="containSelectedText('(', ')')">(非正文内容)</button>
+        <button class="btn btn-warning" onclick="containSelectedText('{', '}')">{有缺损}</button>
+        <button class="btn btn-warning" onclick="replaceSelectedText('?')">有疑问?</button>
 
         </div>
                 <button class="btn btn-warning pull-right" onclick="toggle_view()">切换版式</button>
@@ -41,7 +78,7 @@
         </div>
         <div class="col-md-10 col-xs-10 reel">
         <pre rel="经文" class=" language-markup">
-        <div id="redactor" class="tnt" contenteditable="true">{{page.text|escape|linebreaks}}</div>
+        <div id="redactor" class="" contenteditable="true">{{page.text|escape|linebreaks}}</div>
         </pre>
 
     </div>
@@ -123,8 +160,6 @@ function replaceSelectedText(replacementText) {
     if (window.getSelection) {
         sel = window.getSelection();
         text = window.getSelection().toString();
-        if (text == "")
-            return;
         if (sel.rangeCount) {
             range = sel.getRangeAt(0);
             range.deleteContents();
@@ -176,25 +211,6 @@ function containSelectedText(con1,con2) {
     }
 }
 
-$(function()
-{
-    // $('#redactor').redactor({
-    //     clickToEdit: true,
-    //     clickToCancel: '#btn-cancel',
-    //     clickToSave: '#btn-save',
-    //     callbacks: {
-    //         save: function(html)
-    //         {
-    //             console.log('save', html);
-    //         },
-    //         cancel: function(html)
-    //         {
-    //             console.log('cancel', html);
-    //         }
-    //     }
-    // });
-});
-
 function toggle_view(){
     if ($("#redactor").hasClass("tnt")){
         $("#redactor").removeClass("tnt")
@@ -244,5 +260,28 @@ function save_to_page(){
     });
 
 }
+$(function(){
+    var $contextMenu = $("#contextMenu");
+    $("#redactor").mouseup(function(e){
+        $contextMenu.css({
+          display: "block",
+          left: e.pageX/2,
+          top: e.pageY*1/4
+       });
+         return false;
+     });
+
+    $('body').mousedown(function(e){
+       var $contextMenu = $("#contextMenu");
+       if ($.contains($contextMenu[0],e.target)){
+         return true;
+       }
+       $contextMenu.hide();
+       return true;
+    });
+
+});
+
+
 </script>
 {% endblock %}
