@@ -107,7 +107,7 @@ $('#Tripitaka').on('changed.bs.select', function (e) {
         $("#Volume").empty();
         $("#Volume").append(
                 $("<option></option>").attr(
-                    "value", "").text("--- 册` ---")
+                    "value", "").text("--- 册 ---")
             );
         volumes = data.volumes;
        for (var i = 0; i < data.volumes.length; i++) {
@@ -124,7 +124,7 @@ function renderPage(_pageid){
     var volume_idx = $('#Volume').find("option:selected").data("idx");
     var bars_count = $volumes[volume_idx].bars_count;
     $('#segmentation_page').empty();
-   $.getJSON("/api/page?id="+_pageid,function(result){ 
+   $.getJSON("/api/page?id="+_pageid,function(result){
        result = result.models[0];
         var factor =0.7;
         width = result.width;
@@ -159,16 +159,16 @@ function render_region(arr){
 $('#layoutseg_btn').on('click', function(){
     var data = {'id': page_id };
     data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
-    $.getJSON("/layoutseg/"+page_id,function(result){ 
-        render_region(result); 
+    $.getJSON("/layoutseg/"+page_id,function(result){
+        render_region(result);
     });
 });
 
 $('#charseg_btn').on('click', function(){
     var data = {'id': page_id };
     data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
-    $.getJSON("/charseg/"+page_id,function(result){ 
-        render_region(result); 
+    $.getJSON("/charseg/"+page_id,function(result){
+        render_region(result);
     });
 });
 
