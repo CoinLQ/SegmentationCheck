@@ -44,12 +44,12 @@ module.exports = {
             },
             {
                 // move font files found within CSS to the build directory
-                test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?(\-alpha\.[0-9])?$/,
                 loader: "file?name=[path][name].[ext]?[hash]&context=./node_modules"
             },
             {
                 // move images found within CSS to the build directory
-                test: /\.(jpg|ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                test: /\.(jpg|ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?(\-alpha\.[0-9])?$/,
                 loader: "file?name=[path][name].[ext]?[hash]&context=./node_modules"
             }
         ]
