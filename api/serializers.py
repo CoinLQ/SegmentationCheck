@@ -2,6 +2,17 @@ from managerawdata.models import OPage
 from rest_framework import serializers
 from catalogue.models import Tripitaka, Volume
 from segmentation.models import Page,Character,CharacterStatistics
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            'id', 'first_name', 'last_name', 'email', 'last_login',
+            'is_active', 'date_joined'
+        )
 
 class OPageSerializer(serializers.ModelSerializer):
     class Meta:

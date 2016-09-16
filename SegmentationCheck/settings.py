@@ -161,6 +161,7 @@ CHARACTER_IMAGE_ROOT = MEDIA_ROOT+'character_images/'
 STATIC_ROOT = "/site_media/static"
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, 'frontend', 'build'),
 )
 
 QINIU_ACCESS_KEY= ''

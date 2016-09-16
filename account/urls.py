@@ -6,7 +6,7 @@ from django.contrib import auth
 admin.autodiscover()
 
 urlpatterns = [
-    url(r'^logout/$', auth_views.logout, {'next_page': '/'}),
+    url(r'^logout/$', auth_views.logout, {'next_page': '/'}, name='logout'),
     url('', include('django.contrib.auth.urls')),
     url(r'^register/$', views.register),
     url(r'^register/success/$', views.register_success),

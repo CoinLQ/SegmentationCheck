@@ -1,7 +1,7 @@
 from django.conf.urls import include, url
 from . import views
-from django.contrib import admin
-admin.autodiscover()
+from django.contrib.auth.views import login, logout_then_login
+
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
