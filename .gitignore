@@ -7,3 +7,4 @@ qiefenvenv/
 celerybeat-schedule
 celerybeat.pid
 frontend/node_modules/
+frontend/build/js/

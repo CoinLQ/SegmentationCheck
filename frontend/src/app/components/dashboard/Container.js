@@ -239,7 +239,7 @@ class Container extends React.Component {
                     <td><span className="label label-danger">Denied</span></td>
                     <td>缺损，右边界文字丢失。文件稿对应差异较大。</td>
                     <td>admin</td>
-                    <td>已替换原图，请重校对文字稿</td>
+                    <td>已替换原图，文字稿有待重新校对</td>
                   </tr>
                 </tbody></table>
               </div>
