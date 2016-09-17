@@ -5,9 +5,9 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
-
+from libs.thumbnail import ThumbnailMixin
 # Create your models here.
-class Page(models.Model):
+class Page(models.Model, ThumbnailMixin):
     id = models.CharField(max_length=32, primary_key=True)
     image = models.CharField(max_length=512)
     volume = models.ForeignKey(Volume, related_name='pages', blank=True, null=True)
@@ -39,12 +39,13 @@ class Page(models.Model):
         return s_text
 
     def get_image_path(self):
-        #return settings.PAGE_IMAGE_ROOT+self.image
-        return 'http://ob21oo6fl.bkt.clouddn.com/page_images/'+self.image
+        return settings.PAGE_IMAGE_ROOT+self.image
+        #return 'http://ob21oo6fl.bkt.clouddn.com/page_images/'+self.image
 
     @property
     def image_url(self):
-        return 'http://ob21oo6fl.bkt.clouddn.com/page_images/'+self.image
+        return '/page_images/' + self.image
+        #return 'http://ob21oo6fl.bkt.clouddn.com/page_images/'+self.image
 
 
 class Character(models.Model):

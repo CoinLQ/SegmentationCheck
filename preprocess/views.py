@@ -41,25 +41,26 @@ def opage_cut(request):
             width   = int(bar[u'width'])
             height  = int(bar[u'height'])
             page_image_name = page_id + u'.png'
-            page_image_path = 'page_images/' + page_image_name
-            page_image = opage_image[top:top + height, left:left + width]
-            memfile = cStringIO.StringIO()
-            io.imsave(memfile, page_image)
-            if cloud_storage.exists(page_image_path):
-                cloud_storage.delete(page_image_path)
-            cloud_storage.save(page_image_path, memfile)
-            #io.imsave(page_image_path, page_image)
             page = Page(
-                    id=page_id,
-                    image=page_image_name,
-                    width=width,
-                    height=height,
-                    volume = volume,
-                    o_page = opage
-                    )
+                id=page_id,
+                image=page_image_name,
+                width=width,
+                height=height,
+                volume = volume,
+                o_page = opage
+                )
+            #page_image_path = 'page_images/' + page_image_name
+            page_image = opage_image[top:top + height, left:left + width]
+            # memfile = cStringIO.StringIO()
+            # io.imsave(memfile, page_image)
+            # if cloud_storage.exists(page_image_path):
+            #     cloud_storage.delete(page_image_path)
+            # cloud_storage.save(page_image_path, memfile)
+            io.imsave(page.get_image_path(), page_image)
+
             page.save()
-        #opage.status = 1
-        #opage.save()
+        opage.status = 1
+        opage.save()
         data = {'status': 'ok'}
     else:
         data = {'status': 'error'}

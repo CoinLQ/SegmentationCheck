@@ -6,10 +6,9 @@ from django.db.models.signals import post_save,pre_save
 from django.dispatch import receiver
 from PIL import Image
 from django.conf import settings
+from libs.thumbnail import ThumbnailMixin
 
-
-
-class OPage(models.Model):
+class OPage(models.Model, ThumbnailMixin):
     id = models.CharField(max_length=32,primary_key = True )
     tripitaka = models.ForeignKey(Tripitaka)
     volume = models.ForeignKey(Volume, related_name='o_pages')
@@ -37,7 +36,7 @@ class OPage(models.Model):
 
     @property
     def image_url(self):
-        return '/opage_images/'+self.image
+        return '/opage_images/' + self.image
 
 @receiver(pre_save, sender=OPage)
 def my_handler(sender, instance, **kwargs):
