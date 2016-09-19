@@ -126,6 +126,7 @@ REST_FRAMEWORK = {
         "rest_framework.filters.SearchFilter",
         "rest_framework.filters.DjangoFilterBackend",
     ),
+    'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
 }
 
 # Database
@@ -213,5 +214,4 @@ LOGGING = {
         },
     },
 }
-
 

@@ -33,6 +33,9 @@ class Volume(models.Model):
     start_page = models.SmallIntegerField(default=0, verbose_name=_('Volume|start_page'))
     end_page = models.SmallIntegerField(default=0, verbose_name=_('Volume|end_page'))
     owner = models.ForeignKey(UserProfile, related_name='volumes', null=True)
+    completed_count =  models.SmallIntegerField(default=0, verbose_name=_('Volume|completed_count'))
+    updated_at = models.DateTimeField(auto_now=True)
+    state = models.SmallIntegerField(default=0, verbose_name=_('Volume|state'))
 
     def get_o_pages_count(self):
         return self.o_pages.filter(volume=self).count()
@@ -40,7 +43,7 @@ class Volume(models.Model):
     class Meta:
         verbose_name = _('Segmentation|volume')
         verbose_name_plural = _('Segmentation|volumes')
-
+        ordering = ('-updated_at',)
     def __unicode__(self):
         return u'%s %s' % (self.tripitaka.name, self.number)
 

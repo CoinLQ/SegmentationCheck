@@ -10,7 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            'id', 'first_name', 'last_name', 'email', 'last_login',
+            'id', 'username', 'email', 'last_login',
             'is_active', 'date_joined'
         )
 
@@ -20,19 +20,26 @@ class OPageSerializer(serializers.ModelSerializer):
         fields = ('id', 'description', 'tripitaka','volume', 'page_no','page_type','height', 'width', 'image','status','image_url')
 
 class VolumeSerializer(serializers.ModelSerializer):
-    o_pages = serializers.SerializerMethodField(read_only=True)
-    bars_count = serializers.CharField(read_only=True, source="tripitaka.bars_count")
+    #o_pages = serializers.SerializerMethodField(read_only=True)
+    bars_count = serializers.IntegerField(read_only=True, source="tripitaka.bars_count")
     o_pages_count = serializers.IntegerField(source='get_o_pages_count')
+    #v_owner = serializers.SerializerMethodField(read_only=True)
+    owner = serializers.SerializerMethodField(source='get_owner', read_only=True)
 
     def get_o_pages(self, volume):
-        qs = OPage.objects.filter(status=0, volume=volume).order_by('-id')[:10]
+        qs = OPage.objects.filter(status=0, volume=volume).order_by('-id')
         serializer = OPageSerializer(instance=qs, many=True, read_only=True)
+        return serializer.data
+
+    def get_owner(self,volume):
+        serializer = UserSerializer(instance=(volume.owner and volume.owner.user), read_only=True)
         return serializer.data
 
     class Meta:
         model = Volume
-        fields = ('id', 'number','start_page','end_page', 'o_pages', 'bars_count', 'o_pages_count')
-        read_only_fields = ('o_pages_count')
+        fields = ('id', 'number','start_page','end_page', 'bars_count', 'o_pages_count', 'updated_at',
+        'owner', 'completed_count', 'state')#, 'o_pages')
+        read_only_fields = ('o_pages_count', 'owner')
 
 class TripitakaSerializer(serializers.ModelSerializer):
     #volumes = VolumeSerializer(many=True, read_only=True)

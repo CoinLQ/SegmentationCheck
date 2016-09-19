@@ -71,10 +71,18 @@ class DashBoardViewSet(generics.ListAPIView):
         tripitaka_count = Tripitaka.objects.count()
         done_num = OPage.objects.filter(status=0).count()
         user_total = User.objects.count()
+        pending_page = Page.objects.filter(state=-1).count()
+        done_page = Page.objects.filter(state=1).count()
+
         return Response({
                 'tripitaka': { 'count': tripitaka_count,
                                 'items': TripitakaSerializer(Tripitaka.objects.all().order_by('id'), many=True).data },
                 'opage': { 'total': OPage.objects.count(),
                             'done_num': done_num },
-})
+                'page': { 'pending': pending_page,
+                          'approved': done_page,
+                          'count': Page.objects.count() },
+                'user': { 'count': User.objects.count() }
+        })
+
 
