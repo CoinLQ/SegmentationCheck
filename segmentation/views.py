@@ -179,11 +179,11 @@ def page_modify(request, page_id):
                     char_no = int(char_no)
                     if char_no == 0:
                         char_id = page_id + u'%02dL%02d' % (line_no, 1)
-                        Character.objects.filter(id=char_id).update(top=pos,is_correct=2)
+                        Character.objects.filter(id=char_id).update(top=pos, state=2)
                         cut_char_img(page_id,char_id)
                     else:
                         char_id = page_id + u'%02dL%02d' % (line_no, char_no)
-                        Character.objects.filter(id=char_id).update(bottom=pos,is_correct=2)
+                        Character.objects.filter(id=char_id).update(bottom=pos, state=2)
                         #get page image
                         page = Page.objects.get(id = page_id)
                         pageimg_file = page.image.url
@@ -192,7 +192,7 @@ def page_modify(request, page_id):
                         cut_char_img(page_id,page_image,char_id)
 
                         char_id = page_id + u'%02dL%02d' % (line_no, char_no + 1)
-                        Character.objects.filter(id=char_id).update(top=pos,is_correct=2)
+                        Character.objects.filter(id=char_id).update(top=pos, state=2)
                         cut_char_img(page_id,page_image,char_id)
 #                else: # adjust by colume
 #                    typ, line_no = segs

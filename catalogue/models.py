@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.postgres.fields import JSONField
+from django.contrib.postgres.fields import JSONField, ArrayField
 from account.models import UserProfile
 
 
@@ -16,6 +16,7 @@ class Tripitaka(models.Model):
     bars_count = models.SmallIntegerField(default=0, verbose_name=_('Tripitaka|bars_count'))
     default_bars = JSONField(default=[(100, 60, 1250, 1020), (80, 1050, 1250, 2000)])
     completed_count =  models.SmallIntegerField(default=0, verbose_name=_('Tripitaka|completed_count'))
+    completed_volume_ids = ArrayField(models.CharField(max_length=32))
 
     def __unicode__(self):
         return self.name

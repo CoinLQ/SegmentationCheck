@@ -6,8 +6,13 @@ from resizeimage import resizeimage
 GET_THUMB_PATTERN = re.compile(r'^get_thumbnail_(\d+)x(\d+)_(url|filename)$')
 
 class ThumbnailMixin(object):
+    def get_thumbnail_url(self):
+        return self.build_thumb('get_thumbnail_320x240_url')
 
-    def __getattr__(self, name):
+    def get_thumbnail_filename(self):
+        return self.build_thumb('get_thumbnail_320x240_filename')
+
+    def build_thumb(self, name):
         """
         Deploys dynamic methods for on-demand thumbnails creation with any
         size.
@@ -49,7 +54,7 @@ class ThumbnailMixin(object):
             image.save(thumbnail)
             image.close()
         if method == "url":
-            return get_image_thumbnail_url
+            return get_image_thumbnail_url()
         else:
-            return get_image_thumbnail_filename
+            return get_image_thumbnail_filename()
 

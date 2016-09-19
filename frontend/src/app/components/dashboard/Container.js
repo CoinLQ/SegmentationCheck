@@ -27,11 +27,11 @@ class Container extends React.Component {
         </div>
         <div className="col-md-3 col-sm-6 col-xs-12">
           <div className="info-box">
-            <span className="info-box-icon bg-red"><i className="fa ion-ios-pie"></i></span>
+            <span className="info-box-icon bg-red"><i className="fa ion-ios-paper-outline"></i></span>
 
             <div className="info-box-content">
-              <span className="info-box-text">完善度</span>
-              <span className="info-box-number"><big>30</big><small>%</small></span>
+              <span className="info-box-text">待处理文件数</span>
+              <span className="info-box-number"><big>30</big></span>
             </div>
           </div>
         </div>
@@ -43,7 +43,7 @@ class Container extends React.Component {
             <span className="info-box-icon bg-green"><i className="ion ion-ios-paper"></i></span>
 
             <div className="info-box-content">
-              <span className="info-box-text">稿件处理数</span>
+              <span className="info-box-text">已处理文件数</span>
               <span className="info-box-number">460</span>
             </div>
           </div>

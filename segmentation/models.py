@@ -1,10 +1,12 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from django.db import models
 from catalogue.models import Volume
 from managerawdata.models import OPage
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
-
+from datetime import datetime
 from libs.thumbnail import ThumbnailMixin
 # Create your models here.
 class Page(models.Model, ThumbnailMixin):
@@ -17,15 +19,18 @@ class Page(models.Model, ThumbnailMixin):
     height = models.SmallIntegerField(default=0)
     left = models.SmallIntegerField(default=0)
     right = models.SmallIntegerField(default=0)
-    is_correct = models.SmallIntegerField(default=0)
+    state = models.SmallIntegerField(default=0)
     erro_char_cnt = models.IntegerField(default=0)
-#is_correct value
+
+#state value
 ## 0 unchecked(initial value )
 ## 1 correct
-## -1 erro
-## -2 Character erro
-## -3 line erro
-## -4 page  erro
+## -1 pending
+## -2 text error
+
+    @staticmethod
+    def correct_page_count():
+        return Page.objects.all().filter(state=1).count()
 
     def __unicode__(self):
         return self.id
@@ -89,3 +94,20 @@ class CharacterStatistics(models.Model):
     def __unicode__(self):
         return u'%s:%d' % (self.char,self.total_cnt )
 
+class PageComment(models.Model):
+    STATE_CHOICES = (
+        ('PE', '待处理'),
+        ('DN', '已处理'),
+        ('RJ', '已拒绝'),
+        ('AP', '已接受'),
+    )
+    comment = models.CharField(max_length=128, blank=False)
+    page = models.OneToOneField(Page, related_name='page_comment')
+    collator = models.ForeignKey(User, blank=True, related_name='comments')
+    admin = models.ForeignKey(User, blank=True, related_name='answers')
+    reply = models.CharField(max_length=128, blank=True)
+    comment_at = models.DateTimeField(default=datetime.now, blank=True)
+    replay_at = models.DateTimeField(blank=True)
+    state =models.CharField(max_length=2,
+        choices=STATE_CHOICES,
+        default='PE')

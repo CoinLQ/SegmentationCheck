@@ -35,10 +35,10 @@ class VolumeSerializer(serializers.ModelSerializer):
         read_only_fields = ('o_pages_count')
 
 class TripitakaSerializer(serializers.ModelSerializer):
-    volumes = VolumeSerializer(many=True, read_only=True)
+    #volumes = VolumeSerializer(many=True, read_only=True)
     class Meta:
         model = Tripitaka
-        fields = ('id', 'name','code', 'volumes_count', 'bars_count', 'volumes')
+        fields = ('id', 'name','code', 'volumes_count', 'bars_count', 'completed_count', 'completed_volume_ids')#, 'volumes')
 
 class PageSerializer(serializers.ModelSerializer):
     class Meta:
