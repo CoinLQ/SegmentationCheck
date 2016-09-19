@@ -22,6 +22,7 @@ import home.views
 urlpatterns = [
     url(r'^$', home.views.index, name='main_index'),
     url(r'^jet/', include('jet.urls', 'jet')),
+    url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
     url(r'^admin/', include(admin.site.urls)),
     url(r'^app/', home.views.app, name='app'),
     url(r'^account/', include('account.urls',namespace='account')),
