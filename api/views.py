@@ -22,6 +22,7 @@ class UserViewSet(viewsets.ModelViewSet):
     search_fields = ('first_name', 'last_name', 'email')
     filter_fields = ('id', 'first_name', 'last_name', 'email')
 
+
 class TripitakaViewSet(viewsets.ModelViewSet):
     serializer_class = TripitakaSerializer
     queryset = Tripitaka.objects.all()
@@ -37,7 +38,7 @@ class OPageViewSet(viewsets.ModelViewSet):
     queryset = OPage.objects.all()
     search_fields = ('pages_no', 'tripitaka')
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = ('status','id','volume')
+    filter_fields = ('status', 'id', 'volume')
 
 
 class PageViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -52,11 +53,28 @@ class PageViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         serializer = PageSerializer(instance)
         return Response(serializer.data)
 
+
 class CharacterViewSet(viewsets.ModelViewSet):
     serializer_class = CharacterSerializer
     queryset = Character.objects.all()
     filter_fields = ('page_id', 'char', 'is_correct')
 
+
 class CharacterStatisticsViewSet(viewsets.ModelViewSet):
     serializer_class = CharacterStatisticsSerializer
     queryset = CharacterStatistics.objects.all()
+
+
+class DashBoardViewSet(generics.ListAPIView):
+
+    def list(self, request):
+        tripitaka_count = Tripitaka.objects.count()
+        done_num = OPage.objects.filter(status=0).count()
+        user_total = User.objects.count()
+        return Response({
+                'tripitaka': { 'count': tripitaka_count,
+                                'items': TripitakaSerializer(Tripitaka.objects.all().order_by('id'), many=True).data },
+                'opage': { 'total': OPage.objects.count(),
+                            'done_num': done_num },
+})
+

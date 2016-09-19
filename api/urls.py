@@ -4,6 +4,7 @@ from rest_framework import routers
 
 from rest_framework.routers import DefaultRouter
 from .views import TripitakaViewSet, VolumeViewSet, OPageViewSet, PageViewSet, CharacterViewSet,CharacterStatisticsViewSet, UserViewSet
+from .views import DashBoardViewSet
 
 router = routers.SimpleRouter(trailing_slash=False)
 router.register(r'tripitaka', TripitakaViewSet)
@@ -15,3 +16,6 @@ router.register(r'characterstatistics', CharacterStatisticsViewSet)
 router.register(r'users', UserViewSet)
 urlpatterns = router.urls
 
+urlpatterns += [
+    url(r'dashboard/', DashBoardViewSet.as_view()),
+]

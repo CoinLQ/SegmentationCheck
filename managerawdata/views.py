@@ -20,9 +20,9 @@ class OpageIndex(generic.ListView):
 
 @user_passes_test(lambda u:u.is_staff, login_url='/home/joinus')
 def opage_upload(request):
-    def handle_uploaded_file(f,page_id):
+    def handle_uploaded_file(f,page_filename):
         ext = splitext(f.name)[1]
-        file_name = page_id+ext
+        file_name = page_filename+ext
 #        cloud_storage.save(file_name, f)
         destination_file = settings.OPAGE_IMAGE_ROOT+file_name
         destination = open(destination_file, 'wb')
@@ -40,12 +40,10 @@ def opage_upload(request):
 
         tripitaka = Tripitaka.objects.get(pk = tripitaka_id)
         volume = Volume.objects.get(pk = volume_id)
-        page_id = '{0}-V{1:05}P{2:05}'.format(tripitaka.code,volume.number,page_no)
-
-        image = handle_uploaded_file(request.FILES['file_data'],page_id)
+        page_filename = OPage.build_opage_id(tripitaka, volume, page_no)
+        image = handle_uploaded_file(request.FILES['file_data'],page_filename)
 
         opage = OPage(
-                id = page_id,
                 tripitaka = tripitaka,
                 volume = volume,
                 page_type = page_type,

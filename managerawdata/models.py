@@ -7,6 +7,8 @@ from django.dispatch import receiver
 from PIL import Image
 from django.conf import settings
 from libs.thumbnail import ThumbnailMixin
+from libs.layout_page_rect import LayoutPageRect
+from django.contrib.postgres.fields import JSONField
 
 class OPage(models.Model, ThumbnailMixin):
     id = models.CharField(max_length=32,primary_key = True )
@@ -18,7 +20,7 @@ class OPage(models.Model, ThumbnailMixin):
     width = models.SmallIntegerField(default =0 )
     height = models.SmallIntegerField(default = 0)
     status = models.SmallIntegerField(default = 0) #0 inital 1:output page
-
+    bars = JSONField(default=[])
 
     @property
     def description(self):
@@ -38,9 +40,22 @@ class OPage(models.Model, ThumbnailMixin):
     def image_url(self):
         return '/opage_images/' + self.image
 
+    @staticmethod
+    def build_opage_id(tripitaka, volume, page_no):
+        return '{0}-V{1:04}P{2:05}'.format(tripitaka.code,volume.number,page_no)
+
 @receiver(pre_save, sender=OPage)
 def my_handler(sender, instance, **kwargs):
     # initial image size info
+
     img = Image.open(instance.get_image_path())
     instance.width = img.width
     instance.height = img.height
+    img.close()
+    if instance._state.adding is True:
+        instance.id = OPage.build_opage_id(instance.tripitaka, instance.volume, instance.page_no)
+        instance.bars = LayoutPageRect.find_bar_rectangle(instance.get_image_path())
+    if not instance.bars:
+        instance.bars = LayoutPageRect.find_bar_rectangle(instance.get_image_path())
+
+

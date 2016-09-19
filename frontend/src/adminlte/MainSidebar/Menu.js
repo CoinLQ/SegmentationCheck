@@ -12,8 +12,8 @@ const allLinks = [
     },
     {
         permission: "segmentation.add_page",
-        text: "切分处理",
-        to: "/edit_page",
+        text: "页面校对",
+        to: "/collating",
         icon: "fa fa-edit"
     }
 ];
