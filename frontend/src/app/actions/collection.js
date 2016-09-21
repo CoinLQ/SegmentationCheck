@@ -75,7 +75,6 @@ export function fetchModel({model, successCb = List(), errorCb = List()}) {
         errorCb = errorCb.concat(
             (response) => dispatch(addHttpStatusCodeAlert(response.statusCode))
         );
-
         return http.get(model.apiUrl(), {}, successCb, errorCb);
     };
 }

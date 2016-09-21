@@ -15941,7 +15941,20 @@ table.text-center th {
 }
 .skin-purple .main-header .navbar .nav > li > a {
     height: 52px;
-}/* Make clicks pass-through */
+}
+
+.row {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  flex-wrap: wrap;
+}
+.row > [class*='col-'] {
+  display: flex;
+  flex-direction: column;
+}
+/* Make clicks pass-through */
 #nprogress {
   pointer-events: none;
 }

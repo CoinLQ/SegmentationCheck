@@ -6,9 +6,8 @@ import actions from "app/actions/collection";
 import Container from "app/components/dashboard/Container";
 import WidgetGroup from "app/apps/components/WidgetGroup";
 
-
 const selector = createSelector(
-    (state) => state.users,
+    (state) => state.apps,
     (collection) => {
         return {
             collection,
