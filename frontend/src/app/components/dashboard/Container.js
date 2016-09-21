@@ -15,9 +15,8 @@ class Container extends React.Component {
 
     render() {
         const {children, collection, rowOneWidth = 6, rowTwoWidth = 6} = this.props;
-
         const dashboard = collection.models.get('default');
-        debugger;
+
         return (
             <Row className='content'>
               <InfoBox boxBg='bg-aqua' iconClass='ion-ios-folder'

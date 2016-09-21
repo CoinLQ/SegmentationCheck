@@ -75,6 +75,7 @@ class DashBoardViewSet(generics.ListAPIView):
         done_page = Page.objects.filter(state=1).count()
 
         return Response({
+                'id': 'default',
                 'tripitaka': { 'count': tripitaka_count,
                                 'items': TripitakaSerializer(Tripitaka.objects.all().order_by('id'), many=True).data },
                 'opage': { 'total': OPage.objects.count(),

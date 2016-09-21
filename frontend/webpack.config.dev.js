@@ -14,6 +14,7 @@ module.exports = {
             "reselect", "superagent"
         ],
     },
+    debug: true,
     resolve: {
         modulesDirectories: ["src", "node_modules"]
     },
