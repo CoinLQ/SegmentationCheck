@@ -1,12 +1,15 @@
 {
   "name": "Segmentation",
-  "version": "0.0.1",
+  "version": "0.9",
   "description": "Guji Segmentation App",
   "scripts": {
     "clean": "rimraf dist",
     "build:webpack": "NODE_ENV=production webpack --config webpack.config.prod.js",
     "build": "npm run clean && npm run build:webpack",
-    "start": "webpack -c --progress -w --config webpack.config.dev.js",
+    "dev": "webpack -c --progress -w --config webpack.config.dev.js",
+    "mock": "node_modules/.bin/json-server --watch mock/db.json --port 9090",
+    "start": "webpack-dev-server --hot --inline --content-base build/",
+    "mockdev": "npm run mock & npm start",
     "lint": "eslint src/"
   },
   "author": "lvpython",
@@ -19,6 +22,7 @@
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "babel-preset-es2015": "^6.14.0",
     "babel-preset-react": "^6.11.1",
+    "babel-preset-react-hmre": "^1.1.1",
     "babel-preset-stage-0": "^6.5.0",
     "bootstrap": "^3.3.6",
     "css-loader": "^0.23.1",
@@ -31,10 +35,12 @@
     "font-awesome": "^4.5.0",
     "less": "^2.6.0",
     "less-loader": "^2.2.2",
+    "react-hot-loader": "^1.3.0",
     "rimraf": "^2.4.3",
     "style-loader": "^0.13.0",
     "url-loader": "^0.5.7",
-    "webpack": "^1.12.14"
+    "webpack": "^1.12.14",
+    "webpack-dev-server": "^1.16.1"
   },
   "dependencies": {
     "admin-lte": "^2.3.2",

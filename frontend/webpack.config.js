@@ -14,6 +14,14 @@ module.exports = {
             "reselect", "superagent"
         ],
     },
+    devServer:{
+        proxy: {
+            '/api/v1/*': {
+                target: 'http://localhost:9090',
+                secure: false
+            }
+        }
+    },
     debug: true,
     resolve: {
         modulesDirectories: ["src", "node_modules"]
@@ -25,7 +33,8 @@ module.exports = {
     plugins: [
         new webpack.optimize.CommonsChunkPlugin("vendor", "js/vendor.bundle.js"),
         new ExtractTextPlugin("stylesheets.css"),
-        new webpack.NoErrorsPlugin()
+        new webpack.HotModuleReplacementPlugin(),
+        new webpack.NoErrorsPlugin(),
     ],
     module: {
         loaders: [

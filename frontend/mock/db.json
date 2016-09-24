@@ -1,0 +1,41 @@
+{
+  "dashboard": {
+    "user": {
+        "count": 36
+    },
+    "tripitaka": {
+        "count": 1,
+        "items": [
+            {
+                "id": 1,
+                "name": "\u6d2a\u6b66\u5357\u85cf",
+                "code": "H",
+                "volumes_count": 80,
+                "bars_count": 3,
+                "completed_count": 39,
+                "completed_volume_ids": []
+            }
+        ]
+    },
+    "page": {
+        "count": 3699,
+        "approved": 840,
+        "pending": 0
+    },
+    "id": "default",
+    "opage": {
+        "done_num": 16,
+        "total": 16
+    }
+  },
+  "total": {
+    "data": {
+      "exchange_count": "10",
+      "share_count": "23",
+      "patent_count": "7",
+      "article_count": "37",
+      "exchangeRecords": []
+    },
+    "success": true
+  }
+}

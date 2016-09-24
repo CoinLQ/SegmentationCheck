@@ -5,7 +5,7 @@ import DashBoard from "./views/DashBoard";
 
 
 const routes = (
-      <Route path="dashboard" component={DashBoard}/>
+      <Route path="" component={DashBoard}/>
 
 );
 

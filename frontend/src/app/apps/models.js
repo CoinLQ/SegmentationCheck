@@ -14,7 +14,7 @@ class DashBoard extends Record({
 }){
 
     apiUrl() {
-       return '/api/dashboard/';
+       return '/api/v1/dashboard/';
     }
 
     toString() {

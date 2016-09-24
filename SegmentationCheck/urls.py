@@ -34,7 +34,7 @@ urlpatterns = [
     url(r'^charseg/', include('charseg.urls',namespace='charseg')),
     url(r'^characters/', include('characters.urls',namespace='characters')),
     url(r'^pagecheck/', include('pagecheck.urls',namespace='pagecheck')),
-    url(r'^api/', include('api.urls',namespace='api')),
+    url(r'^api/v1/', include('api.urls',namespace='api')),
 ]
 
 if settings.DEBUG:
