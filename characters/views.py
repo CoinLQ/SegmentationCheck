@@ -5,6 +5,7 @@ from segmentation.models import  Character, CharacterStatistics
 from django.views import generic
 import random
 from django.db.models import F
+from utils.get_checked_character import get_checked_character
 import datetime
 
 class CharacterIndex(generic.ListView):
@@ -22,8 +23,9 @@ def task(request):
         request.session['check_char_number'] = 0
         request.session['checkin_date'] = today
     check_char_number = request.session.get('check_char_number',0)
-    char_lst = CharacterStatistics.objects.filter(uncheck_cnt__gt=0).order_by('-total_cnt')[:30]
-    char = random.choice(char_lst)
+    #char_lst = CharacterStatistics.objects.filter(uncheck_cnt__gt=0).order_by('-total_cnt')[:30]
+    #char = random.choice(char_lst)
+    char = get_checked_character()
     return render(request,'characters/characters.html',{'char':char,'check_char_number':check_char_number} )
 
 #@login_required(login_url='/segmentation/login/')
