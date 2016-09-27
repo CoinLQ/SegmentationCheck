@@ -1,3 +1,48 @@
+.svg_select_points_lt{
+    cursor: nw-resize;
+}
+.svg_select_points_rt{
+    cursor: ne-resize;
+}
+.svg_select_points_rb{
+    cursor: se-resize;
+}
+.svg_select_points_lb{
+    cursor: sw-resize;
+}
+.svg_select_points_t{
+    cursor: n-resize;
+}
+.svg_select_points_r{
+    cursor: e-resize;
+}
+.svg_select_points_b{
+    cursor: s-resize;
+}
+.svg_select_points_l{
+    cursor: w-resize;
+}
+
+.svg_select_points_rot{
+    stroke-width:1;
+    stroke:black;
+    fill: #F9FFED;
+    opacity: 0;
+}
+
+.svg_select_points_point{
+    cursor: move;
+}
+
+.svg_select_boundingRect{
+    stroke-width:1;
+    fill:gray;
+    stroke-dasharray:10 10;
+    stroke:black;
+    stroke-opacity:1;
+    fill-opacity:0.1;
+    pointer-events:none; /* This ons is needed if you want to deselect or drag the shape*/
+}
 .cursor-pointer {
     cursor: pointer;
 }
@@ -56,3 +101,89 @@
   display: flex;
   flex-direction: column;
 }
+
+.btn-circle {
+  width: 49px;
+  height: 49px;
+  text-align: center;
+  padding: 5px 0;
+  font-size: 20px;
+  line-height: 2.00;
+  border-radius: 30px;
+}
+
+.btn-circle-micro {
+  width: 19px;
+  height: 19px;
+  text-align: center;
+  padding: 2px 0;
+  font-size: 13px;
+  line-height: 0.1;
+  border-radius: 30px;
+}
+
+.btn-circle-sm {
+  width: 35px;
+  height: 35px;
+  text-align: center;
+  padding: 2px 0;
+  font-size: 20px;
+  line-height: 1.65;
+  border-radius: 30px;
+}
+
+.btn-circle-lg {
+  width: 79px;
+  height: 79px;
+  text-align: center;
+  padding: 13px 0;
+  font-size: 30px;
+  line-height: 2.00;
+  border-radius: 70px;
+}
+
+.combo-buttons {
+  padding: 5px 15px 0px 0px;
+}
+
+.combo-buttons > a {
+  margin-right: 5px;
+}
+.btn-primary:hover {
+  color: #fff;
+  background-color: #605ca8;
+  border-color: #204d74;
+}
+
+.inline-wrap {
+    display: inline-block;
+    overflow: hidden;
+    margin-left: -80px;
+}
+
+.box {
+  text-align: center;
+}
+.box-title {
+  float: left;
+}
+
+.svg-wrapper {
+  display: block;
+  width: auto;
+  padding: 4px;
+  line-height: 1.42857143;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+
+}
+
+/*svg{
+  position: relative;
+  display: inline-block;
+  padding: 1px;
+  line-height: 1.42857143;
+  background-color: #fff;
+  border: 1px solid #ddd;
+}*/

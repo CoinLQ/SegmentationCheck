@@ -5,7 +5,7 @@ class CollateInfoPanel extends React.Component {
         const {children} = this.props;
 
         return (
-             <div className="box">
+          <div className="box">
             <div className="box-header">
               <h3 className="box-title">校勘信息</h3>
 

@@ -37,5 +37,98 @@
       "exchangeRecords": []
     },
     "success": true
-  }
+  },
+  "papers": {"models": [
+        {
+          "id": 1,
+          "url": "http://od843aa4c.bkt.clouddn.com/hongwu/038.jpg"
+        },
+        {
+          "id": 2,
+          "url": "http://od843aa4c.bkt.clouddn.com/hongwu/039.jpg"
+        },
+        {
+          "id": 3,
+          "url": "http://od843aa4c.bkt.clouddn.com/hongwu/040.jpg"
+        },
+        {
+          "id": 4,
+          "url": "http://od843aa4c.bkt.clouddn.com/hongwu/041.jpg"
+        },
+        {
+          "id": 5,
+          "url": "http://od843aa4c.bkt.clouddn.com/hongwu/042.jpg"
+        },
+        {
+          "id": 6,
+          "url": "http://od843aa4c.bkt.clouddn.com/hongwu/043.jpg"
+        },
+        {
+          "id": 7,
+          "url": "http://od843aa4c.bkt.clouddn.com/hongwu/044.jpg"
+        },
+        {
+          "id": 8,
+          "url": "http://od843aa4c.bkt.clouddn.com/hongwu/045.jpg"
+        },
+        {
+          "id": 9,
+          "url": "http://od843aa4c.bkt.clouddn.com/hongwu/046.jpg"
+        },
+        {
+          "id": 10,
+          "url": "http://od843aa4c.bkt.clouddn.com/hongwu/047.jpg"
+        },
+        {
+          "id": 11,
+          "url": "http://od843aa4c.bkt.clouddn.com/hongwu/048.jpg"
+        },
+        {
+          "id": 12,
+          "url": "http://od843aa4c.bkt.clouddn.com/hongwu/049.jpg"
+        },
+        {
+          "id": 13,
+          "url": "http://od843aa4c.bkt.clouddn.com/hongwu/050.jpg"
+        },
+        {
+          "id": 14,
+          "url": "http://od843aa4c.bkt.clouddn.com/hongwu/051.jpg"
+        },
+        {
+          "id": 15,
+          "url": "http://od843aa4c.bkt.clouddn.com/hongwu/052.jpg"
+        },
+        {
+          "id": 16,
+          "url": "http://od843aa4c.bkt.clouddn.com/hongwu/053.jpg"
+        },
+        {
+          "id": 17,
+          "url": "http://od843aa4c.bkt.clouddn.com/hongwu/054.jpg"
+        },
+        {
+          "id": 18,
+          "url": "http://od843aa4c.bkt.clouddn.com/hongwu/055.jpg"
+        },
+        {
+          "id": 19,
+          "url": "http://od843aa4c.bkt.clouddn.com/hongwu/056.jpg"
+        },
+        {
+          "id": 20,
+          "url": "http://od843aa4c.bkt.clouddn.com/hongwu/057.jpg"
+        }
+      ]
+  },
+  "pagination": {
+        "next_page": 2,
+        "previous_page": null,
+        "total_pages": 2,
+        "end_index": 10,
+        "total_entries": 20,
+        "start_index": 1,
+        "page": 1
+    }
+
 }
