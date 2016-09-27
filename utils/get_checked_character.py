@@ -19,16 +19,25 @@ def main():
     for r in results:
         char_count_map[r[0]] = r[1]
         redis_client.rpush(all_characters_key, r[0])
-    selected_characters = {}
-    for i in [1, -1]:
-        cur.execute("select char, count(*) from segmentation_character where is_correct=%s group by char;", (i,))
+    char_correct_map_lst = [{}, {}]
+    is_correct_values = [1, -1]
+    for i in range(2):
+        is_correct = is_correct_values[i]
+        cur.execute("select char, count(*) from segmentation_character where is_correct=%s group by char;",
+                    (is_correct,))
         results = cur.fetchall()
+
         for r in results:
-            if r[1] < 50:
-                selected_characters[r[0]] = char_count_map[r[0]]
+            char_correct_map_lst[i][r[0]] = r[1]
     cur.close()
     conn.close()
-    selected_character_lst = selected_characters.items()
+
+    selected_character_lst = []
+    for char, count in char_count_map.iteritems():
+        if char not in char_correct_map_lst[0] or char not in char_correct_map_lst[1] or \
+                char_correct_map_lst[0][char] < 50 or char_correct_map_lst[1][char] < 50:
+            selected_character_lst.append( (char, count) )
+
     selected_character_lst.sort(key=itemgetter(1), reverse=True)
 
     redis_client.delete(characters_key)
