@@ -32,6 +32,21 @@
           </div>
         </div>
         <strong id='checkchar' style='font-size:36px; margin:10px;padding:8px;color:#483D8B;'>{{char.char}}</strong> 点选字形不正确或切错的字(详细说明见下方)
+<div style="float:right; margin-right:64px;">
+        每页显示
+        <div id="LineControler" class="btn-group" style="padding:0 16px;">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span>30&nbsp;</span><span class="caret"></span> </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                <li><a href="javascript:;">30&nbsp;</a></li>
+                <li><a href="javascript:;">50&nbsp;</a></li>
+                <li><a href="javascript:;">70&nbsp;</a></li>
+                <li><a href="javascript:;">90&nbsp; </a></li>
+            </ul>
+        </div>
+        字
+    </div>
+
         <div id='charlistArea'>
             <p class="bg-info" style='margin:20px;padding:10px;'>审核模式只显示未审核的字形，浏览模式分页显示所有字形。</p>
         </div><!--end charlistArea -->
@@ -59,10 +74,26 @@
 {% endblock %}
 {% block foot  %}
 <!--for index-->
+<script src="/static/js/jquery.cookie.js" charset="utf-8"></script>
+<script type="text/javascript">
+    $(function() {
+        var page_size = $.cookie('charcheck_page_size');
+        $("#LineControler button span:first-of-type").text(page_size);
+    })
+    $("#LineControler li a").click(function () {
+        var page_size = $(this).text();
+        $("#LineControler button span:first-of-type").text($(this).text());
+        $.cookie('charcheck_page_size', page_size, { expires: 30 });
+    })
+</script>
 <script>
 $(function(){
     var _char = $('#checkchar').text();
-    $.getJSON("/api/character?page_size=30&is_correct=0&char="+_char,function(result){
+    var page_size = $.cookie('charcheck_page_size');
+    if ( page_size==null) {
+        page_size = 30;
+    }
+    $.getJSON("/api/character?page_size="+page_size+"&is_correct=0&char="+_char,function(result){
         renderCharArea("#charlistArea",result.models);
         binding_char_check('#charlistArea');
         $('.progress .progress-bar').progressbar({display_text:'center', use_percentage: false});
@@ -91,7 +122,7 @@ function binding_char_check(area){
             data['is_correct'] = -1;
           }
         $.post('/characters/set_correct', data );
-    }); 
+    });
 }
 </script>
 <script>
@@ -132,4 +163,3 @@ function handler() {
 </script>
 <script type="text/javascript" src="/static/js/bootstrap-progressbar.min.js"></script>
 {% endblock %}
-

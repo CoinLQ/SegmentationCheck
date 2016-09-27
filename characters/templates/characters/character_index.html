@@ -51,15 +51,27 @@ label {
                   </tr>
                 </thead>
               <tbody id='charindextbody'>
-                {% for ch in characterstatistics_list %}
-              <tr >
-                  <td value='{{ch.char}}'>{{ch.char}}</td><td>{{ch.total_cnt}}</td><td>{{ch.uncheck_cnt}}</td><td >{{ch.err_cnt}}</td>
-                {% endfor %}
               </tbody>
             </table>
+            <div id="index_pagearea"> </div>
             </div><!--end sidecol-->
         </div><!--end col-md-3 -->
         <div class='col-md-9 col-xs-9'>
+
+<div style="float:right; margin-right:64px;">
+        每页显示
+        <div id="LineControler" class="btn-group" style="padding:0 16px;">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span>30&nbsp;</span><span class="caret"></span> </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                <li><a href="javascript:;">30&nbsp;</a></li>
+                <li><a href="javascript:;">50&nbsp;</a></li>
+                <li><a href="javascript:;">70&nbsp;</a></li>
+                <li><a href="javascript:;">90&nbsp; </a></li>
+            </ul>
+        </div>
+        字
+    </div>
             <div id='charBrowseArea'>
             </div>
             <div style="clear:both;"> </div>
@@ -73,15 +85,31 @@ label {
 {% endblock %}
 {% block foot  %}
 <script src="/static/js/jquery.simplePagination.js" charset="utf-8"></script>
+<script src="/static/js/jquery.cookie.js" charset="utf-8"></script>
+<script type="text/javascript">
+    $(function() {
+        var page_size = $.cookie('charindex_page_size');
+        $("#LineControler button span:first-of-type").text(page_size);
+    })
+    $("#LineControler li a").click(function () {
+        var page_size = $(this).text();
+        $("#LineControler button span:first-of-type").text($(this).text());
+        $.cookie('charindex_page_size', page_size, { expires: 30 });
+    })
+</script>
 <script>
 var _char;
 var page_size = 30;
-$(function(){
+function bindindex(){
     $('#charindextbody tr').click(function (e) {
         $('.unchecked-box').removeClass('hidden');
         $('tr').removeClass("selected");
         $(this).addClass("selected");
         _char = $("tr.selected td:first").text();
+        page_size = $.cookie('charindex_page_size');
+        if ( page_size==null) {
+            page_size = 30;
+        }
         $.getJSON("/api/character?page_size="+page_size+"&char="+_char,function(result){
             data = result.models;
             pagination = result.pagination;
@@ -90,8 +118,50 @@ $(function(){
             binding_char_check('#charBrowseArea');
         });
     });
-
+}
+$(function(){
+    $.getJSON("/api/characterstatistics?page_size=15",function(result){
+        data = result.models;
+        pagination = result.pagination;
+        index_pagination(pagination.total_entries,page_size);
+        $('#charindextbody').empty();
+        var row ='';
+        $.each(data, function(i, field){
+            row =  field.char;
+            row = "<tr><td value='"+field.char+"'>"+field.char
+            +"</td><td>"+field.total_cnt
+            +"</td><td>"+field.uncheck_cnt
+            +"</td><td>"+field.err_cnt+"</td></tr>"
+            $('#charindextbody').append(row);
+        });
+        bindindex();
+    })
 })
+function index_pagination(_items,_itemsOnpage){
+    $('#index_pagearea').pagination({
+        items: _items,
+        itemsOnPage: _itemsOnpage,
+        cssStyle: 'light-theme',
+        onPageClick: function(pageNumber, event) {
+                var url = "/api/characterstatistics?page_size=15"
+                    +"&page="+pageNumber
+                $.getJSON(url,function(result){
+                    data = result.models;
+                    $('#charindextbody').empty();
+                    var row ='';
+                    $.each(data, function(i, field){
+                        row =  field.char;
+                        row = "<tr><td value='"+field.char+"'>"+field.char
+                        +"</td><td>"+field.total_cnt
+                        +"</td><td>"+field.uncheck_cnt
+                        +"</td><td>"+field.err_cnt+"</td></tr>"
+                        $('#charindextbody').append(row);
+                    });
+                    bindindex();
+                });
+            },
+    });
+}
 function binding_char_check(area){
     var selector = area + ' .char-image'
         $(selector).click(function(){
@@ -148,4 +218,3 @@ function paginationFun(_items,_itemsOnpage){
 </script>
 
 {% endblock %}
-

@@ -22,16 +22,17 @@ import home.views
 urlpatterns = [
     url(r'^$', home.views.index, name='main_index'),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^account/', include('account.urls',namespace='account')),
-    url(r'^home/', include('home.urls',namespace='home')),
-    url(r'^managerawdata/', include('managerawdata.urls',namespace='managerawdata')),
-    url(r'^preprocess/', include('preprocess.urls',namespace='preprocess')),
-    url(r'^segmentation/', include('segmentation.urls',namespace='segmentation')),
-    url(r'^layoutseg/', include('layoutseg.urls',namespace='layoutseg')),
-    url(r'^charseg/', include('charseg.urls',namespace='charseg')),
-    url(r'^characters/', include('characters.urls',namespace='characters')),
-    url(r'^pagecheck/', include('pagecheck.urls',namespace='pagecheck')),
-    url(r'^api/', include('api.urls',namespace='api')),
+    url(r'^account/', include('account.urls', namespace='account')),
+    url(r'^home/', include('home.urls', namespace='home')),
+    url(r'^managerawdata/', include('managerawdata.urls', namespace='managerawdata')),
+    url(r'^preprocess/', include('preprocess.urls', namespace='preprocess')),
+    url(r'^segmentation/', include('segmentation.urls', namespace='segmentation')),
+    url(r'^layoutseg/', include('layoutseg.urls', namespace='layoutseg')),
+    url(r'^charseg/', include('charseg.urls', namespace='charseg')),
+    url(r'^characters/', include('characters.urls', namespace='characters')),
+    url(r'^pagecheck/', include('pagecheck.urls', namespace='pagecheck')),
+    url(r'^api-auth/', include('rest_framework.urls')),
+    url(r'^api/', include('api.urls', namespace='api')),
 ]
 
 if settings.DEBUG:

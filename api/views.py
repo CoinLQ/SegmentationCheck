@@ -1,14 +1,13 @@
-from django.shortcuts import render, get_object_or_404
-
 from rest_framework import viewsets, mixins
 from rest_framework.response import Response
-from rest_framework import generics,filters
+from rest_framework import generics, filters
 
 from .serializers import PageSerializer, OPageSerializer, TripitakaSerializer, VolumeSerializer,CharacterSerializer,CharacterStatisticsSerializer
 
 from managerawdata.models import OPage
 from catalogue.models import Tripitaka, Volume
-from segmentation.models import Page, Character,CharacterStatistics
+from segmentation.models import Page, Character, CharacterStatistics
+
 
 class TripitakaViewSet(viewsets.ModelViewSet):
     serializer_class = TripitakaSerializer
@@ -25,7 +24,7 @@ class OPageViewSet(viewsets.ModelViewSet):
     queryset = OPage.objects.all()
     search_fields = ('pages_no', 'tripitaka')
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = ('status','id','volume')
+    filter_fields = ('status', 'id', 'volume')
 
 
 class PageViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -40,11 +39,13 @@ class PageViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         serializer = PageSerializer(instance)
         return Response(serializer.data)
 
+
 class CharacterViewSet(viewsets.ModelViewSet):
     serializer_class = CharacterSerializer
     queryset = Character.objects.all()
     filter_fields = ('page_id', 'char', 'is_correct')
 
+
 class CharacterStatisticsViewSet(viewsets.ModelViewSet):
     serializer_class = CharacterStatisticsSerializer
-    queryset = CharacterStatistics.objects.all()
+    queryset = CharacterStatistics.objects.all().order_by('-total_cnt')

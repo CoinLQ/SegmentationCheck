@@ -1,32 +1,35 @@
 # -*- coding:utf-8 -*-
 from django.shortcuts import render
-from django.http import  JsonResponse
-from segmentation.models import  Character, CharacterStatistics
+from django.http import JsonResponse
+from segmentation.models import Character, CharacterStatistics
 from django.views import generic
 import random
 from django.db.models import F
 import datetime
 
+
 class CharacterIndex(generic.ListView):
-    model =  CharacterStatistics
+    model = CharacterStatistics
+
 
 def index(request):
-    characterstatistics_list = CharacterStatistics.objects.all().order_by('-total_cnt')[:20]
-    return render(request, 'characters/character_index.html', {'characterstatistics_list': characterstatistics_list})
+    char_cnt_lst = CharacterStatistics.objects.all().order_by('-total_cnt')[:20]
+    return render(request, 'characters/character_index.html', {'characterstatistics_list': char_cnt_lst})
 
 
 def task(request):
     today = datetime.datetime.now().strftime("%Y%m%d")
-    checkin_date = request.session.get('checkin_date',0)
+    checkin_date = request.session.get('checkin_date', 0)
     if checkin_date != today:
         request.session['check_char_number'] = 0
         request.session['checkin_date'] = today
-    check_char_number = request.session.get('check_char_number',0)
+    check_char_number = request.session.get('check_char_number', 0)
     char_lst = CharacterStatistics.objects.filter(uncheck_cnt__gt=0).order_by('-total_cnt')[:30]
     char = random.choice(char_lst)
     return render(request,'characters/characters.html',{'char':char,'check_char_number':check_char_number} )
 
-#@login_required(login_url='/segmentation/login/')
+
+# @login_required(login_url='/segmentation/login/')
 def set_correct(request):
     if 'id' in request.POST:
         char_id = request.POST['id']

@@ -64,6 +64,8 @@ class Character(models.Model):
 ## 0 unchecked(initial value )
 ## 1 correct
 ## 2 manual correct
+## -5
+##  5
 ## -1 erro
 ## -2 with/height erro
 ## -3 line erro
@@ -77,6 +79,8 @@ class Character(models.Model):
     def image_url(self):
         return '/character_images/'+self.page_id+'/'+self.image
 
+    def get_image_path(self):
+        return settings.CHARACTER_IMAGE_ROOT+self.image
 
 class CharacterStatistics(models.Model):
     char = models.CharField(max_length=4,db_index=True,primary_key=True)
@@ -87,4 +91,3 @@ class CharacterStatistics(models.Model):
 
     def __unicode__(self):
         return u'%s:%d' % (self.char,self.total_cnt )
-
