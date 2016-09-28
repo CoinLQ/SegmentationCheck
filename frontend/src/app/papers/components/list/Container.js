@@ -9,6 +9,8 @@ import SearchBox from "app/components/SearchBox";
 import Slider from 'react-slick'
 import PaperCut from 'app/papers/components/PaperCut'
 import _ from "lodash";
+import { DZJEditor } from 'app/components/editor/DZJEditor';
+import Example  from 'app/components/editor/wysiwyg/container.js'
 class Container extends React.Component {
     componentWillMount() {
         const {actions, collection} = this.props;
@@ -68,6 +70,7 @@ class Container extends React.Component {
 
                     </Col>
                     <Col sm={rowTwoWidth}>
+                         <Example />
                         {children}
                     </Col>
                 </Row>
