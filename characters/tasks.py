@@ -9,7 +9,7 @@ from scipy.misc import imresize  # for image resize
 from skimage import io
 from skimage.color import rgb2gray, gray2rgb
 
-from skimage.filter import threshold_otsu
+from skimage.filters import threshold_otsu
 # sys.path.append('/home/can/PycharmProjects/imageprocess/libsvm/python')
 from sklearn import preprocessing
 from sklearn import metrics
@@ -46,9 +46,9 @@ def update_char_stastics():
 
 
 # @task
-def classify():
+def classify(_char):
     # char_info = CharacterStatistics.objects.all().filter
-    _char = u'不'
+    # _char = u'不'
     char_lst = Character.objects.filter(char=_char)
     y, X, ty, tX, t_charid_lst = prepare_data_with_database(char_lst)
 
@@ -122,7 +122,7 @@ def prepare_data_with_database(char_lst):
 
 
 def output_result2sql(p_labels, t_charid_lst, char):
-    result_file = char+'result_char.sql'
+    result_file = '/home/can/classification_results/%s_result_char.sql' % char.encode('utf-8')
     with open(result_file, 'w+') as res_f:
         # length = [len(p_labels),2000][len(p_labels)>2000]
         length = len(p_labels)
