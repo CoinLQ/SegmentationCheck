@@ -33,6 +33,7 @@ urlpatterns = [
     url(r'^pagecheck/', include('pagecheck.urls', namespace='pagecheck')),
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^api/', include('api.urls', namespace='api')),
+    url(r'^quiz/', include('quiz.urls', namespace='quiz')),
 ]
 
 if settings.DEBUG:
