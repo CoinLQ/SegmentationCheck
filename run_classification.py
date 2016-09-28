@@ -15,7 +15,8 @@ characters_key = 'seg_web:classified_character_count'
 def main():
     results = []
     with connection.cursor() as cursor:
-        cursor.execute("select char, count(*) from segmentation_character where is_correct=1 group by char;")
+        cursor.execute("select char, count(is_correct=1) as correct_cnt, count(is_correct=-1) as err_cnt from \
+        segmentation_character group by char;")
         results = cursor.fetchall()
     if len(results) > 0:
         results.sort(key=itemgetter(1), reverse=True)
@@ -23,12 +24,13 @@ def main():
 
         for r in results:
             ch = r[0].encode('utf-8')
-            count_limit = character_count_map.get(ch, 1)
+            count_limit = character_count_map.get(ch, 1) # TODO
             count_limit = int(count_limit)
-            if r[1] < count_limit:
+            print r[1],count_limit
+            if r[1] < count_limit and r[2] < 1:
                 continue
             new_count_limit = r[1] + 50
-            redis_client.hset(characters_key, r[0], new_count_limit)
+            #redis_client.hset(characters_key, r[0], new_count_limit)
             # r[0]
             print r[0]
             classify(r[0])

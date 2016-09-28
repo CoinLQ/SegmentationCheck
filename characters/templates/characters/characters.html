@@ -83,10 +83,9 @@
         var page_size = $(this).text();
         $("#LineControler button span:first-of-type").text($(this).text());
         $.cookie('charcheck_page_size', page_size, { expires: 30 });
+        render_char_area();
     })
-</script>
-<script>
-$(function(){
+function render_char_area(){
     var _char = $('#checkchar').text();
     var page_size = $.cookie('charcheck_page_size');
     if ( page_size==null) {
@@ -102,7 +101,8 @@ $(function(){
             }
         });
     });
-})
+}
+$(render_char_area())
 </script>
 <script>
 function binding_char_check(area){

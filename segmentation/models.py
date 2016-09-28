@@ -80,7 +80,7 @@ class Character(models.Model):
         return '/character_images/'+self.page_id+'/'+self.image
 
     def get_image_path(self):
-        return settings.CHARACTER_IMAGE_ROOT+self.image
+        return settings.CHARACTER_IMAGE_ROOT+self.page_id+'/'+self.image
 
 class CharacterStatistics(models.Model):
     char = models.CharField(max_length=4,db_index=True,primary_key=True)

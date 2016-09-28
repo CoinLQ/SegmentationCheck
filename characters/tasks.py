@@ -49,10 +49,18 @@ def update_char_stastics():
 def classify(_char):
     # char_info = CharacterStatistics.objects.all().filter
     # _char = u'不'
+    if _char == u'無':
+        print 'dangers'
     char_lst = Character.objects.filter(char=_char)
+    print char_lst
     y, X, ty, tX, t_charid_lst = prepare_data_with_database(char_lst)
+    if not( len(X) and len(tX)):
+        return
+    if 1== len(set(y)):
+        return
 
     print "traning"
+    '''
     # normalize the data attributes
     normalized_X = preprocessing.normalize(X)
     # standardize the data attributes
@@ -65,18 +73,23 @@ def classify(_char):
     print(model.feature_importances_)
 
     print "==LogisticRegression=="
+    '''
     from sklearn.linear_model import LogisticRegression
     model = LogisticRegression()
     model.fit(X, y)
-    print "----model------"
-    print(model)
+    #print "----model------"
+    #print(model)
     # make predictions
-    expected = y
-    predicted = model.predict(X)
+    # expected = y
+    # predicted = model.predict(X)
     # summarize the fit of the model
+    '''
     print "-----make predictions-----"
     print(metrics.classification_report(expected, predicted))
     print(metrics.confusion_matrix(expected, predicted))
+    '''
+    if len(tX) == 0:
+        return
     predicted = model.predict(tX)
     output_result2sql(predicted, t_charid_lst, _char)
     return 'classify'
@@ -92,11 +105,14 @@ def prepare_data_with_database(char_lst):
         label = char.is_correct
         img_path = char.get_image_path()
         char_id = char.id
-        if not os.path.exists(img_path):
+        if not os.path.isfile(img_path):
+            print 'no img'
             continue
         src_image = io.imread(img_path, 0)
         img_gray = rgb2gray(src_image)
         img_resize = imresize(img_gray, [10, 15], 'nearest')
+        print 'img_resize'
+        print img_resize
         try:
             thresh = threshold_otsu(img_resize)
         except:
@@ -127,6 +143,6 @@ def output_result2sql(p_labels, t_charid_lst, char):
         # length = [len(p_labels),2000][len(p_labels)>2000]
         length = len(p_labels)
         for i in range(length):
-            update_sql = "update segmentation_character set is_correct = %d \
-            where id = '%s';" % p_labels[i], t_charid_lst[i]
+            update_sql = "update segmentation_character set is_correct = %d where id = '%s';\n"\
+                         % (p_labels[i]*11, t_charid_lst[i])
             res_f.write(update_sql)
