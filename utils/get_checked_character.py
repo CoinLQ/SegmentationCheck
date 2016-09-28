@@ -54,9 +54,12 @@ def get_checked_character():
     if count == 0:
         redis_client.set(characters_index_key, -1)
         all_count = redis_client.llen(all_characters_key)
-        index = random.randint(0, all_count-1)
-        char = redis_client.lindex(all_characters_key, index)
-        return char.decode('utf-8')
+        if all_count != 0:
+            index = random.randint(0, all_count-1)
+            char = redis_client.lindex(all_characters_key, index)
+            return char.decode('utf-8')
+        else:
+            return u'无'
     if index >= count:
         redis_client.set(characters_index_key, 0)
         index = 0
