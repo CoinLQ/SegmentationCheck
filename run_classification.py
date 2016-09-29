@@ -31,7 +31,7 @@ def main():
             new_count_limit = r[1] + 50
             redis_client.hset(characters_key, r[0], new_count_limit)
             # r[0]
-            print r[0]
+            print ch
             classify(r[0])
 
 if __name__ == '__main__':
