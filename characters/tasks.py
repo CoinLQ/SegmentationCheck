@@ -139,7 +139,7 @@ def prepare_data_with_database(char_lst):
 
 
 def output_result2sql(p_labels, t_charid_lst, char):
-    result_file = '/home/can/classification_results/%s_result_char.sql' % char.encode('utf-8')
+    result_file = '/home/dzj/classification_results/%s_result_char.sql' % char.encode('utf-8')
     with open(result_file, 'w+') as res_f:
         # length = [len(p_labels),2000][len(p_labels)>2000]
         length = len(p_labels)
