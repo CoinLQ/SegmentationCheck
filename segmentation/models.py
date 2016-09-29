@@ -60,6 +60,7 @@ class Character(models.Model):
     char_no = models.SmallIntegerField()
     region_no = models.SmallIntegerField(default=0)
     is_correct = models.SmallIntegerField(default=0,db_index=True)
+    accuracy = models.FloatField(default=-1.0)
 #is_correct value
 ## 0 unchecked(initial value )
 ## 1 correct
