@@ -24,13 +24,12 @@ def main():
 
         for r in results:
             ch = r[0].encode('utf-8')
-            count_limit = character_count_map.get(ch, 1) # TODO
+            count_limit = character_count_map.get(ch, 50)
             count_limit = int(count_limit)
-            print r[1],count_limit
             if r[1] < count_limit and r[2] < 1:
                 continue
             new_count_limit = r[1] + 50
-            #redis_client.hset(characters_key, r[0], new_count_limit)
+            redis_client.hset(characters_key, r[0], new_count_limit)
             # r[0]
             print r[0]
             classify(r[0])

@@ -4,6 +4,12 @@ from segmentation.models import Character
 from datetime import datetime
 
 # Create your models here.
+
+class QuizBatch(models.Model):
+    user = models.ForeignKey(User)
+    score = models.FloatField(default=0.0)
+    time = models.DateTimeField(auto_now_add=True)
+
 class QuizResult(models.Model):
     user = models.ForeignKey(User)
     character = models.ForeignKey(Character)
@@ -11,8 +17,4 @@ class QuizResult(models.Model):
     right_wrong = models.BooleanField()
     batch = models.ForeignKey(QuizBatch)
 
-class QuizBatch(models.Model):
-    user = models.ForeignKey(User)
-    score = models.FloatField(default=0.0)
-    time = models.DateTimeField(default=datetime.now())
 

@@ -11,15 +11,33 @@ import json
 from segmentation.models import CharacterStatistics
 from .models import QuizResult, QuizBatch
 
-@login_required(login_url='/segmentation/login/')
+
+def index(request):
+    return render(request, 'quiz/index.html')
+
+
+def task(request):
+    today = datetime.datetime.now().strftime("%Y%m%d")
+    checkin_date = request.session.get('checkin_date', 0)
+    if checkin_date != today:
+        request.session['check_char_number'] = 0
+        request.session['checkin_date'] = today
+    check_char_number = request.session.get('check_char_number',0)
+    #char_lst = CharacterStatistics.objects.filter(uncheck_cnt__gt=0).order_by('-total_cnt')[:30]
+    #char = random.choice(char_lst)
+    char = get_checked_character()
+    return render(request,'characters/characters.html',{'char':char,'check_char_number':check_char_number} )
+
+
+@login_required()
 def quiz_batch_create(request):
     batch = QuizBatch.objects.create(user=request.user)
     return JsonResponse({u'status': u'ok', u'batch_id': batch.id})
 
-@login_required(login_url='/segmentation/login/')
+@login_required()
 def quiz_batch_characters(request, batch_id):
-    offset = random.randint(0, 279)
-    character_statistics = CharacterStatistics.objects.filter(err_cnt__gte=100)[offset]
+    offset = random.randint(0, 5) #TODO
+    character_statistics = CharacterStatistics.objects.filter(err_cnt__gte=1)[offset] #TODO
     char = character_statistics.char
     sql = u"select id, char, image, is_correct from segmentation_character where char='%s' offset random() * 100 " \
           u"* (select count(*)/100 from segmentation_character where char='%s') limit 100;" \
@@ -37,7 +55,7 @@ def quiz_batch_characters(request, batch_id):
     char_lst_json = json.dumps(char_lst)
     return JsonResponse({u'chars': char_lst_json}, safe=False)
 
-@login_required(login_url='/segmentation/login/')
+@login_required()
 def set_correct(request, batch_id):
     if 'id' in request.POST:
         char_id = request.POST['id']

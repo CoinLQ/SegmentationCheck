@@ -45,12 +45,14 @@ THIRD_PARTY_APPS = [
     'django_extensions',
     'rest_framework',
     'djcelery',
+    'debug_toolbar',
 ]
 #   'qiniustorage',
 #    'kombu.transport.django',
 
 LOCAL_APPS = [
     'home',
+    'quiz',
     'account',
     'catalogue',
     'managerawdata',
@@ -81,7 +83,17 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',  # mast be the last Middleware
 )
+
+INTERNAL_IPS = [
+    '127.0.0.1'
+]
+
+DEBUG_TOOLBAR_CONFIG = {
+    # Toolbar options
+    'JQUERY_URL': '//cdn.bootcss.com/jquery/3.1.1/jquery.min.js',
+}
 
 ROOT_URLCONF = 'SegmentationCheck.urls'
 
