@@ -14,7 +14,8 @@ from skimage.filters import threshold_otsu
 from sklearn import preprocessing
 from sklearn import metrics
 from sklearn.ensemble import ExtraTreesClassifier
-
+import time
+from itertools import chain
 
 # @task
 def add(x, y):
@@ -47,19 +48,19 @@ def update_char_stastics():
 
 # @task
 def classify(_char):
-    # char_info = CharacterStatistics.objects.all().filter
-    # _char = u'不'
-    if _char == u'無':
-        print 'dangers'
+    print 'to fetch data'
+    start_time = time.time()
     char_lst = Character.objects.filter(char=_char)
-    print char_lst
+    #print char_lst
     y, X, ty, tX, t_charid_lst = prepare_data_with_database(char_lst)
     if not( len(X) and len(tX)):
         return
-    if 1== len(set(y)):
+    if 1 == len(set(y)) or len(y) < 10:
         return
 
-    print "traning"
+    print "fetch data done, spent %s seconds." % int(time.time() - start_time)
+    start_time = time.time()
+    print "traning: data size: %d" % len(y)
     '''
     # normalize the data attributes
     normalized_X = preprocessing.normalize(X)
@@ -75,8 +76,13 @@ def classify(_char):
     print "==LogisticRegression=="
     '''
     from sklearn.linear_model import LogisticRegressionCV
-    model = LogisticRegressionCV(cv=5, solver='liblinear', class_weight='balanced')
-    model.fit(X, y)
+    model = LogisticRegressionCV(cv=3, solver='liblinear', class_weight='balanced', n_jobs=4)
+    try:
+        model.fit(X, y)
+        print "training done, spent %s seconds." % int(time.time() - start_time)
+    except Exception, e:
+        print 'except: ', e
+        return
     #print "----model------"
     #print(model)
     # make predictions
@@ -90,9 +96,14 @@ def classify(_char):
     '''
     if len(tX) == 0:
         return
+    start_time = time.time()
+    print "predict: data size: %d" % len(tX)
     predicted = model.predict_proba(tX)
     predicted = map(lambda x: x[1], predicted)
+    print "predict done, spent %s seconds." % int(time.time() - start_time)
+    start_time = time.time()
     output_result2sql(predicted, t_charid_lst, _char)
+    print "write db done, spent %s seconds." % int(time.time() - start_time)
     return 'classify'
 
 
@@ -107,33 +118,31 @@ def prepare_data_with_database(char_lst):
         img_path = char.get_image_path()
         char_id = char.id
         if not os.path.isfile(img_path):
-            print 'no img'
+            #print 'no img'
             continue
-        src_image = io.imread(img_path, 0)
-        img_gray = rgb2gray(src_image)
-        img_resize = imresize(img_gray, [10, 15], 'nearest')
-        print 'img_resize'
-        print img_resize
         try:
+            src_image = io.imread(img_path, 0)
+            img_gray = rgb2gray(src_image)
+            img_resize = imresize(img_gray, [10, 15], 'nearest')
             thresh = threshold_otsu(img_resize)
         except:
             continue
         binary = img_resize > thresh
-        im = (binary * 1).astype('ubyte')
-        im.shape = 1, -1
-        x = im.tolist()
+        x = binary.ravel().tolist()
+        #im = binary.astype('ubyte')
+        #im.shape = 1, -1
+        #x = im.tolist()
         if int(label) == 0:
-            test_x += x
-            test_y += [int(label)]
-            # test_path += [img_path]
-            test_char_id_lst += [char_id]
+            test_x.append(x)
+            test_y.append( int(label) )
+            test_char_id_lst.append( char_id )
         else:
             if int(label) < 0:
                 label = -1
             elif int(label) > 0:
                 label = 1
-            prob_x += x
-            prob_y += [label]
+            prob_x.append( x )
+            prob_y.append( label )
     # return (prob_y, prob_x, test_y, test_x, test_path)
     return (prob_y, prob_x, test_y, test_x, test_char_id_lst)
 

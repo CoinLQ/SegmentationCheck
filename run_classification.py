@@ -31,6 +31,9 @@ def main():
             new_count_limit = r[1] + 50
             redis_client.hset(characters_key, r[0], new_count_limit)
             # r[0]
+            result_file = '/home/dzj/classification_results/%s_result_char.sql' % ch
+            if os.path.exists(result_file):
+                continue
             print ch
             classify(r[0])
 

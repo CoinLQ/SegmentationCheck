@@ -10,6 +10,9 @@ class PageAdmin(admin.ModelAdmin):
 #    def view_on_site(self, obj):
 #        return 'http://192.168.16.3:8000' + reverse('segmentation:page_detail', kwargs={'page_id': obj.id})
 
+class CharacterAdmin(admin.ModelAdmin):
+    list_display = ('image_tag', 'char', 'is_correct', 'accuracy', 'id')
+    list_filter = ['char']
 
 admin.site.register(Page, PageAdmin)
-admin.site.register(Character)
+admin.site.register(Character, CharacterAdmin)

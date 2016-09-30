@@ -60,7 +60,7 @@ class Character(models.Model):
     char_no = models.SmallIntegerField()
     region_no = models.SmallIntegerField(default=0)
     is_correct = models.SmallIntegerField(default=0,db_index=True)
-    accuracy = models.FloatField(default=-1.0)
+    accuracy = models.FloatField(default=-1.0, db_index=True)
 #is_correct value
 ## 0 unchecked(initial value )
 ## 1 correct
@@ -82,6 +82,11 @@ class Character(models.Model):
 
     def get_image_path(self):
         return settings.CHARACTER_IMAGE_ROOT+self.page_id+'/'+self.image
+
+    def image_tag(self):
+        return u'<img src="%s" />' % (self.image_url)
+    image_tag.short_description = 'Image'
+    image_tag.allow_tags = True
 
 class CharacterStatistics(models.Model):
     char = models.CharField(max_length=4,db_index=True,primary_key=True)
