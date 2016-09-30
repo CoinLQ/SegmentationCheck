@@ -109,15 +109,6 @@ body {
 
 {% block mainbody %}
 
-
-{% if next %}
-    {% if user.is_authenticated %}
-    <p>Your account doesn't have access to this page. To proceed,
-    please login with an account that has access.</p>
-    {% else %}
-    <p>Please login to see this page.</p>
-    {% endif %}
-{% endif %}
 <div class="container">
   <div class="row">
       <div class="col-md-6 col-md-offset-3">
@@ -133,65 +124,65 @@ body {
                   </div>
                   <hr>
               </div>
-<div class="panel-body">
-<div class="row">
-  <div class="col-lg-12">
-      <form id="login-form" role="form" style="display: block;" method="post" action="{% url 'account:login' %}">
-          {% csrf_token %}
-          <input type="hidden" name="next" value="/">
-          <div class="form-group">
-              <input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="用户名" value="">
-          </div>
-          <div class="form-group">
-              <input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="密码">
-          </div>
-          {% if form.errors %}
-          <p style="color:red">你的用户名和密码不匹配。</p>
-          {% endif %}
-          <div class="form-group text-center">
-              <input type="checkbox" tabindex="3" class="" name="remember" id="remember">
-              <label for="remember"> 记住我</label>
-          </div>
-          <div class="form-group">
-              <div class="row">
-                  <div class="col-sm-6 col-sm-offset-3">
-                      <input type="submit" name="login-submit" id="login-submit" tabindex="4" class="form-control btn btn-login" value="登录">
-                  </div>
-              </div>
-          </div>
-          <div class="form-group">
-              <div class="row">
-                  <div class="col-lg-12">
-                      <div class="text-center">
-                          <a href="#forgot" tabindex="5" class="forgot-password">忘记密码?</a>
+            <div class="panel-body">
+            <div class="row">
+              <div class="col-lg-12">
+                  <form id="login-form" role="form" style="display: block;" method="post" action="{% url 'account:login' %}">
+                      {% csrf_token %}
+                      <input type="hidden" name="next" value="/">
+                      <div class="form-group">
+                          <input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="用户名" value="">
                       </div>
-                  </div>
-              </div>
-          </div>
-      </form>
-      <form id="register-form" role="form" style="display: none;" method="post" action="/account/register/">
-          {% csrf_token %}
-          <input type="hidden" name="next" value="/account/login">
-          <div class="form-group">
-              <input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="用户名" value="">
-          </div>
-          <div class="form-group">
-              <input type="email" name="email" id="email" tabindex="1" class="form-control" placeholder="邮件地址" value="">
-          </div>
-          <div class="form-group">
-              <input type="password" name="password1" id="password1" tabindex="2" class="form-control" placeholder="密码">
-          </div>
-          <div class="form-group">
-              <input type="password" name="password2" id="password2" tabindex="2" class="form-control" placeholder="确认密码">
-          </div>
-          <div class="form-group">
-              <div class="row">
-                  <div class="col-sm-6 col-sm-offset-3">
-                      <input type="submit" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="现在注册">
-                  </div>
-              </div>
-          </div>
-        </form>
+                      <div class="form-group">
+                          <input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="密码">
+                      </div>
+                      {% if form.errors %}
+                      <p style="color:red">你的用户名和密码不匹配。</p>
+                      {% endif %}
+                      <div class="form-group text-center">
+                          <input type="checkbox" tabindex="3" class="" name="remember" id="remember">
+                          <label for="remember"> 记住我</label>
+                      </div>
+                      <div class="form-group">
+                          <div class="row">
+                              <div class="col-sm-6 col-sm-offset-3">
+                                  <input type="submit" name="login-submit" id="login-submit" tabindex="4" class="form-control btn btn-login" value="登录">
+                              </div>
+                          </div>
+                      </div>
+                      <div class="form-group">
+                          <div class="row">
+                              <div class="col-lg-12">
+                                  <div class="text-center">
+                                      <a href="#forgot" tabindex="5" class="forgot-password">忘记密码?</a>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </form>
+                  <form id="register-form" role="form" style="display: none;" method="post" action="/account/register/">
+                      {% csrf_token %}
+                      <input type="hidden" name="next" value="/account/login">
+                      <div class="form-group">
+                          <input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="用户名" value="">
+                      </div>
+                      <div class="form-group">
+                          <input type="email" name="email" id="email" tabindex="1" class="form-control" placeholder="邮件地址" value="">
+                      </div>
+                      <div class="form-group">
+                          <input type="password" name="password1" id="password1" tabindex="2" class="form-control" placeholder="密码">
+                      </div>
+                      <div class="form-group">
+                          <input type="password" name="password2" id="password2" tabindex="2" class="form-control" placeholder="确认密码">
+                      </div>
+                      <div class="form-group">
+                          <div class="row">
+                              <div class="col-sm-6 col-sm-offset-3">
+                                  <input type="submit" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="现在注册">
+                              </div>
+                          </div>
+                      </div>
+                    </form>
                             </div>
                         </div>
                     </div>

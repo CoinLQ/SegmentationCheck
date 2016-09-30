@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
+from django.http import JsonResponse
 
 @csrf_protect
 def register(request):
@@ -17,18 +18,6 @@ def register(request):
             )
             return HttpResponseRedirect('/')
     else:
-        form = RegistrationForm()
-    variables = RequestContext(request, {
-    'form': form
-    })
-
-    return render_to_response(
-    'registration/register.html',
-    variables,
-    )
-
-def register_success(request):
-    return render_to_response(
-    'registration/success.html',
-    )
+        data = {'status': 'error'}
+        return JsonResponse(data)
 
