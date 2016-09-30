@@ -9,5 +9,4 @@ urlpatterns = [
     url(r'^logout/$', auth_views.logout, {'next_page': '/'}),
     url('', include('django.contrib.auth.urls')),
     url(r'^register/$', views.register),
-    url(r'^register/success/$', views.register_success),
 ]

@@ -7,6 +7,7 @@ import random
 from django.db.models import F
 from utils.get_checked_character import get_checked_character
 import datetime
+from django.contrib.auth.decorators import user_passes_test
 
 
 class CharacterIndex(generic.ListView):
@@ -17,7 +18,7 @@ def index(request):
     char_cnt_lst = CharacterStatistics.objects.all().order_by('-total_cnt')[:20]
     return render(request, 'characters/character_index.html', {'characterstatistics_list': char_cnt_lst})
 
-
+@user_passes_test(lambda u:u.is_staff, login_url='/quiz')
 def task(request):
     today = datetime.datetime.now().strftime("%Y%m%d")
     checkin_date = request.session.get('checkin_date', 0)
