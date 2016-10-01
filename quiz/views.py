@@ -30,8 +30,8 @@ def quiz_batch_characters(request, batch_id):
         page_size = int(request.GET['page_size'])
     else:
         page_size = 30
-    offset = random.randint(0, 2 ) #TODO
-    character_statistics = CharacterStatistics.objects.filter(err_cnt__gte=1).order_by('-total_cnt')[offset] #TODO
+    offset = random.randint(0, 237 ) #TODO
+    character_statistics = CharacterStatistics.objects.filter(err_cnt__gte=50).order_by('-total_cnt')[offset] #TODO
     char = character_statistics.char
     sql = u"select id, char, image, is_correct from segmentation_character where char='%s' \
     and (is_correct=1 or is_correct = -1) limit %d;" % (char,page_size)
