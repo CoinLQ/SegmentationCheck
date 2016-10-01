@@ -41,7 +41,7 @@ def quiz_batch_characters(request, batch_id):
         obj = {
             u'id': char.id,
             u'char': char.char,
-            u'image': char.image,
+            u'image_url': char.image_url,
             u'is_correct': char.is_correct,
         }
         char_lst.append(obj)
