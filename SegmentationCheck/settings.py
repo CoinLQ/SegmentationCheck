@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '^49jkh@wk!6by03j4f@du(m3$)1-%yejr!@om&#tm974b3%99i'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     '112.74.23.141',
@@ -47,10 +47,8 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-    'django_extensions',
     'rest_framework',
     'djcelery',
-    'debug_toolbar',
 ]
 #   'qiniustorage',
 #    'kombu.transport.django',
@@ -88,17 +86,11 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.locale.LocaleMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',  # mast be the last Middleware
 )
 
 INTERNAL_IPS = [
     '127.0.0.1'
 ]
-
-DEBUG_TOOLBAR_CONFIG = {
-    # Toolbar options
-    'JQUERY_URL': '//cdn.bootcss.com/jquery/3.1.1/jquery.min.js',
-}
 
 ROOT_URLCONF = 'SegmentationCheck.urls'
 
