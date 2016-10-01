@@ -52,6 +52,10 @@ function handler() {
             });
         }
         else {
+            console.log(status['round_number']);
+            var $pb = $('.progress .progress-bar');
+            $pb.attr('data-transitiongoal', status['round_number']).progressbar({display_text: 'center'});
+            //$('.progress .progress-bar').progressbar({display_text:'center', use_percentage: false});
             $.getJSON("/quiz/"+batch_id+"/characters",function(result){
                 var char = result[0].char;
                 $('#checkchar').text(char);

@@ -90,6 +90,7 @@ function render_char_area(){
     var page_size = $.cookie('charcheck_page_size');
     if ( page_size==null) {
         page_size = 30;
+        $.cookie('charcheck_page_size', page_size, { expires: 30 });
     }
     $.getJSON("/api/character?page_size="+page_size+"&is_correct=0&char="+_char,function(result){
         renderCharArea("#charlistArea",result.models);

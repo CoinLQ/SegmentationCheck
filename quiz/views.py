@@ -30,8 +30,8 @@ def quiz_batch_characters(request, batch_id):
         page_size = int(request.GET['page_size'])
     else:
         page_size = 30
-    offset = random.randint(0, 237 ) #TODO
-    character_statistics = CharacterStatistics.objects.filter(err_cnt__gte=50)[offset] #TODO
+    offset = random.randint(0, 2 ) #TODO
+    character_statistics = CharacterStatistics.objects.filter(err_cnt__gte=1).order_by('-total_cnt')[offset] #TODO
     char = character_statistics.char
     sql = u"select id, char, image, is_correct from segmentation_character where char='%s' \
     and (is_correct=1 or is_correct = -1) limit %d;" % (char,page_size)
@@ -61,8 +61,8 @@ def set_correct(request, batch_id):
         quiz_result.save()
         data = {'status': 'ok'}
     elif 'charArr[]' in request.POST:
-        round_number = request.session.get(batch_id+'round_number',1)
-        request.session[batch_id+'round_number'] = round_number+1
+        round_number = request.session.get('round_number',1)
+        request.session['round_number'] = round_number+1
         charArr = request.POST.getlist('charArr[]')
         quiz_result_lst = []
         is_correct = 1
@@ -74,7 +74,7 @@ def set_correct(request, batch_id):
             quiz_result_lst.append(quiz_result)
         QuizResult.objects.bulk_create(quiz_result_lst)
         if round_number%4==0:
-            #request.session['round_number'] = 1
+            request.session['round_number'] = 1
             count = QuizResult.objects.filter(batch_id=batch_id).count()
             right_count = QuizResult.objects.filter(batch_id=batch_id, right_wrong=True).count()
             score = right_count * 1.0 / count
@@ -91,7 +91,7 @@ def set_correct(request, batch_id):
             except:
                 data = {'status': 'error'}
         else:
-            data = {'status': 'ok'}
+            data = {'status': 'ok', 'round_number':round_number}
     else:
         data = {'status': 'error'}
     return JsonResponse(data)

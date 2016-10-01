@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from .settings import *
+from SegmentationCheck.settings import *
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
