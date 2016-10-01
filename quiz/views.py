@@ -61,8 +61,8 @@ def set_correct(request, batch_id):
         quiz_result.save()
         data = {'status': 'ok'}
     elif 'charArr[]' in request.POST:
-        round_number = request.session.get('round_number',1)
-        request.session['round_number'] = round_number+1
+        round_number = request.session.get(batch_id+'round_number',1)
+        request.session[batch_id+'round_number'] = round_number+1
         charArr = request.POST.getlist('charArr[]')
         quiz_result_lst = []
         is_correct = 1
@@ -73,8 +73,8 @@ def set_correct(request, batch_id):
                                      right_wrong=right_wrong, batch_id=batch_id)
             quiz_result_lst.append(quiz_result)
         QuizResult.objects.bulk_create(quiz_result_lst)
-        if round_number==4:
-            request.session['round_number'] = 1
+        if round_number%4==0:
+            #request.session['round_number'] = 1
             count = QuizResult.objects.filter(batch_id=batch_id).count()
             right_count = QuizResult.objects.filter(batch_id=batch_id, right_wrong=True).count()
             score = right_count * 1.0 / count

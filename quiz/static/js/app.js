@@ -43,7 +43,8 @@ function handler() {
     $.post('/quiz/'+batch_id+'/set_correct', data, function(status) {
         if(status['score']>=0){
             $('#'+status['status']).removeClass('hidden');
-            $('#'+status['status']+'_score').text(status['score']*100+'%');
+            $('#'+status['status']+'_score').text((status['score']*100).toFixed(2)+'%');
+            $('#'+status['status']+'_btn').hide();
             $('#myModal').modal({
                 backdrop: 'static',
                 keyboard: false,
