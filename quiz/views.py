@@ -82,7 +82,7 @@ def set_correct(request, batch_id):
                 batch = QuizBatch.objects.get(id=batch_id)
                 batch.score = score
                 batch.save()
-                status = 'success' if score>0.95 else 'failure'
+                status = 'success' if score>0.85 else 'failure'
                 if 'success' == status:
                     user = User.objects.get(username=request.user)
                     user.is_staff = True
