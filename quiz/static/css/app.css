@@ -1,0 +1,31 @@
+  .error-char {
+    background-color: pink;
+    border:solid red 2px !important;
+  }
+  .correct-char {
+    border:solid blue 2px !important;
+  }
+  .flow {float:left; min-width:80px; min-height:80px; margin:5px;border:solid blue 1px;}
+
+.unchecked-box{
+    position: relative;
+    padding: 25px 15px 15px;
+    background-color: #fafafa;
+    border: 1px solid #ddd;
+    border-bottom-width: 0;
+}
+.hidden {
+    display:none;
+}
+.success {
+    border-left-color: #5cb85c;
+    background: #dff0d8;
+    border-radius: 3px;
+}
+
+.failure {
+    border-left-color: #d9534f;
+    background: #f2dede;
+    border-radius: 3px;
+}
+#flashContent { width:100%; height:100%; }

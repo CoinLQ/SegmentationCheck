@@ -10,6 +10,7 @@ import datetime
 import json
 from segmentation.models import CharacterStatistics
 from .models import QuizResult, QuizBatch
+from django.contrib.auth.models import User
 
 
 def index(request):
@@ -29,13 +30,11 @@ def quiz_batch_characters(request, batch_id):
         page_size = int(request.GET['page_size'])
     else:
         page_size = 30
-    offset = random.randint(0, 5) #TODO
-    # offset = random.randint(0, 237 ) #TODO
-    character_statistics = CharacterStatistics.objects.filter(err_cnt__gte=1)[offset] #TODO
+    offset = random.randint(0, 237 ) #TODO
+    character_statistics = CharacterStatistics.objects.filter(err_cnt__gte=50)[offset] #TODO
     char = character_statistics.char
     sql = u"select id, char, image, is_correct from segmentation_character where char='%s' \
-     limit %d;" % (char,page_size)
-    #and (is_correct=1 or is_correct = -1) limit %d;" % (char,page_size)
+    and (is_correct=1 or is_correct = -1) limit %d;" % (char,page_size)
     characters = Character.objects.raw(sql)
     char_lst = []
     for char in characters:
@@ -74,8 +73,8 @@ def set_correct(request, batch_id):
                                      right_wrong=right_wrong, batch_id=batch_id)
             quiz_result_lst.append(quiz_result)
         QuizResult.objects.bulk_create(quiz_result_lst)
-
         if round_number==4:
+            request.session['round_number'] = 1
             count = QuizResult.objects.filter(batch_id=batch_id).count()
             right_count = QuizResult.objects.filter(batch_id=batch_id, right_wrong=True).count()
             score = right_count * 1.0 / count
@@ -83,9 +82,14 @@ def set_correct(request, batch_id):
                 batch = QuizBatch.objects.get(id=batch_id)
                 batch.score = score
                 batch.save()
-                data = {'status': 'ok', 'score': score}
+                status = 'success' if score>0.95 else 'failure'
+                if 'success' == status:
+                    user = User.objects.get(username=request.user)
+                    user.is_staff = True
+                    user.save()
+                data = {'status': status, 'score': score}
             except:
-                data = {'status': 'ok'}
+                data = {'status': 'error'}
         else:
             data = {'status': 'ok'}
     else:
