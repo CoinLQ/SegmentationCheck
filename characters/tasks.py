@@ -149,12 +149,9 @@ def prepare_data_with_database(char_lst):
             test_y.append( int(label) )
             test_char_id_lst.append( char_id )
         else:
-            if int(label) < 0:
-                label = -1
-            elif int(label) > 0:
-                label = 1
-            prob_x.append( x )
-            prob_y.append( label )
+            if abs(label) == 1:
+                prob_x.append( x )
+                prob_y.append( label )
     # return (prob_y, prob_x, test_y, test_x, test_path)
     return (prob_y, prob_x, test_y, test_x, test_char_id_lst)
 
