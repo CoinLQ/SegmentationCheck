@@ -1,10 +1,9 @@
 import React from "react";
 import drawSVG from "app/utils/svgHelper"
+import PaperCut from "app/paper_cuts/components/PaperCut"
 
-class PaperCut extends React.Component {
+class PaperContainer extends React.Component {
     componentDidMount() {
-        const {model} = this.props;
-        drawSVG(model.id.toString(), model.url);
     }
 
 
@@ -12,12 +11,11 @@ class PaperCut extends React.Component {
         const {children, model, key} = this.props;
         return (
             <div {...this.props}>
-            <div className="svg-wrapper" key={key} id={model.id} >
-            </div>
+            <PaperCut key={key} model={model} />
             </div>
         );
     }
 }
 
 
-export default PaperCut;
+export default PaperContainer;

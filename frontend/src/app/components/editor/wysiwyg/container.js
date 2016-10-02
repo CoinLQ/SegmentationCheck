@@ -1,9 +1,11 @@
 import React from 'react';
 import { RichUtils } from 'draft-js';
+import { Entity, Modifier, EditorState, SelectionState } from 'draft-js';
 import Editor from 'app/components/editor/src/editor';
 import { Blocks, Data } from 'app/components/editor/wysiwyg/draft';
 import request from 'superagent';
 import createToolbarPlugin from 'draft-js-toolbar-plugin';
+import {replaceContent} from 'app/utils/editorUtil'
 export default class Example extends React.Component {
     constructor(props) {
         super(props);
@@ -139,17 +141,58 @@ export default class Example extends React.Component {
                                     handleDefaultData={this.defaultData}
                                     handleUpload={this.upload}
                                     toolbar={{
-                                      disableItems: ['H5'],
+                                      disableItems: ['H5', 'H4', 'H3', 'H2', 'H1'],
                                       textActions: [
                                       {
-                                        button: <span>Quote</span>,
-                                        label: 'Quote',
-                                        active: (block, editorState) => block.get('type') === 'blockquote',
-                                        toggle: (block, action, editorState, setEditorState) => setEditorState(RichUtils.toggleBlockType(
-                                          editorState,
-                                          'blockquote'
-                                        )),
-                                      }]
+                                        button: <span>&lt;夹注&gt;</span>,
+                                        label: '夹注',
+                                        active: (block, editorState) => block.get('type') === 'unstyled',
+                                        toggle: (block, action, editorState, setEditorState) =>
+                                            replaceContent(editorState,setEditorState, '<', '>')
+                                      },
+                                      {
+                                        button: <span>@题记@</span>,
+                                        label: '题记',
+                                        active: (block, editorState) => block.get('type') === 'unstyled',
+                                        toggle: (block, action, editorState, setEditorState) =>
+                                            replaceContent(editorState,setEditorState, '@', '@')
+                                      },{
+                                        button: <span>$衍文$</span>,
+                                        label: '衍文',
+                                        active: (block, editorState) => block.get('type') === 'unstyled',
+                                        toggle: (block, action, editorState, setEditorState) =>
+                                            replaceContent(editorState,setEditorState, '$', '$')
+                                      },
+                                      {
+                                        button: <span>【增字】</span>,
+                                        label: '增字',
+                                        active: (block, editorState) => block.get('type') === 'unstyled',
+                                        toggle: (block, action, editorState, setEditorState) =>
+                                            replaceContent(editorState,setEditorState, '【', '】')
+                                      },
+                                      {
+                                        button: <span>(非正文内容)</span>,
+                                        label: '非正文内容',
+                                        active: (block, editorState) => block.get('type') === 'unstyled',
+                                        toggle: (block, action, editorState, setEditorState) =>
+                                            replaceContent(editorState,setEditorState, '{', '}')
+                                      },
+                                      {
+                                        button: <span>{'{'}有缺损{'}'}</span>,
+                                        label: '有缺损',
+                                        active: (block, editorState) => block.get('type') === 'unstyled',
+                                        toggle: (block, action, editorState, setEditorState) =>
+                                            replaceContent(editorState,setEditorState, '{', '}'),
+                                      },
+                                      {
+                                      label: '有疑问',
+                                      button: <span>?有疑问?</span>,
+                                      style: 'link',
+                                      active: (block, editorState) => block.get('type') === 'unstyled',
+                                      toggle: function toggle(block, action, editorState, setEditorState) {
+                                        replaceContent(editorState,setEditorState, '?','?');
+                                      }
+                                    }]
                                     }}/>
                         </div>
                     </div>

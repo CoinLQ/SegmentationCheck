@@ -12,7 +12,7 @@ class WysiwygEditor extends Component {
     style: {},
     styleEditor: {},
     styleList: {},
-    styleListItem: {}
+    styleListItem: {},
   }
 
   constructor(props) {
@@ -66,6 +66,12 @@ class WysiwygEditor extends Component {
     }
   };
 
+  toggleLine = (id) => {
+    var that = this;
+    return function(id) {
+    };
+  }
+
   focus = () => {
     this.refs.editor.focus();
   };
@@ -116,11 +122,8 @@ class WysiwygEditor extends Component {
             padding: 0
           })}>
           {[...Array((this.editorState || EditorState.createEmpty()).getCurrentContent().getBlockMap().size)].map((x, i) =>
-            <li key={i}
-              {...this.props.listItem}
-              style={Object.assign(this.props.styleListItem, {
-                listStylePosition: 'inside'
-              })} />
+            <a onClick={this.toggleLine(i)} ><li key={i}
+              /></a>
           )}
         </ol>
         <div style={{flex: 1}}>

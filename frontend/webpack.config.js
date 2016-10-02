@@ -16,8 +16,8 @@ module.exports = {
     },
     devServer:{
         proxy: {
-            '/api/v1/*': {
-                target: 'http://localhost:9090',
+            '/api/v1/**': {
+                target: 'http://localhost:8001',
                 secure: false
             }
         },

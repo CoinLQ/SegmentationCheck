@@ -1643,6 +1643,8 @@ SVG.Element.prototype.selectize.defaults = {
             event: e
           , p: p
           , m: this.m
+          , x: gx
+          , y: gy
           , handler: this
         }
       , cancelable: true

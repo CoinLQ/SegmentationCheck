@@ -179,11 +179,74 @@
 
 }
 
-/*svg{
-  position: relative;
-  display: inline-block;
-  padding: 1px;
-  line-height: 1.42857143;
-  background-color: #fff;
-  border: 1px solid #ddd;
-}*/
+.column-line {
+  stroke: rgb(119, 68, 176);
+  stroke-width: 2;
+}
+
+.row-line {
+  cursor: ns-resize;
+}
+
+.highlight* {
+  stroke: black;
+}
+
+.highlight-1 {
+  stroke: #0066FF;
+}
+.highlight-2 {
+  stroke: #009900;
+}
+.highlight-3 {
+  stroke: #00FF00;
+}
+.highlight-4 {
+  stroke: #6666FF;
+}
+.highlight-5 {
+  stroke: #66FFFF;
+}
+.highlight-6 {
+  stroke: #990000;
+}
+.highlight-7 {
+  stroke: #996600;
+}
+.highlight-8 {
+  stroke: #9999FF;
+}
+.highlight-9 {
+  stroke: #CC00FF;
+}
+.highlight-10 {
+  stroke: #CC66FF;
+}
+.highlight-11 {
+  stroke: #CC0000;
+}
+.highlight-12 {
+  stroke: #CC6600;
+}
+.highlight-13 {
+  stroke: #CC9900;
+}
+.highlight-14 {
+  stroke: #CCFF00;
+}
+.highlight-15 {
+  stroke: #FF00FF;
+}
+.highlight-16 {
+  stroke: #FF99FF;
+}
+.highlight-17 {
+  stroke: #FF9900;
+}
+.highlight-18 {
+  stroke: #FFFF00;
+}
+
+.highlight* {
+  stroke: black;
+}

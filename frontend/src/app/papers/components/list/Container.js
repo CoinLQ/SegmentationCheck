@@ -7,7 +7,7 @@ import Pagination from "app/components/Pagination";
 import RefreshButton from "app/components/RefreshButton";
 import SearchBox from "app/components/SearchBox";
 import Slider from 'react-slick'
-import PaperCut from 'app/papers/components/PaperCut'
+import PaperContainer from 'app/papers/components/PaperContainer'
 import _ from "lodash";
 import { DZJEditor } from 'app/components/editor/DZJEditor';
 import Example  from 'app/components/editor/wysiwyg/container.js'
@@ -62,7 +62,7 @@ class Container extends React.Component {
 
                                  {collection.models.size != 0 && <Slider {...settings}>
                                     {collection.models.toList().map((model, key) =>
-                                        <PaperCut key={key} model={model}/>
+                                        <PaperContainer key={key} model={model}/>
                                     )}
                                     <h1>OK</h1>
                                 </Slider>

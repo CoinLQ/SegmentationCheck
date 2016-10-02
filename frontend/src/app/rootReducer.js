@@ -5,6 +5,7 @@ import alerts from "app/reducers/alerts";
 import users from "app/users/reducers";
 import apps from "app/apps/reducers";
 import papers from "app/papers/reducers";
+import paper_cuts from "app/paper_cuts/reducers";
 
 export default combineReducers({
     adminlte,
@@ -12,4 +13,5 @@ export default combineReducers({
     users,
     apps,
     papers,
+    paper_cuts,
 });
