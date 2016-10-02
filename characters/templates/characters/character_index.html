@@ -123,10 +123,11 @@ function bindindex(){
     });
 }
 $(function(){
-    $.getJSON("/api/characterstatistics?page_size=15",function(result){
+    var index_page_size = 15;
+    $.getJSON("/api/characterstatistics?page_size="+index_page_size,function(result){
         data = result.models;
         pagination = result.pagination;
-        index_pagination(pagination.total_entries,page_size);
+        index_pagination(pagination.total_entries,index_page_size);
         $('#charindextbody').empty();
         var row ='';
         $.each(data, function(i, field){

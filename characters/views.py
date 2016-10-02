@@ -16,8 +16,9 @@ class CharacterIndex(generic.ListView):
 
 
 def index(request):
-    char_cnt_lst = CharacterStatistics.objects.all().order_by('-total_cnt')[:20]
-    return render(request, 'characters/character_index.html', {'characterstatistics_list': char_cnt_lst})
+    #char_cnt_lst = CharacterStatistics.objects.all().order_by('-total_cnt')[:20]
+    #return render(request, 'characters/character_index.html', {'characterstatistics_list': char_cnt_lst})
+    return render(request, 'characters/character_index.html')
 
 @user_passes_test(lambda u:u.is_staff, login_url='/quiz')
 def task(request):
