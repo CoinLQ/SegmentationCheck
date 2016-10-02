@@ -8,6 +8,8 @@ from django.db.models import F
 from utils.get_checked_character import get_checked_character
 import datetime
 from django.contrib.auth.decorators import user_passes_test
+from .models import UserCredit
+from django.contrib.auth.models import User
 
 
 class CharacterIndex(generic.ListView):
@@ -23,6 +25,9 @@ def task(request):
     today = datetime.datetime.now().strftime("%Y%m%d")
     checkin_date = request.session.get('checkin_date', 0)
     if checkin_date != today:
+        check_char_number = request.session['check_char_number']
+        user_credit = UserCredit(user=request.user, username=request.user.username, credit=check_char_number)
+        user_credit.save()
         request.session['check_char_number'] = 0
         request.session['checkin_date'] = today
     check_char_number = request.session.get('check_char_number',0)

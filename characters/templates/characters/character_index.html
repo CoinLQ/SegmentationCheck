@@ -157,8 +157,9 @@ function index_pagination(_items,_itemsOnpage){
                         row =  field.char;
                         row = "<tr><td value='"+field.char+"'>"+field.char
                         +"</td><td>"+field.total_cnt
-                        +"</td><td>"+field.uncheck_cnt
-                        +"</td><td>"+field.err_cnt+"</td></tr>"
+                        +"</td><td>"+field.correct_cnt
+                        +"</td><td>"+field.err_cnt
+                        +"</td><td>"+field.uncheck_cnt+"</td></tr>"
                         $('#charindextbody').append(row);
                     });
                     bindindex();
