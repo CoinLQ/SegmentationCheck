@@ -1,4 +1,5 @@
-﻿INSERT INTO public.segmentation_characterstatistics (char,total_cnt, correct_cnt, err_cnt,uncheck_cnt)
+﻿SET SEARCH_PATH TO public;
+INSERT INTO public.segmentation_characterstatistics (char,total_cnt, correct_cnt, err_cnt,uncheck_cnt)
 SELECT 
 char,
   count(segmentation_character."char") as total_cnt,
