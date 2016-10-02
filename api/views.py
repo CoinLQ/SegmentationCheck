@@ -42,8 +42,8 @@ class PageViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
 class CharacterViewSet(viewsets.ModelViewSet):
     serializer_class = CharacterSerializer
-    queryset = Character.objects.all()
-    filter_fields = ('page_id', 'char', 'is_correct')
+    queryset = Character.objects.order_by('accuracy')
+    filter_fields = ('page_id', 'char', 'is_correct', 'accuracy')
 
 
 class CharacterStatisticsViewSet(viewsets.ModelViewSet):

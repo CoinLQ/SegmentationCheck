@@ -17,6 +17,8 @@ from sklearn.ensemble import ExtraTreesClassifier
 import time
 from itertools import chain
 
+from thinning import convert_image, thinning
+
 # @task
 def add(x, y):
     return x + y
@@ -51,9 +53,8 @@ def classify(_char):
     print 'to fetch data'
     start_time = time.time()
     char_lst = Character.objects.filter(char=_char)
-    #print char_lst
     y, X, ty, tX, t_charid_lst = prepare_data_with_database(char_lst)
-    if not( len(X) and len(tX)):
+    if len(y) == 0 or len(ty) == 0:
         return
     if 1 == len(set(y)) or len(y) < 10:
         return
@@ -76,10 +77,14 @@ def classify(_char):
     print "==LogisticRegression=="
     '''
     from sklearn.linear_model import LogisticRegressionCV
-    model = LogisticRegressionCV(cv=3, solver='liblinear', class_weight='balanced', n_jobs=4)
+    model = LogisticRegressionCV(cv=5, solver='liblinear', class_weight='balanced', n_jobs=-1)
     try:
         model.fit(X, y)
         print "training done, spent %s seconds." % int(time.time() - start_time)
+        print 'params: '
+        for k, v in model.get_params().iteritems():
+            print '\t', k, ' : ', v
+        print 'score: ', model.score(X, y)
     except Exception, e:
         print 'except: ', e
         return
@@ -120,14 +125,21 @@ def prepare_data_with_database(char_lst):
         if not os.path.isfile(img_path):
             #print 'no img'
             continue
+        # try:
+        #     src_image = io.imread(img_path, 0)
+        #     img_gray = rgb2gray(src_image)
+        #     img_resize = imresize(img_gray, [10, 15], 'nearest')
+        #     thresh = threshold_otsu(img_resize)
+        # except:
+        #     continue
+        # binary = img_resize > thresh
         try:
-            src_image = io.imread(img_path, 0)
-            img_gray = rgb2gray(src_image)
-            img_resize = imresize(img_gray, [10, 15], 'nearest')
-            thresh = threshold_otsu(img_resize)
-        except:
+            image_norm = convert_image(img_path)
+            if image_norm is not None:
+                binary = thinning(image_norm)
+        except Exception, e:
+            print e
             continue
-        binary = img_resize > thresh
         x = binary.ravel().tolist()
         #im = binary.astype('ubyte')
         #im.shape = 1, -1
