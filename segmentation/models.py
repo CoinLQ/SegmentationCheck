@@ -68,9 +68,11 @@ class Character(models.Model):
 ## -5
 ##  5
 ## -1 erro
-## -2 with/height erro
+## -2 width/height erro
 ## -3 line erro
 ## -4 page  erro
+## -5 image file does not exists.
+## -6 the image is white or black.
     #verification_user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
 
     def __unicode__(self):
