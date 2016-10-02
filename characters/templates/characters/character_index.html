@@ -113,7 +113,7 @@ function bindindex(){
         if ( page_size==null) {
             page_size = 30;
         }
-        $.getJSON("/api/character?accuracy__gt=-1&page_size="+page_size+"&char="+_char,function(result){
+        $.getJSON("/api/character?page_size="+page_size+"&char="+_char,function(result){
             data = result.models;
             pagination = result.pagination;
             paginationFun(pagination.total_entries,page_size);
