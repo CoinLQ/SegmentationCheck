@@ -3,13 +3,12 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from segmentation.models import Character, CharacterStatistics
 from django.views import generic
-import random
+import time
 from django.db.models import F
 from utils.get_checked_character import get_checked_character
 import datetime
 from django.contrib.auth.decorators import user_passes_test
 from .models import UserCredit
-from django.contrib.auth.models import User
 
 
 class CharacterIndex(generic.ListView):
@@ -25,8 +24,12 @@ def task(request):
     today = datetime.datetime.now().strftime("%Y%m%d")
     checkin_date = request.session.get('checkin_date', 0)
     if checkin_date != today:
-        check_char_number = request.session['check_char_number']
-        user_credit = UserCredit(user=request.user, username=request.user.username, credit=check_char_number)
+        #active_date=time.strptime(checkin_date,'%Y%m%d')
+        user_credit = UserCredit(user=request.user,
+                                 active_date=checkin_date,
+                                 credit=request.session['check_char_number'],
+                                 username=request.user.username
+                                 )
         user_credit.save()
         request.session['check_char_number'] = 0
         request.session['checkin_date'] = today
