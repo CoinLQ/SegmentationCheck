@@ -7,5 +7,5 @@ def demo(request):
     return render(request, 'home/demo.html')
 
 def join_us(request):
-    request.session['checkin_date'] = u'20150507'
+    request.session['checkin_date'] = u'20150507'  # TODO
     return render(request, 'home/join_us.html')
