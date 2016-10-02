@@ -43,4 +43,4 @@ class CharacterSerializer(serializers.ModelSerializer):
 class CharacterStatisticsSerializer(serializers.ModelSerializer):
     class Meta:
         model = CharacterStatistics
-        fields = ('char','total_cnt', 'uncheck_cnt','err_cnt', 'uncertainty_cnt')
+        fields = ('char','total_cnt', 'uncheck_cnt','err_cnt', 'correct_cnt')

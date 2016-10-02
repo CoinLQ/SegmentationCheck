@@ -42,7 +42,8 @@ def set_correct(request):
         if Character.objects.filter(id=char_id).filter(is_correct=0).exists():
             CharacterStatistics.objects.filter(char=char).update(uncheck_cnt=F('uncheck_cnt')-1)
         Character.objects.filter(id=char_id).update(is_correct=is_correct)
-        CharacterStatistics.objects.filter(char=char).update(err_cnt=F('err_cnt')-is_correct)
+        CharacterStatistics.objects.filter(char=char).\
+            update(err_cnt=F('err_cnt')-is_correct, correct_cnt=F('correct_cnt')+is_correct)
         data = {'status': 'ok'}
     elif 'charArr[]' in request.POST:
         check_char_number = request.session.get('check_char_number',0)
@@ -51,7 +52,8 @@ def set_correct(request):
         char = request.POST['char']
         updateNum = int(request.POST['updateNum'])
         Character.objects.filter(id__in = charArr ).filter(is_correct=0).update(is_correct=1)
-        CharacterStatistics.objects.filter(char=char).update(uncheck_cnt=F('uncheck_cnt')-updateNum)
+        CharacterStatistics.objects.filter(char=char).\
+            update(uncheck_cnt=F('uncheck_cnt')-updateNum, correct_cnt=F('correct_cnt')+updateNum)
         data = {'status': 'ok'}
     else:
         data = {'status': 'error'}

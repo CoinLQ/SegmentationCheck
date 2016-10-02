@@ -10,9 +10,11 @@ label {
   } /*for tooltip*/
   .error-char {
     background-color: pink;
+    border:solid red 2px !important;
   }
   .correct-char {
     background-color: #9AFF9A;
+    border:solid blue 2px !important;
   }
   .flow {float:left; min-width:80px; min-height:80px; margin:5px;border:solid blue 1px;}
 
@@ -46,8 +48,9 @@ label {
                   <tr>
                      <th>字</th>
                      <th>字形总数</th>
-                     <th>未审核字形数</th>
-                     <th>错误字形数</th>
+                      <th>正样本</th>
+                      <th>负样本</th>
+                     <th>未标记</th>
                   </tr>
                 </thead>
               <tbody id='charindextbody'>
@@ -130,8 +133,9 @@ $(function(){
             row =  field.char;
             row = "<tr><td value='"+field.char+"'>"+field.char
             +"</td><td>"+field.total_cnt
-            +"</td><td>"+field.uncheck_cnt
-            +"</td><td>"+field.err_cnt+"</td></tr>"
+            +"</td><td>"+field.correct_cnt
+            +"</td><td>"+field.err_cnt
+            +"</td><td>"+field.uncheck_cnt+"</td></tr>"
             $('#charindextbody').append(row);
         });
         bindindex();
