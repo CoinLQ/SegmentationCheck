@@ -267,7 +267,6 @@ function handler(is_correct,btn) {
       btn.click(handler)}, 2000);
     $.post('/characters/set_correct', data, function() {
        if(data['status']=='ok'){
-
        }
     });
 }
