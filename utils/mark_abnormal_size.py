@@ -26,19 +26,23 @@ def binarisation(src_image):
 def main():
     with open('/home/dzj/abnormal_size.sql', 'w') as fsql:
         results = []
-        count = Character.objects.count()
-        iter_count = (count-1)/1000
+        count = Character.objects.filter(is_correct=0).count()
+        iter_count = (count-1)/100000
         for i in range(iter_count):
-            start = i*1000
-            characters = Character.objects.all()[start: start+1000]
+            start = i*100000
+            characters = Character.objects.filter(is_correct=0)[start: start+100000]
             for ch in characters:
                 width = ch.right - ch.left
                 height = ch.bottom - ch.top
-                abnormal = True
-                if height != 0:
+                abnormal = False
+                if width < 23 or width > 94:
+                    abnormal = True
+                elif height < 8 or height > 100:
+                    abnormal = True
+                else:
                     ratio = width * 1.0 / height
-                    if ratio >= 0.5 and ratio <= 2.0:
-                        abnormal = False
+                    if ch.char != u'一' and (ratio < 0.5 or ratio > 2.0):
+                        abnormal = True
                 if abnormal:
                     sql = "UPDATE segmentation_character SET is_correct=-2 where id='%s';\n" % ch.id.encode('utf-8')
                     fsql.write(sql)
