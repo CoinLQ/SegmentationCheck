@@ -8,7 +8,7 @@ char,
   sum(case when is_correct= 0 then 1 else 0 end) as uncheck_cnt
 FROM
   public.segmentation_character
-where is_correct > -2 and is_correct <2
+where is_correct = -1 or is_correct =1 or is_correct = 0
   group by char
 ON CONFLICT (char)
 DO UPDATE SET 

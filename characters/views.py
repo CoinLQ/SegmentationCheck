@@ -2,23 +2,16 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from segmentation.models import Character, CharacterStatistics
-from django.views import generic
-import time
 from django.db.models import F
 from utils.get_checked_character import get_checked_character
 import datetime
 from django.contrib.auth.decorators import user_passes_test
 from .models import UserCredit
 import redis
-
-
-class CharacterIndex(generic.ListView):
-    model = CharacterStatistics
+#from libs.fetch_variants import fetcher
 
 
 def index(request):
-    #char_cnt_lst = CharacterStatistics.objects.all().order_by('-total_cnt')[:20]
-    #return render(request, 'characters/character_index.html', {'characterstatistics_list': char_cnt_lst})
     return render(request, 'characters/character_index.html')
 
 @user_passes_test(lambda u:u.is_staff, login_url='/quiz')
@@ -49,10 +42,13 @@ def task(request):
     #char_lst = CharacterStatistics.objects.filter(uncheck_cnt__gt=0).order_by('-total_cnt')[:30]
     #char = random.choice(char_lst)
     char = get_checked_character()
+    #lq_variant = fetcher.fetch_variants(u'麤')
+    lq_variant=''
     return render(request,'characters/characters.html',{'char':char,
                                                         'check_char_number':check_char_number,
                                                         'done_cnt':done_cnt,
                                                         'total_cnt':total_cnt,
+                                                        'variant_lst':lq_variant,
                                                         } )
 
 
@@ -88,3 +84,9 @@ def set_correct(request):
     else:
         data = {'status': 'error'}
     return JsonResponse(data)
+'''
+def variant(request):
+    lq_variant = fetcher.fetch_variants(u'麤')
+    data = {'variant_lst':lq_variant}
+    return  JsonResponse(data)
+'''
