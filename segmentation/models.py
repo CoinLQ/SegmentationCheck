@@ -95,7 +95,7 @@ class CharacterStatistics(models.Model):
     total_cnt = models.IntegerField(default=0)
     uncheck_cnt = models.IntegerField(default=0)
     err_cnt = models.IntegerField(default=0)
-    uncertainty_cnt = models.IntegerField(default=0)
+    correct_cnt = models.IntegerField(default=0)
 
     def __unicode__(self):
         return u'%s:%d' % (self.char,self.total_cnt )
