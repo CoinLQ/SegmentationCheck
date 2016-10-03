@@ -74,9 +74,9 @@ def set_correct(request):
         request.session['check_char_number'] = check_char_number+1
         charArr = request.POST.getlist('charArr[]')
         char = request.POST['char']
-        is_correct = request.POST['is_correct']
+        is_correct = int(request.POST['is_correct'])
         updateNum = int(request.POST['updateNum'])
-        Character.objects.filter(id__in = charArr ).filter(is_correct=0).update(is_correct=is_correct)
+        Character.objects.filter(id__in =charArr).filter(is_correct=0).update(is_correct=is_correct)
         if is_correct == 1:
             CharacterStatistics.objects.filter(char=char).\
                 update(uncheck_cnt=F('uncheck_cnt')-updateNum, correct_cnt=F('correct_cnt')+updateNum)

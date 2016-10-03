@@ -104,19 +104,19 @@ label {
     })
 </script>
 <script>
-var _char;
+var g_char;
 var page_size = 30;
 function bindindex(){
     $('#charindextbody tr').click(function (e) {
         $('.unchecked-box').removeClass('hidden');
         $('tr').removeClass("selected");
         $(this).addClass("selected");
-        _char = $("tr.selected td:first").text();
+        g_char = $("tr.selected td:first").text();
         page_size = $.cookie('charindex_page_size');
         if ( page_size==null) {
             page_size = 30;
         }
-        $.getJSON("/api/character?page_size="+page_size+"&char="+_char,function(result){
+        $.getJSON("/api/character?page_size="+page_size+"&char="+g_char,function(result){
             data = result.models;
             pagination = result.pagination;
             paginationFun(pagination.total_entries,page_size);
@@ -176,7 +176,7 @@ function binding_char_check(area){
         $(selector).click(function(){
           var data = {'id': this.id};
           data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
-          data['char'] =_char;
+          data['char'] =g_char;
           if ($(this).hasClass('error-char')) {
             $(this).removeClass('error-char');
             $(this).addClass('correct-char');
@@ -215,7 +215,7 @@ function paginationFun(_items,_itemsOnpage){
                 // Callback triggered when a page is clicked
                 // Page number is given as an optional parameter
                 var url = "/api/character?page_size="+page_size
-                    +"&char="+_char
+                    +"&char="+g_char
                     +"&page="+pageNumber
                 $.getJSON(url,function(result){
                     renderCharArea("#charBrowseArea",result.models);
@@ -249,22 +249,17 @@ function handler(is_correct,btn) {
             else{
                 $(tmp).addClass('correct-char');
             }
+            arr.push(tmp.id);
         }
-        arr.push(tmp.id);
     }
     var data = {
         'charArr':arr,
         'is_correct':is_correct
         };
-    var updateNum = $('.char-image').length - $('.correct-char').length - $('.error-char').length;
+    var updateNum = arr.length;
     data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
-    data['char'] = $('#checkchar').text();
+    data['char'] = g_char;
     data['updateNum'] = updateNum;
-    btn.addClass('btn-warning');
-    btn.off('click');
-    setTimeout(function(){
-      btn.removeClass('btn-warning');
-      btn.click(handler)}, 2000);
     $.post('/characters/set_correct', data, function() {
        if(data['status']=='ok'){
        }
