@@ -65,18 +65,21 @@ label {
         每页显示
         <div id="LineControler" class="btn-group" style="padding:0 16px;">
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span>30&nbsp;</span><span class="caret"></span> </button>
+                <span>100&nbsp;</span><span class="caret"></span> </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                <li><a href="javascript:;">30&nbsp;</a></li>
-                <li><a href="javascript:;">50&nbsp;</a></li>
-                <li><a href="javascript:;">70&nbsp;</a></li>
-                <li><a href="javascript:;">90&nbsp; </a></li>
+                <li><a href="javascript:;">100&nbsp;</a></li>
+                <li><a href="javascript:;">200&nbsp;</a></li>
+                <li><a href="javascript:;">300&nbsp;</a></li>
+                <li><a href="javascript:;">900&nbsp; </a></li>
             </ul>
         </div>
         字
     </div>
             <div id='charBrowseArea'>
             </div>
+            <div style="clear:both;"> </div>
+            <div  class="btn btn-primary batch-check" >批量標對</div>
+            <div  class="btn btn-primary batch-check" id="err_btn">批量標錯</div>
             <div style="clear:both;"> </div>
             <div class="pagec" id="pagearea">
                 <ul class="pagination">
@@ -222,5 +225,51 @@ function paginationFun(_items,_itemsOnpage){
     });
 }
 </script>
+<script>
+$(function(){
+    $('.batch-check').click(function(){
+        var btn = $(this);
+        var is_correct=1;
+        if (this.id=='err_btn'){
+            is_correct = -1;
+        }
+        handler(is_correct,btn);
+    });
+})
+function handler(is_correct,btn) {
+    var arr =[];
+    var charlist = $("#charBrowseArea").children();
+    for (var i=0;i<charlist.length;i++){
+        var tmp = charlist[i];
 
+        if (! ($(tmp).hasClass('error-char') || $(tmp).hasClass('correct-char') )){
+            if(is_correct==-1){
+                $(tmp).addClass('error-char');
+            }
+            else{
+                $(tmp).addClass('correct-char');
+            }
+        }
+        arr.push(tmp.id);
+    }
+    var data = {
+        'charArr':arr,
+        'is_correct':is_correct
+        };
+    var updateNum = $('.char-image').length - $('.correct-char').length - $('.error-char').length;
+    data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+    data['char'] = $('#checkchar').text();
+    data['updateNum'] = updateNum;
+    btn.addClass('btn-warning');
+    btn.off('click');
+    setTimeout(function(){
+      btn.removeClass('btn-warning');
+      btn.click(handler)}, 2000);
+    $.post('/characters/set_correct', data, function() {
+       if(data['status']=='ok'){
+
+       }
+    });
+}
+</script>
 {% endblock %}
