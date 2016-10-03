@@ -24,13 +24,13 @@ class VariantsFetcher:
         if not self.is_login:
             return None
         url = 'http://hanzi.lqdzj.cn/hanzi-dict/search?param=%s' % char.encode('utf-8')
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:49.0) Gecko/20100101 Firefox/49.0',
-            'Cookie': 'PHPSESSID=n9q5pkpuimhs1tdj6r80iq0702; _csrf=7b5176da068298669b0b5c2cd865b8ba12e2835b5615cde7c0f651e9bdb4b3b5a:2:{i:0;s:5:"_csrf";i:1;s:32:"9d5cgzBU1vND1p6QJ5HRTaxNYE0KzSPv";}',
-                   }
         r = self.session.get(url)
         soup = BeautifulSoup(r.text)
         lq_variant = soup.find(id='lq-variant')
+        for link in lq_variant.findAll('a'):
+            link['href'] = u'http://hanzi.lqdzj.cn' + link['href']
+        for link in lq_variant.findAll('img'):
+            link['src'] = u'http://hanzi.lqdzj.cn' + link['src']
         return lq_variant
 
 fetcher = VariantsFetcher()
