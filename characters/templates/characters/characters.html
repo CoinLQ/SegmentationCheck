@@ -153,6 +153,7 @@ function handler() {
     var updateNum = $('.char-image').length - $('.correct-char').length - $('.error-char').length;
     data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
     data['char'] = $('#checkchar').text();
+    data['is_correct'] = 1;
     data['updateNum'] = updateNum;
     $('.batch-check').addClass('btn-warning');
     $('.batch-check').off('click');
