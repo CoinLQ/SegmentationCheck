@@ -260,11 +260,6 @@ function handler(is_correct,btn) {
     data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
     data['char'] = $('#checkchar').text();
     data['updateNum'] = updateNum;
-    btn.addClass('btn-warning');
-    btn.off('click');
-    setTimeout(function(){
-      btn.removeClass('btn-warning');
-      btn.click(handler)}, 2000);
     $.post('/characters/set_correct', data, function() {
        if(data['status']=='ok'){
        }
