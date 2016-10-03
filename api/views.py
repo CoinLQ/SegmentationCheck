@@ -56,5 +56,5 @@ class CharacterViewSet(viewsets.ModelViewSet):
 
 class CharacterStatisticsViewSet(viewsets.ModelViewSet):
     serializer_class = CharacterStatisticsSerializer
-    queryset = CharacterStatistics.objects.all().order_by('-total_cnt')
+    queryset = CharacterStatistics.objects.all().order_by('-total_cnt', 'char')
     filter_fields = ('char', )
