@@ -72,8 +72,8 @@ def convert_image(src_image):
     binary_line = bw.sum(axis=0)
     c_start = -1
     c_end = -1
-    c_start = -1
-    c_end = -1
+    r_start = -1
+    r_end = -1
     for i in range(image_width):
         if binary_line[i] != 0:
             c_start = i
