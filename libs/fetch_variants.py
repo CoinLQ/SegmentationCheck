@@ -13,8 +13,8 @@ class VariantsFetcher:
 
         data = {
             '_csrf': self.csrf,
-            'LoginForm[identity]': 'xianbu',
-            'LoginForm[password]': 'xianbu123',
+            'LoginForm[identity]': 'fetchvariant',
+            'LoginForm[password]': 'fetchvariant',
             'LoginForm[rememberMe]': '1',
         }
         r = self.session.post(url, data)
