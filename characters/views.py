@@ -59,27 +59,32 @@ def set_correct(request):
         is_correct = int(request.POST['is_correct'])
         char = request.POST['char']
         char.encode('utf-8')
-        if Character.objects.filter(id=char_id).filter(is_correct=0).exists():
-            CharacterStatistics.objects.filter(char=char).update(uncheck_cnt=F('uncheck_cnt')-1)
+        if Character.objects.filter(id=char_id).filter(is_correct=0).exists():  # uncheck -> check
+            if 1 == is_correct:
+                CharacterStatistics.objects.filter(char=char).\
+                    update(uncheck_cnt=F('uncheck_cnt')-1, correct_cnt=F('correct_cnt')+1)
+            else:
+                CharacterStatistics.objects.filter(char=char).\
+                    update(uncheck_cnt=F('uncheck_cnt')-1, err_cnt=F('err_cnt')+1)
+        else:  # correct <-> err  in check
+            CharacterStatistics.objects.filter(char=char).\
+                update(err_cnt=F('err_cnt')-is_correct, correct_cnt=F('correct_cnt')+is_correct)
         Character.objects.filter(id=char_id).update(is_correct=is_correct)
-        CharacterStatistics.objects.filter(char=char).\
-            update(err_cnt=F('err_cnt')-is_correct, correct_cnt=F('correct_cnt')+is_correct)
         data = {'status': 'ok'}
-    elif 'charArr[]' in request.POST:
+    elif 'charArr[]' in request.POST: # uncheck -> check
         check_char_number = request.session.get('check_char_number',0)
         request.session['check_char_number'] = check_char_number+1
         charArr = request.POST.getlist('charArr[]')
         char = request.POST['char']
         is_correct = int(request.POST['is_correct'])
         updateNum = int(request.POST['updateNum'])
-        Character.objects.filter(id__in =charArr).filter(is_correct=0).update(is_correct=is_correct)
+        Character.objects.filter(id__in =charArr).filter(is_correct=0).update(is_correct=is_correct) #TODO remove filter
         if is_correct == 1:
             CharacterStatistics.objects.filter(char=char).\
                 update(uncheck_cnt=F('uncheck_cnt')-updateNum, correct_cnt=F('correct_cnt')+updateNum)
         else:
             CharacterStatistics.objects.filter(char=char). \
                 update(uncheck_cnt=F('uncheck_cnt')-updateNum, err_cnt=F('err_cnt')+updateNum)
-
         data = {'status': 'ok'}
     else:
         data = {'status': 'error'}
