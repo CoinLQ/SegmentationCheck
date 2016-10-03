@@ -9,6 +9,7 @@ from utils.get_checked_character import get_checked_character
 import datetime
 from django.contrib.auth.decorators import user_passes_test
 from .models import UserCredit
+import redis
 
 
 class CharacterIndex(generic.ListView):
@@ -22,23 +23,37 @@ def index(request):
 
 @user_passes_test(lambda u:u.is_staff, login_url='/quiz')
 def task(request):
+    redis_client = redis.StrictRedis(host='localhost', port=6379, db=2)
+    all_characters_key = 'seg_web:all_characters'
+    selected_characters = 'seg_web:selected_characters'
+
+    total_cnt = redis_client.llen(all_characters_key)
+    select_cnt = redis_client.llen(selected_characters)
+    done_cnt = total_cnt - select_cnt
+
     today = datetime.datetime.now().strftime("%Y%m%d")
     checkin_date = request.session.get('checkin_date', 0)
     if checkin_date != today:
         #active_date=time.strptime(checkin_date,'%Y%m%d')
-        user_credit = UserCredit(user=request.user,
-                                 active_date=checkin_date,
-                                 credit=request.session['check_char_number'],
-                                 username=request.user.username
-                                 )
-        user_credit.save()
+        check_char_number = request.session.get('check_char_number', 0)
+        if check_char_number !=0:
+            user_credit = UserCredit(user=request.user,
+                                     active_date=checkin_date,
+                                     credit=request.session['check_char_number'],
+                                     username=request.user.username
+                                     )
+            user_credit.save()
         request.session['check_char_number'] = 0
         request.session['checkin_date'] = today
     check_char_number = request.session.get('check_char_number',0)
     #char_lst = CharacterStatistics.objects.filter(uncheck_cnt__gt=0).order_by('-total_cnt')[:30]
     #char = random.choice(char_lst)
     char = get_checked_character()
-    return render(request,'characters/characters.html',{'char':char,'check_char_number':check_char_number} )
+    return render(request,'characters/characters.html',{'char':char,
+                                                        'check_char_number':check_char_number,
+                                                        'done_cnt':done_cnt,
+                                                        'total_cnt':total_cnt,
+                                                        } )
 
 
 # @login_required(login_url='/segmentation/login/')
