@@ -6,38 +6,7 @@
 <link href="/static/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
   <!-- DataTables -->
   <link rel="stylesheet" href="/static/datatables/dataTables.bootstrap.css">
-<style>
-  .error-char {
-    background-color: pink;
-    border:solid red 2px !important;
-  }
-  .correct-char {
-    background-color: #9AFF9A;
-    border:solid green 2px !important;
-  }
-  .flow {float:left; min-width:80px; min-height:80px; margin:5px;border:solid blue 1px;}
-
-  .selected {
-      background-color: #aaa !important;
-  }
-
-.unchecked-box{
-    position: relative;
-    padding: 25px 15px 15px;
-    background-color: #fafafa;
-    border: 1px solid #ddd;
-    border-bottom-width: 0;
-}
-.sidecol {
-    height:80%;
-    overflow:auto;
-    position:relative;
-    max-height:800px;
-}
-span {
-    padding:5px 5px;
-}
-</style>
+<link rel="stylesheet" href="/static/characters/css/app.css">
 {% endblock %}
 {% block mainbody %}
 <div class="container" style="min-width:1000px !important;">
@@ -61,17 +30,16 @@ span {
                     </tr>
                     </thead>
                     <tbody id="char_index_tbody">
-                    {% for char in characterstatistics_list%}
-                    <tr>
-                        <td>{{ forloop.counter }}</td>
-                        <td>{{char.char}}</td>
-                        <td>{{char.total_cnt}}</td>
-                        <td>{{char.correct_cnt}}</td>
-                        <td>{{char.err_cnt}}</td>
-                        <td>{{char.uncheck_cnt}}</td>
-                    </tr>
-                    {% endfor %}
-
+                  {% for char in characterstatistics_list%}
+                  <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <td>{{char.char}}</td>
+                      <td>{{char.total_cnt}}</td>
+                      <td>{{char.correct_cnt}}</td>
+                      <td>{{char.err_cnt}}</td>
+                      <td>{{char.uncheck_cnt}}</td>
+                  </tr>
+                  {% endfor %}
                     </tbody>
                   </table>
                 </div>
@@ -99,8 +67,10 @@ span {
             <div id='charBrowseArea'>
             </div>
             <div style="clear:both;"> </div>
-            <div  class="btn btn-primary batch-check" >批量標對</div>
-            <div  class="btn btn-primary batch-check" id="err_btn">批量標錯</div>
+            <div style="float:right; margin-right:64px;">
+                <div  class="btn btn-primary batch-check" >批量標對</div>
+                <div  class="btn btn-primary batch-check" id="err_btn">批量標錯</div>
+            </div>
             <div style="clear:both;"> </div>
             <div class="pagec" id="pagearea">
                 <ul class="pagination">
@@ -114,16 +84,14 @@ span {
 <!-- DataTables -->
 <script src="/static/datatables/jquery.dataTables.min.js"></script>
 <script src="/static/datatables/dataTables.bootstrap.min.js"></script>
+<script src="/static/datatables/input.js"></script>
 <!-- page script -->
 <script>
   $(function () {
     $("#char_index").DataTable({
-      "paging": true,
-      "lengthChange": true,
-      "searching": true,
-      "ordering": true,
-      "info": true,
-      "autoWidth": true
+      "pagingType": "input",
+        "info":     false
+
     });
   });
 </script>
