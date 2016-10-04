@@ -75,3 +75,8 @@ div.dataTables_paginate span {
 #char_index_filter > label > input {
     width: 70px;
 }
+
+
+#char_index_wrapper > div:nth-child(3) > div.col-sm-5{
+    display:none;
+}
