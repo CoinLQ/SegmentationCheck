@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import user_passes_test
 from .models import UserCredit
 import redis
 from django.views import generic
-#from libs.fetch_variants import fetcher
+from libs.fetch_variants import fetcher
 
 
 class Index(generic.ListView):
@@ -50,7 +50,7 @@ def task(request):
     #char = random.choice(char_lst)
     char = get_checked_character()
     #lq_variant = fetcher.fetch_variants(u'麤')
-    lq_variant=''
+    lq_variant = ''
     return render(request,'characters/characters.html',{'char':char,
                                                         'check_char_number':check_char_number,
                                                         'done_cnt':done_cnt,
