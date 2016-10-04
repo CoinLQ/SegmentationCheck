@@ -7,9 +7,6 @@
   <!-- DataTables -->
   <link rel="stylesheet" href="/static/datatables/dataTables.bootstrap.css">
 <style>
-label {
-    display: inline-block;
-  } /*for tooltip*/
   .error-char {
     background-color: pink;
     border:solid red 2px !important;
@@ -45,45 +42,44 @@ span {
 {% block mainbody %}
 <div class="container">
     <div class='row show-grid'>
-        <div class='col-md-3 col-xs-3' >
-                <div class="box">
-            <div class="box-header">
-              <h3 class="box-title">Data Table With Full Features</h3>
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-              <table id="example1" class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                    <th>No</th>
-                    <th>字</th>
-                    <th>字形总数</th>
-                    <th>正样本</th>
-                    <th>负样本</th>
-                    <th>未标记</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for char in characterstatistics_list%}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{char.char}}</td>
-                    <td>{{char.total_cnt}}</td>
-                    <td>{{char.correct_cnt}}</td>
-                    <td>{{char.err_cnt}}</td>
-                    <td>{{char.uncheck_cnt}}</td>
-                </tr>
-                {% endfor %}
+        <div class='col-md-4 col-xs-4' >
+            <div class="box">
+                <div class="box-header">
+                  <h3 class="box-title">字形列表</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                  <table id="char_index" class="table table-bordered table-striped">
+                    <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>字</th>
+                        <th>字形总数</th>
+                        <th>正样本</th>
+                        <th>负样本</th>
+                        <th>未标记</th>
+                    </tr>
+                    </thead>
+                    <tbody id="char_index_tbody">
+                    {% for char in characterstatistics_list%}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{char.char}}</td>
+                        <td>{{char.total_cnt}}</td>
+                        <td>{{char.correct_cnt}}</td>
+                        <td>{{char.err_cnt}}</td>
+                        <td>{{char.uncheck_cnt}}</td>
+                    </tr>
+                    {% endfor %}
 
-                </tbody>
-              </table>
-            </div>
+                    </tbody>
+                  </table>
+                </div>
             <!-- /.box-body -->
           </div>
           <!-- /.box -->
-
         </div><!--end col-md-3 -->
-        <div class='col-md-9 col-xs-9'>
+        <div class='col-md-8 col-xs-8'>
             <div style="float:right; margin-right:64px;">
                 每页显示
                 <div id="LineControler" class="btn-group" style="padding:0 16px;">
@@ -99,6 +95,7 @@ span {
                 </div>
                 字
             </div>
+            <div style="clear:both;"> </div>
             <div id='charBrowseArea'>
             </div>
             <div style="clear:both;"> </div>
@@ -120,7 +117,7 @@ span {
 <!-- page script -->
 <script>
   $(function () {
-    $("#example1").DataTable({
+    $("#char_index").DataTable({
       "paging": true,
       "lengthChange": true,
       "searching": true,
@@ -132,35 +129,25 @@ span {
 </script>
 <script src="/static/js/jquery.simplePagination.js" charset="utf-8"></script>
 <script src="/static/js/jquery.cookie.js" charset="utf-8"></script>
-<script type="text/javascript">
-    $(function() {
-        var page_size = $.cookie('charindex_page_size');
-        $("#LineControler button span:first-of-type").text(page_size);
-    })
-    $("#LineControler li a").click(function () {
-        var page_size = $(this).text();
-        $("#LineControler button span:first-of-type").text($(this).text());
-        $.cookie('charindex_page_size', page_size, { expires: 30 });
-    })
-</script>
 <script >
 var g_char;
 var page_size = 30;
-
-function bindindex(){
-    $('#charindextbody tr').click(function (e) {
-        $('tr').removeClass("selected");
-        $(this).addClass("selected");
-        g_char = $("tr.selected td:first").text();
-        page_size = $.cookie('charindex_page_size');
-        if ( page_size==null) {
-            page_size = 30;
-        }
-        $.getJSON("/api/character?page_size="+page_size+"&char="+g_char,function(result){
-        });
+$('#char_index #char_index_tbody').on('click', 'tr', function(event) {
+    $('tr').removeClass("selected");
+    $(this).addClass("selected");
+    g_char = $("tr.selected td:eq(1)").text();
+    page_size = $.cookie('charindex_page_size');
+    if ( page_size==null) {
+        page_size = 30;
+    }
+    $.getJSON("/api/character?page_size="+page_size+"&char="+g_char,function(result){
+        data = result.models;
+        pagination = result.pagination;
+        paginationFun(pagination.total_entries,page_size);
+        renderCharArea("#charBrowseArea",data);
+        binding_char_check('#charBrowseArea');
     });
-}
-
+})
 
 function binding_char_check(area){
     var selector = area + ' .char-image'
@@ -215,6 +202,17 @@ function paginationFun(_items,_itemsOnpage){
             },
     });
 }
+</script>
+<script type="text/javascript">
+    $(function() {
+        var page_size = $.cookie('charindex_page_size');
+        $("#LineControler button span:first-of-type").text(page_size);
+    })
+    $("#LineControler li a").click(function () {
+        var page_size = $(this).text();
+        $("#LineControler button span:first-of-type").text($(this).text());
+        $.cookie('charindex_page_size', page_size, { expires: 30 });
+    })
 </script>
 <script>
 $(function(){

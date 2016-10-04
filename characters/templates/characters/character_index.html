@@ -114,38 +114,6 @@ span {
 <script >
 var g_char;
 var page_size = 30;
-/*
-$("#go_char_input").keyup(function(){
-    if(event.keyCode == 13){
-        $.getJSON("/api/characterstatistics?char="+$(this).val(),function(result){
-            field = result.models[0];
-            row = "<div><span>"+field.char
-            +"</span><span>"+field.total_cnt
-            +"</span><span>"+field.correct_cnt
-            +"</span><span>"+field.err_cnt
-            +"</span><span>"+field.uncheck_cnt+"</span></div>"
-            $('#go_char').append(row);
-            $('#go_char').click(function (e) {
-                $('tr').removeClass("selected");
-                $(this).addClass("selected");
-                g_char = $("#go_char").val();
-                page_size = $.cookie('charindex_page_size');
-                if ( page_size==null) {
-                    page_size = 30;
-                }
-                $.getJSON("/api/character?page_size="+page_size+"&char="+g_char,function(result){
-                    data = result.models;
-                    pagination = result.pagination;
-                    paginationFun(pagination.total_entries,page_size);
-                    renderCharArea("#charBrowseArea",data);
-                    binding_char_check('#charBrowseArea');
-                });
-            });
-
-        });
-    }
-});
-*/
 function bindindex(){
     $('#charindextbody tr').click(function (e) {
         $('tr').removeClass("selected");
