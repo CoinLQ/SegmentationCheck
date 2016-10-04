@@ -64,7 +64,6 @@ class Container extends React.Component {
                                     {collection.models.toList().map((model, key) =>
                                         <PaperContainer key={key} model={model}/>
                                     )}
-                                    <h1>OK</h1>
                                 </Slider>
                                 }
 

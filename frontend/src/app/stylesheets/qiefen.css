@@ -1,0 +1,733 @@
+
+@keyframes btnGlow {
+    100% {
+        box-shadow: 0 0 32px white;
+        background-color: rgba(255, 255, 255, .62);
+    }
+}
+
+@keyframes inputGlow {
+    100% {
+        box-shadow: 0 0 32px white;
+        background-color: rgba(187, 200, 230, .24);
+        border-bottom-color: #C3272B;
+    }
+}
+
+@keyframes logoChange {
+    100% {
+        background-color: red;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, .38);
+    }
+}
+
+a.btn:hover,
+#HCteTri:hover,
+#HCteVol:hover {
+    animation: btnGlow .5s ease;
+    animation-fill-mode: forwards;
+}
+
+input:hover,
+input:active,
+input:focus {
+    animation: inputGlow .5s ease;
+    animation-fill-mode: forwards;
+}
+
+.hideText {
+    display: inline-block;
+    width: 1px;
+    height: 1px;
+    color: transparent;
+}
+
+.shadow,
+.badge {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, .16);
+}
+
+.glow {
+    box-shadow: 0 0 16px rgba(255, 255, 255, .24);
+}
+
+.number,
+.sign,
+#CRTextCt ol li,
+.badge {
+    font-family: Georgia, serif;
+}
+
+.sign {
+    padding: 0 4px;
+    font-weight: bold;
+    color: inherit;
+}
+
+.popover-content>li:first-of-type>a {
+    color: darkred;
+}
+
+.popover-content>li:nth-of-type(2)>a {
+    color: darkgoldenrod;
+}
+
+.popover-content>li:nth-of-type(3)>a {
+    color: darkgreen;
+}
+
+.popover-content>li:nth-of-type(4)>a {
+    color: darkcyan;
+}
+
+.popover-content>li:nth-of-type(5)>a {
+    color: darkblue;
+}
+
+.popover-content>li:nth-of-type(6)>a {
+    color: darkmagenta;
+}
+
+.popover-content .fa {
+    padding-right: 4px;
+    opacity: .62;
+}
+
+.blackBackground {
+    background: rgba(48, 40, 51, .38);
+    border: solid 1px rgba(37, 13, 0, .16);
+}
+
+.whiteBackground {
+    background: rgba(187, 200, 230, .38);
+    border: solid 1px rgba(255, 255, 255, .16);
+    box-sizing: border-box;
+}
+
+body {
+    min-width: 1000px;
+    min-height: 540px;
+    background: #595455;
+    overflow: auto;
+}
+
+#CRightCt {
+    display: flex;
+    position: relative;
+    height: inherit;
+    min-height: inherit;
+    background: #EAE5E3;
+}
+
+#Content {
+    width: 100%;
+    min-height: inherit;
+    overflow: hidden;
+}
+
+#CLeftCt {
+    position: relative;
+    width: auto;
+    height: inherit;
+    min-height: inherit;
+    overflow: hidden;
+}
+
+.triangle {
+    position: absolute;
+    right: 4px;
+    bottom: 4px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 0 4px 4px;
+    border-color: transparent transparent #fff transparent;
+}
+
+#HPjtLogo {
+    display: block;
+    margin-left: 32px;
+    float: left;
+    width: 60px;
+    height: 60px;
+    background: #C3272B url(../img/TripiLogo.svg) no-repeat;
+}
+
+#HPjtLogo:hover {
+    animation: logoChange 1s ease;
+    animation-fill-mode: forwards;
+}
+
+#HLogo {
+    display: block;
+    margin: 8px 0 0 2%;
+    float: left;
+    width: 64px;
+    height: 62px;
+    background: url(../img/CutCharLogo.svg) top left no-repeat;
+}
+
+#HContents {
+    width: 170px;
+}
+
+#HCteTri,
+#HCteVol {
+    position: relative;
+    display: block;
+    font-size: 21px;
+    float: left;
+    margin-right: 16px;
+    width: 32px;
+    height: 50px;
+    overflow: hidden;
+}
+
+#HCteTri .text,
+#HCteVol .text {
+    position: absolute;
+    padding: 11px 4px;
+    width: 120px;
+    font-size: 21px;
+    color: white;
+}
+
+.whiteSpace {
+    padding: 0 4px;
+}
+
+#HCteVolCt>span:last-of-type {
+    display: block;
+    float: left;
+    margin-left: -8px;
+    padding-top: 16px;
+    opacity: .62;
+}
+
+#CRFctCt .btn,
+#CReportPanel .btn {
+    display: block;
+    float: left;
+    width: 30px;
+    height: 30px;
+    background: rgba(187, 200, 230, .38);
+    border: solid 1px rgba(255, 255, 255, .16);
+}
+
+#CReportCt #CReviewPanel .btn {
+    float: left;
+    width: 50%;
+    padding: 8px 0 8px 0;
+    background: rgba(48, 40, 51, .38);
+    border: solid 1px rgba(37, 13, 0, .16);
+    cursor: pointer;
+}
+
+#CReportCt #CReviewPanel .btn.chosen {
+    background: rgba(0, 0, 0, .38);
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 4px 17px rgba(0, 0, 0, .24) inset;
+}
+
+#CReportCt #CReviewPanel .btn:nth-of-type(2) {
+    border-left: none;
+}
+
+#CReviewPanel .btn-group,
+#CReviewPanel .form-group {
+    margin: 8px 0;
+    position: relative;
+}
+
+#QueInput {
+    box-sizing: border-box;
+    margin-top: 16px;
+    float: left;
+    height: 32px;
+    width: 100%;
+    padding: 2px 84px 2px 8px;
+}
+
+#CReportCt #CReviewPanel #SubmitBtn {
+    position: absolute;
+    top: 54px;
+    right: 0;
+    width: 80px;
+    height: 30px;
+    padding-top: 4px;
+}
+
+#CReportPanel .fa {
+    display: block;
+    float: left;
+    margin: 5px 0 0 6px;
+    font-size: 21px;
+    color: white;
+}
+
+.btn .fa.offset {
+    margin-left: 4px;
+}
+
+#HContents,
+#HColNum,
+#HFtnBtn {
+    float: left;
+    margin-left: 0;
+}
+
+#HUserSet {
+    float: right;
+    margin-right: 32px;
+}
+
+#HUserSet div {
+    float: left;
+}
+
+#HUserPtl+.dropdown-menu {
+    right: 0;
+}
+
+#HColNum .number,
+#CRAutoWrapNum {
+    float: left;
+    background: rgba(187, 200, 230, .16);
+    border-bottom: solid 2px rgba(255, 255, 255, .16);
+}
+
+#HColNum .number {
+    font-size: 21px;
+    margin: 10px 4px 0 0;
+    padding: 4px 16px 2px 16px;
+    width: 210px;
+    text-align: center;
+}
+
+#CRAutoWrapNum {
+    margin: 2px 0 0 4px;
+    padding: 5px 8px;
+    border-bottom: solid 2px rgba(255, 255, 255, .62);
+    width: 40px;
+}
+
+#HUserPtl {
+    display: block;
+    float: right;
+    margin-top: 3px;
+    width: 40px;
+    height: 40px;
+    border-width: 2px;
+    border-radius: 50%;
+}
+
+#HUserPtl .fa {
+    margin-top: 2px;
+    font-size: 34px;
+}
+
+#CLPageCt {
+    width: 100%;
+    height: inherit;
+    margin-top: 50px;
+    overflow: auto;
+}
+
+#CLPages {
+    margin: 16px auto 64px auto;
+    padding: 32px 24px;
+    width: 720px;
+    height: 100%;
+    background: white;
+    z-index: 1;
+    box-shadow: 4px 16px 64px rgba(0, 0, 0, .38);
+}
+
+.columnStroke {
+    margin: 16px 32px;
+    height: 300px;
+    border: Solid 1px rgba(105, 138, 171, .24);
+}
+
+.columnStroke.activeColumn {
+    border-color: #F2BE45;
+    box-shadow: 0 0 32px rgba(242, 190, 69, .8);
+}
+
+#CRDrawBtn {
+    box-sizing: border-box;
+    position: absolute;
+    right: 32px;
+    bottom: 32px;
+    width: 160px;
+    height: 48px;
+    background: rgba(131, 204, 210, .80);
+    border: Solid 1px rgba(105, 138, 171, .24);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, .24);
+}
+
+#CRDrawBtn span {
+    padding-right: 10px;
+    font-size: 24px;
+}
+
+#CRDrawBtn span.text {
+    font-weight: bold;
+}
+
+#CReportCt {
+    position: absolute;
+    left: 0;
+    top: 96px;
+}
+
+#CReportBtnCt {
+    float: left;
+    width: 32px;
+    height: 64px;
+    border-left: none;
+}
+
+#CReportCt .btn {
+    display: block;
+    width: 100%;
+    height: 50%;
+}
+
+#CReportCt .btn .fa {
+    font-size: 19px;
+    float: left;
+    margin: 7px 0 0 6px;
+    opacity: .8;
+}
+
+#CReportCt .btn:first-of-type .fa {
+    margin: 4px 0 0 7px;
+    font-size: 21px;
+}
+
+#CLFctCt {
+    position: absolute;
+    bottom: 16px;
+    right: 48px;
+    height: 32px;
+}
+
+#CLFctCt>* {
+    width: auto;
+    float: left;
+}
+
+#CLFctCt>nav {
+    border-right: solid 1px rgba(37, 13, 0, .16);
+}
+
+#CLFctCt a.btn {
+    display: block;
+    float: left;
+    width: 32px;
+    height: 32px;
+}
+
+#CLFctCt .fa {
+    float: left;
+    font-size: 21px;
+    margin: 4px 0 0 6px;
+}
+
+#CLFctCt #CLViewCt .fa {
+    margin: 5px 0 0 7px;
+}
+
+#CLFctCt nav>a .fa {
+    font-size: 34px;
+    margin: -2px 0 0 6px;
+}
+
+#CLFctCt nav>a:last-of-type .fa {
+    margin-top: 0;
+}
+
+#CLPageNumCt {
+    float: left;
+    height: 32px;
+    padding: 0 8px 0 0;
+    text-align: right;
+}
+
+#CLCrtPage {
+    position: relative;
+    display: inline-block;
+    height: 20px;
+    padding: 6px 8px;
+}
+
+#CLFctCt .triangle {
+    border-color: transparent transparent #250D00 transparent;
+}
+
+#CLTolPN {
+    margin-left: 4px;
+    opacity: .62;
+}
+
+#CLCurPageNumInput+.number:last-of-type {
+    float: left;
+    margin: 7px 0 0 2px;
+    opacity: .38;
+}
+
+#CLViewCt>a {
+    display: block;
+    float: right;
+}
+
+#CLFctCt #CLVList {
+    position: relative;
+    width: auto;
+}
+
+#CLVList .text {
+    display: inline-block;
+    margin: 6px 8px 0 8px;
+}
+
+#CRFctCt {
+    padding: 58px 0 8px 12px;
+    height: 32px;
+    box-shadow: 2px 4px 8px rgba(0, 0, 0, .08);
+}
+
+#CRFctCt .group {
+    float: left;
+}
+
+#CRFctCt .btn .fa {
+    font-size: 21px;
+    float: left;
+    margin: 5px 6px;
+    opacity: .62;
+}
+
+#CRFctCt .group:first-of-type .fa {
+    font-size: 34px;
+    margin: -3px 4px;
+}
+
+#CRFctCt .group:last-of-type .fa {
+    margin-left: 7px;
+}
+
+#CRFctCt #CRNxtCol .fa {
+    margin-top: -1px;
+}
+
+#CRFctCt #CRIstQus .fa {
+    font-size: 26px;
+    margin: 2px 0 0 6px;
+}
+
+#CRFctCt .btn {
+    margin-left: 8px;
+    border-color: rgba(255, 255, 255, .5);
+}
+
+#CRFctCt #CRPreCol {
+    margin-left: 0;
+}
+
+#CRFctCt .shadow {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, .08);
+}
+
+#CRAutoWrapCt label {
+    float: left;
+    margin: 8px 0 0 8px;
+    opacity: .62;
+}
+
+#CRTextCt {
+    position: relative;
+    width: 100%;
+    height: 420px;
+}
+
+#CRTextCt ol {
+    position: absolute;
+    top: 0;
+    left: 0;
+    text-align: right;
+    padding: 16px 8px 64px 0;
+    width: 40px;
+    min-height: 100%;
+    list-style-type: none;
+    counter-reset: sectioncounter;
+    opacity: .38;
+}
+
+#CRTextCt ol li:before {
+    content: counter(sectioncounter) "";
+    counter-increment: sectioncounter;
+}
+
+#CRTextCt textarea {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 16px 24px 72px 48px;
+    background: rgba(255, 255, 255, .38);
+    border: none;
+    resize: none;
+}
+
+#CReportPanel,
+#CReviewPanel {
+    display: none;
+    float: left;
+    box-sizing: border-box;
+    width: 360px;
+    margin-left: -360px;
+    height: inherit;
+    min-height: inherit;
+    background: rgba(187, 200, 230, .38);
+    border: solid 1px rgba(255, 255, 255, .24);
+    border-left: none;
+}
+
+#CReviewPanel legend {
+    opacity: .5;
+}
+
+#CReviewPanel .form-inline {
+    margin: 16px 24px;
+}
+
+#CReportPanel {
+    width: 24%;
+    margin-left: -24%;
+    border-width: 0 1px 0 0;
+}
+
+#CReviewPanel {
+    height: 160px;
+}
+
+#CReportPanel h3 {
+    margin: 72px 0 8px 3%;
+    color: white;
+    opacity: .38;
+    font-weight: normal;
+    float: left;
+}
+
+h3 .number {
+    margin-left: 2px;
+}
+
+#HContents .dropdown {
+    float: left;
+    height: inherit;
+}
+
+#HNotiBtn {
+    position: relative;
+}
+
+#HNotiBtn .badge {
+    position: absolute;
+    right: -2px;
+    bottom: -2px;
+    padding: 3px 4px 2px 5px;
+    min-width: 8px;
+    text-align: center;
+    background: #C3272B;
+    font-size: 11px;
+    font-weight: bold;
+    border-radius: 50%;
+    color: white;
+}
+
+#TaskPage {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+}
+
+#CReportPanel .table tbody tr.chosen {
+    box-sizing: border-box;
+    background: white;
+    border: solid 1px #F2BE45;
+    box-shadow: 0 0 32px #F2BE45;
+}
+
+#CReportPanel .table tbody tr.chosen+tr td {
+    border-top: none;
+}
+
+#CReportPanel .table tbody tr.chosen td {
+    background: none;
+    border: none;
+}
+
+#CReportPanel .table .caret {
+    position: absolute;
+    color: white;
+    margin: 8px 0 0 4px;
+}
+
+#CReportPanel .pager {
+    float: right;
+    margin: 64px 2% 0 0;
+}
+
+#CReportPanel .btn {
+    float: left;
+    margin: 0 8px 0 0;
+}
+
+a.btn.disabled {
+    animation: none;
+    opacity: .62;
+    box-shadow: none;
+    cursor: default;
+}
+
+#CReportPanel nav .input-group {
+    position: relative;
+    float: left;
+    width: 80px;
+    height: 32px;
+}
+
+#CRPageNumInput,
+#CLCurPageNumInput {
+    box-sizing: border-box;
+    width: 50px;
+    height: 100%;
+    padding: 2px 32px 2px 4px;
+    background: rgba(187, 200, 230, .24);
+    border-bottom: solid 2px rgba(255, 255, 255, .16);
+}
+
+#CLCurPageNumInput {
+    float: left;
+    width: 64px;
+    margin: 0;
+    padding: 0 4px;
+    text-align: center;
+}
+
+#CReportPanel .fa {
+    margin-top: 4px;
+}
+
+#CRPageSkipBtn {
+    position: absolute;
+    top: 0;
+    right: -8px;
+}

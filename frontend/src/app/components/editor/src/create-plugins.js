@@ -10,13 +10,13 @@ import createResizeablePlugin, { ResizeableDecorator } from 'draft-js-resizeable
 // Blocks
 import createImagePlugin, { imageCreator, imageStyles } from 'draft-js-image-plugin';
 import createTablePlugin, { tableCreator, tableStyles } from 'draft-js-table-plugin';
-
+import createUndoPlugin from 'draft-js-undo-plugin';
 // Styles
 //
-
 // Utils
 import addBlock from 'draft-js-dnd-plugin/lib/modifiers/addBlock';
 import { RichUtils } from 'draft-js';
+
 
 const image = ResizeableDecorator({
   resizeSteps: 10,
@@ -52,7 +52,10 @@ export default ({ handleUpload, handleDefaultData, plugins = ()=>{}, toolbar = {
     __toolbarHandler: {
       add: props => console.log('Add toolbar', props),
       remove: props => console.log('Remove toolbar', props),
-    }, textActions: [...[{
+    },
+    inlineStyles: [],
+    clearTextActions: true,
+    textActions: [...[{
       button: <span>H1</span>,
       key: 'H1',
       label: 'Header 1',
@@ -125,4 +128,5 @@ export default ({ handleUpload, handleDefaultData, plugins = ()=>{}, toolbar = {
   // Blocks
   createImagePlugin({ component: image }),
   createTablePlugin({ component: table, Editor }),
+  createUndoPlugin(),
 ];

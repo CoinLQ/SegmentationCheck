@@ -5,6 +5,8 @@ import {DefaultDraftBlockRenderMap} from 'draft-js';
 import createPlugins from './create-plugins';
 import {Map} from 'immutable';
 
+
+
 class WysiwygEditor extends Component {
 
 
@@ -111,31 +113,38 @@ class WysiwygEditor extends Component {
   render() {
     const {editorState} = this;
     const {isDragging, progress, readOnly} = this.props;
-
+    debugger;
+    const { UndoButton, RedoButton } = this.plugins[this.plugins.length-1];
     return (
-      <div style={Object.assign(this.props.style, {
-          display: 'flex'
-        })}>
-        <ol {...this.props.list}
-          style={Object.assign(this.props.styleList, {
-            margin: 0,
-            padding: 0
-          })}>
-          {[...Array((this.editorState || EditorState.createEmpty()).getCurrentContent().getBlockMap().size)].map((x, i) =>
-            <a onClick={this.toggleLine(i)} ><li key={i}
-              /></a>
-          )}
-        </ol>
-        <div style={{flex: 1}}>
-      <Editor readOnly={readOnly} editorState={editorState}
-              plugins={this.plugins}
-              blockRenderMap={this.blockRenderMap}
-              blockRendererFn={this.blockRendererFn}
-              onChange={this.onChange}
-              ref="editor"
-      />
-      </div>
-      </div>
+
+
+                  <div style={Object.assign(this.props.style, {
+                      display: 'flex'
+                    })}>
+                    <ol {...this.props.list}
+                      style={Object.assign(this.props.styleList, {
+                        margin: 0,
+                        padding: 0
+                      })}>
+                      {[...Array((this.editorState || EditorState.createEmpty()).getCurrentContent().getBlockMap().size)].map((x, i) =>
+                        <a onClick={this.toggleLine(i)} ><li key={i}
+                          /></a>
+                      )}
+                    </ol>
+                    <div style={{flex: 1}}>
+                  <Editor readOnly={readOnly} editorState={editorState}
+                          plugins={this.plugins}
+                          blockRenderMap={this.blockRenderMap}
+                          blockRendererFn={this.blockRendererFn}
+                          onChange={this.onChange}
+                          ref="editor"
+                  />
+                  <UndoButton onChange={ this.onChange } editorState={ this.editorState } />
+                  <RedoButton onChange={ this.onChange } editorState={ this.editorState } />
+                  </div>
+            <button id="CRDrawBtn" className="btn" type="button" data-toggle="popover" data-original-title="" title=""><span className="fa fa-scissors"></span><span className="text">切字</span></button>
+        </div>
+
     );
   }
 }

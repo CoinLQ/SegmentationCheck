@@ -48,7 +48,7 @@
     "draft-js-counter-plugin": "^1.0.0",
     "draft-js-plugins-editor": "^1.1.0",
     "draft-js-toolbar-plugin": "^1.0.5",
-    "draft-wysiwyg": "git+ssh://git@github.com/bkniffler/draft-wysiwyg.git",
+    "draft-wysiwyg": "git+ssh://git@github.com/lvpython/draft-wysiwyg.git",
     "history": "2.0.1",
     "immutable": "^3.7.6",
     "ionicons": "^3.0.0",
