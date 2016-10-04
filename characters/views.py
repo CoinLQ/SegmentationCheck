@@ -8,8 +8,13 @@ import datetime
 from django.contrib.auth.decorators import user_passes_test
 from .models import UserCredit
 import redis
+from django.views import generic
 #from libs.fetch_variants import fetcher
 
+
+class Index(generic.ListView):
+    model = CharacterStatistics
+    template_name = 'characters/char_manage.html'
 
 def index(request):
     return render(request, 'characters/character_index.html')
