@@ -19,6 +19,11 @@ class VariantsFetcher:
         }
         r = self.session.post(url, data)
         self.is_login = ( u'ETag' in r.headers )
+        char =u'塡'
+        url = 'http://hanzi.lqdzj.cn/hanzi-dict/search?param=%s' % char.encode('utf-8')
+        r = self.session.get(url)
+        soup = BeautifulSoup(r.text)
+        self.soup = soup
 
     def fetch_variants(self, char):
         if not self.is_login:
@@ -26,6 +31,7 @@ class VariantsFetcher:
         url = 'http://hanzi.lqdzj.cn/hanzi-dict/search?param=%s' % char.encode('utf-8')
         r = self.session.get(url)
         soup = BeautifulSoup(r.text)
+        self.soup = soup
         lq_variant = soup.find(id='lq-variant')
         for link in lq_variant.findAll('a'):
             link['href'] = u'http://hanzi.lqdzj.cn' + link['href']
@@ -36,5 +42,5 @@ class VariantsFetcher:
 fetcher = VariantsFetcher()
 
 if __name__ == '__main__':
-    lq_variant = fetcher.fetch_variants(u'麤')
+    lq_variant = fetcher.fetch_variants(u'塡')
     print lq_variant
