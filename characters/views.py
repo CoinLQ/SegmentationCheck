@@ -82,8 +82,8 @@ def set_correct(request):
         charArr = request.POST.getlist('charArr[]')
         char = request.POST['char']
         is_correct = int(request.POST['is_correct'])
-        updateNum = int(request.POST['updateNum'])
-        Character.objects.filter(id__in =charArr).filter(is_correct=0).update(is_correct=is_correct) #TODO remove filter
+        #updateNum = int(request.POST['updateNum'])
+        updateNum = Character.objects.filter(id__in =charArr).filter(is_correct=0).update(is_correct=is_correct) #TODO remove filter
         if is_correct == 1:
             CharacterStatistics.objects.filter(char=char).\
                 update(uncheck_cnt=F('uncheck_cnt')-updateNum, correct_cnt=F('correct_cnt')+updateNum)
