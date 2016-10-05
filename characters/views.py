@@ -13,8 +13,14 @@ from libs.fetch_variants import fetcher
 
 
 class Index(generic.ListView):
-    #model = CharacterStatistics
     template_name = 'characters/char_manage.html'
+    def get_queryset(self):
+        return CharacterStatistics.objects.all().order_by('-total_cnt','char')
+
+
+class NewIndex(generic.ListView):
+    model = CharacterStatistics
+    template_name = 'characters/characterstatistics_list.html'
     def get_queryset(self):
         return CharacterStatistics.objects.all().order_by('-total_cnt','char')
 
