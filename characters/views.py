@@ -9,8 +9,9 @@ from django.contrib.auth.decorators import user_passes_test
 from .models import UserCredit
 import redis
 from django.views import generic
+from django.core.cache import cache
 from libs.fetch_variants import fetcher
-
+import json
 
 class Index(generic.ListView):
     template_name = 'characters/char_manage.html'
@@ -102,6 +103,33 @@ def set_correct(request):
     else:
         data = {'status': 'error'}
     return JsonResponse(data)
+
+def get_marked_char_count(request):
+    out_lst = cache.get('marked_char_count', None)
+    if out_lst is None:
+        sql = u'SELECT char, \
+        count(CASE WHEN is_correct=1 THEN 1 END) as mark_correct_by_man, \
+        count(CASE WHEN is_correct=-1 THEN 1 END) as mark_wrong_by_man, \
+        count(CASE WHEN is_correct=0 and accuracy>0.5 THEN 1 END) as mark_correct_by_pc, \
+        count(CASE WHEN is_correct=0 and accuracy<0.5 THEN 1 END) as mark_wrong_by_pc \
+    FROM segmentation_character GROUP BY char;'
+        from django.db import connection
+        cursor = connection.cursor()
+        cursor.execute(sql)
+        results = cursor.fetchall()
+        out_lst = []
+        for r in results:
+            d = {
+                u'char': r[0],
+                u'mark_correct_by_man': r[1],
+                u'mark_wrong_by_man': r[2],
+                u'mark_correct_by_pc': r[3],
+                u'mark_wrong_by_pc': r[4],
+            }
+            out_lst.append(d)
+        cache.set('marked_char_count', out_lst)
+    return JsonResponse({'status': 'ok', 'data': out_lst})
+
 '''
 def variant(request):
     lq_variant = fetcher.fetch_variants(u'麤')
