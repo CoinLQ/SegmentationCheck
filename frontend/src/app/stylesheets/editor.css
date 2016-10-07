@@ -135,14 +135,14 @@
 
 .inner_head {
   /*background: linear-gradient(150deg, #ffb347, #ffcc33);*/
-  background-color: rgba(187, 200, 230, 0.380392);
+  background-color: rgb(172, 166, 168);
   border: solid 1px rgba(255, 255, 255, .26);
-  margin-left: 0%;
+  margin-left: -5%;
   height: 60px;
-  top:0;
-  width: 40%;
-  z-index: 10;
-  position: fixed;
+  top: -145px;
+  width: 100%;
+  z-index: 1;
+  position: absolute;
   overflow: hidden;
 }
 
@@ -199,6 +199,7 @@
 
 .old-button {
   position: fixed;
+  display: none;
   left: 60%;
   top: 300px;
   background: white;
@@ -216,6 +217,10 @@
 @media only screen and (max-width : 768px) {
 .svg-wrapper {
   display: none;
+}
+.inner_head {
+  top: -86px;
+  margin-left: -19%;
 }
 .old-button {
   display: none;

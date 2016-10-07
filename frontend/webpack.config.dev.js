@@ -41,7 +41,7 @@ module.exports = {
             },
             {
                 test: /\.less$/,
-                loader: ExtractTextPlugin.extract("css?sourceMap!less?sourceMap")
+                loader: ExtractTextPlugin.extract('postcss-loader!css?sourceMap!less?sourceMap')
             },
             {
                 // move font files found within CSS to the build directory
@@ -54,5 +54,6 @@ module.exports = {
                 loader: "file?name=[path][name].[ext]?[hash]&context=./node_modules"
             }
         ]
-    }
+    },
+    postcss: [ autoprefixer({ browsers: ['last 10 versions'] }) ],
 };

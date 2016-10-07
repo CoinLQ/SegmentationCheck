@@ -4,7 +4,7 @@ import Editor from 'draft-js-plugins-editor-wysiwyg';
 import {DefaultDraftBlockRenderMap} from 'draft-js';
 import createPlugins from './create-plugins';
 import {Map} from 'immutable';
-
+import Headroom from 'react-headroom'
 
 
 class WysiwygEditor extends Component {
@@ -17,6 +17,10 @@ class WysiwygEditor extends Component {
     styleListItem: {},
   }
 
+
+  save(){
+
+    }
   constructor(props) {
     super(props);
     this.batch = batch(200);
@@ -29,7 +33,7 @@ class WysiwygEditor extends Component {
       this.customBlockRendering(props)
     );
 
-    this.state = {};
+    this.state = {saved: false};
   }
 
   componentWillUnmount(){
@@ -112,12 +116,12 @@ class WysiwygEditor extends Component {
 
   render() {
     const {editorState} = this;
+    const {saved} = this.state;
     const {isDragging, progress, readOnly} = this.props;
-    debugger;
     const { UndoButton, RedoButton } = this.plugins[this.plugins.length-1];
     return (
 
-
+                  <div>
                   <div style={Object.assign(this.props.style, {
                       display: 'flex'
                     })}>
@@ -139,10 +143,25 @@ class WysiwygEditor extends Component {
                           onChange={this.onChange}
                           ref="editor"
                   />
-                  <UndoButton onChange={ this.onChange } editorState={ this.editorState } />
-                  <RedoButton onChange={ this.onChange } editorState={ this.editorState } />
+                   <Headroom style={{ background: 'rgb(57, 111, 176)',
+                        boxShadow: '1px 1px 1px rgba(0,0,0,0.25)'}}>
+                        <div id="HFtnBtn" >
+                    <UndoButton onChange={ this.onChange } editorState={ this.editorState } ><span className="fa fa-undo"></span></UndoButton>
+                    <RedoButton onChange={ this.onChange } editorState={ this.editorState } />
+                    <button className="draftJsUndoPlugin__button__3Vugn" onClick={::this.save} data-tooltip="保存" ><span className="fa fa-floppy-o"></span></button>
+                    </div>
+                   </Headroom>
+                  <div className="inner_head">
+
+                  <div id="HFtnBtn" >
+                    <UndoButton onChange={ this.onChange } editorState={ this.editorState } ><span className="fa fa-undo"></span></UndoButton>
+                    <RedoButton onChange={ this.onChange } editorState={ this.editorState } />
+                    <button className="draftJsUndoPlugin__button__3Vugn" onClick={::this.save} data-tooltip="保存" ><span className="fa fa-floppy-o"></span></button>
+                    </div>
+                  </div>
                   </div>
             <button id="CRDrawBtn" className="btn" type="button" data-toggle="popover" data-original-title="" title=""><span className="fa fa-scissors"></span><span className="text">切字</span></button>
+        </div>
         </div>
 
     );

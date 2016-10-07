@@ -36,20 +36,6 @@ export default class Example extends React.Component {
         }
     }
 
-    save(){
-        localStorage.setItem("data", JSON.stringify(this.state.data));
-        localStorage.setItem("hash", this.hash);
-
-        this.setState({
-            saved: true
-        });
-        setTimeout(()=>{
-            this.setState({
-                saved: false
-            });
-        }, 1500)
-    }
-
     upload = (data, success, failed, progress) => {
         console.log(data.formData);
         request.post('/upload')
@@ -98,46 +84,7 @@ export default class Example extends React.Component {
 
         return (
             <div className="flex-container">
-              <div className="inner_head">
-                    <a className="github-button" href="#" target="_blank">
 
-                    </a>
-
-                    <button className="editor-button" onClick={::this.save}>
-                        {saved ? 'Saved!' : 'Save'}
-                    </button>
-                    <button className="editor-button" onClick={(v)=>this.setState({data:null})}>
-                        Clear
-                    </button>
-                    <div id="HFtnBtn" >
-                        <a id="HSaveBtn" href="javascript:;" className="btn" data-tooltip="tooltip" data-placement="bottom" title="" data-original-title="保存">
-                        <span className="fa fa-floppy-o"></span>
-                        <span className="text hideText">保存</span>
-                        </a>
-                        <a id="HUndoBtn" href="javascript:;" className="btn glow" data-tooltip="tooltip" data-placement="bottom" title="" data-original-title="撤销">
-                        <span className="fa fa-undo"></span>
-                        <span className="text hideText">撤销</span></a>
-                        <a id="HRedoBtn" href="javascript:;" className="btn glow" data-tooltip="tooltip" data-placement="bottom" title="" data-original-title="重做">
-                        <span className="fa fa-repeat"></span>
-                        <span className="text hideText">重做</span></a>
-                    </div>
-                    {/*
-                    <button className={"editor-button"+(view==='json'?' active':'')} onClick={()=>this.setState({view: 'json'})}>
-                        See JSON
-                    </button>
-                    <button className={"editor-button"+(view==='edit'?' active':'')} onClick={()=>this.setState({view: 'edit'})}>
-                        See Editor
-                    </button>
-                    <button className="button" onClick={()=>this.setState({data: Draft.AddBlock(data, 'end', 'div', {}, true)})}>
-                        Horizontal+Vertical
-                    </button>
-                    <button className="button" onClick={()=>this.setState({data: Draft.AddBlock(data, 'start', 'div2', {}, true)})}>Add
-                        Horizontal only
-                    </button>
-                    <button className="button" onClick={()=>this.setState({data: Draft.AddBlock(data, 'start', 'youtube', {}, true)})}>Add
-                        Youtube
-                    </button>*/}
-                    </div>
                 <div className="old-button"><span className="fa fa-arrow-left"></span></div>
 
                 <div className="container-content" style={{display: view==='json' ? 'block' : 'none'}}>

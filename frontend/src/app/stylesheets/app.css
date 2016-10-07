@@ -104,6 +104,10 @@
   display: flex;
   flex-wrap: wrap;
 }
+
+.row:before, .row:after {
+  display: flex;
+}
 .row > [class*='col-'] {
   display: flex;
   flex-direction: column;
@@ -266,26 +270,30 @@
 
 [data-tooltip]:after {
   content: attr(data-tooltip);
-  position: absolute;
-  bottom: 130%;
-  left: 0%;
-  background: #000000;
-  padding: 5px 15px;
-  color: #ffffff;
-  border-radius: 10px;
-  white-space: nowrap;
-  opacity: 0;
-  -webkit-transition: all 0.4s ease;
-  transition: all 0.4s ease;
-  pointer-events: none;
+  font-size: 10px;
+    position:absolute;
+    z-index: 999;
+    white-space:nowrap;
+    bottom:9999px;
+    left: 90%;
+    background:#000;
+    color:#e0e0e0;
+    padding:0px 7px;
+    line-height: 24px;
+    height: 24px;
+
+    opacity: 0;
+    transition:opacity 0.4s ease-out;
 }
 
 [data-tooltip]:hover:after {
-  bottom: 110%;
+ opacity: 1;
+
+    bottom:-12px;
 }
 
 [data-tooltip]:hover:after, a:hover:before {
-  opacity: 1;
+  opacity: 0.5;
 }
 
 /* Sidebar */
@@ -386,3 +394,65 @@
   background-color: rgb(34, 45, 50);
   color: white;
 }
+
+.draftJsUndoPlugin__button__3Vugn {
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  display: inline-block;
+  margin-bottom: 0;
+  font-size: 1.2em;
+  font-weight: normal;
+  margin: 9px -15px 0px 25px;
+  width: 1.6em;
+  line-height: 1.42857143;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  -ms-touch-action: manipulation;
+      touch-action: manipulation;
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  background-image: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+
+
+}
+
+.draftJsUndoPlugin__button__3Vugn:focus {
+  background-color: #eee;
+  color: #999;
+  outline: 0; /* reset for :focus */
+}
+
+.draftJsUndoPlugin__button__3Vugn:hover {
+  animation: btnGlow .5s ease;
+  animation-fill-mode: forwards;
+}
+
+.draftJsUndoPlugin__button__3Vugn:active {
+  background-color: #ddd;
+  color: #777;
+}
+
+.draftJsUndoPlugin__button__3Vugn:disabled {
+  background-color: #F5F5F5;
+  color: #ccc;
+}
+
+header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-width: inherit;
+    height: 60px;
+    border-width: 0 0 1px 0;
+    box-sizing: border-box;
+    z-index: 255;
+}
+
+

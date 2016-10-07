@@ -10,8 +10,8 @@ import DashBoard from "app/apps/views/DashBoard";
 const urls = (
     <Route path="/">
 
-        <Route component={Admin} path="">
-            <IndexRoute  component={DashBoard} />
+        <Route component={Admin} path="" >
+            <IndexRoute components={{main: DashBoard}} />
             {users}
             {papers}
             <Route path="*" component={RouteNotFound}/>

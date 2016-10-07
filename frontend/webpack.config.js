@@ -1,4 +1,6 @@
 var path = require("path");
+var precss       = require('precss');
+var autoprefixer = require('autoprefixer');
 var webpack = require("webpack");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
@@ -55,7 +57,7 @@ module.exports = {
             },
             {
                 test: /\.less$/,
-                loader: ExtractTextPlugin.extract("css?sourceMap!less?sourceMap")
+                loader: ExtractTextPlugin.extract('css?sourceMap!postcss-loader!less?sourceMap')
             },
             {
                 // move font files found within CSS to the build directory
@@ -68,5 +70,8 @@ module.exports = {
                 loader: "file?name=[path][name].[ext]?[hash]&context=./node_modules"
             }
         ]
+    }
+    ,postcss: function () {
+        return [autoprefixer({ browsers: ['last 10 versions'] })];
     }
 };

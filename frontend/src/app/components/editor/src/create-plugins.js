@@ -128,5 +128,6 @@ export default ({ handleUpload, handleDefaultData, plugins = ()=>{}, toolbar = {
   // Blocks
   createImagePlugin({ component: image }),
   createTablePlugin({ component: table, Editor }),
-  createUndoPlugin(),
+  createUndoPlugin({undoContent: <span className="fa fa-undo" data-tooltip="撤销" ></span>,
+                    redoContent: <span className="fa fa-repeat" data-tooltip="重做"></span>}),
 ];

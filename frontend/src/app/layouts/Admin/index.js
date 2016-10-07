@@ -18,15 +18,16 @@ class Admin extends React.Component {
     }
 
     render() {
-        const {adminlte, actions, alerts, children} = this.props;
-
+        const {adminlte, actions, alerts, children, main, navbar} = this.props;
+        debugger;
         return (
             <Wrapper>
-                <MainHeader actions={actions} adminlte={adminlte}/>
+                <MainHeader actions={actions} adminlte={adminlte} navbar={navbar}/>
                 <MainSidebar/>
                 <ContentWrapper adminlte={adminlte}>
                     <Content>
                         {alerts.toList().map((Alert, key) => <Alert key={key}/>)}
+                        {main}
                         {children}
                     </Content>
                 </ContentWrapper>
