@@ -7,4 +7,5 @@ urlpatterns = [
     url(r'^manage$', views.NewIndex.as_view()),
     url(r'^task/$', views.task, name='task'),
     url(r'^set_correct$', views.set_correct, name='set_correct'),
+    url(r'^get_marked_char_count$', views.get_marked_char_count, name='get_marked_char_count'),
 ]
