@@ -74,30 +74,85 @@
 {% block foot  %}
 <script src="/static/js/jquery.cookie.js" charset="utf-8"></script>
 <!--react-->
+<script src="//cdn.bootcss.com/redux/3.5.2/redux.min.js"></script>
 <script src="//cdn.bootcss.com/react/15.3.2/react.js"></script>
 <script src="//cdn.bootcss.com/react/15.3.2/react-dom.js"></script>
 <script src="/static/js/browser.min.js"></script>
 <!--<script src="/static/characters/js/char-area.js" type="text/babel"></script>-->
+<script>
+/** Action Creators */
+function inc() {
+  return {
+    type: 'INCREMENT',
+    data : 2,
+  };
+}
+function dec() {
+  return { type: 'DECREMENT' };
+}
+
+function reducer(state, action) {
+  // 首次调用本函数时设置初始 state
+  state = state || { counter: 0 };
+
+  switch (action.type) {
+    case 'INCREMENT':
+      return { counter: state.counter + action.data };
+    case 'DECREMENT':
+      return { counter: state.counter - 1 };
+    default:
+      return state; // 无论如何都返回一个 state
+  }
+}
+
+var store = Redux.createStore(reducer);
+
+console.log( store.getState() ); // { counter: 0 }
+
+store.dispatch(inc());
+console.log( store.getState() ); // { counter: 1 }
+
+store.dispatch(inc());
+console.log( store.getState() ); // { counter: 2 }
+
+store.dispatch(dec());
+console.log( store.getState() ); // { counter: 1 }
+</script>
 
 <script  type="text/babel">
 var PageSizeSelector = React.createClass({
+    getInitialState: function(){
+        var page_size = $.cookie('charindex_page_size');
+        return {
+            page_size_list: [50,100,200,300,900],
+            page_size: page_size,
+        };
+    },
+    handleSelect: function(item) {
+        var that = this;
+        $.cookie('charindex_page_size', item, { expires: 30 });
+        return function (item) {
+            that.setState({page_size: item})
+            that.props.onPageSizeUpdate( item)
+        };
+    },
     render: function(){
+         var PageSizeChoices = this.state.page_size_list.map(function(choice,i){
+            return(
+                <li onClick={this.handleSelect(choice).bind(this, choice)} key={i}><a>{choice}</a></li>
+            );
+        },this);
         return(
-                <div >
-                每页显示
-                <div id="LineControler" class="btn-group" >
+            <div>
+                <div id="LineControler" className="btn-group" >
                     <button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span>50&nbsp;</span><span className="caret"></span> </button>
+                        <span> {this.state.page_size} </span><span className="caret"></span> </button>
                     <ul className="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <li><a href="javascript:;">50&nbsp;</a></li>
-                        <li><a href="javascript:;">100&nbsp;</a></li>
-                        <li><a href="javascript:;">200&nbsp;</a></li>
-                        <li><a href="javascript:;">300&nbsp;</a></li>
-                        <li><a href="javascript:;">900&nbsp; </a></li>
+                    {PageSizeChoices}
                     </ul>
                 </div>
-                字
-            </div>
+                <h1>{this.state.page_size}</h1>
+             </div>
         );
     }
 })
@@ -136,6 +191,7 @@ var CharArea = React.createClass({
         this.get_characters()
     },
     get_characters: function() {
+        console.log('get_char');
          $.ajax({
           url: this.props.url+"&page_size="+this.state.page_size,
           dataType: 'json',
@@ -149,16 +205,20 @@ var CharArea = React.createClass({
           }.bind(this)
         });
     },
+    handlePageSizeUpdate:function(page_size){
+        this.setState({page_size:page_size});
+        this.get_characters();
+    },
     handleClick: function(event){
         this.setState({page_size:3});
-        this.get_characters()
+        this.get_characters();
     },
     render: function(){
         return(
         <div>
-            <PageSizeSelector />
             <CharList  data={this.state.data}/>
             <div className="btn btn-primary" onClick={this.handleClick}> click me</div>
+            <PageSizeSelector onPageSizeUpdate={this.handlePageSizeUpdate}/>
         </div>
         );
     }
@@ -168,17 +228,6 @@ ReactDOM.render(
   <CharArea url='http://127.0.0.1:8000/api/character?format=json'/>,
   document.getElementById('example')
 );
-</script>
-<script type="text/javascript">
-    $(function() {
-        var page_size = $.cookie('charindex_page_size');
-        $("#LineControler button span:first-of-type").text(page_size);
-    })
-    $("#LineControler li a").click(function () {
-        var page_size = $(this).text();
-        $("#LineControler button span:first-of-type").text($(this).text());
-        $.cookie('charindex_page_size', page_size, { expires: 30 });
-    })
 </script>
 <!-- DataTables -->
 <script src="/static/datatables/jquery.dataTables.min.js"></script>
