@@ -1,42 +1,39 @@
 import React from "react";
-
-
+import ReactDOM from "react-dom";
+import classnames from "classnames";
+import TriMenu from "./TriMenu"
+import VolumeMenu from "./VolumeMenu"
 class VolumnSelection extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { current_tri: 0,
+                       current_vol: 0,
+                     };
+    }
+
     componentDidMount() {
     }
 
+    triChanged = (id) => {
+        this.setState({current_tri: id})
+    }
+
+    volChanged = (id) => {
+        this.setState({current_vol: id})
+    }
 
     render() {
-        const {children} = this.props;
         return (
             <div {...this.props}>
-            <div id="HContents" style={{marginLeft: 46}}>
-                <div className="dropdown">
-                    <a id="HCteTri" href="javascript:;" className="whiteBackground glow" type="button" data-toggle="dropdown">
-                    <span className="text">洪<span className="whiteSpace">
-                    </span>武南藏</span><span className="triangle"></span>
-                    </a>
-                    <ul className="dropdown-menu">
-                        <li>
-                            <a href="javascript:;">高丽藏</a>
-                        </li>
-                        <li>
-                            <a href="javascript:;">赵城金藏</a>
-                        </li>
-                        <li className="disabled"><a href="javascript:;">洪武南藏</a></li>
-                        <li role="separator" className="divider"></li>
-                        <li>
-                            <a href="javascript:;">其他</a>
-                        </li>
-                    </ul>
+                <div id="HContents" style={{marginLeft: 40}} ref='area'>
+                    <TriMenu triChanged={this.triChanged}/>
+                    <VolumeMenu volChanged={this.volChanged}/>
                 </div>
-                <div id="HCteVolCt" className="dropdown"><a id="HCteVol" href="javascript:;" className="whiteBackground glow" type="button" data-toggle="dropdown"><span className="text number">17</span><span className="triangle"></span></a><span>册</span>
-                    <ul className="dropdown-menu">
-                        <li className="disabled"><a href="javascript:;" className="number">17</a></li>
-                        <li><a href="javascript:;" className="number">18</a></li>
-                        <li><a href="javascript:;" className="number">19</a></li>
-                    </ul>
-                </div>
+                <div id="HColNum">
+                <input type="text" className="text number" required="required" pattern="" />
+                <a href="javascript:;" className="btn glow" style={{marginTop: -10}} data-tooltip="跳转">
+                <span className="text hideText">跳转</span>
+                <span className="fa fa-arrow-right" style={{color: 'red'}}></span></a>
             </div>
             </div>
         );

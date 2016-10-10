@@ -8,7 +8,6 @@ import RefreshButton from "app/components/RefreshButton";
 import SearchBox from "app/components/SearchBox";
 import Slider from 'react-slick'
 import PaperContainer from 'app/papers/components/PaperContainer'
-import _ from "lodash";
 import { DZJEditor } from 'app/components/editor/DZJEditor';
 import Example  from 'app/components/editor/wysiwyg/container.js'
 class Container extends React.Component {

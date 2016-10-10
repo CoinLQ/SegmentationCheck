@@ -19,7 +19,6 @@ class Admin extends React.Component {
 
     render() {
         const {adminlte, actions, alerts, children, main, navbar} = this.props;
-        debugger;
         return (
             <Wrapper>
                 <MainHeader actions={actions} adminlte={adminlte} navbar={navbar}/>

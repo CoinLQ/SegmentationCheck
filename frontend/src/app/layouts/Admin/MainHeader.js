@@ -20,10 +20,12 @@ class TopNavbar extends React.Component {
         return (
             <Wrapper>
                 <Logo/>
+                {navbar && <a id="HLogo" style={{padding: 0}}></a>}
+                {navbar  ||
                 <Navbar>
                     <MainSidebarToggle actions={actions} adminlte={adminlte}/>
-                    <a id="HLogo" style={{padding: 0}}></a>
-                    {navbar ||
+
+
                     <Menu>
                         <Nav>
 
@@ -31,8 +33,10 @@ class TopNavbar extends React.Component {
                             <ControlSidebarToggle actions={actions} adminlte={adminlte}/>
                         </Nav>
                     </Menu>
-                    }
+
                 </Navbar>
+                }
+
             </Wrapper>
         );
     }
