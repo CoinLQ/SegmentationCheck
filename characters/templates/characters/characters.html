@@ -103,7 +103,7 @@ function render_char_area(){
     }
     $.getJSON("/api/character?page_size="+page_size+"&is_correct=0&char="+_char,function(result){
         if(result.models.length==0){
-            //location.reload();
+            location.reload();
         }
         renderCharArea("#charlistArea",result.models);
         binding_char_check('#charlistArea');
