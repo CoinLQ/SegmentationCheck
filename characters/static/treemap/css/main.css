@@ -1,0 +1,298 @@
+@import "font-awesome.min.css";
+* {
+    margin: 0;
+    padding: 0;
+}
+
+ul {
+    list-style: none;
+}
+
+body {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    min-width: 1000px;
+    min-height: 600px;
+    font-family: "Microsoft YaHei", Arial, Helvetica, sans-serif, "宋体";
+}
+
+nav {
+    position: fixed;
+    top: 4px;
+    left: 8px;
+    z-index: 254;
+}
+
+.ledgend {
+    display: none;
+    position: absolute;
+    z-index: 256;
+    top: 0;
+    left: 0;
+}
+
+.ledgend ul {
+    position: absolute;
+    top: 16px;
+    width: 240px;
+}
+
+.ledgend ul li {
+    padding: 4px 8px;
+    margin-bottom: 8px;
+    border: solid 1px white;
+    border-radius: 4px;
+}
+
+.button {
+    display: block;
+    float: left;
+    margin-right: 8px;
+    width: 40px;
+    height: 40px;
+    font-size: 21px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(95, 65, 75, .38);
+    color: white;
+    cursor: pointer;
+    z-index: 254;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, .16);
+}
+
+#LedgendBtn {
+    background-image: url(../img/ledgend.png);
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+.button:hover,
+.button:active,
+.button:focus {
+    outline: none;
+    background: rgba(95, 65, 75, .62);
+}
+
+#Stage {
+    width: 100%;
+    height: inherit;
+    margin: auto;
+    position: relative;
+}
+
+.node {
+    cursor: pointer;
+    overflow: hidden;
+    position: absolute;
+    text-align: center;
+    border-radius: 4px;
+}
+
+.node[data-level="1"],
+.lightbox {
+    cursor: default;
+}
+
+.node[data-level="5"] .char {
+    font-size: 2.25em;
+}
+
+.node[data-level="4"] .char {
+    font-size: 1.6em;
+}
+
+.node[data-level="2"] .char {
+    font-size: .38em;
+}
+
+
+/*.node[data-level="1"] .char {
+    font-size: .38em;
+}*/
+
+[data-per="0"] {
+    background: #C9BEB6;
+}
+
+.lightbox[data-per="0"] {
+    background: #F0EAE5;
+}
+
+[data-per="1"] {
+    background: #A3A4D8;
+}
+
+.lightbox[data-per="1"] {
+    background: #DBDCF5;
+}
+
+[data-per="2"] {
+    background: #A7DEE5;
+}
+
+.lightbox[data-per="2"] {
+    background: #DDF8FB;
+}
+
+[data-per="3"] {
+    background: #A2D789;
+}
+
+.lightbox[data-per="3"] {
+    background: #DBF5CB;
+}
+
+[data-per="4"] {
+    background: #FBD97A;
+}
+
+.lightbox[data-per="4"] {
+    background: #FEF6C1;
+}
+
+[data-per="5"] {
+    background: #EBA1BE;
+}
+
+.lightbox[data-per="5"] {
+    background: #FCDBEA;
+}
+
+.node[data-level="3"] {
+    border-radius: 2px;
+}
+
+
+/*.node[data-level="3"] .char {
+    display: none;
+}*/
+
+.node[data-level="3"] .detail {
+    background: rgba(255, 255, 255, .62);
+}
+
+.node:not([data-level="2"]):not([data-level="1"]):not(.lightbox):focus,
+.node:not([data-level="2"]):not([data-level="1"]):not(.lightbox):hover {
+    box-shadow: 0 0 64px white;
+    border: solid 2px white;
+    margin: -2px 0 0 -2px;
+    z-index: 253;
+}
+
+.node:hover .char {
+    font-weight: bold;
+}
+
+.lightbox .detail,
+.hideText .text {
+    display: none;
+}
+
+.container {
+    position: relative;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: inherit;
+    font-size: 10px;
+}
+
+.char {
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 48%;
+    margin: -.6em 0 0 -.5em;
+}
+
+.node.lightbox .char {
+    display: block;
+    font-size: 55px;
+    font-weight: bold;
+    z-index: 2000;
+}
+
+.detail {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, .38);
+    border-radius: inherit;
+}
+
+.demo,
+.ledgend li.demo {
+    box-sizing: border-box;
+    border: solid 3px transparent;
+    border-bottom-color: orange;
+    border-top-color: orange;
+    background: rgba(255, 255, 255, .38);
+}
+
+.ledgend ul li:only-child {
+    border: none;
+}
+
+#Wrap {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 256;
+    background: rgba(255, 255, 255, .62);
+}
+
+.lightbox {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 640px;
+    height: 640px;
+    margin: -320px 0 0 -320px;
+    z-index: 30000;
+    box-shadow: 0 8px 64px rgba(0, 0, 0, .16);
+}
+
+.lightbox .close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    background: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.close:hover,
+.close:active,
+.close:focus {
+    color: black;
+}
+
+.node svg {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+}
+
+#TextPath {
+    fill: none;
+    stroke: none;
+}
+
+.label {
+    font-weight: bold;
+}
+
+.value {
+    font-family: Georgia, serif;
+    font-weight: normal;
+    font-size: 16px;
+}

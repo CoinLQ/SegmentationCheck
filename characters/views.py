@@ -98,6 +98,9 @@ def set_correct(request):
         data = {'status': 'error'}
     return JsonResponse(data)
 
+def tree_map(request):
+    return render(request, 'characters/tree_map.html')
+
 def get_marked_char_count(request):
     out_lst = cache.get('marked_char_count', None)
     if out_lst is None:
