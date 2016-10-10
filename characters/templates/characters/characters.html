@@ -42,7 +42,8 @@
             </div>
             <strong id='checkchar' style='font-size:36px; margin:10px;padding:8px;color:#483D8B;'>{{char}}</strong>
             <a target="_blank" href="http://hanzi.lqdzj.cn/hanzi-dict/search?param={{char}}">查看異體字字典</a>
-            点选字形不正确或切错的字(详细说明见下方) <img src="/static/img/legend.png"/>
+            <a target="_blank" href="/characters/task/help">示例说明</a>
+            <img src="/static/img/legend.png"/>
             <div id='variant_list'>{{variant_lst|safe}} </div>
             <div style="float:right; margin-right:64px;">
                 每页显示
@@ -59,23 +60,13 @@
                 字
             </div>
             <div id='charlistArea'>
-                <p class="bg-info" style='margin:20px;padding:10px;'>审核模式只显示未审核的字形，浏览模式分页显示所有字形。</p>
+                <p class="bg-info hidden" style='margin:20px;padding:40px;'>审核模式只显示未审核的字形，浏览模式分页显示所有字形。</p>
             </div><!--end charlistArea -->
             <div style="clear:both;"> </div>
-            <div  class="btn btn-primary batch-check" >批量提交</div>
+            <div  class="btn btn-primary batch-check-correct" >批量正确</div>
+            <div  class="btn btn-primary batch-check-error" >批量错误</div>
+            <a   href="javascript:location.reload()" class="btn btn-primary batch-check-error" >下一页</a>
 
-            <blockquote style="margin:5px">
-                <p>通过鼠标左键点选字形不正确或切错的字，
-                    然后点击【批量审核通过按钮】，之后页面会自动弹出新的一页；
-                    请大家仔细认真核查，按以下标准点选：
-                </p>
-                <ol>
-                    <li>不要点选正确字形，即没有明显的少切、多切、切错等现象的字形；</li>
-                    <li>不要点选异体字字形，比如无、無，都算是正确的；</li>
-                    <li>不要点选跟正确字形相差非常小的字形，比如字的边缘存在多余的小黑点（而不是笔划）；</li>
-                    <li>不要点选不认识的生僻字形，除非经过准确的考证后可以认定并非本字的异体字形的情况。</li>
-                </ol>
-            </blockquote>
         </div>
 
     </div>
@@ -106,7 +97,7 @@ function render_char_area(){
     }
     $.getJSON("/api/character?page_size="+page_size+"&is_correct=0&char="+_char,function(result){
         if(result.models.length==0){
-            location.reload();
+            //location.reload();
         }
         renderCharArea("#charlistArea",result.models);
         binding_char_check('#charlistArea');
@@ -138,6 +129,21 @@ function binding_char_check(area){
           }
         $.post('/characters/set_correct', data );
     });
+    $(selector).dblclick(function(){
+          var data = {'id': this.id};
+          data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+          data['char'] = $('#checkchar').text();
+          if ($(this).hasClass('correct-char')) {
+            $(this).removeClass('correct-char');
+            $(this).addClass('error-char');
+            data['is_correct'] = -1;
+          } else {
+            $(this).removeClass('error-char');
+            $(this).addClass('correct-char');
+            data['is_correct'] = 1;
+          }
+        $.post('/characters/set_correct', data );
+    });
 }
 </script>
 <script>
@@ -152,7 +158,8 @@ function renderCharArea(area,charArr){
 </script>
 <script>
 $(function(){
-    $('.batch-check').click(handler);
+    $('.batch-check-correct').click(handler);
+    $('.batch-check-error').click(handler_default_error);
 })
 function handler() {
     var arr =[];
@@ -165,13 +172,36 @@ function handler() {
     var updateNum = $('.char-image').length - $('.correct-char').length - $('.error-char').length;
     data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
     data['char'] = $('#checkchar').text();
-    data['is_correct'] = 0;
+    data['is_correct'] = 1;
     data['updateNum'] = updateNum;
-    $('.batch-check').addClass('btn-warning');
-    $('.batch-check').off('click');
+    $('.batch-check-correct').addClass('btn-warning');
+    $('.batch-check-correct').off('click');
     setTimeout(function(){
-      $('.batch-check').removeClass('btn-warning');
-      $('.batch-check').click(handler)}, 2000);
+      $('.batch-check-correct').removeClass('btn-warning');
+      $('.batch-check-correct').click(handler)}, 2000);
+    $.post('/characters/set_correct', data, function() {
+          location.reload();
+    });
+}
+
+function handler_default_error() {
+    var arr =[];
+    var charlist = $("#charlistArea").children();
+    for (var i=0;i<charlist.length;i++){
+        var tmp = charlist[i];
+        arr.push(tmp.id);
+    }
+    var data = {'charArr':arr};
+    var updateNum = $('.char-image').length - $('.correct-char').length - $('.error-char').length;
+    data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+    data['char'] = $('#checkchar').text();
+    data['is_correct'] = -1;
+    data['updateNum'] = updateNum;
+    $('.batch-check-error').addClass('btn-warning');
+    $('.batch-check-error').off('click');
+    setTimeout(function(){
+      $('.batch-check-error').removeClass('btn-warning');
+      $('.batch-check-error').click(handler)}, 2000);
     $.post('/characters/set_correct', data, function() {
           location.reload();
     });

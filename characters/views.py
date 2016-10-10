@@ -23,6 +23,9 @@ class Index(generic.ListView):
 def index(request):
     return render(request, 'characters/character_index.html')
 
+def help(request):
+    return render(request, 'characters/characters_help.html')
+
 @user_passes_test(lambda u:u.is_staff, login_url='/quiz')
 def task(request):
     # redis_client = redis.StrictRedis(host='localhost', port=6379, db=2)
