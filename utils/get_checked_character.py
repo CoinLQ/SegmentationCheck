@@ -11,7 +11,7 @@ all_characters_key = 'seg_web:all_characters'
 stage_characters = 'seg_web:stage_characters'
 
 def main():
-    conn = psycopg2.connect("dbname=dzj_characters user=dzj password=dzjsql")
+    conn = psycopg2.connect("host=localhost dbname=dzj_characters user=dzj password=dzjsql")
     cur = conn.cursor()
     char_count_map = {}
     cur.execute("select char, count(*) from segmentation_character group by char;")
