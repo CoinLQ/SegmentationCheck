@@ -127,7 +127,7 @@ function binding_char_check(area){
           var data = {'id': this.id};
           data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
           data['char'] = $('#checkchar').text();
-          if (!$(this).hasClass('error-char')) {
+          if ($(this).hasClass('error-char')) {
             $(this).removeClass('error-char');
             $(this).addClass('correct-char');
             data['is_correct'] = 1;
