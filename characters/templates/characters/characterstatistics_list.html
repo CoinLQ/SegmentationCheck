@@ -74,65 +74,24 @@
 {% block foot  %}
 <script src="/static/js/jquery.cookie.js" charset="utf-8"></script>
 <!--react-->
-<script src="//cdn.bootcss.com/redux/3.5.2/redux.min.js"></script>
+<!--<script src="//cdn.bootcss.com/redux/3.5.2/redux.min.js"></script>-->
 <script src="//cdn.bootcss.com/react/15.3.2/react.js"></script>
 <script src="//cdn.bootcss.com/react/15.3.2/react-dom.js"></script>
 <script src="/static/js/browser.min.js"></script>
 <!--<script src="/static/characters/js/char-area.js" type="text/babel"></script>-->
-<script>
-/** Action Creators */
-function inc() {
-  return {
-    type: 'INCREMENT',
-    data : 2,
-  };
-}
-function dec() {
-  return { type: 'DECREMENT' };
-}
-
-function reducer(state, action) {
-  // 首次调用本函数时设置初始 state
-  state = state || { counter: 0 };
-
-  switch (action.type) {
-    case 'INCREMENT':
-      return { counter: state.counter + action.data };
-    case 'DECREMENT':
-      return { counter: state.counter - 1 };
-    default:
-      return state; // 无论如何都返回一个 state
-  }
-}
-
-var store = Redux.createStore(reducer);
-
-console.log( store.getState() ); // { counter: 0 }
-
-store.dispatch(inc());
-console.log( store.getState() ); // { counter: 1 }
-
-store.dispatch(inc());
-console.log( store.getState() ); // { counter: 2 }
-
-store.dispatch(dec());
-console.log( store.getState() ); // { counter: 1 }
-</script>
-
 <script  type="text/babel">
+
+//var page_size = $.cookie('charindex_page_size');
+//$.cookie('charindex_page_size', item, { expires: 30 });
 var PageSizeSelector = React.createClass({
     getInitialState: function(){
-        var page_size = $.cookie('charindex_page_size');
         return {
             page_size_list: [50,100,200,300,900],
-            page_size: page_size,
         };
     },
     handleSelect: function(item) {
         var that = this;
-        $.cookie('charindex_page_size', item, { expires: 30 });
         return function (item) {
-            that.setState({page_size: item})
             that.props.onPageSizeUpdate( item)
         };
     },
@@ -151,7 +110,7 @@ var PageSizeSelector = React.createClass({
                     {PageSizeChoices}
                     </ul>
                 </div>
-                <h1>{this.state.page_size}</h1>
+                <h1>{this.props.page_size}</h1>
              </div>
         );
     }
@@ -191,7 +150,6 @@ var CharArea = React.createClass({
         this.get_characters()
     },
     get_characters: function() {
-        console.log('get_char');
          $.ajax({
           url: this.props.url+"&page_size="+this.state.page_size,
           dataType: 'json',
@@ -207,27 +165,30 @@ var CharArea = React.createClass({
     },
     handlePageSizeUpdate:function(page_size){
         this.setState({page_size:page_size});
-        this.get_characters();
+        setTimeout(function(){this.get_characters();}.bind(this),5);
     },
     handleClick: function(event){
         this.setState({page_size:3});
-        this.get_characters();
+        setTimeout(function(){this.get_characters();}.bind(this),5);
     },
     render: function(){
         return(
         <div>
             <CharList  data={this.state.data}/>
             <div className="btn btn-primary" onClick={this.handleClick}> click me</div>
-            <PageSizeSelector onPageSizeUpdate={this.handlePageSizeUpdate}/>
+            <PageSizeSelector onPageSizeUpdate={this.handlePageSizeUpdate} page_size={this.state.page_size}/>
         </div>
         );
     }
 })
+function render(){
+   ReactDOM.render(
+      <CharArea url='http://127.0.0.1:8000/api/character?format=json'/>,
+      document.getElementById('example')
+    );
+}
+render();
 
-ReactDOM.render(
-  <CharArea url='http://127.0.0.1:8000/api/character?format=json'/>,
-  document.getElementById('example')
-);
 </script>
 <!-- DataTables -->
 <script src="/static/datatables/jquery.dataTables.min.js"></script>
