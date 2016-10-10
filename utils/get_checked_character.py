@@ -41,8 +41,7 @@ def main():
     for char, count in char_count_map.iteritems():
         if char in remained_characters and \
                 (char not in char_correct_map_lst[0] or char not in char_correct_map_lst[1] or \
-                             char_correct_map_lst[0][char] < 50 or char_correct_map_lst[1][char] < 50)\
-                and char_count_map[char] > 5:
+                             char_correct_map_lst[0][char] < 50 or char_correct_map_lst[1][char] < 50):
 
             selected_character_lst.append( (char, count) )
 
