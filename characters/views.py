@@ -33,7 +33,7 @@ def task(request):
     # total_cnt = redis_client.get(stage_characters)
     # select_cnt = redis_client.llen(selected_characters)
     # done_cnt = total_cnt - select_cnt
-    query = CharacterStatistics.objects.filter(total_cnt__lte=5)
+    query = CharacterStatistics.objects.filter(total_cnt__lte=5).exclude(total_cnt=0)
     total_cnt = query.count()
     select_cnt = query.filter(uncheck_cnt__gt=0).count()
     done_cnt = total_cnt - select_cnt
