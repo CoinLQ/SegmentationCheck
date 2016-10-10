@@ -43,6 +43,10 @@
         $ python manage.py loaddata segmentation/fixtures/character.json
 
 8. 运行本地开发服务器
+        如果要使用dev环境配置,可以在.bashrc 类似的脚本中加入:
+        DJANGO_SETTINGS_MODULE="SegmentationCheck.settings_dev"
+        export DJANGO_SETTINGS_MODULE
+
 
         $ python manage.py runserver
 
