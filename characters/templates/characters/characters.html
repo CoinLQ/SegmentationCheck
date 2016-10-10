@@ -29,7 +29,7 @@
 <div class="container">
     <div class='row show-grid'>
         <div class='col-md-12 col-xs-12'>
-            系統總進度:
+            任务总进度:
             <div class="progress progress-striped">
                 <div class="progress-bar " role="progressbar" data-transitiongoal="{{ done_cnt}}" aria-valuemax="{{total_cnt}}"></div>
             </div>
@@ -59,7 +59,7 @@
                 <p class="bg-info" style='margin:20px;padding:10px;'>审核模式只显示未审核的字形，浏览模式分页显示所有字形。</p>
             </div><!--end charlistArea -->
             <div style="clear:both;"> </div>
-            <div  class="btn btn-primary batch-check" >批量审核通过(除了有错误标记的都会通过)</div>
+            <div  class="btn btn-primary batch-check" >批量提交</div>
 
             <blockquote style="margin:5px">
                 <p>通过鼠标左键点选字形不正确或切错的字，
@@ -119,7 +119,7 @@ $(render_char_area())
 </script>
 <script>
 function binding_char_check(area){
-    var selector = area + ' .char-image'
+    var selector = area; //+ ' .char-image'
     $(selector).click(function(){
           var data = {'id': this.id};
           data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
@@ -162,7 +162,7 @@ function handler() {
     var updateNum = $('.char-image').length - $('.correct-char').length - $('.error-char').length;
     data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
     data['char'] = $('#checkchar').text();
-    data['is_correct'] = 1;
+    data['is_correct'] = 0;
     data['updateNum'] = updateNum;
     $('.batch-check').addClass('btn-warning');
     $('.batch-check').off('click');

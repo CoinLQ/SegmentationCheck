@@ -27,8 +27,9 @@ def task(request):
     redis_client = redis.StrictRedis(host='localhost', port=6379, db=2)
     all_characters_key = 'seg_web:all_characters'
     selected_characters = 'seg_web:selected_characters'
+    stage_characters = 'seg_web:stage_characters'
 
-    total_cnt = redis_client.llen(all_characters_key)
+    total_cnt = redis_client.llen(stage_characters)
     select_cnt = redis_client.llen(selected_characters)
     done_cnt = total_cnt - select_cnt
 
