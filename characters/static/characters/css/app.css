@@ -1,24 +1,4 @@
-  .error-char {
-    background-color: pink;
-    border:solid red 2px !important;
-  }
-  .correct-char {
-    background-color: #9AFF9A;
-    border:solid green 2px !important;
-  }
-  .flow {float:left; min-width:80px; min-height:80px; margin:5px;border:solid blue 1px;}
 
-  .selected {
-      background-color: #aaa !important;
-  }
-
-.unchecked-box{
-    position: relative;
-    padding: 25px 15px 15px;
-    background-color: #fafafa;
-    border: 1px solid #ddd;
-    border-bottom-width: 0;
-}
 .sidecol {
     height:80%;
     overflow:auto;
@@ -82,4 +62,50 @@ div.dataTables_paginate span {
 }
 
 /*for char area*/
+.radio-btn {
+    display:inline;
+    margin: 5px,5px;
+    color: #8c96a0;
+    box-shadow: 0 1px 2px #fff inset,0 -1px 0 #a8abae inset;
+    background: -webkit-linear-gradient(top,#f2f3f7,#e4e8ec);
+    background: -moz-linear-gradient(top,#f2f3f7,#e4e8ec);
+    background: linear-gradient(top,#f2f3f7,#e4e8ec);
+    border: 1px gray solid;
+    border-radius:5px;
+    -moz-border-radius:5px; /* Old Firefox */
+    padding: 4px 3px;
+    text-shadow:1px 1px 1px #333;
+}
+.radio-btn:hover{
+    color:cornflowerblue;
+    cursor:pointer;
+}
+.radio-btn:active{
+    color: azure;
+}
+.radio-btn.actived{
+    border: 1px solid blue;
+    color:azure;
+}
+  .error-char {
+    background-color: pink;
+    border:solid red 2px !important;
+  }
+  .correct-char {
+    background-color: #9AFF9A;
+    border:solid green 2px !important;
+  }
+  .flow {float:left; min-width:80px; min-height:80px; margin:5px;border:solid blue 1px;}
+
+  .selected {
+      background-color: #aaa !important;
+  }
+
+.unchecked-box{
+    position: relative;
+    padding: 25px 15px 15px;
+    background-color: #fafafa;
+    border: 1px solid #ddd;
+    border-bottom-width: 0;
+}
 

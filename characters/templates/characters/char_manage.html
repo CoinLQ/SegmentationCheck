@@ -48,12 +48,16 @@
           <!-- /.box -->
         </div><!--end col-md-3 -->
         <div class='col-md-8 col-xs-8'>
-            <div style="float:right; margin-right:64px;">
+            <div style="float:right; margin-right:64px;margin-top:75px;">
+                <div class="radio-btn actived" data-value="0">未标记</div>
+                <div class="radio-btn" data-value="-1">人工标错</div>
+                <div class="radio-btn" data-value="1">人工标对</div>
                 每页显示
                 <div id="LineControler" class="btn-group" style="padding:0 16px;">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span>100&nbsp;</span><span class="caret"></span> </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                        <li><a href="javascript:;">5&nbsp;</a></li>
                         <li><a href="javascript:;">50&nbsp;</a></li>
                         <li><a href="javascript:;">100&nbsp;</a></li>
                         <li><a href="javascript:;">200&nbsp;</a></li>
@@ -98,91 +102,128 @@
 <script src="/static/js/jquery.simplePagination.js" charset="utf-8"></script>
 <script src="/static/js/jquery.cookie.js" charset="utf-8"></script>
 <script >
-var g_char;
-var page_size = 30;
+var charListContainer =
+    {
+        char: '',
+        page_size: 15,
+        page_number: 1,
+        filter: '0',
+        data: [],
+        pagination: {},
+        paginationRender: function(){
+            var _items = this.pagination.total_entries;
+            var _page_size = this.page_size
+            var that = this;
+            $('#pagearea').pagination({
+                items: _items,
+                itemsOnPage: _page_size,
+                cssStyle: 'light-theme',
+                onPageClick: function(pageNumber, event) {
+                        // Callback triggered when a page is clicked  Page number is given as an optional parameter
+                        that.page_number = pageNumber;
+                        that.fetchDataAndRender();
+                    },
+            });
+        },
+        hello: function(){
+            alert('hello');
+        },
+        renderCharArea : function(){
+            var area = "#charBrowseArea";
+            var charArr = this.data;
+            $(area).empty();
+            txt =''
+            $.each(charArr, function(i, field){
+                txt = "<div id="+field.id+" class='flow "
+                if (field.is_correct <0){
+                    txt += "error-char ";
+                }
+                else if (field.is_correct == 1){
+                    txt += "correct-char ";
+                }
+                txt +="char-image' title='"+field.id+"'><img src='"+field.image_url+"' alt='加载中'></div>"
+                $(area).append(txt);
+              });
+        },
+        binding_char_check : function (char){
+            var selector = '#charBrowseArea .char-image'
+            var _char = char;
+            $(selector).click(function(){
+                  var data = {'id': this.id};
+                  data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+                  data['char'] = _char;
+                  if ($(this).hasClass('error-char')) {
+                    $(this).removeClass('error-char');
+                    $(this).addClass('correct-char');
+                    data['is_correct'] = 1;
+                  } else {
+                    $(this).removeClass('correct-char');
+                    $(this).addClass('error-char');
+                    data['is_correct'] = -1;
+                  }
+                $.post('/characters/set_correct', data);
+            });
+        },
+        renderCharAndBind : function(){
+            this.renderCharArea();
+            this.binding_char_check(this.char);
+        },
+        fetchDataAndRender: function(){
+            var that = this;
+            var query = "/api/character?page_size="+this.page_size
+                +"&char="+this.char
+                +"&page="+this.page_number
+                +"&is_correct="+this.filter;
+            $.getJSON(query,function(result){
+                that.data = result.models;
+                that.pagination = result.pagination;
+                that.renderCharAndBind();
+                that.paginationRender();
+            });
+        }
+    }
+//inital page_size
+$(function(){
+    var page_size = $.cookie('charindex_page_size');
+    if(page_size== undefined){
+        page_size = 50;
+    }
+    charListContainer.page_size = page_size;
+});
+
+//handler char select
 $('#char_index #char_index_tbody').on('click', 'tr', function(event) {
     $('tr').removeClass("selected");
     $(this).addClass("selected");
-    g_char = $("tr.selected td:eq(1)").text();
-    page_size = $.cookie('charindex_page_size');
-    if ( page_size==null) {
-        page_size = 30;
-    }
-    $.getJSON("/api/character?page_size="+page_size+"&char="+g_char,function(result){
-        data = result.models;
-        pagination = result.pagination;
-        paginationFun(pagination.total_entries,page_size);
-        renderCharArea("#charBrowseArea",data);
-        binding_char_check('#charBrowseArea');
-    });
+    charListContainer.char = $("tr.selected td:eq(1)").text();
+    charListContainer.page_number=1;
+    charListContainer.fetchDataAndRender();
 })
 
-function binding_char_check(area){
-    var selector = area + ' .char-image'
-        $(selector).click(function(){
-          var data = {'id': this.id};
-          data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
-          data['char'] =g_char;
-          if ($(this).hasClass('error-char')) {
-            $(this).removeClass('error-char');
-            $(this).addClass('correct-char');
-            data['is_correct'] = 1;
-          } else {
-            $(this).removeClass('correct-char');
-            $(this).addClass('error-char');
-            data['is_correct'] = -1;
-          }
-        $.post('/characters/set_correct', data);
-    });
-}
 
-function renderCharArea(area,charArr){
-    $(area).empty();
-    txt =''
-    $.each(charArr, function(i, field){
-        txt = "<div id="+field.id+" class='flow "
-        if (field.is_correct <0){
-            txt += "error-char ";
-        }
-        else if (field.is_correct == 1){
-            txt += "correct-char ";
-        }
-        txt +="char-image' title='"+field.id+"'><img src='"+field.image_url+"' alt='加载中'></div>"
-        $(area).append(txt);
-      });
-}
+//page_size selector
+$(function() {
+    var page_size = charListContainer.page_size;
+    $("#LineControler button span:first-of-type").text(page_size);
+})
+$("#LineControler li a").click(function () {
+    var page_size = $(this).text();
+    charListContainer.page_size = page_size;
+    $("#LineControler button span:first-of-type").text(page_size);
+    $.cookie('charindex_page_size', page_size, { expires: 30 });
+    charListContainer.page_number=1;
+    charListContainer.fetchDataAndRender();
+})
 
-function paginationFun(_items,_itemsOnpage){
-    $('#pagearea').pagination({
-        items: _items,
-        itemsOnPage: _itemsOnpage,
-        cssStyle: 'light-theme',
-        onPageClick: function(pageNumber, event) {
-                // Callback triggered when a page is clicked
-                // Page number is given as an optional parameter
-                var url = "/api/character?page_size="+page_size
-                    +"&char="+g_char
-                    +"&page="+pageNumber
-                $.getJSON(url,function(result){
-                    renderCharArea("#charBrowseArea",result.models);
-                    binding_char_check('#charBrowseArea');
-                });
-            },
-    });
-}
-</script>
-<script type="text/javascript">
-    $(function() {
-        var page_size = $.cookie('charindex_page_size');
-        $("#LineControler button span:first-of-type").text(page_size);
-    })
-    $("#LineControler li a").click(function () {
-        var page_size = $(this).text();
-        $("#LineControler button span:first-of-type").text($(this).text());
-        $.cookie('charindex_page_size', page_size, { expires: 30 });
-    })
-</script>
-<script>
+//filter button handle
+$('.radio-btn').click(function() {
+    $('.radio-btn').removeClass('actived');
+    $(this).addClass('actived');
+    charListContainer.filter=$(this).attr('data-value');
+    charListContainer.fetchDataAndRender();
+})
+
+// batch handle
 $(function(){
     $('.batch-check').click(function(){
         var btn = $(this);
@@ -215,7 +256,7 @@ function handler(is_correct,btn) {
         };
     var updateNum = arr.length;
     data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
-    data['char'] = g_char;
+    data['char'] = charListContainer.char;
     data['updateNum'] = updateNum;
     $.post('/characters/set_correct', data, function() {
        if(data['status']=='ok'){
