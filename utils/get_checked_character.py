@@ -52,7 +52,8 @@ def main():
     redis_client.delete(stage_characters)
     for c in selected_character_lst:
         redis_client.rpush(characters_key, c[0])
-        redis_client.rpush(stage_characters, c[0])
+    total = redis_client.llen(characters_key)
+    redis_client.set(stage_characters, total)
     redis_client.set(characters_index_key, -1)
 
 def get_checked_character():

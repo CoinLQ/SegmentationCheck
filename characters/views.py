@@ -12,6 +12,7 @@ from django.views import generic
 from django.core.cache import cache
 from libs.fetch_variants import fetcher
 import json
+import random
 
 class Index(generic.ListView):
     template_name = 'characters/char_manage.html'
@@ -24,13 +25,17 @@ def index(request):
 
 @user_passes_test(lambda u:u.is_staff, login_url='/quiz')
 def task(request):
-    redis_client = redis.StrictRedis(host='localhost', port=6379, db=2)
-    all_characters_key = 'seg_web:all_characters'
-    selected_characters = 'seg_web:selected_characters'
-    stage_characters = 'seg_web:stage_characters'
+    # redis_client = redis.StrictRedis(host='localhost', port=6379, db=2)
+    # all_characters_key = 'seg_web:all_characters'
+    # selected_characters = 'seg_web:selected_characters'
+    # stage_characters = 'seg_web:stage_characters'
 
-    total_cnt = redis_client.llen(stage_characters)
-    select_cnt = redis_client.llen(selected_characters)
+    # total_cnt = redis_client.get(stage_characters)
+    # select_cnt = redis_client.llen(selected_characters)
+    # done_cnt = total_cnt - select_cnt
+    query = CharacterStatistics.objects.filter(total_cnt__lte=5)
+    total_cnt = query.count()
+    select_cnt = query.filter(uncheck_cnt__gt=0).count()
     done_cnt = total_cnt - select_cnt
 
     today = datetime.datetime.now().strftime("%Y%m%d")
@@ -48,9 +53,9 @@ def task(request):
         request.session['check_char_number'] = 0
         request.session['checkin_date'] = today
     check_char_number = request.session.get('check_char_number',0)
-    #char_lst = CharacterStatistics.objects.filter(uncheck_cnt__gt=0).order_by('-total_cnt')[:30]
-    #char = random.choice(char_lst)
-    char = get_checked_character()
+    char_lst = query.filter(uncheck_cnt__gt=0).order_by('-total_cnt')[:30]
+    char = random.choice(char_lst)
+    #char = get_checked_character()
     #lq_variant = fetcher.fetch_variants(u'麤')
     lq_variant = ''
     return render(request,'characters/characters.html',{'char':char,
