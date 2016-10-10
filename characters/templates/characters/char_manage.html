@@ -141,7 +141,7 @@ var charListContainer =
                 else if (field.is_correct == 1){
                     txt += "correct-char ";
                 }
-                txt +="char-image' title='"+field.id+"'><img src='"+field.image_url+"' alt='加载中'></div>"
+                txt +="char-image' title='"+field.id+"'><img src='"+field.image_url+"' alt='加载中'><span class='badge char-info'> "+ field.accuracy+"</span> </div>"
                 $(area).append(txt);
               });
         },

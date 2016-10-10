@@ -95,7 +95,20 @@ div.dataTables_paginate span {
     background-color: #9AFF9A;
     border:solid green 2px !important;
   }
-  .flow {float:left; min-width:80px; min-height:80px; margin:5px;border:solid blue 1px;}
+  .flow {
+  float:left;
+  position:relative;
+  min-width:80px;
+  min-height:80px;
+  margin:5px;
+  border:solid blue 1px;
+  }
+
+  .char-info{
+    position:absolute;
+    right:0;
+    bottom:0;
+  }
 
   .selected {
       background-color: #aaa !important;
