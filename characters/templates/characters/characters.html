@@ -118,31 +118,44 @@ function binding_char_check(area){
           var data = {'id': this.id};
           data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
           data['char'] = $('#checkchar').text();
-          if ($(this).hasClass('error-char')) {
-            $(this).removeClass('error-char');
-            $(this).addClass('correct-char');
-            data['is_correct'] = 1;
-          } else {
+          // if ($(this).hasClass('error-char')) {
+          //   $(this).removeClass('error-char');
+          //   $(this).addClass('correct-char');
+          //   data['is_correct'] = 1;
+          // } else {
+            // $(this).removeClass('correct-char');
+            // $(this).addClass('error-char');
+            // data['is_correct'] = -1;
+          // }
+        // $.post('/characters/set_correct', data );
+        if (!$(this).hasClass('error-char')) {
             $(this).removeClass('correct-char');
             $(this).addClass('error-char');
             data['is_correct'] = -1;
-          }
-        $.post('/characters/set_correct', data );
+            $.post('/characters/set_correct', data );
+        }
     });
     $(selector).dblclick(function(){
           var data = {'id': this.id};
           data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
           data['char'] = $('#checkchar').text();
-          if ($(this).hasClass('correct-char')) {
-            $(this).removeClass('correct-char');
-            $(this).addClass('error-char');
-            data['is_correct'] = -1;
-          } else {
+          // if ($(this).hasClass('correct-char')) {
+          //   $(this).removeClass('correct-char');
+          //   $(this).addClass('error-char');
+          //   data['is_correct'] = -1;
+          // } else {
+            // $(this).removeClass('error-char');
+            // $(this).addClass('correct-char');
+            // data['is_correct'] = 1;
+          // }
+        // $.post('/characters/set_correct', data );
+        if ($(this).hasClass('error-char')) {
+        {
             $(this).removeClass('error-char');
             $(this).addClass('correct-char');
             data['is_correct'] = 1;
-          }
-        $.post('/characters/set_correct', data );
+            $.post('/characters/set_correct', data );
+        }
     });
 }
 </script>
