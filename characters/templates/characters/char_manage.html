@@ -49,7 +49,8 @@
         </div><!--end col-md-3 -->
         <div class='col-md-8 col-xs-8'>
             <div style="float:right; margin-right:64px;margin-top:75px;">
-                <div class="radio-btn actived" data-value="0">未标记</div>
+                <div class="radio-btn actived" data-value="-10">显示全部</div>
+                <div class="radio-btn" data-value="0">未标记</div>
                 <div class="radio-btn" data-value="-1">人工标错</div>
                 <div class="radio-btn" data-value="1">人工标对</div>
                 每页显示
@@ -72,10 +73,19 @@
             </div>
             <div style="clear:both;"> </div>
             <div style="float:right; margin-right:64px;">
+                <div class='char-pagitor'>
+                    <span class='first paginate_button' id='char_index_first'>First</span>
+                    <span class='previous paginate_button' id='char_index_previous'>Previous</span>
+                    <span class='paginate_page'>Page </span><input class='paginate_input' type='text'>
+                    <span class='paginate_of'> of 34</span>
+                    <span class='next paginate_button' id='char_index_next'>Next</span>
+                    <span class='last paginate_button' id='char_index_last'>Last</span>
+                </div>
                 <div  class="btn btn-primary batch-check" >批量標對</div>
                 <div  class="btn btn-primary batch-check" id="err_btn">批量標錯</div>
             </div>
             <div style="clear:both;"> </div>
+
             <div class="pagec" id="pagearea">
                 <ul class="pagination">
                 </ul>
@@ -107,9 +117,11 @@ var charListContainer =
         char: '',
         page_size: 15,
         page_number: 1,
-        filter: '0',
+        filter: '-10',//show alll
         data: [],
         pagination: {},
+        pagitorRender:function(){
+        },
         paginationRender: function(){
             var _items = this.pagination.total_entries;
             var _page_size = this.page_size
@@ -172,13 +184,16 @@ var charListContainer =
             var that = this;
             var query = "/api/character?page_size="+this.page_size
                 +"&char="+this.char
-                +"&page="+this.page_number
-                +"&is_correct="+this.filter;
+                +"&page="+this.page_number;
+            if(this.filter!=-10){
+                query += "&is_correct="+this.filter;
+            }
             $.getJSON(query,function(result){
                 that.data = result.models;
                 that.pagination = result.pagination;
                 that.renderCharAndBind();
                 that.paginationRender();
+                that.pagitorRender();
             });
         }
     }
@@ -197,6 +212,7 @@ $('#char_index #char_index_tbody').on('click', 'tr', function(event) {
     $(this).addClass("selected");
     charListContainer.char = $("tr.selected td:eq(1)").text();
     charListContainer.page_number=1;
+    charListContainer.filter="-10";
     charListContainer.fetchDataAndRender();
 })
 

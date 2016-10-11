@@ -122,3 +122,6 @@ div.dataTables_paginate span {
     border-bottom-width: 0;
 }
 
+.char-pagitor{
+    display:inline;
+}
