@@ -57,11 +57,14 @@ def task(request):
         request.session['checkin_date'] = today
     check_char_number = request.session.get('check_char_number',0)
     char_lst = query.filter(uncheck_cnt__gt=0).order_by('-total_cnt')[:30]
-    char = random.choice(char_lst)
+    if char_lst:
+        char = random.choice(char_lst).char
+    else:
+        char = u'无'
     #char = get_checked_character()
     #lq_variant = fetcher.fetch_variants(u'麤')
     lq_variant = ''
-    return render(request,'characters/characters.html',{'char':char.char,
+    return render(request,'characters/characters.html',{'char':char,
                                                         'check_char_number':check_char_number,
                                                         'done_cnt':done_cnt,
                                                         'total_cnt':total_cnt,
@@ -88,20 +91,22 @@ def set_correct(request):
                 update(err_cnt=F('err_cnt')-is_correct, correct_cnt=F('correct_cnt')+is_correct)
         Character.objects.filter(id=char_id).update(is_correct=is_correct)
         data = {'status': 'ok'}
-    elif 'charArr[]' in request.POST: # uncheck -> check
+    elif (('e_charArr[]' in request.POST) or ('c_charArr[]' in request.POST)): # uncheck -> check
         check_char_number = request.session.get('check_char_number',0)
         request.session['check_char_number'] = check_char_number+1
-        charArr = request.POST.getlist('charArr[]')
+        charArr = request.POST.getlist('e_charArr[]')
         char = request.POST['char']
-        is_correct = int(request.POST['is_correct'])
-        #updateNum = int(request.POST['updateNum'])
-        updateNum = Character.objects.filter(id__in =charArr).filter(is_correct=0).update(is_correct=is_correct) #TODO remove filter
-        if is_correct == 1:
-            CharacterStatistics.objects.filter(char=char).\
-                update(uncheck_cnt=F('uncheck_cnt')-updateNum, correct_cnt=F('correct_cnt')+updateNum)
-        else:
+        if charArr:
+            updateNum = Character.objects.filter(id__in =charArr).update(is_correct=-1)
             CharacterStatistics.objects.filter(char=char). \
-                update(uncheck_cnt=F('uncheck_cnt')-updateNum, err_cnt=F('err_cnt')+updateNum)
+                    update(uncheck_cnt=F('uncheck_cnt')-updateNum, err_cnt=F('err_cnt')+updateNum)
+
+        charArr = request.POST.getlist('c_charArr[]')
+        if charArr:
+            updateNum = Character.objects.filter(id__in =charArr).update(is_correct=1)
+            CharacterStatistics.objects.filter(char=char).\
+                    update(uncheck_cnt=F('uncheck_cnt')-updateNum, correct_cnt=F('correct_cnt')+updateNum)
+
         data = {'status': 'ok'}
     else:
         data = {'status': 'error'}
