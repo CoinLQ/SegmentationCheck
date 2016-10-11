@@ -42,7 +42,6 @@
             </div>
             <strong id='checkchar' style='font-size:36px; margin:10px;padding:8px;color:#483D8B;'>{{char}}</strong>
             <a target="_blank" href="http://hanzi.lqdzj.cn/hanzi-dict/search?param={{char}}">查看異體字字典</a>
-            <a target="_blank" href="/characters/task/help">示例说明</a>
             <img src="/static/img/legend.png"/>
             <div id='variant_list'>{{variant_lst|safe}} </div>
             <div style="float:right; margin-right:64px;">
@@ -65,7 +64,7 @@
             <div style="clear:both;"> </div>
             <div  class="btn btn-primary batch-check-correct" >批量正确</div>
             <div  class="btn btn-primary batch-check-error" >批量错误</div>
-            <a   href="javascript:location.reload()" class="btn btn-primary batch-check-error" >下一页</a>
+            <div  class="btn btn-primary step-next" >下一步</div>
 
         </div>
 
@@ -97,7 +96,7 @@ function render_char_area(){
     }
     $.getJSON("/api/character?page_size="+page_size+"&is_correct=0&char="+_char,function(result){
         if(result.models.length==0){
-            //location.reload();
+            // location.reload();
         }
         renderCharArea("#charlistArea",result.models);
         binding_char_check('#charlistArea');
@@ -118,42 +117,18 @@ function binding_char_check(area){
           var data = {'id': this.id};
           data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
           data['char'] = $('#checkchar').text();
-          // if ($(this).hasClass('error-char')) {
-          //   $(this).removeClass('error-char');
-          //   $(this).addClass('correct-char');
-          //   data['is_correct'] = 1;
-          // } else {
-            // $(this).removeClass('correct-char');
-            // $(this).addClass('error-char');
-            // data['is_correct'] = -1;
-          // }
-        // $.post('/characters/set_correct', data );
         if (!$(this).hasClass('error-char')) {
             $(this).removeClass('correct-char');
             $(this).addClass('error-char');
-            data['is_correct'] = -1;
-            $.post('/characters/set_correct', data );
         }
     });
     $(selector).dblclick(function(){
           var data = {'id': this.id};
           data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
           data['char'] = $('#checkchar').text();
-          // if ($(this).hasClass('correct-char')) {
-          //   $(this).removeClass('correct-char');
-          //   $(this).addClass('error-char');
-          //   data['is_correct'] = -1;
-          // } else {
-            // $(this).removeClass('error-char');
-            // $(this).addClass('correct-char');
-            // data['is_correct'] = 1;
-          // }
-        // $.post('/characters/set_correct', data );
         if ($(this).hasClass('error-char')) {
             $(this).removeClass('error-char');
             $(this).addClass('correct-char');
-            data['is_correct'] = 1;
-            $.post('/characters/set_correct', data );
         }
     });
 }
@@ -172,51 +147,48 @@ function renderCharArea(area,charArr){
 $(function(){
     $('.batch-check-correct').click(handler);
     $('.batch-check-error').click(handler_default_error);
+    $('.step-next').click(step);
 })
-function handler() {
-    var arr =[];
-    var charlist = $("#charlistArea").children();
-    for (var i=0;i<charlist.length;i++){
-        var tmp = charlist[i];
-        arr.push(tmp.id);
+
+function step() {
+    var correct_arr = $('.correct-char').map(function() {return this.id}).get();
+    var error_arr = $('.error-char').map(function() {return this.id}).get();
+    if (correct_arr.length + error_arr.length == 0){
+        return;
     }
-    var data = {'charArr':arr};
-    var updateNum = $('.char-image').length - $('.correct-char').length - $('.error-char').length;
+    var data = {'e_charArr':error_arr};
     data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
     data['char'] = $('#checkchar').text();
-    data['is_correct'] = 1;
-    data['updateNum'] = updateNum;
-    $('.batch-check-correct').addClass('btn-warning');
-    $('.batch-check-correct').off('click');
-    setTimeout(function(){
-      $('.batch-check-correct').removeClass('btn-warning');
-      $('.batch-check-correct').click(handler)}, 2000);
+    data['e_updateNum'] = error_arr.length;
+    data['c_charArr'] = correct_arr;
+    data['c_updateNum'] = correct_arr.length;
+    $('.step-next').addClass('btn-warning');
+    $('.step-next').off('click');
     $.post('/characters/set_correct', data, function() {
-          location.reload();
+         $('.step-next').removeClass('btn-warning');
+         location.reload();
     });
 }
 
+function handler() {
+    $('.char-image').toArray().forEach(function(item, i) {
+        if (!$(item).hasClass('correct-char') && !$(item).hasClass('error-char'))
+        {
+            $(item).addClass('correct-char');
+        }
+    })
+}
+
 function handler_default_error() {
-    var arr =[];
-    var charlist = $("#charlistArea").children();
-    for (var i=0;i<charlist.length;i++){
-        var tmp = charlist[i];
-        arr.push(tmp.id);
-    }
-    var data = {'charArr':arr};
-    var updateNum = $('.char-image').length - $('.correct-char').length - $('.error-char').length;
-    data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
-    data['char'] = $('#checkchar').text();
-    data['is_correct'] = -1;
-    data['updateNum'] = updateNum;
-    $('.batch-check-error').addClass('btn-warning');
-    $('.batch-check-error').off('click');
-    setTimeout(function(){
-      $('.batch-check-error').removeClass('btn-warning');
-      $('.batch-check-error').click(handler)}, 2000);
-    $.post('/characters/set_correct', data, function() {
-          location.reload();
-    });
+
+    $('.char-image').toArray().forEach(function(item, i) {
+        if (!$(item).hasClass('correct-char') && !$(item).hasClass('error-char'))
+        {
+            $(item).addClass('error-char');
+        }
+    })
+
+
 }
 </script>
 <script type="text/javascript" src="/static/js/bootstrap-progressbar.min.js"></script>
