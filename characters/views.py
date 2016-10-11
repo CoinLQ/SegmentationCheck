@@ -19,8 +19,9 @@ class Index(generic.ListView):
     def get_queryset(self):
         char_lst = cache.get('characterstatistics_lst', None)
         if char_lst is None:
+            print 'no cache'
             char_lst = CharacterStatistics.objects.all().order_by('-total_cnt','char')
-        cache.set('characterstatistics_lst', char_lst)
+            cache.set('characterstatistics_lst', char_lst)
         return  char_lst
 
 def index(request):
