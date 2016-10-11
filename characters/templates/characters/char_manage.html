@@ -93,6 +93,7 @@
             </div>
         </div><!--end col-md-9 -->
     </div><!--endrow-->
+    <div class="modal"><!-- Place at bottom of page --></div>
 </div><!-- /.container -->
 {% endblock %}
 {% block foot  %}
@@ -183,7 +184,6 @@ var charListContainer =
                 that.pagination = result.pagination;
                 that.renderCharAndBind();
                 that.paginationRender();
-                that.pagitorRender();
             });
         }
     }
@@ -297,6 +297,19 @@ $('.pagitor_input').keypress(function( event ){
     }
 });
 </script>
+<script>
+$body = $("body");
+$(document).on({
+    ajaxStart: function() {
+        $body.addClass("loading");
+    },
+    ajaxComplete: function() {
+      $body.removeClass("loading");
+    }
+});
+
+</script>
+
 {% endblock %}
 
 
