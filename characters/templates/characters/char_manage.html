@@ -144,7 +144,7 @@ var charListContainer =
                 else if (field.is_correct == 1){
                     txt += "correct-char ";
                 }
-                txt +="char-image' title='"+field.id+"'><img src='"+field.image_url+"' alt='加载中'><span class='badge char-info'> "+ field.accuracy+"</span> </div>"
+                txt +="char-image' title='"+field.id+"'><img src='"+field.image_url+"' alt='图片丢失' class='lazy'><span class='badge char-info'> "+ field.accuracy+"</span> </div>"
                 $(area).append(txt);
               });
         },
@@ -297,6 +297,9 @@ $('.pagitor_input').keypress(function( event ){
     }
 });
 </script>
+
+
+<script src="/static/js/jquery.lazyload.min.js" charset="utf-8"></script>
 <script>
 $body = $("body");
 $(document).on({
@@ -306,6 +309,10 @@ $(document).on({
     ajaxComplete: function() {
       $body.removeClass("loading");
     }
+});
+
+$("img.lazy").lazyload({
+    effect : "fadeIn"
 });
 
 </script>
