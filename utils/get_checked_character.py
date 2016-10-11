@@ -8,9 +8,10 @@ redis_client = redis.StrictRedis(host='localhost', port=6379, db=2)
 characters_key = 'seg_web:selected_characters'
 characters_index_key = 'seg_web:selected_characters_index'
 all_characters_key = 'seg_web:all_characters'
+stage_characters = 'seg_web:stage_characters'
 
 def main():
-    conn = psycopg2.connect("dbname=dzj_characters user=dzj password=dzjsql")
+    conn = psycopg2.connect("host=localhost dbname=dzj_characters user=dzj password=dzjsql")
     cur = conn.cursor()
     char_count_map = {}
     cur.execute("select char, count(*) from segmentation_character group by char;")
@@ -48,8 +49,11 @@ def main():
     selected_character_lst.sort(key=itemgetter(1), reverse=True)
 
     redis_client.delete(characters_key)
+    redis_client.delete(stage_characters)
     for c in selected_character_lst:
         redis_client.rpush(characters_key, c[0])
+    total = redis_client.llen(characters_key)
+    redis_client.set(stage_characters, total)
     redis_client.set(characters_index_key, -1)
 
 def get_checked_character():
