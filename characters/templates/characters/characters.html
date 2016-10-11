@@ -3,6 +3,7 @@
 <title>字索引</title>
 
 <link href="/static/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/static/treemap/css/font-awesome.min.css">
 <style>
 .char-image {
     /*background-color: #9AFF9A;*/
@@ -26,11 +27,44 @@
     border: 1px solid #ddd;
     border-bottom-width: 0;
 }
+
+
+/* Tooltip text */
+.btn .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+    margin-left: 36px;
+    margin-top:-5px;
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.btn:hover .tooltiptext {
+    visibility: visible;
+}
+
+.tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent #555 transparent transparent;
+}
 </style>
 {% endblock %}
 {% block mainbody %}
 <div class="container">
-    <div class='row show-grid'>
+    <div class='row show-grid' style="margin-top:20px">
         <div class='col-md-12 col-xs-12'>
             任务总进度:
             <div class="progress progress-striped">
@@ -62,9 +96,11 @@
                 <p class="bg-info hidden" style='margin:20px;padding:40px;'>审核模式只显示未审核的字形，浏览模式分页显示所有字形。</p>
             </div><!--end charlistArea -->
             <div style="clear:both;"> </div>
-            <div  class="btn btn-primary batch-check-correct" >批量正确</div>
-            <div  class="btn btn-primary batch-check-error" >批量错误</div>
-            <div  class="btn btn-primary step-next" >下一步</div>
+            <div  class="btn btn-primary batch-check-correct" ><span class="tooltiptext">批量正确</span><span class="fa fa-check"></div>
+            <div  class="btn btn-primary batch-check-error" style="margin-left: 10px;padding: 6px 13px" >
+            <span class="tooltiptext">批量错误</span><span class="fa fa-times"></div>
+            <div  class="btn btn-primary step-next pull-right" >
+            <span class="tooltiptext">下一步</span><span class="fa fa-arrow-right"></div>
 
         </div>
 
