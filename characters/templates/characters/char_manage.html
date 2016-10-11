@@ -74,12 +74,13 @@
             <div style="clear:both;"> </div>
             <div style="float:right; margin-right:64px;">
                 <div class='char-pagitor'>
-                    <span class='first paginate_button' id='char_index_first'>First</span>
-                    <span class='previous paginate_button' id='char_index_previous'>Previous</span>
-                    <span class='paginate_page'>Page </span><input class='paginate_input' type='text'>
-                    <span class='paginate_of'> of 34</span>
-                    <span class='next paginate_button' id='char_index_next'>Next</span>
-                    <span class='last paginate_button' id='char_index_last'>Last</span>
+                    <span class='first pagitor' id='char_index_first'>First</span>
+                    <span class='previous pagitor' id='char_index_previous'>Previous</span>
+                    <input class='pagitor_input' type='number' min="1">
+                    <span class='pagitor_of'id="total_page"> </span>
+                    <span class='next pagitor' id='char_index_next'>Next</span>
+                    <span class='last pagitor' id='char_index_last'>Last</span>
+
                 </div>
                 <div  class="btn btn-primary batch-check" >批量標對</div>
                 <div  class="btn btn-primary batch-check" id="err_btn">批量標錯</div>
@@ -120,22 +121,11 @@ var charListContainer =
         filter: '-10',//show alll
         data: [],
         pagination: {},
-        pagitorRender:function(){
-        },
         paginationRender: function(){
-            var _items = this.pagination.total_entries;
-            var _page_size = this.page_size
-            var that = this;
-            $('#pagearea').pagination({
-                items: _items,
-                itemsOnPage: _page_size,
-                cssStyle: 'light-theme',
-                onPageClick: function(pageNumber, event) {
-                        // Callback triggered when a page is clicked  Page number is given as an optional parameter
-                        that.page_number = pageNumber;
-                        that.fetchDataAndRender();
-                    },
-            });
+            var total_pages = this.pagination.total_pages;
+            $('.pagitor_input').val(this.page_number);
+            $('.pagitor_input').attr('max',total_pages);
+            $('#total_page').text('of '+total_pages);
         },
         hello: function(){
             alert('hello');
@@ -279,5 +269,77 @@ function handler(is_correct,btn) {
        }
     });
 }
+
+$(function(){
+ $('.pagitor').click(function(){
+        if($(this).hasClass('first')){
+            page_number=1;
+        }
+        else if($(this).hasClass('previous')){
+            page_number= charListContainer.pagination.previous_page;
+        }
+        else if($(this).hasClass('next')){
+            page_number= charListContainer.pagination.next_page;
+        }
+        else if($(this).hasClass('last')){
+            page_number= charListContainer.pagination.total_pages;
+        }
+        charListContainer.page_number=page_number;
+        charListContainer.fetchDataAndRender();
+    });
+})
+
+$('.pagitor_input').keypress(function( event ){
+    if(event.which == 13){
+        var page_number = $('.pagitor_input').val();
+        charListContainer.page_number=page_number;
+        charListContainer.fetchDataAndRender();
+    }
+});
 </script>
 {% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
