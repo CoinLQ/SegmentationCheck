@@ -1,11 +1,11 @@
 from __future__ import absolute_import
 from .models import DataPoint
-from SegmentationCheck import celery_app as app
+from celery import task
 from segmentation.models import Character
 from django.db.models import Q
 from django.db import transaction
 
-@app.task
+@task
 def calculate_classification_statistics():
     DATA_POINT_NUM = 200
     char_statistics_map = {}
