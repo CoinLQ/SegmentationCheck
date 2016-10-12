@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<head>
+    <link rel="stylesheet" href="css/main.css">
+    <!--    <link rel="stylesheet" href="css/popover.css">-->
+
+</head>
+
+<body>
+    <div id="Stage"></div>
+    <div id="Wrap"></div>
+    <nav>
+        <button id="ReturnBtn" class="button hideText"><span class="fa fa-arrow-circle-left"></span><span class="text">返回</span></button>
+        <button id="LedgendBtn" class="button hideText"><span class="text">图例</span></button>
+    </nav>
+    <div class="ledgend">
+        <ul>
+            <li>
+                <h3>色块面积</h3></li>
+            <li>该字在藏经中出现频数</li>
+            <li>
+                <h3>色块颜色</h3></li>
+            <li data-per="0">样本正确率&nbsp;≤50%</li>
+            <li data-per="1">50%&lt;&nbsp;样本正确率&nbsp;≤60%</li>
+            <li data-per="2">60%&lt;&nbsp;样本正确率&nbsp;≤70%</li>
+            <li data-per="3">70%&lt;&nbsp;样本正确率&nbsp;≤80%</li>
+            <li data-per="4">80%&lt;&nbsp;样本正确率&nbsp;≤90%</li>
+            <li data-per="5">90%&lt;&nbsp;样本正确率&nbsp;≤100%</li>
+            <li class="demo">
+                <h3>色块上层白框高度</h3></li>
+            <li>该字样本中目前未被人工检查的比例</li>
+            <li>
+        </ul>
+    </div>
+    <script src="js/d3/d3.min.js" charset="utf-8"></script>
+    <script src="js/jquery/jquery-1.12.4.min.js"></script>
+    <script src="js/jquery/jquery.resizeend.min.js"></script>
+    <script src="data.json"></script>
+    <script src="js/d3/liquidFillGauge.js"></script>
+    <script src="js/new.js"></script>
+</body>

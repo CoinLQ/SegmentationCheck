@@ -10,6 +10,7 @@
 <body>
     <div id="Stage"></div>
     <div id="Wrap"></div>
+    <div id="aa"></div>
     <nav>
         <button id="ReturnBtn" class="button hideText"><span class="fa fa-arrow-circle-left"></span><span class="text">返回</span></button>
         <button id="LedgendBtn" class="button hideText"><span class="text">图例</span></button>
@@ -34,15 +35,22 @@
         </ul>
     </div>
     <script src="/static/treemap/js/d3/d3.min.js" charset="utf-8"></script>
-    <!--
-<script src="/static/treemap/js/bootstrap/jquery.hoverIntent.minified.js"></script>
-<script src="/static/treemap/js/bootstrap/tooltip.js"></script>
-<script src="/static/treemap/js/bootstrap/popover.js"></script>-->
-
-    <script src="/static/treemap/js/bootstrap/jquery-1.12.4.min.js"></script>
-    <script src="/static/treemap/data.json"></script>
+    <script src="/static/treemap/js/jquery/jquery-1.12.4.min.js"></script>
+    <script src="/static/treemap/js/jquery/jquery.resizeend.min.js"></script>
+    <!--<script src="/static/treemap/data.json"></script>-->
     <script src="/static/treemap/js/d3/liquidFillGauge.js"></script>
     <script src="/static/treemap/js/new.js"></script>
+    <script>
+        var data;
+        $(function(){
+            d3.json('/characters/get_marked_char_count',function(res){
+                data = res.data;
+                $.getScript("/static/treemap/js/new.js");
+
+            });
+        });
+
+    </script>
     <script>
         $("#ReturnBtn").click(function(){
             window.location.href = "/";
