@@ -9,14 +9,20 @@ from django.db import transaction
 def calculate_classification_statistics():
     DATA_POINT_NUM = 200
     char_statistics_map = {}
-    for ch in Character.objects.filter(~Q(accuracy=-1)):
-        range_idx = int(ch.accuracy * DATA_POINT_NUM)
-        if range_idx < 0:
-            continue
-        if range_idx == DATA_POINT_NUM:
-            range_idx = DATA_POINT_NUM - 1
-        data_point_lst = char_statistics_map.setdefault(ch.char, [0] * DATA_POINT_NUM)
-        data_point_lst[range_idx] = data_point_lst[range_idx] + 1
+    total_count = Character.objects.filter(~Q(accuracy=-1)).count()
+    iter_count = (total_count - 1) / 10000
+    for i in range(iter_count):
+        start = i * 10000
+        query = 'SELECT id, char, accuracy FROM segmentation_character WHERE accuracy != 1.0 LIMIT 10000 OFFSET %d' % start
+        characters = Character.objects.raw(query)
+        for ch in characters:
+            range_idx = int(ch.accuracy * DATA_POINT_NUM)
+            if range_idx < 0:
+                continue
+            if range_idx == DATA_POINT_NUM:
+                range_idx = DATA_POINT_NUM - 1
+            data_point_lst = char_statistics_map.setdefault(ch.char, [0] * DATA_POINT_NUM)
+            data_point_lst[range_idx] = data_point_lst[range_idx] + 1
     data_points = []
     for char, data_point_lst in char_statistics_map.iteritems():
         for range_idx in range(DATA_POINT_NUM):
