@@ -77,15 +77,17 @@
             <div class="progress progress-striped">
                 <div class="progress-bar " role="progressbar" data-transitiongoal="{{ check_char_number}}" aria-valuemax="100"></div>
             </div>
+            <div class="row">
+            <div class="col-md-10 col-xs-7">
             <strong id='checkchar' style='font-size:36px; margin:10px;padding:8px;color:#483D8B;'>{{char}}</strong>
             <a target="_blank" href="http://hanzi.lqdzj.cn/hanzi-dict/search?param={{char}}">查看異體字字典</a>
             <img src="/static/img/legend.png"/>
-            <div id='variant_list'>{{variant_lst|safe}} </div>
-            <div style="margin: 20px 0px 20px 700px;">
-                每页显示
-                <div id="LineControler" class="btn-group" style="padding:0 16px;">
+            </div>
+            <div class="col-md-2 col-xs-5">
+            <div style="margin: 20px 0px 20px 0px;">
+                <div id="LineControler" class="btn-group" style="padding:0 6px;">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span style="margin-right: 5px">30&nbsp;</span><span class="caret"></span> </button>
+                        <span style="margin-right: 5px">25&nbsp;</span><span class="caret"></span> </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                         <li><a href="javascript:;">25&nbsp;</a></li>
                         <li><a href="javascript:;">50&nbsp;</a></li>
@@ -93,8 +95,11 @@
                         <li><a href="javascript:;">100&nbsp; </a></li>
                     </ul>
                 </div>
-                字
+                字/页
             </div>
+            </div>
+            </div>
+            <div id='variant_list'>{{variant_lst|safe}} </div>
             <div id='charlistArea'>
                 <p class="bg-info hidden" style='margin:20px;padding:40px;'>审核模式只显示未审核的字形，浏览模式分页显示所有字形。</p>
             </div><!--end charlistArea -->
@@ -124,20 +129,24 @@
 <script type="text/javascript">
     $(function() {
         var page_size = $.cookie('charcheck_page_size');
+        if (page_size==30){
+            $.cookie('charcheck_page_size', 25);
+            page_size = 25;
+        }
         $("#LineControler button span:first-of-type").text(page_size);
     })
     $("#LineControler li a").click(function () {
         var page_size = $(this).text();
         $("#LineControler button span:first-of-type").text($(this).text());
-        $.cookie('charcheck_page_size', page_size, { expires: 30 });
+        $.cookie('charcheck_page_size', page_size, { expires: 25 });
         render_char_area();
     })
 function render_char_area(){
     var _char = $('#checkchar').text();
     var page_size = $.cookie('charcheck_page_size');
     if ( page_size==null) {
-        page_size = 30;
-        $.cookie('charcheck_page_size', page_size, { expires: 30 });
+        page_size = 25;
+        $.cookie('charcheck_page_size', page_size, { expires: 25 });
     }
     $.getJSON("/api/character?page_size="+page_size+"&is_correct=0&char="+_char,function(result){
         if(result.models.length==0){
@@ -153,7 +162,7 @@ function render_char_area(){
         });
     });
 }
-$(render_char_area())
+//$(render_char_area())
 </script>
 <script>
 function binding_char_check(area){
