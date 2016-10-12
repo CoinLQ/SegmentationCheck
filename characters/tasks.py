@@ -17,8 +17,10 @@ from sklearn.ensemble import ExtraTreesClassifier
 import time
 from itertools import chain
 
+from utils.image_normalization.normalization import normalize
 from thinning import convert_image, thinning
 import cPickle
+import numpy as np
 
 # @task
 def add(x, y):
@@ -63,20 +65,6 @@ def classify(_char):
     print "fetch data done, spent %s seconds." % int(time.time() - start_time)
     start_time = time.time()
     print "traning: data size: %d" % len(y)
-    '''
-    # normalize the data attributes
-    normalized_X = preprocessing.normalize(X)
-    # standardize the data attributes
-    standardized_X = preprocessing.scale(X)
-
-    model = ExtraTreesClassifier()
-    model.fit(X, y)
-    # display the relative importance of each attribute
-    print "=============feature_importances_========"
-    print(model.feature_importances_)
-
-    print "==LogisticRegression=="
-    '''
     from sklearn.linear_model import LogisticRegressionCV
     model = LogisticRegressionCV(cv=5, solver='liblinear', class_weight='balanced', n_jobs=-1)
     try:
@@ -90,7 +78,6 @@ def classify(_char):
         print 'except: ', e
         return
     #print "----model------"
-    #print(model)
     # make predictions
     # expected = y
     # predicted = model.predict(X)
@@ -107,11 +94,8 @@ def classify(_char):
     predicted = model.predict_proba(tX)
     predicted = map(lambda x: x[1], predicted)
     print "predict done, spent %s seconds." % int(time.time() - start_time)
-    start_time = time.time()
     output_result2sql(predicted, t_charid_lst, _char)
-    print "write db done, spent %s seconds." % int(time.time() - start_time)
-    return 'classify'
-
+    print "output done."
 
 def prepare_data_with_database(char_lst):
     prob_x = []
@@ -123,49 +107,18 @@ def prepare_data_with_database(char_lst):
         label = char.is_correct
         img_path = char.get_image_path()
         char_id = char.id
-        vector_file = u'/data/share/dzj_characters/character_vector/%s' % char_id
-        x = None
-        if os.path.exists(vector_file):
-            with open(vector_file, 'r') as f:
-                x = cPickle.load(f)
-        else:
-            if not os.path.isfile(img_path):
-                #print 'no img'
-                continue
-            # try:
-            #     src_image = io.imread(img_path, 0)
-            #     img_gray = rgb2gray(src_image)
-            #     img_resize = imresize(img_gray, [10, 15], 'nearest')
-            #     thresh = threshold_otsu(img_resize)
-            # except:
-            #     continue
-            # binary = img_resize > thresh
-            binary = None
-            try:
-                image_norm = convert_image(img_path)
-                if image_norm is not None:
-                    binary = thinning(image_norm)
-            except Exception, e:
-                #print e
-                continue
-            if binary is None:
-                continue
-            x = binary.ravel().tolist()
-            with open(vector_file, 'w') as f:
-                cPickle.dump(x, f)
-            #im = binary.astype('ubyte')
-            #im.shape = 1, -1
-            #x = im.tolist()
-        if x is not None:
-            if int(label) == 0:
-                test_x.append(x)
-                test_y.append( int(label) )
-                test_char_id_lst.append( char_id )
-            else:
-                if abs(label) == 1:
-                    prob_x.append( x )
-                    prob_y.append( label )
-    # return (prob_y, prob_x, test_y, test_x, test_path)
+        try:
+            binary = normalize(img_path)
+            feature_vector = binary.ravel()
+        except:
+            feature_vector = None
+        if feature_vector is not None:
+            test_x.append(feature_vector)
+            test_y.append( int(label) )
+            test_char_id_lst.append(char_id)
+            if abs(label) == 1:
+                prob_x.append(feature_vector)
+                prob_y.append(label)
     return (prob_y, prob_x, test_y, test_x, test_char_id_lst)
 
 

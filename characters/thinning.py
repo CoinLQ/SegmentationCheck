@@ -61,6 +61,59 @@ def thinning(src):
 
     return dst # * 255
 
+import skimage.io as io
+import skimage.filters as filters
+import skimage.measure as measure
+import numpy as np
+import sys
+import math
+
+def nln(src_image):
+    orig_image = io.imread(src_image, 0)
+    if len(orig_image.shape) == 3:
+        image = (orig_image.sum(axis=2) / 3).astype('ubyte')
+    else:
+        image = orig_image
+    h, w = image.shape
+    thresh = filters.threshold_otsu(image)
+    binary = (image < thresh).astype('ubyte') # 二值化，黑色为1
+    sum_of_black_pixels = np.sum(binary)
+    binary_line = binary.sum(axis=0) # 在X軕上投影
+    hx = binary_line / (sum_of_black_pixels * 1.0)
+    binary_line_v = binary.sum(axis=1) # 在Y軕上投影
+    hy = binary_line_v / (sum_of_black_pixels * 1.0)
+
+    H = 40
+    W = 40
+    binary_new = np.zeros( (H, W) )
+    for y in range(h):
+        for x in range(w):
+            if binary[y,x] == 1:
+                x2 = int((W-1) * np.sum(hx[0:x+1]))
+                y2 = int((H-1) * np.sum(hy[0:y+1]))
+                x2_end = int((W - 1) * np.sum(hx[0:x + 2]))
+                y2_end = int((H - 1) * np.sum(hy[0:y + 2]))
+                if y == h - 1:
+                    y2 = H - 1
+                    y2_end = H
+                if x == w - 1:
+                    x2 = W - 1
+                    x2_end = W
+                binary_new[y2:y2_end, x2:x2_end] = binary[y,x]
+    # y = h-1
+    x = 0
+    y = 0
+    # for x in range(W):
+    #     if x-1 >= 0 and x-1 <= W-1 and x+2 <= W:
+    #         #binary_new[H-1,x] = (np.sum(binary_new[H-2:H, x-1:x+2]) > 0).astype('ubyte')
+    #         binary_new[H - 1, x] = binary_new[H - 1, x - 1]
+    # for y in range(H):
+    #     if y-1 >= 0 and y-1 <= H-1 and y+2 <= H:
+    #         #binary_new[y,W-1] = (np.sum(binary_new[y-1:y+2, W-2:W]) > 0).astype('ubyte')
+    #         binary_new[y,W-1] = binary_new[y-1, W-1]
+
+    return binary_new.astype('ubyte')
+
 def convert_image(src_image):
     image = io.imread(src_image, 0)
     try:
