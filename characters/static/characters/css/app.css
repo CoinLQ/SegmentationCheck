@@ -64,7 +64,7 @@ div.dataTables_paginate span {
 /*for char area*/
 .radio-btn {
     display:inline;
-    margin: 5px,5px;
+    margin: 2px 2px;
     color: #8c96a0;
     box-shadow: 0 1px 2px #fff inset,0 -1px 0 #a8abae inset;
     background: -webkit-linear-gradient(top,#f2f3f7,#e4e8ec);
@@ -84,7 +84,7 @@ div.dataTables_paginate span {
     color: azure;
 }
 .radio-btn.actived{
-    border: 1px solid blue;
+    border: 2px solid blue;
     color:azure;
 }
   .error-char {
@@ -106,8 +106,10 @@ div.dataTables_paginate span {
 
 .flow img{
   float:left;
+  margin: 2px;
 }
   .char-info{
+      margin: 3px 1px 2px 1px;
     display:block;
     float:right;
     clear:both;

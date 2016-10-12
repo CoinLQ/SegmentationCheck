@@ -30,7 +30,10 @@ def index(request):
 def help(request):
     return render(request, 'characters/characters_help.html')
 
-@user_passes_test(lambda u:u.is_staff, login_url='/quiz')
+def char_dashboard(request):
+    return render(request, 'characters/char_dashboard.html')
+
+#@user_passes_test(lambda u:u.is_staff, login_url='/quiz')
 def task(request):
     # redis_client = redis.StrictRedis(host='localhost', port=6379, db=2)
     # all_characters_key = 'seg_web:all_characters'
@@ -40,7 +43,7 @@ def task(request):
     # total_cnt = redis_client.get(stage_characters)
     # select_cnt = redis_client.llen(selected_characters)
     # done_cnt = total_cnt - select_cnt
-    query = CharacterStatistics.objects.filter(total_cnt__gte=5,total_cnt__gt=0)
+    query = CharacterStatistics.objects.filter(total_cnt__lte=5,total_cnt__gt=0)
     total_cnt = query.count()
     select_cnt = query.filter(uncheck_cnt__gt=0).count()
     done_cnt = total_cnt - select_cnt

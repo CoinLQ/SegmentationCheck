@@ -49,7 +49,7 @@
         </div><!--end col-md-3 -->
         <div class='col-md-8 col-xs-8'>
             <div style="float:right; margin-right:64px;margin-top:75px;">
-                <div class="radio-btn actived" data-value="-10">显示全部</div>
+                <div class="radio-btn actived show-all" data-value="-10">显示全部</div>
                 <div class="radio-btn" data-value="0">未标记</div>
                 <div class="radio-btn" data-value="-1">人工标错</div>
                 <div class="radio-btn" data-value="1">人工标对</div>
@@ -203,6 +203,8 @@ $('#char_index #char_index_tbody').on('click', 'tr', function(event) {
     charListContainer.char = $("tr.selected td:eq(1)").text();
     charListContainer.page_number=1;
     charListContainer.filter="-10";
+    $('.radio-btn').removeClass('actived');
+    $('.radio-btn.show-all').addClass('actived');
     charListContainer.fetchDataAndRender();
 })
 
