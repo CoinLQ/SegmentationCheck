@@ -106,8 +106,10 @@ div.dataTables_paginate span {
 
 .flow img{
   float:left;
+  margin: 2px;
 }
   .char-info{
+      margin: 3px 1px 2px 1px;
     display:block;
     float:right;
     clear:both;
