@@ -1,0 +1,198 @@
+<!doctype html>
+<html>
+<head>
+  <script src="https://cdn.anychart.com/js/7.11.1/anychart-bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.anychart.com/css/latest/anychart-ui.min.css" />
+  <style>
+    html, body, #container {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+    <div id="container"></div>
+    <script type="text/javascript">
+anychart.onDocumentReady(function() {
+  // create data set on our data,also we can pud data directly to series
+  var dataSet = anychart.data.set(
+  [
+        {
+            "char": "\u7121",
+            "total_cnt": 54,
+            "uncheck_cnt": 39,
+            "err_cnt": 3,
+            "correct_cnt": 12
+        },
+        {
+            "char": "\u6cd5",
+            "total_cnt": 17,
+            "uncheck_cnt": 16,
+            "err_cnt": 1,
+            "correct_cnt": 0
+        },
+        {
+            "char": "\u5730",
+            "total_cnt": 14,
+            "uncheck_cnt": 14,
+            "err_cnt": 0,
+            "correct_cnt": 0
+        },
+        {
+            "char": "\u660e",
+            "total_cnt": 14,
+            "uncheck_cnt": 14,
+            "err_cnt": 0,
+            "correct_cnt": 0
+        },
+        {
+            "char": "\u662f",
+            "total_cnt": 14,
+            "uncheck_cnt": 14,
+            "err_cnt": 0,
+            "correct_cnt": 0
+        },
+        {
+            "char": "\u5982",
+            "total_cnt": 13,
+            "uncheck_cnt": 13,
+            "err_cnt": 0,
+            "correct_cnt": 0
+        },
+        {
+            "char": "\u5fc3",
+            "total_cnt": 13,
+            "uncheck_cnt": 13,
+            "err_cnt": 0,
+            "correct_cnt": 0
+        },
+        {
+            "char": "\u4e00",
+            "total_cnt": 11,
+            "uncheck_cnt": 11,
+            "err_cnt": 0,
+            "correct_cnt": 0
+        },
+        {
+            "char": "\u5f97",
+            "total_cnt": 10,
+            "uncheck_cnt": 10,
+            "err_cnt": 0,
+            "correct_cnt": 0
+        },
+        {
+            "char": "\u56e0",
+            "total_cnt": 10,
+            "uncheck_cnt": 5,
+            "err_cnt": 1,
+            "correct_cnt": 4
+        }
+    ]
+  );
+
+  /*([
+    ['Jan', 22, 43, 75],
+    ['Feb', 34, 45, 56],
+    ['Mar', 16, 26, 67],
+    ['Apr', 12, 86, 42],
+    ['May', 41, 35, 17],
+    ['Jun', 47, 31, 12],
+    ['Jul', 39, 27, 9],
+    ['Aug', 28, 16, 23],
+    ['Sep', 21, 27, 47],
+    ['Oct', 18, 31, 58],
+    ['Nov', 24, 42, 69],
+    ['Dec', 29, 39, 71]
+  ]);*/
+
+  // map data for the first series,take value from first column of data set
+  var seriesData_1 = dataSet.mapAs({x: [0], value: [1]});
+
+  // map data for the second series,take value from second column of data set
+  var seriesData_2 = dataSet.mapAs({x: [0], value: [2]});
+
+  // map data for the third series, take x from the zero column and value from the third column of data set
+  var seriesData_3 = dataSet.mapAs({x: [0], value: [3]});
+
+  // create line chart
+  chart = anychart.line();
+
+  // turn on chart animation
+  chart.animation(true);
+
+  // turn on the crosshair and tune it
+  chart.crosshair().enabled(true).yLabel().enabled(false);
+  chart.crosshair().enabled(true).xLabel().enabled(false);
+  chart.crosshair().enabled(true).yStroke(null);
+
+  // disable one of the chart grids
+  chart.grid(0).enabled(false);
+
+  // set container id for the chart
+  chart.container('container');
+  chart.padding([10,20,5,20]);
+
+  // set chart title text settings
+  chart.title('ACME corp. Problems During the Year');
+  chart.title().padding([0,0,5,0]);
+
+  // set yAxis title
+  chart.yAxis().title('Occurences per month');
+
+  /** We can edit series stroke by function in which context available
+   *  @param color - stroke color
+   *  @param style - dash lines style
+   *  @return string/Object - acgraph.vector.Stroke type (string/Object)
+  */
+  var seriesStrokeFunction = function(color, style) {
+    return {color: color, dash: style};
+  };
+
+
+  /** Helper Function to setup series
+   *  @param series - stroke color
+   *  @param name - stroke series name
+  */
+  var seriesConfiguration = function(series, name) {
+    series.name(name);
+    series.tooltip().title(false);
+    series.tooltip().separator(false);
+    series.tooltip().textFormatter("{%Value} times");
+    series.hoverMarkers().enabled(true).size(4);
+    series.tooltip().position('right').anchor('leftBottom').offsetX(2).offsetY(5);
+  };
+
+  // temp variable to store series instance
+  var series;
+
+  // setup first series
+  series = chart.line(seriesData_1);
+  series.stroke('#000000');
+  seriesConfiguration(series, 'Purchase Returns');
+
+  // setup second series
+  series = chart.line(seriesData_2);
+  series.stroke(seriesStrokeFunction('#6C6C6C', '3 5 10 5'));
+  seriesConfiguration(series, 'Delivery Failure');
+
+  // setup third series
+  series = chart.line(seriesData_3);
+  series.stroke(seriesStrokeFunction('#C8C8C8', '3 5'));
+  seriesConfiguration(series, 'Order Cancellation');
+
+  // interactivity and tooltip settings
+  chart.interactivity().hoverMode('byX');
+  chart.tooltip().displayMode('separated');
+  chart.tooltip().positionMode('point');
+
+  // turn the legend on
+  chart.legend().enabled(true).padding([0,0,10,0]);
+
+  // initiate chart drawing
+  chart.draw();
+});
+    </script>
+</body>
+</html>
