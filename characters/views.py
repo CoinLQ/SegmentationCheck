@@ -30,7 +30,7 @@ def index(request):
 def help(request):
     return render(request, 'characters/characters_help.html')
 
-@user_passes_test(lambda u:u.is_staff, login_url='/quiz')
+#@user_passes_test(lambda u:u.is_staff, login_url='/quiz')
 def task(request):
     # redis_client = redis.StrictRedis(host='localhost', port=6379, db=2)
     # all_characters_key = 'seg_web:all_characters'
