@@ -149,6 +149,7 @@ DATABASES = {
         'PASSWORD': 'dzjsql',
         'HOST': 'localhost',
         'PORT': '5432',
+        'CONN_MAX_AGE': None,
     }
 }
 
