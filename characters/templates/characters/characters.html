@@ -38,14 +38,14 @@
     text-align: center;
     padding: 5px 0;
     border-radius: 6px;
-    margin-left: 36px;
-    margin-top:-5px;
+    margin-left: -2%;
+    margin-top: 36px;
     /* Position the tooltip text - see examples below! */
     position: absolute;
     z-index: 1;
 }
 .fa {
-    font-size: 26px;
+    font-size: 16px;
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */
@@ -56,12 +56,12 @@
 .tooltiptext::after {
     content: "";
     position: absolute;
-    top: 50%;
-    right: 100%;
+    top: -18%;
+    right: 50%;
     margin-top: -5px;
     border-width: 5px;
     border-style: solid;
-    border-color: transparent #555 transparent transparent;
+    border-color: transparent  transparent #555 transparent;
 }
 </style>
 {% endblock %}
@@ -81,11 +81,11 @@
             <a target="_blank" href="http://hanzi.lqdzj.cn/hanzi-dict/search?param={{char}}">查看異體字字典</a>
             <img src="/static/img/legend.png"/>
             <div id='variant_list'>{{variant_lst|safe}} </div>
-            <div style="float:right; margin-right:64px;">
+            <div style="margin: 20px 0px 20px 700px;">
                 每页显示
                 <div id="LineControler" class="btn-group" style="padding:0 16px;">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span>30&nbsp;</span><span class="caret"></span> </button>
+                        <span style="margin-right: 5px">30&nbsp;</span><span class="caret"></span> </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                         <li><a href="javascript:;">25&nbsp;</a></li>
                         <li><a href="javascript:;">50&nbsp;</a></li>
@@ -98,12 +98,12 @@
             <div id='charlistArea'>
                 <p class="bg-info hidden" style='margin:20px;padding:40px;'>审核模式只显示未审核的字形，浏览模式分页显示所有字形。</p>
             </div><!--end charlistArea -->
-            <div style="clear:both;"> </div>
-            <div  class="btn btn-primary batch-check-correct" ><span class="tooltiptext">批量正确</span><span class="fa fa-check"></div>
+            <div style="clear:both; margin-bottom: 20px"> </div>
+            <div  class="btn btn-primary batch-check-correct" ><span class="tooltiptext">批量正确</span><span class="fa fa-check">批量正确</span></div>
             <div  class="btn btn-primary batch-check-error" style="margin-left: 10px;padding: 6px 13px" >
-            <span class="tooltiptext">批量错误</span><span class="fa fa-times"></div>
-            <div  class="btn btn-primary step-next pull-right" >
-            <span class="tooltiptext">下一步</span><span class="fa fa-arrow-right"></div>
+            <span class="tooltiptext">批量错误</span><span class="fa fa-times">批量错误</span></div>
+            <div  class="btn btn-primary step-next pull-right disabled" >
+            <span class="tooltiptext">请继续点选</span><span class="fa fa-arrow-right">请继续点选</span></div>
 
         </div>
 
@@ -159,7 +159,11 @@ function binding_char_check(area){
         if (!$(this).hasClass('error-char')) {
             $(this).removeClass('correct-char');
             $(this).addClass('error-char');
+        } else {
+            $(this).removeClass('error-char');
+            $(this).addClass('correct-char');
         }
+        validButton();
     });
     $(selector).dblclick(function(){
           var data = {'id': this.id};
@@ -169,7 +173,9 @@ function binding_char_check(area){
             $(this).removeClass('error-char');
             $(this).addClass('correct-char');
         }
+        validButton();
     });
+
 }
 </script>
 <script>
@@ -189,10 +195,21 @@ $(function(){
     $('.step-next').click(step);
 })
 
+function validButton() {
+    if ($('.char-image').length == ($('.correct-char').length + $('.error-char').length)) {
+        $('.step-next').removeClass('disabled');
+        $('.step-next .fa').text('下一步');
+    }
+}
+
 function step() {
     var correct_arr = $('.correct-char').map(function() {return this.id}).get();
     var error_arr = $('.error-char').map(function() {return this.id}).get();
-    if (correct_arr.length + error_arr.length == 0){
+    if (correct_arr.length + error_arr.length == 0) {
+        return;
+    }
+    validButton();
+    if ($('.char-image').length != (correct_arr.length + error_arr.length)) {
         return;
     }
     var data = {'e_charArr':error_arr};
@@ -216,6 +233,7 @@ function handler() {
             $(item).addClass('correct-char');
         }
     })
+    validButton();
 }
 
 function handler_default_error() {
@@ -226,6 +244,7 @@ function handler_default_error() {
             $(item).addClass('error-char');
         }
     })
+    validButton();
 
 
 }
