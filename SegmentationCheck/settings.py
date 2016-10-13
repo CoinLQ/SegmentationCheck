@@ -65,6 +65,7 @@ LOCAL_APPS = [
     'charseg',
     'characters',
     'pagecheck',
+    'classification_statistics',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -73,7 +74,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
 djcelery.setup_loader()
-# BROKER_URL = 'django://'
+BROKER_URL = 'redis+socket:///var/run/redis/redis.sock'
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
 
@@ -149,6 +150,7 @@ DATABASES = {
         'PASSWORD': 'dzjsql',
         'HOST': 'localhost',
         'PORT': '5432',
+        'CONN_MAX_AGE': None,
     }
 }
 

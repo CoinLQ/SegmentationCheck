@@ -91,7 +91,6 @@ nav {
     border-radius: 4px;
 }
 
-.node[data-level="1"],
 .lightbox {
     cursor: default;
 }
@@ -105,13 +104,17 @@ nav {
 }
 
 .node[data-level="2"] .char {
-    font-size: .38em;
+    font-size: .24em;
 }
 
 
 /*.node[data-level="1"] .char {
-    font-size: .38em;
+    font-size: .09em;
 }*/
+
+.node[data-level="1"] .char {
+    display: none;
+}
 
 [data-per="0"] {
     background: #C9BEB6;
@@ -205,7 +208,7 @@ nav {
     display: block;
     position: absolute;
     left: 50%;
-    top: 48%;
+    top: 46%;
     margin: -.6em 0 0 -.5em;
 }
 
@@ -268,6 +271,7 @@ nav {
     background: none;
     border-radius: 0;
     box-shadow: none;
+    color: rgba(95, 65, 75, .38);
 }
 
 .close:hover,

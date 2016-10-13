@@ -20,22 +20,20 @@ level.children.reverse();
 //D3 stage
 var width = window.innerWidth,
     height = window.innerHeight,
-    //color = ["#8A8E8D", "#5BC4CF", "#395EDE", "#8541CF", "#D640A3", "#DE5131"],
+
     stage = d3.select('#Stage').style('position', 'relative');
 
 var treemap = d3.treemap()
-    .tile(d3.treemapSquarify.ratio(1))
+    .tile(d3.treemapResquarify.ratio(1))
     .size([width, height])
     .padding(1)
     .round(true);
 
 var root = d3.hierarchy(level).sum(function (d) {
-    //return unifySize(d);
     return Math.pow(d.total_mark_num, .6);
 });
 
 treemap(root);
-//console.log(root);
 
 var node = stage.selectAll(".node")
     .data(root.leaves())
@@ -61,20 +59,16 @@ var node = stage.selectAll(".node")
     })
     .attr("data-level", function (d) {
         return d.parent.data.level;
-    });
-
-var filter = node.filter(function (d) {
-        return d.parent.data.level > 1 ? true : false;
     })
-    .call(insertData);
-filter.append("div")
+    .call(insertData)
+    .append("div")
     .attr("class", "container")
     .append("div")
     .attr("class", "detail")
     .style("height", function (d) {
         return changeToPercent(1 - d.data.man_mark_per);
     });
-filter.selectAll(".container")
+d3.selectAll(".container")
     .append("span")
     .attr("class", "char")
     .text(function (d) {
@@ -86,14 +80,21 @@ filter.selectAll(".container")
 //jQuery area
 var style = "";
 $(document).ready(function () {
-    $('body').height($(window).innerHeight());
+    sizeLayout();
+    $(window).resizeend(sizeLayout);
 });
-$('.node:not([data-level="1"]').click(function () {
+$('.node').click(function () {
     if (!$(this).hasClass('lightbox')) {
         style = $(this).attr('style');
         $(this).removeAttr('style').addClass('lightbox')
         $(this).find('.container').append('<button class="close button hideText"><span class="fa fa-times"></span><span class="text">关闭</span></button>')
+
         $('.close').bind('click', function (event) {
+            $('.lightbox').removeClass('lightbox').attr('style', style).find('svg,.close').remove();
+            $('#Wrap').hide();
+            event.stopPropagation();
+        });
+        $('#Wrap').bind('click', function () {
             $('.lightbox').removeClass('lightbox').attr('style', style).find('svg,.close').remove();
             $('#Wrap').hide();
             event.stopPropagation();
@@ -102,6 +103,7 @@ $('.node:not([data-level="1"]').click(function () {
         drawChat(this);
     }
 })
+
 
 $('#LedgendBtn').click(function () {
     if ($('.ledgend').css('display') == 'none') {
@@ -146,6 +148,19 @@ $('[data-toggle="popover"]').hoverIntent(function () {
 
 //-------------------------------------------
 //functions
+
+function sizeLayout() {
+    width = $(window).innerWidth();
+    height = $(window).innerHeight();
+    $('body').height(height);
+
+    treemap.size([width, height]);
+    treemap(root);
+    d3.selectAll('.node')
+        .data(root.leaves())
+        .call(position);
+}
+
 function adjustLabel(datum, f) {
     for (i = 1; i < 5; i++) {
         if (datum[i - 1].value / datum[4].value < f) {
@@ -251,32 +266,32 @@ function drawChat(selection) {
             return color[i];
         })
 
-    drawTextPath(pieChat);
+    /*drawTextPath(pieChat);
     var text = pieChat.select('g')
-        .selectAll(".label")
+        .selectAll(".value")
         .data(datum.slice(0, 4))
         .enter()
         .append('text')
-        .attr('class', 'label')
-        .attr('dx', 4)
-        .attr('dy', -24)
-        .append('textPath')
-        .attr('xlink:href', function () {
-            return '#TextPath'
-        })
-        .attr("startOffset", function (d, i) {
-            if (datum[i].value == 0) {
-                return '200%';
-            } else {
-                var s = 0;
-                for (j = 0; j < i; j++) {
-                    s += parseInt(datum[j].value);
-                }
-                return changeToPercent(s / datum[4].value / 1.2);
+    .attr('class', 'label')
+    .attr('dx', 4)
+    .attr('dy', -24)
+    .append('textPath')
+    .attr('xlink:href', function () {
+        return '#TextPath'
+    })
+    .attr("startOffset", function (d, i) {
+        if (datum[i].value == 0) {
+            return '200%';
+        } else {
+            var s = 0;
+            for (j = 0; j < i; j++) {
+                s += parseInt(datum[j].value);
             }
+            return changeToPercent(s / datum[4].value / 1.2);
+        }
 
-        })
-        .style("text-anchor", "start")
+    })
+    .style("text-anchor", "start")
         .text(function (d) {
             return d.label;
         })
@@ -286,7 +301,7 @@ function drawChat(selection) {
             return d.value;
         })
 
-    adjustLabel(datum, 0.08);
+    adjustLabel(datum, 0.02);*/
 
     var label = svg.append('g');
 
@@ -318,16 +333,40 @@ function drawChat(selection) {
         .text(function (d) {
             return changeToPercent(datum[6].value);
         })
-}
 
-function formatNumber(n) {
-    s = n.toString();
-    var i = parseInt(s.length / 3);
-    var newS = '';
-    for (j = 0; j < i; j++) {
-        newS += substr(-3 * j - 1, 3);
-    }
+    var legend = svg.append('g')
+        .attr('class', 'charLegend')
+        .selectAll('.li')
+        .append('g')
+        .data(datum.slice(0, 4))
+        .enter()
 
+    legend.append('rect')
+        .attr('width', '20')
+        .attr('height', '20')
+        .attr('x', '36')
+        .attr('y', function (d, i) {
+            return i * 28;
+        })
+        .attr('rx', '8')
+        .attr('ry', '8')
+        .attr('fill', function (d, i) {
+            return color[i];
+        })
+    legend.append('text')
+        .attr('x', '60')
+        .attr('y', function (d, i) {
+            return 16 + i * 28;
+        })
+        .attr('class', 'label')
+        .text(function (d, i) {
+            return datum[i].label;
+        })
+        .append('tspan')
+        .attr('class', 'value')
+        .text(function (d, i) {
+            return ' ' + datum[i].value;
+        })
 }
 
 function insertData(selection) {
