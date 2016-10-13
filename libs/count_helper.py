@@ -13,8 +13,8 @@ class ApproxCountPgQuerySet(models.query.QuerySet):
       cursor = connections[self.db].cursor()
       if hasattr(connections[self.db].client.connection, 'pg_version'):
           query = self.query
-          # not query.where and
-          if (query.high_mark is None and query.low_mark == 0 and
+          #
+          if (not query.where and query.high_mark is None and query.low_mark == 0 and
               not query.select and not query.group_by and not query.having and not query.distinct):
               # If query has no constraints, we would be simply doing
               # "SELECT COUNT(*) FROM foo". Monkey patch so the we get an approximation instead.

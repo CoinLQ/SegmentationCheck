@@ -52,9 +52,9 @@ class CharacterFilter(filters.FilterSet):
 class CharacterViewSet(viewsets.ModelViewSet):
     serializer_class = CharacterSerializer
     filter_class = CharacterFilter
-    qs = Character.objects.order_by('accuracy')
-    queryset = qs._clone(klass=ApproxCountPgQuerySet)
-    #queryset = Character.objects.order_by('accuracy')
+    # qs = Character.objects.order_by('accuracy')
+    # queryset = qs._clone(klass=ApproxCountPgQuerySet)
+    queryset = Character.objects.order_by('accuracy')
 
     #queryset = Character.objects.filter(is_correct__lt=2).\
     #    filter(is_correct__gt=-2).order_by('accuracy')
