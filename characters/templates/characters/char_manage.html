@@ -82,8 +82,9 @@
                     <span class='last pagitor' id='char_index_last'>Last</span>
 
                 </div>
-                <div  class="btn btn-primary batch-check" >批量標對</div>
+                <div  class="btn btn-primary batch-check" id="correct_btn">批量標對</div>
                 <div  class="btn btn-primary batch-check" id="err_btn">批量標錯</div>
+                <div  class="btn btn-primary batch-check" id="clear_btn">批量清空</div>
             </div>
             <div style="clear:both;"> </div>
 
@@ -119,7 +120,9 @@ var charListContainer =
         char: '',
         page_size: 15,
         page_number: 1,
-        filter: '-10',//show alll
+        filter: '-10',//show all
+        accuracy_cap: 1,
+        accuracy_floor: -1,
         data: [],
         pagination: {},
         paginationRender: function(){
@@ -139,10 +142,10 @@ var charListContainer =
             $.each(charArr, function(i, field){
                 txt = "<div id="+field.id+" class='flow "
                 if (field.is_correct <0){
-                    txt += "error-char ";
+                    txt += "error-char o-error-char";
                 }
                 else if (field.is_correct == 1){
-                    txt += "correct-char ";
+                    txt += "correct-char o-correct-char";
                 }
                 txt +="char-image' title='"+field.id+"'><img src='"+field.image_url+"' alt='加载中...' class='lazy'><span class='badge char-info'> "+ field.accuracy+"</span> </div>"
                 $(area).append(txt);
@@ -175,7 +178,9 @@ var charListContainer =
             var that = this;
             var query = "/api/character?page_size="+this.page_size
                 +"&char="+this.char
-                +"&page="+this.page_number;
+                +"&page="+this.page_number
+                +"&accuracy__lt="+this.accuracy_cap
+                +"&accuracy__gt="+this.accuracy_floor;
             if(this.filter!=-10){
                 query += "&is_correct="+this.filter;
             }
@@ -235,9 +240,13 @@ $('.radio-btn').click(function() {
 $(function(){
     $('.batch-check').click(function(){
         var btn = $(this);
-        var is_correct=1;
-        if (this.id=='err_btn'){
+        var is_correct=-2;
+        if (btn.attr('id')=='err_btn'){
             is_correct = -1;
+        } else if (btn.attr('id')=='correct_btn') {
+            is_correct = 1;
+        } else {
+            is_correct = 0;
         }
         handler(is_correct,btn);
     });
@@ -252,22 +261,38 @@ function handler(is_correct,btn) {
             if(is_correct==-1){
                 $(tmp).addClass('error-char');
             }
-            else{
+            else if (is_correct==1){
                 $(tmp).addClass('correct-char');
             }
             arr.push(tmp.id);
         }
     }
-    var data = {
-        'charArr':arr,
-        'is_correct':is_correct
-        };
+    if (is_correct == 0)
+    {
+        arr = charlist.get();
+    }
+    var data = {};
     var updateNum = arr.length;
+    var e_num = $("#charBrowseArea .error-char").length;
+    var c_num = $("#charBrowseArea .correct-char").length;
     data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
     data['char'] = charListContainer.char;
-    data['updateNum'] = updateNum;
-    $.post('/characters/set_correct', data, function() {
-       if(data['status']=='ok'){
+    if ( is_correct == 1) {
+        data['c_charArr'] = arr;
+        data['c_updateNum'] = arr.length;
+    } else if ( is_correct == -1) {
+        data['e_charArr'] = arr;
+        data['e_updateNum'] = arr.length;
+    } else if ( is_correct == 0) {
+        data['cl_charArr'] = arr;
+        data['cl_updateNum'] = arr.length;
+        data['e_num'] = e_num;
+        data['c_num'] = c_num;
+    }
+    $.post('/characters/set_correct', data, function(res) {
+       if(res['clear']=='ok'){
+        $('.correct-char').map(function() {return $(this).removeClass('correct-char')});
+        $('.error-char').map(function() {return $(this).removeClass('error-char')});
        }
     });
 }
