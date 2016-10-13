@@ -142,10 +142,10 @@ var charListContainer =
             $.each(charArr, function(i, field){
                 txt = "<div id="+field.id+" class='flow "
                 if (field.is_correct <0){
-                    txt += "error-char o-error-char";
+                    txt += "error-char o-error-char ";
                 }
                 else if (field.is_correct == 1){
-                    txt += "correct-char o-correct-char";
+                    txt += "correct-char o-correct-char ";
                 }
                 txt +="char-image' title='"+field.id+"'><img src='"+field.image_url+"' alt='加载中...' class='lazy'><span class='badge char-info'> "+ field.accuracy+"</span> </div>"
                 $(area).append(txt);
@@ -178,10 +178,14 @@ var charListContainer =
             var that = this;
             var query = "/api/character?page_size="+this.page_size
                 +"&char="+this.char
-                +"&page="+this.page_number
-                +"&accuracy__lt="+this.accuracy_cap
-                +"&accuracy__gt="+this.accuracy_floor;
-            if(this.filter!=-10){
+                +"&page="+this.page_number;
+            if (this.accuracy_cap <1) {
+                query += "&accuracy__lt="+this.accuracy_cap;
+            }
+            if (this.accuracy_floor>-1) {
+                query += "&accuracy__gt="+this.accuracy_floor;
+            }
+            if(this.filter != -10){
                 query += "&is_correct="+this.filter;
             }
             $.getJSON(query,function(result){
