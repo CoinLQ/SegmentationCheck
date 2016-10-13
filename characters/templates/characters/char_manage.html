@@ -48,12 +48,11 @@
           <!-- /.box -->
         </div><!--end col-md-3 -->
         <div class='col-md-8 col-xs-8'>
-            <div style="float:right; margin-right:64px;margin-top:75px;">
+            <div style="margin-top:75px;">
                 <div class="radio-btn actived show-all" data-value="-10">显示全部</div>
                 <div class="radio-btn" data-value="0">未标记</div>
                 <div class="radio-btn" data-value="-1">人工标错</div>
                 <div class="radio-btn" data-value="1">人工标对</div>
-                每页显示
                 <div id="LineControler" class="btn-group" style="padding:0 16px;">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span>100&nbsp;</span><span class="caret"></span> </button>
@@ -66,13 +65,13 @@
                         <li><a href="javascript:;">900&nbsp; </a></li>
                     </ul>
                 </div>
-                字
+                字/页
             </div>
             <div style="clear:both;"> </div>
             <div id='charBrowseArea'>
             </div>
             <div style="clear:both;"> </div>
-            <div style="float:right; margin-right:64px;">
+            <div style="">
                 <div class='char-pagitor'>
                     <span class='first pagitor' id='char_index_first'>First</span>
                     <span class='previous pagitor' id='char_index_previous'>Previous</span>
@@ -174,6 +173,33 @@ var charListContainer =
             this.renderCharArea();
             this.binding_char_check(this.char);
         },
+        switchAndRender: function() {
+            var that = this;
+            var query = "/api/character?page_size="+this.page_size
+                +"&char="+this.char
+                +"&page=1";//+this.page_number;
+            if (this.accuracy_cap <1) {
+                query += "&accuracy__lt="+this.accuracy_cap;
+            }
+            if (this.accuracy_floor>-1) {
+                query += "&accuracy__gt="+this.accuracy_floor;
+            }
+            if(this.filter != -10){
+                query += "&is_correct="+this.filter;
+            }
+
+            $.getJSON(query,function(result){
+                that.data = result.models;
+                var before_page_n = charListContainer.pagination.total_pages;
+                that.pagination = result.pagination;
+                page_n = $('.pagitor_input').val();
+                var current_page = parseInt(page_n) || 0;
+                var jump_page = Math.ceil((current_page/ before_page_n) * that.pagination.total_pages);
+                charListContainer.page_number=jump_page;
+                charListContainer.fetchDataAndRender();
+
+            });
+        },
         fetchDataAndRender: function(){
             var that = this;
             var query = "/api/character?page_size="+this.page_size
@@ -188,6 +214,7 @@ var charListContainer =
             if(this.filter != -10){
                 query += "&is_correct="+this.filter;
             }
+
             $.getJSON(query,function(result){
                 that.data = result.models;
                 that.pagination = result.pagination;
@@ -222,7 +249,7 @@ $('#char_index #char_index_tbody').on('click', 'tr', function(event) {
 $(function() {
     var page_size = charListContainer.page_size;
     $("#LineControler button span:first-of-type").text(page_size);
-})
+
 $("#LineControler li a").click(function () {
     var page_size = $(this).text();
     charListContainer.page_size = page_size;
@@ -237,9 +264,9 @@ $('.radio-btn').click(function() {
     $('.radio-btn').removeClass('actived');
     $(this).addClass('actived');
     charListContainer.filter=$(this).attr('data-value');
-    charListContainer.fetchDataAndRender();
+    charListContainer.switchAndRender();
 })
-
+})
 // batch handle
 $(function(){
     $('.batch-check').click(function(){
