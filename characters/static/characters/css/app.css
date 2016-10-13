@@ -98,8 +98,10 @@ div.dataTables_paginate span {
   .flow {
   float:left;
   position:relative;
-  min-width:80px;
-  min-height:80px;
+  width:80px;
+  height:80px;
+  max-width:100%;
+  max-height:100%;
   margin:5px;
   border:solid blue 1px;
   }

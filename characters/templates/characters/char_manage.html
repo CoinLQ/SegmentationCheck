@@ -273,7 +273,7 @@ function handler(is_correct,btn) {
     }
     if (is_correct == 0)
     {
-        arr = charlist.get();
+        arr = charlist.map(function() {return this.id}).get();
     }
     var data = {};
     var updateNum = arr.length;
@@ -292,6 +292,8 @@ function handler(is_correct,btn) {
         data['cl_updateNum'] = arr.length;
         data['e_num'] = e_num;
         data['c_num'] = c_num;
+        $('.correct-char').map(function() {return $(this).removeClass('correct-char')});
+        $('.error-char').map(function() {return $(this).removeClass('error-char')});
     }
     $.post('/characters/set_correct', data, function(res) {
        if(res['clear']=='ok'){
