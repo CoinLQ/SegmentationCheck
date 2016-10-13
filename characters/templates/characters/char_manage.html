@@ -11,7 +11,7 @@
 {% block mainbody %}
 <div class="container" style="min-width:1000px !important;">
     <div class='row show-grid'>
-        <div class='col-md-4 col-xs-4' >
+        <div class='col-md-4 col-xs-12' >
             <div class="box">
                 <div class="box-header">
                   <h3 class="box-title">字形列表</h3>
@@ -47,43 +47,85 @@
           </div>
           <!-- /.box -->
         </div><!--end col-md-3 -->
-        <div class='col-md-8 col-xs-8'>
-            <div style="margin-top:75px;">
-                <div class="radio-btn actived show-all" data-value="-10">显示全部</div>
-                <div class="radio-btn" data-value="0">未标记</div>
-                <div class="radio-btn" data-value="-1">人工标错</div>
-                <div class="radio-btn" data-value="1">人工标对</div>
-                <div id="LineControler" class="btn-group" style="padding:0 16px;">
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span>100&nbsp;</span><span class="caret"></span> </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <li><a href="javascript:;">5&nbsp;</a></li>
-                        <li><a href="javascript:;">50&nbsp;</a></li>
-                        <li><a href="javascript:;">100&nbsp;</a></li>
-                        <li><a href="javascript:;">200&nbsp;</a></li>
-                        <li><a href="javascript:;">300&nbsp;</a></li>
-                        <li><a href="javascript:;">900&nbsp; </a></li>
-                    </ul>
+
+        <div class='col-md-8 col-xs-12' style="margin-top:75px;">
+            <div style="margin-left:10px;">
+            <div id="find_scope" class="dropdown" style="float:left;">
+              <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span>显示全部&nbsp;</span>
+              <span class="caret"></span></button>
+              <ul class="dropdown-menu">
+                <li><a data-value="-10" href="#">显示全部</a></li>
+                <li><a data-value="0" href="#">未标记</a></li>
+                <li><a data-value="-1" href="#">人工标错</a></li>
+                <li><a data-value="1" href="#">人工标对</a></li>
+              </ul>
+            </div>
+
+            <div id="accuracy_scope" class="dropdown hidden" style="float:left;">
+              <span>相似基准:&nbsp;</span><input class='accuracy_input' type='number' max="1">
+              <span>相似范围</span>
+              <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span>10&nbsp;</span>
+              <span class="caret"></span></button>
+              <ul class="dropdown-menu">
+                <li><a data-value="-100" href="#">-100</a></li>
+                <li><a data-value="-50" href="#">-50</a></li>
+                <li><a data-value="-25" href="#">-25</a></li>
+                <li><a data-value="-10" href="#">-10</a></li>
+                <li><a data-value="-5" href="#">-5</a></li>
+                <li><a data-value="-1" href="#">-1</a></li>
+                <li><a data-value="0" href="#">0</a></li>
+                <li><a data-value="1" href="#">1</a></li>
+                <li><a data-value="5" href="#">5</a></li>
+                <li><a data-value="10" href="#">10</a></li>
+                <li><a data-value="25" href="#">25</a></li>
+                <li><a data-value="50" href="#">50</a></li>
+                <li><a data-value="100" href="#">100</a></li>
+              </ul>
+            </div>
+            <div id="LineControler" class="btn-group" style="padding:0 16px;">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span>100&nbsp;</span><span class="caret"></span> </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <li><a href="javascript:;">5&nbsp;</a></li>
+                    <li><a href="javascript:;">50&nbsp;</a></li>
+                    <li><a href="javascript:;">100&nbsp;</a></li>
+                    <li><a href="javascript:;">200&nbsp;</a></li>
+                    <li><a href="javascript:;">300&nbsp;</a></li>
+                    <li><a href="javascript:;">900&nbsp; </a></li>
+                </ul>
+            </div>
+            字/页
+            </div>
+            <div style="margin-left:10px;margin-top:10px">
+                <div class='char-pagitor'>
+                    <span class='pagitor first btn btn-warning' id='char_index_first'>First</span>
+                    <span class='pagitor previous btn btn-warning' id='char_index_previous'>Previous</span>
+                    <input class='pagitor_input' type='number' min="1">
+                    <span class='pagitor_of'id="total_page"> </span>
+                    <span class='pagitor next btn btn-warning' id='char_index_next'>Next</span>
+                    <span class='pagitor last btn btn-warning' id='char_index_last'>Last</span>
+
                 </div>
-                字/页
             </div>
             <div style="clear:both;"> </div>
             <div id='charBrowseArea'>
             </div>
             <div style="clear:both;"> </div>
-            <div style="">
+            <div style="margin-left:10px;margin-top:10px">
                 <div class='char-pagitor'>
-                    <span class='first pagitor' id='char_index_first'>First</span>
-                    <span class='previous pagitor' id='char_index_previous'>Previous</span>
+                    <span class='pagitor first btn btn-warning' id='char_index_first'>First</span>
+                    <span class='pagitor previous btn btn-warning' id='char_index_previous'>Previous</span>
                     <input class='pagitor_input' type='number' min="1">
                     <span class='pagitor_of'id="total_page"> </span>
-                    <span class='next pagitor' id='char_index_next'>Next</span>
-                    <span class='last pagitor' id='char_index_last'>Last</span>
+                    <span class='pagitor next btn btn-warning' id='char_index_next'>Next</span>
+                    <span class='pagitor last btn btn-warning' id='char_index_last'>Last</span>
 
                 </div>
+                <div style="float:right">
                 <div  class="btn btn-primary batch-check" id="correct_btn">批量標對</div>
                 <div  class="btn btn-primary batch-check" id="err_btn">批量標錯</div>
                 <div  class="btn btn-primary batch-check" id="clear_btn">批量清空</div>
+                </div>
             </div>
             <div style="clear:both;"> </div>
 
@@ -175,6 +217,9 @@ var charListContainer =
         },
         switchAndRender: function() {
             var that = this;
+            if (this.char == '') {
+                return;
+            }
             var query = "/api/character?page_size="+this.page_size
                 +"&char="+this.char
                 +"&page=1";//+this.page_number;
@@ -195,6 +240,9 @@ var charListContainer =
                 page_n = $('.pagitor_input').val();
                 var current_page = parseInt(page_n) || 0;
                 var jump_page = Math.ceil((current_page/ before_page_n) * that.pagination.total_pages);
+                if (current_page == 1) {
+                    jump_page = 1;
+                }
                 charListContainer.page_number=jump_page;
                 charListContainer.fetchDataAndRender();
 
@@ -202,6 +250,9 @@ var charListContainer =
         },
         fetchDataAndRender: function(){
             var that = this;
+            if (this.char == '') {
+                return;
+            }
             var query = "/api/character?page_size="+this.page_size
                 +"&char="+this.char
                 +"&page="+this.page_number;
@@ -259,11 +310,10 @@ $("#LineControler li a").click(function () {
     charListContainer.fetchDataAndRender();
 })
 
-//filter button handle
-$('.radio-btn').click(function() {
-    $('.radio-btn').removeClass('actived');
-    $(this).addClass('actived');
-    charListContainer.filter=$(this).attr('data-value');
+$("#find_scope .dropdown-menu a").click(function() {
+    var li = $(this);
+    li.parent().parent().parent().find("button span:first-of-type").text(li.text());
+    charListContainer.filter=li.data('value');
     charListContainer.switchAndRender();
 })
 })
