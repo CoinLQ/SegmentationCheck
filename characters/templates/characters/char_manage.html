@@ -4,6 +4,8 @@
 
 <link href="/static/css/simplePagination.css" rel="stylesheet">
 <link href="/static/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/static/treemap/css/font-awesome.min.css">
+
   <!-- DataTables -->
   <link rel="stylesheet" href="/static/datatables/dataTables.bootstrap.css">
 <link rel="stylesheet" href="/static/characters/css/app.css">
@@ -30,16 +32,7 @@
                     </tr>
                     </thead>
                     <tbody id="char_index_tbody">
-                  {% for char in characterstatistics_list%}
-                  <tr>
-                      <td>{{ forloop.counter }}</td>
-                      <td>{{char.char}}</td>
-                      <td>{{char.total_cnt}}</td>
-                      <td>{{char.correct_cnt}}</td>
-                      <td>{{char.err_cnt}}</td>
-                      <td>{{char.uncheck_cnt}}</td>
-                  </tr>
-                  {% endfor %}
+
                     </tbody>
                   </table>
                 </div>
@@ -49,82 +42,72 @@
         </div><!--end col-md-3 -->
 
         <div class='col-md-8 col-xs-12' style="margin-top:75px;">
-            <div style="margin-left:10px;">
-            <div id="find_scope" class="dropdown" style="float:left;">
-              <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span>显示全部&nbsp;</span>
-              <span class="caret"></span></button>
-              <ul class="dropdown-menu">
-                <li><a data-value="-10" href="#">显示全部</a></li>
-                <li><a data-value="0" href="#">未标记</a></li>
-                <li><a data-value="-1" href="#">人工标错</a></li>
-                <li><a data-value="1" href="#">人工标对</a></li>
-              </ul>
-            </div>
-
-            <div id="accuracy_scope" class="dropdown" style="float:left; margin-left: 5px;">
-              <span>相似范围:</span>
-              <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span>1000</span>
-              <span class="caret"></span></button>
-              <ul class="dropdown-menu">
-                <li><a data-value="1" href="#">1</a></li>
-                <li><a data-value="5" href="#">5</a></li>
-                <li><a data-value="10" href="#">10</a></li>
-                <li><a data-value="25" href="#">25</a></li>
-                <li><a data-value="50" href="#">50</a></li>
-                <li><a data-value="100" href="#">100</a></li>
-                <li><a data-value="200" href="#">200</a></li>
-                <li><a data-value="500" href="#">500</a></li>
-                <li><a data-value="1000" href="#">1000</a></li>
-              </ul>
-
-              <span>相似基准:&nbsp;</span><input class='accuracy_input' type='number' max="1000"/>
-
-            </div>
-            <div id="LineControler" class="btn-group" style="padding:0 16px;">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span>100&nbsp;</span><span class="caret"></span> </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                    <li><a href="javascript:;">5&nbsp;</a></li>
-                    <li><a href="javascript:;">50&nbsp;</a></li>
-                    <li><a href="javascript:;">100&nbsp;</a></li>
-                    <li><a href="javascript:;">200&nbsp;</a></li>
-                    <li><a href="javascript:;">300&nbsp;</a></li>
-                    <li><a href="javascript:;">900&nbsp; </a></li>
-                </ul>
-            </div>
-            字/页
-            </div>
-            <div style="margin-left:10px;margin-top:10px">
-                <div class='char-pagitor'>
-                    <span class='pagitor first btn btn-warning' id='char_index_first'>第一页</span>
-                    <span class='pagitor previous btn btn-warning' id='char_index_previous'>❮ ❮ </span>
-                    <input class='pagitor_input' type='number' min="1">
-                    <span class='pagitor_of'id="total_page"> </span>
-                    <span class='pagitor next btn btn-warning' id='char_index_next'> ❯ ❯</span>
-                    <span class='pagitor last btn btn-warning' id='char_index_last'>最末页</span>
-
+            <div class='row'>
+                <div class="col-md-2" style="margin-top:-16px;">
+                <strong id='checkchar' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>口</strong>
+                <a target="_blank" href="http://hanzi.lqdzj.cn/hanzi-dict/search?param={{char}}">查字典</a>
                 </div>
+                <div id="accuracy_scope" class="form-inline dropdown" style="display: inline-block;margin-left: 2px;float:right">
+                  <label>相似度:<input class="accuracy_input form-control-inline input-sm" placeholder="0.5" aria-controls="char_index"></label>
+                  <label style="margin-left:6px;">±:
+
+                  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span>0.01</span>
+                  <span class="caret"></span></button>
+
+                  <ul class="dropdown-menu" style="margin-left:45%">
+                    <li><a data-value="1" href="#">0.001</a></li>
+                    <li><a data-value="5" href="#">0.005</a></li>
+                    <li><a data-value="10" href="#">0.01</a></li>
+                    <li><a data-value="25" href="#">0.025</a></li>
+                    <li><a data-value="50" href="#">0.05</a></li>
+                    <li><a data-value="100" href="#">0.1</a></li>
+                  </ul>
+                  </label>
+                </div>
+                <div id="find_scope" class="dropdown" style="display: inline-block;float:right;margin: 0px 10px;">
+                  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span>显示全部&nbsp;</span>
+                  <span class="caret"></span></button>
+                  <ul class="dropdown-menu" style="margin-top:8px;">
+                    <li><a data-value="-10" href="#">显示全部</a></li>
+                    <li><a data-value="0" href="#">未标记</a></li>
+                    <li><a data-value="-1" href="#">人工标错</a></li>
+                    <li><a data-value="1" href="#">人工标对</a></li>
+                  </ul>
+                </div>
+                <div id="LineControler" class="btn-group" style="padding:0px;float:right; margin: 0px 10px;">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span>100&nbsp;</span><span class="caret"></span> </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                            <li><a href="javascript:;">5&nbsp;</a></li>
+                            <li><a href="javascript:;">20&nbsp;</a></li>
+                            <li><a href="javascript:;">50&nbsp;</a></li>
+                            <li><a href="javascript:;">100&nbsp;</a></li>
+                            <li><a href="javascript:;">200&nbsp;</a></li>
+                            <li><a href="javascript:;">300&nbsp;</a></li>
+                            <li><a href="javascript:;">900&nbsp; </a></li>
+                        </ul>
+                        <label style="line-height: 31px;">字/页</label>
+                    </div>
             </div>
+
             <div style="clear:both;"> </div>
             <div id='charBrowseArea'>
             </div>
             <div style="clear:both;"> </div>
-            <div style="margin-left:10px;margin-top:10px">
+            <div class="row" style="margin-top:10px">
+                <div  class="btn btn-primary batch-check" id="correct_btn" ><span class="fa fa-check">批量正确</span></div>
+                <div  class="btn btn-primary batch-check" id="err_btn"><span class="fa fa-times">批量错误</span></div>
                 <div class='char-pagitor'>
-                    <span class='pagitor first btn btn-warning' id='char_index_first'>第一页</span>
-                    <span class='pagitor previous btn btn-warning' id='char_index_previous'>❮ ❮ </span>
+                    <span class='pagitor first btn btn-primary' id='char_index_first'><span class="fa fa-step-backward"></span></span>
+                    <span class='pagitor previous btn btn-primary' id='char_index_previous'>❮ ❮ </span>
                     <input class='pagitor_input' type='number' min="1">
-                    <span class='pagitor_of'id="total_page"> </span>
-                    <span class='pagitor next btn btn-warning' id='char_index_next'> ❯ ❯</span>
-                    <span class='pagitor last btn btn-warning' id='char_index_last'>最末页</span>
+                    <span class='pagitor_of total_page'> </span>
+                    <span class='pagitor next btn btn-primary' id='char_index_next'> ❯ ❯</span>
+                    <span class='pagitor last btn btn-primary' id='char_index_last'><span class="fa fa-step-forward"></span></span>
 
                 </div>
-                <div style="float:right">
-                <div  class="btn btn-primary batch-check" id="correct_btn">批量標對</div>
-                <div  class="btn btn-primary batch-check" id="err_btn">批量標錯</div>
-                <div  class="btn btn-primary batch-check" id="clear_btn">批量清空</div>
+                <div  class="btn btn-primary batch-check" id="clear_btn"><span class="fa fa-repeat">批量清空</span></div>
                 </div>
-            </div>
             <div style="clear:both;"> </div>
 
             <div class="pagec" id="pagearea">
@@ -141,12 +124,35 @@
 <script src="/static/datatables/jquery.dataTables.min.js"></script>
 <script src="/static/datatables/dataTables.bootstrap.min.js"></script>
 <script src="/static/datatables/input.js"></script>
+<script type="text/javascript">
+    var chars = [
+    {% for char in characterstatistics_list %}
+        [
+            "{{forloop.counter}}",
+            "{{char.char}}",
+            "{{char.total_cnt}}",
+            "{{char.correct_cnt}}",
+            "{{char.err_cnt}}",
+            "{{char.uncheck_cnt}}"
+        ],
+    {% endfor %}
+    ]
+</script>
 <!-- page script -->
 <script>
   $(function () {
     $("#char_index").DataTable({
       "pagingType": "input",
-        "info":     false
+        "info":     false,
+        "borderClasses": false,
+        "bSortClasses": false,
+        "bProcessing": true,
+    "bDeferRender": true,
+    "bProcessing": true,
+    "bDeferRender": true,
+
+    // Rows and column headers stored in a "data" object:
+    "aaData": chars,
 
     });
   });
@@ -160,15 +166,15 @@ var charListContainer =
         page_size: 15,
         page_number: 1,
         filter: '-10',//show all
-        accuracy_base: 0,
-        accuracy_scope: 1000,
+        accuracy_base: NaN,
+        accuracy_scope: 10,
         data: [],
         pagination: {},
         paginationRender: function(){
             var total_pages = this.pagination.total_pages;
             $('.pagitor_input').val(this.page_number);
             $('.pagitor_input').attr('max',total_pages);
-            $('#total_page').text('of '+total_pages);
+            $('.total_page').text('of '+total_pages);
         },
         hello: function(){
             alert('hello');
@@ -222,13 +228,15 @@ var charListContainer =
                 +"&char="+this.char
                 +"&page=1";//+this.page_number;
             var accuracy_cap, accuracy_floor;
-            accuracy_cap = (this.accuracy_base + this.accuracy_scope)/1000;
-            accuracy_floor = (this.accuracy_base - this.accuracy_scope)/1000;
-            if (accuracy_cap <1) {
-                query += "&accuracy__lt="+accuracy_cap;
-            }
-            if (accuracy_floor>-1) {
-                query += "&accuracy__gt="+accuracy_floor;
+            if (this.accuracy_base) {
+                accuracy_cap = (this.accuracy_base + this.accuracy_scope/1000);
+                accuracy_floor = (this.accuracy_base - this.accuracy_scope/1000);
+                if (accuracy_cap <1) {
+                    query += "&accuracy__lt="+accuracy_cap;
+                }
+                if (accuracy_floor>-1) {
+                    query += "&accuracy__gt="+accuracy_floor;
+                }
             }
             if(this.filter != -10){
                 query += "&is_correct="+this.filter;
@@ -258,13 +266,15 @@ var charListContainer =
                 +"&char="+this.char
                 +"&page="+this.page_number;
             var accuracy_cap, accuracy_floor;
-            accuracy_cap = (this.accuracy_base + this.accuracy_scope)/1000;
-            accuracy_floor = (this.accuracy_base - this.accuracy_scope)/1000;
-            if (accuracy_cap <1) {
-                query += "&accuracy__lt="+accuracy_cap;
-            }
-            if (accuracy_floor>-1) {
-                query += "&accuracy__gt="+accuracy_floor;
+            if (this.accuracy_base) {
+                accuracy_cap = (this.accuracy_base + this.accuracy_scope/1000);
+                accuracy_floor = (this.accuracy_base - this.accuracy_scope/1000);
+                if (accuracy_cap <1) {
+                    query += "&accuracy__lt="+accuracy_cap;
+                }
+                if (accuracy_floor>-1) {
+                    query += "&accuracy__gt="+accuracy_floor;
+                }
             }
             if(this.filter != -10){
                 query += "&is_correct="+this.filter;
@@ -288,7 +298,7 @@ $(function(){
 });
 
 $('.accuracy_input').on('input',function(e){
-    charListContainer.accuracy_base=parseInt($(this).val());
+    charListContainer.accuracy_base=parseFloat($(this).val());
 });
 
 //handler char select
@@ -296,6 +306,7 @@ $('#char_index #char_index_tbody').on('click', 'tr', function(event) {
     $('tr').removeClass("selected");
     $(this).addClass("selected");
     charListContainer.char = $("tr.selected td:eq(1)").text();
+    $("#checkchar").text(charListContainer.char);
     charListContainer.page_number=1;
     charListContainer.filter="-10";
     $('.radio-btn').removeClass('actived');
@@ -308,7 +319,7 @@ $('#char_index #char_index_tbody').on('click', 'tr', function(event) {
 $(function() {
     var page_size = charListContainer.page_size;
     $("#LineControler button span:first-of-type").text(page_size);
-    $('.accuracy_input').val('0');
+    $('.accuracy_input').val('');
 
     $("#LineControler li a").click(function () {
         var page_size = $(this).text();
@@ -409,6 +420,9 @@ $(function(){
         }
         else if($(this).hasClass('last')){
             page_number= charListContainer.pagination.total_pages;
+        }
+        if (!page_number) {
+            return;
         }
         charListContainer.page_number=page_number;
         charListContainer.fetchDataAndRender();
