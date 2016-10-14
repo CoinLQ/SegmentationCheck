@@ -107,11 +107,13 @@ div.dataTables_paginate span {
   float:left;
   margin: 2px;
 }
-  .char-info{
+.char-info{
       margin: 3px 1px 2px 1px;
     display:block;
     float:right;
     clear:both;
+    position: absolute;
+    bottom: 0px;
   }
 
 .selected {
