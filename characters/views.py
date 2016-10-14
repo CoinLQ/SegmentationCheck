@@ -38,14 +38,6 @@ def stacked_area_chart(request):
 
 #@user_passes_test(lambda u:u.is_staff, login_url='/quiz')
 def task(request):
-    # redis_client = redis.StrictRedis(host='localhost', port=6379, db=2)
-    # all_characters_key = 'seg_web:all_characters'
-    # selected_characters = 'seg_web:selected_characters'
-    # stage_characters = 'seg_web:stage_characters'
-
-    # total_cnt = redis_client.get(stage_characters)
-    # select_cnt = redis_client.llen(selected_characters)
-    # done_cnt = total_cnt - select_cnt
     query = CharacterStatistics.objects.filter(total_cnt__lte=5,total_cnt__gt=0)
     total_cnt = query.count()
     select_cnt = query.filter(uncheck_cnt__gt=0).count()
@@ -118,6 +110,17 @@ def set_correct(request):
                     update(uncheck_cnt=F('uncheck_cnt')-updateNum, correct_cnt=F('correct_cnt')+updateNum)
 
         data = {'status': 'ok'}
+    elif ('cl_charArr[]' in request.POST):
+        c_num = int(request.POST['c_num'])
+        e_num = int(request.POST['e_num'])
+        unset_num = e_num + c_num;
+        char = request.POST['char']
+        charArr = request.POST.getlist('cl_charArr[]')
+        updateNum = Character.objects.filter(id__in =charArr).update(is_correct=0)
+        CharacterStatistics.objects.filter(char=char).\
+                    update(uncheck_cnt=F('uncheck_cnt')+unset_num, correct_cnt=F('correct_cnt')-c_num,
+                        err_cnt=F('err_cnt')-e_num)
+        data = {'status': 'ok', 'clear': 'ok'}
     else:
         data = {'status': 'error'}
     return JsonResponse(data)
@@ -148,7 +151,7 @@ def get_marked_char_count(request):
                 u'mark_wrong_by_pc': r[4],
             }
             out_lst.append(d)
-        cache.set('marked_char_count', out_lst)
+        cache.set('marked_char_count', out_lst, timeout=86400)
     return JsonResponse({'status': 'ok', 'data': out_lst})
 
 '''
