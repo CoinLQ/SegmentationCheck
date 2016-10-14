@@ -47,20 +47,6 @@
                 <strong id='checkchar' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>口</strong>
                 <a target="_blank" href="javascript:checkDict()">查字典</a>
                 </div>
-                <div id="LineControler" class="btn-group" style="padding:0px;float:right; margin: 0px 10px;">
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span>100&nbsp;</span><span class="caret"></span> </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <li><a href="javascript:;">10&nbsp;</a></li>
-                        <li><a href="javascript:;">20&nbsp;</a></li>
-                        <li><a href="javascript:;">50&nbsp;</a></li>
-                        <li><a href="javascript:;">100&nbsp;</a></li>
-                        <li><a href="javascript:;">200&nbsp;</a></li>
-                        <li><a href="javascript:;">500&nbsp;</a></li>
-                        <li><a href="javascript:;">1000&nbsp; </a></li>
-                    </ul>
-                    <label style="line-height: 31px;">字/页</label>
-                </div>
                 <div id="accuracy_scope" class="form-inline dropdown" style="display: inline-block;margin-left: 2px;float:right">
                   <label>相似度:<input class="accuracy_input form-control-inline input-sm" placeholder="0.5" aria-controls="char_index"></label>
                   <label style="margin-left:6px;">±
@@ -100,14 +86,29 @@
                 <div  class="btn btn-primary batch-check" id="correct_btn" ><span class="fa fa-check">批量正确</span></div>
                 <div  class="btn btn-primary batch-check" id="err_btn"><span class="fa fa-times">批量错误</span></div>
                 <div class='char-pagitor'>
-                    <span class='pagitor first btn btn-primary' id='char_index_first'><span class="fa fa-step-backward"></span></span>
-                    <span class='pagitor previous btn btn-primary' id='char_index_previous'>❮ ❮ </span>
-                    <input class='pagitor_input' type='number' min="1">
+                    <span class='pagitor first btn btn-default' id='char_index_first'><span class="fa fa-step-backward"></span></span>
+                    <span class='pagitor previous btn btn-default' id='char_index_previous'>❮</span>
+                    <input class='form-control-inline pagitor_input input-sm' type='number' min="1">
                     <span class='pagitor_of total_page'> </span>
-                    <span class='pagitor next btn btn-primary' id='char_index_next'> ❯ ❯</span>
-                    <span class='pagitor last btn btn-primary' id='char_index_last'><span class="fa fa-step-forward"></span></span>
+                    <span class='pagitor next btn btn-default' id='char_index_next'>❯</span>
+                    <span class='pagitor last btn btn-default' id='char_index_last'><span class="fa fa-step-forward"></span></span>
 
+                    <div id="LineControler" class="btn-group" style="padding:0px; margin-left: 10px;">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span>100&nbsp;</span><span class="caret"></span> </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                        <li><a href="javascript:;">10&nbsp;</a></li>
+                        <li><a href="javascript:;">20&nbsp;</a></li>
+                        <li><a href="javascript:;">50&nbsp;</a></li>
+                        <li><a href="javascript:;">100&nbsp;</a></li>
+                        <li><a href="javascript:;">200&nbsp;</a></li>
+                        <li><a href="javascript:;">500&nbsp;</a></li>
+                        <li><a href="javascript:;">1000&nbsp; </a></li>
+                    </ul>
+                    <label style="line-height: 31px;">字/页</label>
                 </div>
+                </div>
+
                 <div  class="btn btn-primary batch-check" id="clear_btn"><span class="fa fa-repeat">批量清空</span></div>
                 </div>
             <div style="clear:both;"> </div>
