@@ -7,7 +7,7 @@ from .serializers import PageSerializer, OPageSerializer, TripitakaSerializer, V
 from managerawdata.models import OPage
 from catalogue.models import Tripitaka, Volume
 from segmentation.models import Page, Character, CharacterStatistics
-
+from libs.count_helper import ApproxCountPgQuerySet
 
 class TripitakaViewSet(viewsets.ModelViewSet):
     serializer_class = TripitakaSerializer
@@ -52,7 +52,10 @@ class CharacterFilter(filters.FilterSet):
 class CharacterViewSet(viewsets.ModelViewSet):
     serializer_class = CharacterSerializer
     filter_class = CharacterFilter
+    # qs = Character.objects.order_by('accuracy')
+    # queryset = qs._clone(klass=ApproxCountPgQuerySet)
     queryset = Character.objects.order_by('accuracy')
+
     #queryset = Character.objects.filter(is_correct__lt=2).\
     #    filter(is_correct__gt=-2).order_by('accuracy')
 
