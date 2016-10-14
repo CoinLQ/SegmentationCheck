@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from celery import task
 from django.db import connection
+from django.db.models import Q
 from segmentation.models import Character, CharacterStatistics
 import sys
 import os
@@ -21,6 +22,7 @@ from utils.image_normalization.normalization import normalize
 from thinning import convert_image, thinning
 import cPickle
 import numpy as np
+import traceback
 
 # @task
 def add(x, y):
@@ -55,18 +57,29 @@ def update_char_stastics():
 def classify(_char):
     print 'to fetch data'
     start_time = time.time()
+    char_count = Character.objects.filter(char=_char, is_correct=1).count()
+    if char_count < 10:
+        return
     char_lst = Character.objects.filter(char=_char)
     y, X, ty, tX, t_charid_lst = prepare_data_with_database(char_lst)
     if len(y) == 0 or len(ty) == 0:
         return
     if 1 == len(set(y)) or len(y) < 10:
         return
+    X_neg = []
+    y_neg = []
+    fetch_negative_samples(_char, X_neg, y_neg)
+    print('negative: %d' % len(y_neg))
+    if len(y) == 0 or len(ty) == 0:
+        return
+    if 1 == len(set(y)) or len(y) < 50:
+        return
 
     print "fetch data done, spent %s seconds." % int(time.time() - start_time)
     start_time = time.time()
     print "traning: data size: %d" % len(y)
     from sklearn.linear_model import LogisticRegressionCV
-    model = LogisticRegressionCV(cv=5, solver='liblinear', class_weight='balanced', n_jobs=-1)
+    model = LogisticRegressionCV(cv=5, solver='liblinear', class_weight='balanced', n_jobs=1)
     try:
         model.fit(X, y)
         print "training done, spent %s seconds." % int(time.time() - start_time)
@@ -76,6 +89,7 @@ def classify(_char):
         print 'score: ', model.score(X, y)
     except Exception, e:
         print 'except: ', e
+        traceback.print_exc()
         return
     #print "----model------"
     # make predictions
@@ -121,6 +135,31 @@ def prepare_data_with_database(char_lst):
                 prob_y.append(label)
     return (prob_y, prob_x, test_y, test_x, test_char_id_lst)
 
+def fetch_negative_samples(char, X = [] * 1, y = [] * 1):
+    char_count_map = {}
+    total_count = Character.objects.filter(Q(is_correct=1) & ~Q(char=char)).count()
+    print 'negative samples: total %d' % total_count
+    iter_count = (total_count - 1) / 10000
+    for i in range(iter_count):
+        start = i * 10000
+        characters = Character.objects.filter(Q(is_correct=1) & ~Q(char=char))[start:start+10000]
+        for ch in characters:
+            count = char_count_map.get(ch.char, 0)
+            if count >= 5:
+                continue
+            label = -1
+            img_path = ch.get_image_path()
+            try:
+                binary = normalize(img_path)
+                feature_vector = binary.ravel()
+            except:
+                feature_vector = None
+            if feature_vector is not None:
+                X.append(feature_vector)
+                y.append( label )
+                char_count_map[ch.char] = count + 1
+    return X, y
+
 
 def output_result2sql(p_labels, t_charid_lst, char):
     result_file = '/home/dzj/classification_results/%s_result_char.sql' % char.encode('utf-8')
@@ -129,5 +168,5 @@ def output_result2sql(p_labels, t_charid_lst, char):
         length = len(p_labels)
         for i in range(length):
             update_sql = "update segmentation_character set accuracy = %g where id = '%s';\n"\
-                         % (p_labels[i], t_charid_lst[i])
+                         % (int(p_labels[i]*1000), t_charid_lst[i])
             res_f.write(update_sql)

@@ -148,7 +148,7 @@ def get_marked_char_count(request):
                 u'mark_wrong_by_pc': r[4],
             }
             out_lst.append(d)
-        cache.set('marked_char_count', out_lst)
+        cache.set('marked_char_count', out_lst, timeout=86400)
     return JsonResponse({'status': 'ok', 'data': out_lst})
 
 '''
