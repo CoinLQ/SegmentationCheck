@@ -113,6 +113,13 @@ TEMPLATES = [
     },
 ]
 
+TEMPLATE_LOADERS = (
+    ('django.template.loaders.cached.Loader', (
+        'django.template.loaders.filesystem.Loader',
+        'django.template.loaders.app_directories.Loader',
+    )),
+)
+
 WSGI_APPLICATION = 'SegmentationCheck.wsgi.application'
 
 REST_FRAMEWORK = {
@@ -150,7 +157,7 @@ DATABASES = {
         'PASSWORD': 'dzjsql',
         'HOST': 'localhost',
         'PORT': '5432',
-        'CONN_MAX_AGE': None,
+        'CONN_MAX_AGE': 600,
     }
 }
 
