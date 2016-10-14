@@ -26,11 +26,11 @@ def binarisation(src_image):
 def main():
     with open('/home/dzj/abnormal_size.sql', 'w') as fsql:
         results = []
-        count = Character.objects.filter(is_correct=0).count()
+        count = Character.objects.filter(is_correct__in=[0,-1]).count()
         iter_count = (count-1)/100000
         for i in range(iter_count):
             start = i*100000
-            characters = Character.objects.filter(is_correct=0)[start: start+100000]
+            characters = Character.objects.filter(is_correct__in=[0,-1])[start: start+100000]
             for ch in characters:
                 width = ch.right - ch.left
                 height = ch.bottom - ch.top
