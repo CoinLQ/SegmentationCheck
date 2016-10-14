@@ -1,7 +1,7 @@
 var sort = [];
 sortData();
 //console.log(sort.length);
-width = window.innerWidth,
+width = window.innerWidth-20,
     height = window.innerHeight,
     color = ['#B8D200', '#EB6EA5', '#C8D5BB', '#F4B3C2', '#F8B500', '#7EBEAB', '#BBC8E6'],
     svg = d3.select("svg")
