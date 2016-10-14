@@ -1,25 +1,25 @@
 {% extends "base.html" %}
 {% block head %}
 {# 用于在html head部分添加内容，如引入css，js资源等#}
-<title>數據圖表</title>
+<title>数据图表</title>
 <link href="/static/css/handwriting.css" rel="stylesheet" type="text/css"/>
 {% endblock %}
 {% block mainbody %}
 {# 主内容区 #}
 <div class="container">
     <div class="panel panel-info">
-        <div class="panel-heading">漢字地圖</div>
+        <div class="panel-heading">汉字地图</div>
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-4">
                     <a href="/characters/treemap">
-                        <img src="/static/img/treemap.png" alt="漢字地圖" style="width:100%;">
+                        <img src="/static/img/treemap.png" alt="汉字地图" style="width:100%;">
                     </a>
                 </div>
                 <div class="col-md-8">
                     <div class="well well-lg">
-                        每個字按照出現的次數佔用不同大小的區域,出現的次數越多,所對應的區域面積越大,組合在一起就形成了一個漂亮的漢字地圖.
-                        使用漢字地圖,可以讓您以鳥瞰的方式來瀏覽每個字在經文中出現的情況.
+                        每个字按照出现的次数占用不同大小的区域,出现的次数越多,所对应的区域面积越大,组合在一起就形成了一个漂亮的汉字地图.
+                        使用汉字地图可以让您以鸟瞰的方式来浏览每个字出现的情况.
                     </div>
                 </div>
             </div>
@@ -27,16 +27,16 @@
     </div>
 
     <div class="panel panel-info">
-        <div class="panel-heading">堆疊圖</div>
+        <div class="panel-heading">堆叠图</div>
         <div class="panel-body">
             <div class="col-md-4">
                 <a href="/characters/stackedareachart">
-                    <img src="/static/img/stackedarea.png" alt="堆疊圖" style="width:100%;">
+                    <img src="/static/img/stackedarea.png" alt="堆叠图" style="width:100%;">
                 </a>
             </div>
             <div class="col-md-8">
                 <div class="well well-lg">
-                    以堆疊圖的形式爲您展示每個字的字形信息.包括人工標注的正樣本數,負樣本數;機器標注的正樣本數,負樣本數.
+                    以堆叠图的形式为您展示每个字的字形信息.包括人工标注的正样本数,负样本数,机器标注的正样本数,负样本数.
                 </div>
             </div>
         </div>
