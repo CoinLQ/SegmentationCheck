@@ -61,26 +61,24 @@
               </ul>
             </div>
 
-            <div id="accuracy_scope" class="dropdown hidden" style="float:left;">
-              <span>相似基准:&nbsp;</span><input class='accuracy_input' type='number' max="1">
-              <span>相似范围</span>
-              <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span>10&nbsp;</span>
+            <div id="accuracy_scope" class="dropdown" style="float:left; margin-left: 5px;">
+              <span>相似范围:</span>
+              <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span>1000</span>
               <span class="caret"></span></button>
               <ul class="dropdown-menu">
-                <li><a data-value="-100" href="#">-100</a></li>
-                <li><a data-value="-50" href="#">-50</a></li>
-                <li><a data-value="-25" href="#">-25</a></li>
-                <li><a data-value="-10" href="#">-10</a></li>
-                <li><a data-value="-5" href="#">-5</a></li>
-                <li><a data-value="-1" href="#">-1</a></li>
-                <li><a data-value="0" href="#">0</a></li>
                 <li><a data-value="1" href="#">1</a></li>
                 <li><a data-value="5" href="#">5</a></li>
                 <li><a data-value="10" href="#">10</a></li>
                 <li><a data-value="25" href="#">25</a></li>
                 <li><a data-value="50" href="#">50</a></li>
                 <li><a data-value="100" href="#">100</a></li>
+                <li><a data-value="200" href="#">200</a></li>
+                <li><a data-value="500" href="#">500</a></li>
+                <li><a data-value="1000" href="#">1000</a></li>
               </ul>
+
+              <span>相似基准:&nbsp;</span><input class='accuracy_input' type='number' max="1000"/>
+
             </div>
             <div id="LineControler" class="btn-group" style="padding:0 16px;">
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -98,12 +96,12 @@
             </div>
             <div style="margin-left:10px;margin-top:10px">
                 <div class='char-pagitor'>
-                    <span class='pagitor first btn btn-warning' id='char_index_first'>First</span>
-                    <span class='pagitor previous btn btn-warning' id='char_index_previous'>Previous</span>
+                    <span class='pagitor first btn btn-warning' id='char_index_first'>第一页</span>
+                    <span class='pagitor previous btn btn-warning' id='char_index_previous'>❮ ❮ </span>
                     <input class='pagitor_input' type='number' min="1">
                     <span class='pagitor_of'id="total_page"> </span>
-                    <span class='pagitor next btn btn-warning' id='char_index_next'>Next</span>
-                    <span class='pagitor last btn btn-warning' id='char_index_last'>Last</span>
+                    <span class='pagitor next btn btn-warning' id='char_index_next'> ❯ ❯</span>
+                    <span class='pagitor last btn btn-warning' id='char_index_last'>最末页</span>
 
                 </div>
             </div>
@@ -113,12 +111,12 @@
             <div style="clear:both;"> </div>
             <div style="margin-left:10px;margin-top:10px">
                 <div class='char-pagitor'>
-                    <span class='pagitor first btn btn-warning' id='char_index_first'>First</span>
-                    <span class='pagitor previous btn btn-warning' id='char_index_previous'>Previous</span>
+                    <span class='pagitor first btn btn-warning' id='char_index_first'>第一页</span>
+                    <span class='pagitor previous btn btn-warning' id='char_index_previous'>❮ ❮ </span>
                     <input class='pagitor_input' type='number' min="1">
                     <span class='pagitor_of'id="total_page"> </span>
-                    <span class='pagitor next btn btn-warning' id='char_index_next'>Next</span>
-                    <span class='pagitor last btn btn-warning' id='char_index_last'>Last</span>
+                    <span class='pagitor next btn btn-warning' id='char_index_next'> ❯ ❯</span>
+                    <span class='pagitor last btn btn-warning' id='char_index_last'>最末页</span>
 
                 </div>
                 <div style="float:right">
@@ -162,8 +160,8 @@ var charListContainer =
         page_size: 15,
         page_number: 1,
         filter: '-10',//show all
-        accuracy_cap: 1,
-        accuracy_floor: -1,
+        accuracy_base: 0,
+        accuracy_scope: 1000,
         data: [],
         pagination: {},
         paginationRender: function(){
@@ -223,11 +221,14 @@ var charListContainer =
             var query = "/api/character?page_size="+this.page_size
                 +"&char="+this.char
                 +"&page=1";//+this.page_number;
-            if (this.accuracy_cap <1) {
-                query += "&accuracy__lt="+this.accuracy_cap;
+            var accuracy_cap, accuracy_floor;
+            accuracy_cap = (this.accuracy_base + this.accuracy_scope)/1000;
+            accuracy_floor = (this.accuracy_base - this.accuracy_scope)/1000;
+            if (accuracy_cap <1) {
+                query += "&accuracy__lt="+accuracy_cap;
             }
-            if (this.accuracy_floor>-1) {
-                query += "&accuracy__gt="+this.accuracy_floor;
+            if (accuracy_floor>-1) {
+                query += "&accuracy__gt="+accuracy_floor;
             }
             if(this.filter != -10){
                 query += "&is_correct="+this.filter;
@@ -256,11 +257,14 @@ var charListContainer =
             var query = "/api/character?page_size="+this.page_size
                 +"&char="+this.char
                 +"&page="+this.page_number;
-            if (this.accuracy_cap <1) {
-                query += "&accuracy__lt="+this.accuracy_cap;
+            var accuracy_cap, accuracy_floor;
+            accuracy_cap = (this.accuracy_base + this.accuracy_scope)/1000;
+            accuracy_floor = (this.accuracy_base - this.accuracy_scope)/1000;
+            if (accuracy_cap <1) {
+                query += "&accuracy__lt="+accuracy_cap;
             }
-            if (this.accuracy_floor>-1) {
-                query += "&accuracy__gt="+this.accuracy_floor;
+            if (accuracy_floor>-1) {
+                query += "&accuracy__gt="+accuracy_floor;
             }
             if(this.filter != -10){
                 query += "&is_correct="+this.filter;
@@ -283,6 +287,10 @@ $(function(){
     charListContainer.page_size = page_size;
 });
 
+$('.accuracy_input').on('input',function(e){
+    charListContainer.accuracy_base=parseInt($(this).val());
+});
+
 //handler char select
 $('#char_index #char_index_tbody').on('click', 'tr', function(event) {
     $('tr').removeClass("selected");
@@ -300,22 +308,30 @@ $('#char_index #char_index_tbody').on('click', 'tr', function(event) {
 $(function() {
     var page_size = charListContainer.page_size;
     $("#LineControler button span:first-of-type").text(page_size);
+    $('.accuracy_input').val('0');
 
-$("#LineControler li a").click(function () {
-    var page_size = $(this).text();
-    charListContainer.page_size = page_size;
-    $("#LineControler button span:first-of-type").text(page_size);
-    $.cookie('charindex_page_size', page_size, { expires: 30 });
-    charListContainer.page_number=1;
-    charListContainer.fetchDataAndRender();
-})
+    $("#LineControler li a").click(function () {
+        var page_size = $(this).text();
+        charListContainer.page_size = page_size;
+        $("#LineControler button span:first-of-type").text(page_size);
+        $.cookie('charindex_page_size', page_size, { expires: 30 });
+        charListContainer.page_number=1;
+        charListContainer.fetchDataAndRender();
+    })
 
-$("#find_scope .dropdown-menu a").click(function() {
-    var li = $(this);
-    li.parent().parent().parent().find("button span:first-of-type").text(li.text());
-    charListContainer.filter=li.data('value');
-    charListContainer.switchAndRender();
-})
+    $("#find_scope .dropdown-menu a").click(function() {
+        var li = $(this);
+        li.parent().parent().parent().find("button span:first-of-type").text(li.text());
+        charListContainer.filter=li.data('value');
+        charListContainer.switchAndRender();
+    })
+
+    $("#accuracy_scope .dropdown-menu a").click(function() {
+        var li = $(this);
+        li.parent().parent().parent().find("button span:first-of-type").text(li.text());
+        charListContainer.accuracy_scope=li.data('value');
+        charListContainer.switchAndRender();
+    })
 })
 // batch handle
 $(function(){
@@ -399,9 +415,9 @@ $(function(){
     });
 })
 
-$('.pagitor_input').keypress(function( event ){
+$('input').keypress(function( event ){
     if(event.which == 13){
-        var page_number = $('.pagitor_input').val();
+        var page_number = parseInt($('.pagitor_input').val()) || 1;
         charListContainer.page_number=page_number;
         charListContainer.fetchDataAndRender();
     }

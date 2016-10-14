@@ -154,7 +154,7 @@ div.dataTables_paginate span {
     color: gainsboro;
     cursor: not-allowed;
 }
-.pagitor_input{
+.accuracy_input, .pagitor_input{
      width: 55px;
 }
 
