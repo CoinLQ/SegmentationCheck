@@ -33,6 +33,9 @@ def help(request):
 def char_dashboard(request):
     return render(request, 'characters/char_dashboard.html')
 
+def stacked_area_chart(request):
+    return render(request, 'characters/stacked_area_chart.html')
+
 #@user_passes_test(lambda u:u.is_staff, login_url='/quiz')
 def task(request):
     # redis_client = redis.StrictRedis(host='localhost', port=6379, db=2)

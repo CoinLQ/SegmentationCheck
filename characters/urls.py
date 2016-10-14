@@ -9,5 +9,6 @@ urlpatterns = [
     url(r'^set_correct$', views.set_correct, name='set_correct'),
     url(r'^treemap$', views.tree_map),
     url(r'^dashboard$', views.char_dashboard),
+    url(r'^stackedareachart$', views.stacked_area_chart),
     url(r'^get_marked_char_count$', views.get_marked_char_count, name='get_marked_char_count'),
 ]
