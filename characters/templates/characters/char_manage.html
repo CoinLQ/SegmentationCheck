@@ -45,19 +45,19 @@
             <div class='row'>
                 <div class="col-md-2" style="margin-top:-16px;">
                 <strong id='checkchar' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>口</strong>
-                <a target="_blank" href="http://hanzi.lqdzj.cn/hanzi-dict/search?param={{char}}">查字典</a>
+                <a target="_blank" href="javascript:checkDict()">查字典</a>
                 </div>
                 <div id="LineControler" class="btn-group" style="padding:0px;float:right; margin: 0px 10px;">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span>100&nbsp;</span><span class="caret"></span> </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <li><a href="javascript:;">5&nbsp;</a></li>
+                        <li><a href="javascript:;">10&nbsp;</a></li>
                         <li><a href="javascript:;">20&nbsp;</a></li>
                         <li><a href="javascript:;">50&nbsp;</a></li>
                         <li><a href="javascript:;">100&nbsp;</a></li>
                         <li><a href="javascript:;">200&nbsp;</a></li>
-                        <li><a href="javascript:;">300&nbsp;</a></li>
-                        <li><a href="javascript:;">900&nbsp; </a></li>
+                        <li><a href="javascript:;">500&nbsp;</a></li>
+                        <li><a href="javascript:;">1000&nbsp; </a></li>
                     </ul>
                     <label style="line-height: 31px;">字/页</label>
                 </div>
@@ -70,9 +70,10 @@
 
                   <ul class="dropdown-menu" style="margin-left:45%">
                     <li><a data-value="1" href="#">0.001</a></li>
+                    <li><a data-value="2" href="#">0.002</a></li>
                     <li><a data-value="5" href="#">0.005</a></li>
                     <li><a data-value="10" href="#">0.01</a></li>
-                    <li><a data-value="25" href="#">0.025</a></li>
+                    <li><a data-value="20" href="#">0.02</a></li>
                     <li><a data-value="50" href="#">0.05</a></li>
                     <li><a data-value="100" href="#">0.1</a></li>
                   </ul>
@@ -298,6 +299,12 @@ $(function(){
     charListContainer.page_size = page_size;
 });
 
+function checkDict(){
+    href="javascript:;"
+    url = 'http://hanzi.lqdzj.cn/hanzi-dict/search?param='
+    url += charListContainer.char;
+    window.open(url,'_blank');
+}
 $('.accuracy_input').on('input',function(e){
     charListContainer.accuracy_base=parseFloat($(this).val());
 });
