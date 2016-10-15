@@ -6,7 +6,7 @@ from django.db.models import F
 from utils.get_checked_character import get_checked_character
 import datetime
 from django.contrib.auth.decorators import user_passes_test
-from .models import UserCredit
+from .models import UserCredit, CharMarkRecord
 import redis
 from django.views import generic
 from django.core.cache import cache
@@ -75,7 +75,7 @@ def task(request):
                                                         } )
 
 
-# @login_required(login_url='/segmentation/login/')
+#@login_required(login_url='/segmentation/login/')
 def set_correct(request):
     if 'id' in request.POST:
         char_id = request.POST['id']
@@ -93,22 +93,34 @@ def set_correct(request):
             CharacterStatistics.objects.filter(char=char).\
                 update(err_cnt=F('err_cnt')-is_correct, correct_cnt=F('correct_cnt')+is_correct)
         Character.objects.filter(id=char_id).update(is_correct=is_correct)
+        record = CharMarkRecord.create(request.user, char_id, is_correct, datetime.datetime.now())
+        record.save()
+        print record.id
         data = {'status': 'ok'}
     elif (('e_charArr[]' in request.POST) or ('c_charArr[]' in request.POST)): # uncheck -> check
         check_char_number = request.session.get('check_char_number',0)
         request.session['check_char_number'] = check_char_number+1
         charArr = request.POST.getlist('e_charArr[]')
         char = request.POST['char']
+        time = datetime.datetime.now()
+        records = []
         if charArr:
             updateNum = Character.objects.filter(id__in =charArr).update(is_correct=-1)
             CharacterStatistics.objects.filter(char=char). \
                     update(uncheck_cnt=F('uncheck_cnt')-updateNum, err_cnt=F('err_cnt')+updateNum)
+            for char_id in charArr:
+                record = CharMarkRecord.create(request.user, char_id, -1, time)
+                records.append(record)
 
         charArr = request.POST.getlist('c_charArr[]')
         if charArr:
             updateNum = Character.objects.filter(id__in =charArr).update(is_correct=1)
             CharacterStatistics.objects.filter(char=char).\
                     update(uncheck_cnt=F('uncheck_cnt')-updateNum, correct_cnt=F('correct_cnt')+updateNum)
+            for char_id in charArr:
+                record = CharMarkRecord.create(request.user, char_id, 1, time)
+                records.append(record)
+        CharMarkRecord.objects.bulk_create(records)
 
         data = {'status': 'ok'}
     elif ('cl_charArr[]' in request.POST):
@@ -121,6 +133,12 @@ def set_correct(request):
         CharacterStatistics.objects.filter(char=char).\
                     update(uncheck_cnt=F('uncheck_cnt')+unset_num, correct_cnt=F('correct_cnt')-c_num,
                         err_cnt=F('err_cnt')-e_num)
+        time = datetime.datetime.now()
+        records = []
+        for char_id in charArr:
+            record = CharMarkRecord.create(request.user, char_id, 0, time)
+            records.append(record)
+        CharMarkRecord.objects.bulk_create(records)
         data = {'status': 'ok', 'clear': 'ok'}
     else:
         data = {'status': 'error'}
