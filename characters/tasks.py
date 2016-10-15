@@ -27,6 +27,7 @@ import numpy as np
 import traceback
 import random
 from datetime import datetime
+from operator import itemgetter
 
 # @task
 def update_char_stastics():
@@ -104,12 +105,17 @@ def classify_with_random_samples(char, positive_sample_count):
                                      started, completed, fetch_spent, training_spent, predict_spent)
     task.save()
     compare_results = []
+    results = []
     for i in range(predict_count):
         new_accuracy = int(predicted[i][1] * 1000)
         origin_accuracy = test_accuracy_lst[i]
         difference = new_accuracy - origin_accuracy
-        if difference >= 100:
-            result = ClassificationCompareResult.create(task, test_char_id_lst[i], origin_accuracy, new_accuracy)
+        results.append( (test_char_id_lst[i], origin_accuracy, new_accuracy, difference) )
+    results.sort(key=itemgetter(3), reverse=True)
+    selected_count = max(predict_count/10, 1000)
+    for char_id, origin_accuracy, new_accuracy, difference in results[:selected_count]:
+        if difference != 0:
+            result = ClassificationCompareResult.create(task, char_id, origin_accuracy, new_accuracy)
             compare_results.append(result)
     if len(compare_results) > 0:
         ClassificationCompareResult.objects.bulk_create(compare_results)

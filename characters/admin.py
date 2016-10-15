@@ -54,10 +54,12 @@ class ClassificationCompareResultAdmin(admin.ModelAdmin):
 
     def task_desc(self, obj):
         return obj.task_id
+    task_desc.admin_order_field = 'task_id'
     task_desc.short_description = u'分类任务'
 
     def char(self, obj):
         return obj.character.char
+    char.admin_order_field = 'character_id'
     char.short_description = u'字'
 
     def character_image(self, obj):
@@ -67,10 +69,12 @@ class ClassificationCompareResultAdmin(admin.ModelAdmin):
 
     def origin_accuracy_decimal(self, obj):
         return obj.origin_accuracy / 1000.0
+    origin_accuracy_decimal.admin_order_field = 'origin_accuracy'
     origin_accuracy_decimal.short_description = u'当前准确度'
 
     def new_accuracy_decimal(self, obj):
         return obj.new_accuracy / 1000.0
+    new_accuracy_decimal.admin_order_field = 'new_accuracy'
     new_accuracy_decimal.short_description = u'新预测准确度'
 
     def difference_decimal(self, obj):
@@ -78,6 +82,7 @@ class ClassificationCompareResultAdmin(admin.ModelAdmin):
             return u'<b>%s</b>' % (obj.difference / 1000.0)
         else:
             return u'%s' % (obj.difference / 1000.0)
+    difference_decimal.admin_order_field = 'difference'
     difference_decimal.short_description = u'准确度变化'
     difference_decimal.allow_tags = True
 

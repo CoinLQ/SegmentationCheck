@@ -97,7 +97,6 @@ def set_correct(request):
         Character.objects.filter(id=char_id).update(is_correct=is_correct)
         record = CharMarkRecord.create(request.user, char_id, is_correct, datetime.datetime.now())
         record.save()
-        print record.id
         data = {'status': 'ok'}
     elif (('e_charArr[]' in request.POST) or ('c_charArr[]' in request.POST)): # uncheck -> check
         check_char_number = request.session.get('check_char_number',0)
@@ -179,7 +178,7 @@ def classify(request):
     char = request.GET.get('char', None)
     if char is None:
         return JsonResponse({'status': 'error', 'msg': 'no char'})
-    positive_sample_count = request.GET.get('positive_sample_count', 0)
+    positive_sample_count = int(request.GET.get('positive_sample_count', 0))
     classify_with_random_samples.delay(char, positive_sample_count)
     return JsonResponse({'status': 'ok'})
 '''
