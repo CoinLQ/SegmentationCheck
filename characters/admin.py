@@ -7,7 +7,7 @@ class CharMarkRecordAdmin(admin.ModelAdmin):
     list_display = ('time', 'user', 'character_id', 'is_correct')
 
 class ClassificationTaskAdmin(admin.ModelAdmin):
-    list_display = ('id', 'char', 'started', 'completed',
+    list_display = ('id', 'char', 'train_count', 'predict_count', 'started', 'completed',
                     'spent', 'fetch_spent', 'training_spent', 'predict_spent', 'updated')
 
     def has_add_permission(self, request):
@@ -26,10 +26,18 @@ class ClassificationTaskAdmin(admin.ModelAdmin):
 
     actions = ['do_update']
 
+    def get_actions(self, request):
+        actions = super(ClassificationTaskAdmin, self).get_actions(request)
+        if not request.user.has_perm('characters.update_result'):
+            if 'do_update' in actions:
+                del actions['do_update']
+        return actions
+
     def do_update(self, request, queryset):
         task_ids = []
         for task in queryset:
-            task_ids.append(task.id)
+            if not task.updated:
+                task_ids.append(task.id)
         from django.db import transaction
         with transaction.atomic():
             for result in ClassificationCompareResult.objects.filter(task_id__in=task_ids):

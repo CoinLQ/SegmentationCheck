@@ -72,7 +72,9 @@ def classify_with_random_samples(char, positive_sample_count):
     for sample in negative_samples:
         X.append(sample[0])
         y.append(sample[1])
-    if 1 == len(set(y)) or len(y) < 10 or len(test_y) == 0:
+    train_count = len(y)
+    predict_count = len(test_y)
+    if 1 == len(set(y)) or train_count < 10 or predict_count == 0:
         return
     fetch_spent = int(time.time() - start_time)
     print "fetch data done, spent %s seconds." % fetch_spent
@@ -98,14 +100,15 @@ def classify_with_random_samples(char, positive_sample_count):
     predict_spent = int(time.time() - start_time)
     print "predict done, spent %s seconds." % predict_spent
     completed = datetime.now()
-    task = ClassificationTask.create(char, u'', started, completed, fetch_spent, training_spent, predict_spent)
+    task = ClassificationTask.create(char, u'', train_count, predict_count,
+                                     started, completed, fetch_spent, training_spent, predict_spent)
     task.save()
     compare_results = []
-    for i in range(len(test_y)):
+    for i in range(predict_count):
         new_accuracy = int(predicted[i][1] * 1000)
         origin_accuracy = test_accuracy_lst[i]
         difference = new_accuracy - origin_accuracy
-        if difference >= 200:
+        if difference >= 100:
             result = ClassificationCompareResult.create(task, test_char_id_lst[i], origin_accuracy, new_accuracy)
             compare_results.append(result)
     if len(compare_results) > 0:

@@ -32,21 +32,30 @@ class CharMarkRecord(models.Model):
         return u'%s 修改 %s 为 %d, 时间%s' % (self.user, self.character_id, self.is_correct, self.time)
 
 class ClassificationTask(models.Model):
-    char = models.CharField(max_length=4)
-    algorithm = models.CharField(max_length=128)
-    started = models.DateTimeField()
-    completed = models.DateTimeField()
-    spent = models.IntegerField()
-    fetch_spent = models.IntegerField()
-    training_spent = models.IntegerField()
-    predict_spent = models.IntegerField()
-    updated = models.BooleanField()
+    char = models.CharField(u'字', max_length=4)
+    algorithm = models.CharField(u'分类算法', max_length=128)
+    train_count = models.IntegerField(u'训练样本数', default=0)
+    predict_count = models.IntegerField(u'预测样本数', default=0)
+    started = models.DateTimeField(u'开始时间')
+    completed = models.DateTimeField(u'完成时间')
+    spent = models.IntegerField(u'总时间(秒)')
+    fetch_spent = models.IntegerField(u'取数据用的时间(秒)')
+    training_spent = models.IntegerField(u'训练时间(秒)')
+    predict_spent = models.IntegerField(u'预测时间(秒)')
+    updated = models.BooleanField(u'是否已更新结果')
+
+    class Meta:
+        permissions = (
+            ("update_result", "更新分类结果到字表"),
+        )
 
     @classmethod
-    def create(cls, char, algorithm, started, completed, fetch_spent, training_spent, predict_spent):
+    def create(cls, char, algorithm, train_count, predict_count, started, completed, fetch_spent, training_spent, predict_spent):
         obj = cls()
         obj.char = char
         obj.algorithm = algorithm
+        obj.train_count = train_count
+        obj.predict_count = predict_count
         obj.started = started
         obj.completed = completed
         obj.spent = (completed - started).seconds
