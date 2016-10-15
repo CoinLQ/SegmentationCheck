@@ -14,6 +14,8 @@ from libs.fetch_variants import fetcher
 import json
 import random
 
+from .tasks import classify_with_random_samples
+
 class Index(generic.ListView):
     template_name = 'characters/char_manage.html'
     def get_queryset(self):
@@ -173,6 +175,13 @@ def get_marked_char_count(request):
         cache.set('marked_char_count', out_lst, timeout=86400)
     return JsonResponse({'status': 'ok', 'data': out_lst})
 
+def classify(request):
+    char = request.GET.get('char', None)
+    if char is None:
+        return JsonResponse({'status': 'error', 'msg': 'no char'})
+    positive_sample_count = request.GET.get('positive_sample_count', 0)
+    classify_with_random_samples.delay(char, positive_sample_count)
+    return JsonResponse({'status': 'ok'})
 '''
 def variant(request):
     lq_variant = fetcher.fetch_variants(u'麤')
