@@ -14029,7 +14029,7 @@
 		"sNoFooter": "no-footer",
 
 		/* Paging buttons */
-		"sPageButton": "paginate_button",
+		"sPageButton": "paginate_button btn btn-default",
 		"sPageButtonActive": "current",
 		"sPageButtonDisabled": "disabled",
 
@@ -14190,7 +14190,7 @@
 		},
 
 		full_numbers: function ( page, pages ) {
-			return [ 'first', 'previous', _numbers(page, pages), 'next', 'last' ];
+			return [ 'first', 'previous', _numbers(page, pages), 'next', 'last'];
 		},
 
 		// For testing and plug-ins to use

@@ -216,7 +216,7 @@
 				.addClass(disableClasses[lastClassName]);
 
 			// Paginate of N pages text
-			$(an).children('.' + paginateOfClassName).html(' of ' + iPages);
+			$(an).children('.' + paginateOfClassName).html('/' + iPages);
 
 			// Current page numer input value
 			$(an).children('.' + paginateInputClassName).val(iCurrentPage);

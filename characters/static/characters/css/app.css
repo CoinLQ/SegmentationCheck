@@ -23,7 +23,18 @@ div.dataTables_paginate span {
     text-shadow:1px 1px 1px #fff;
 }
 
-.paginate_button,.paginate_page {
+select.input-sm {
+  height: 27px;
+  line-height: 27px;
+}
+#char_index_length {
+  position: absolute;
+  right: -10%;
+}
+.paginate_page {
+  display: none !important;
+}
+.paginate_button{
     display: inline-block;
     padding: 3px 8px;
     margin-left: 2px;
@@ -58,11 +69,17 @@ div.dataTables_paginate span {
     cursor: not-allowed;
 }
 .paginate_input{
-     width: 28px;
+     width: 55px;
+     height: 27px !important;
+     padding: 3px 3px !important;
 }
 
 #char_index_filter > label > input {
     width: 70px;
+}
+
+.m-l-3 {
+  margin-left: 3px;
 }
 
 
@@ -219,7 +236,8 @@ body.loading .modal {
 }
 .form-control-inline {
   display: inline-block;
-  height: 34px;
+  height: 27px;
+  line-height: 27px;
   padding: 6px 6px;
   font-size: 14px;
   line-height: 1.42857143;
@@ -263,4 +281,9 @@ fieldset[disabled] .form-control-inline {
 .form-control-inline[disabled],
 fieldset[disabled] .form-control-inline {
   cursor: not-allowed;
+}
+
+button.dropdown-toggle {
+  height: 28px;
+  line-height: 1;
 }
