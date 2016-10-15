@@ -66,10 +66,7 @@ def classify(_char):
         return
     if 1 == len(set(y)) or len(y) < 10:
         return
-    X_neg = []
-    y_neg = []
-    fetch_negative_samples(_char, X_neg, y_neg)
-    print('negative: %d' % len(y_neg))
+    fetch_negative_samples(_char, X, y)
     if len(y) == 0 or len(ty) == 0:
         return
     if 1 == len(set(y)) or len(y) < 50:
@@ -79,7 +76,7 @@ def classify(_char):
     start_time = time.time()
     print "traning: data size: %d" % len(y)
     from sklearn.linear_model import LogisticRegressionCV
-    model = LogisticRegressionCV(cv=5, solver='liblinear', class_weight='balanced', n_jobs=1)
+    model = LogisticRegressionCV(cv=5, solver='liblinear', n_jobs=1)
     try:
         model.fit(X, y)
         print "training done, spent %s seconds." % int(time.time() - start_time)
