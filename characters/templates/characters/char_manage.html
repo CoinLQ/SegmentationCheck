@@ -45,10 +45,10 @@
             <div class='row'>
                 <div class="col-md-4" style="margin-top:-16px;">
                 <strong id='checkchar' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>口</strong>
-                <a target="_blank" href="javascript:checkDict()">查字典</a>
+                <a href="javascript:;" onclick="checkDict()">查字典</a>
                 </div>
                 <div id="accuracy_scope" class="form-inline dropdown" style="display: inline-block;margin-left: 2px;float:right">
-                  <label>相似度:<input class="accuracy_input form-control-inline input-sm" placeholder="0.5" aria-controls="char_index"></label>
+                  <label>相似度:<input class="accuracy_input form-control-inline" placeholder="0.5" aria-controls="char_index" style="margin-top:2px;"/></label>
                   <label style="margin-left:6px;">±
 
                   <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span>0.01</span>
@@ -94,7 +94,7 @@
                     <span class='pagitor last btn btn-default' id='char_index_last'><span class="fa fa-step-forward"></span></span>
 
                     <div id="LineControler" class="btn-group" style="padding:0px; margin-left: 10px;">
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-top:3px">
                         <span>100&nbsp;</span><span class="caret"></span> </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                         <li><a href="javascript:;">10&nbsp;</a></li>
@@ -124,8 +124,8 @@
 {% endblock %}
 {% block foot  %}
 <!-- DataTables -->
-<script src="/static/datatables/jquery.dataTables.min.js"></script>
-<script src="/static/datatables/dataTables.bootstrap.min.js"></script>
+<script src="/static/datatables/jquery.dataTables.js"></script>
+<script src="/static/datatables/dataTables.bootstrap.js"></script>
 <script src="/static/datatables/input.js"></script>
 <script type="text/javascript">
     var chars = [
@@ -156,7 +156,17 @@
 
     // Rows and column headers stored in a "data" object:
     "aaData": chars,
-
+    language: {
+        search:         "搜索&nbsp;:",
+        lengthMenu:    " _MENU_ 字/页",
+        loadingRecords: "载入数据中...",
+        paginate: {
+            first:      "<span class='fa fa-step-backward'></span>",
+            previous:   "❮",
+            next:       "❯",
+            last:       "<span class='fa fa-step-forward'></span>"
+        }
+    }
     });
   });
 </script>
@@ -177,7 +187,7 @@ var charListContainer =
             var total_pages = this.pagination.total_pages;
             $('.pagitor_input').val(this.page_number);
             $('.pagitor_input').attr('max',total_pages);
-            $('.total_page').text('of '+total_pages);
+            $('.total_page').text('/ '+total_pages);
         },
         hello: function(){
             alert('hello');
@@ -302,9 +312,11 @@ $(function(){
 
 function checkDict(){
     href="javascript:;"
-    url = 'http://hanzi.lqdzj.cn/hanzi-dict/search?param='
+    url = "http://hanzi.lqdzj.cn/hanzi-dict/search?param="
     url += charListContainer.char;
-    window.open(url,'_blank');
+    var _open = window.open(url);
+    if (_open == null || typeof(_open)=='undefined')
+        console.log("Turn off your pop-up blocker!");
 }
 $('.accuracy_input').on('input',function(e){
     charListContainer.accuracy_base=parseFloat($(this).val());
