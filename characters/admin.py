@@ -17,13 +17,6 @@ class ClassificationTaskAdmin(admin.ModelAdmin):
         super(ClassificationTaskAdmin, self).__init__(*args, **kwargs)
         self.list_display_links = (None,)
 
-    def updated(self, obj):
-        if obj.updated:
-            return u'已更新'
-        else:
-            return u'未更新'
-    updated.short_description = u'更新'
-
     actions = ['do_update']
 
     def get_actions(self, request):
