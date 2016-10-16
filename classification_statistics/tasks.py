@@ -10,13 +10,13 @@ def calculate_classification_statistics():
     DATA_POINT_NUM = 200
     char_statistics_map = {}
     total_count = Character.objects.filter(~Q(accuracy=-1)).count()
-    iter_count = (total_count - 1) / 10000
+    iter_count = (total_count - 1) / 1000000
     for i in range(iter_count):
-        start = i * 10000
-        query = 'SELECT id, char, accuracy FROM segmentation_character WHERE accuracy != 1.0 LIMIT 10000 OFFSET %d' % start
+        start = i * 1000000
+        query = 'SELECT id, char, accuracy FROM segmentation_character WHERE accuracy != -1 LIMIT 1000000 OFFSET %d' % start
         characters = Character.objects.raw(query)
         for ch in characters:
-            range_idx = int(ch.accuracy * DATA_POINT_NUM)
+            range_idx = int(ch.accuracy/1000 * DATA_POINT_NUM)
             if range_idx < 0:
                 continue
             if range_idx == DATA_POINT_NUM:
