@@ -154,8 +154,8 @@ def get_marked_char_count(request):
         sql = u'SELECT char, \
         count(CASE WHEN is_correct=1 THEN 1 END) as mark_correct_by_man, \
         count(CASE WHEN is_correct=-1 THEN 1 END) as mark_wrong_by_man, \
-        count(CASE WHEN is_correct=0 and accuracy>0.5 THEN 1 END) as mark_correct_by_pc, \
-        count(CASE WHEN is_correct=0 and accuracy<0.5 THEN 1 END) as mark_wrong_by_pc \
+        count(CASE WHEN is_correct=0 and accuracy>=500 THEN 1 END) as mark_correct_by_pc, \
+        count(CASE WHEN is_correct=0 and accuracy<500 THEN 1 END) as mark_wrong_by_pc \
     FROM segmentation_character GROUP BY char;'
         from django.db import connection
         cursor = connection.cursor()
