@@ -205,7 +205,7 @@ var charListContainer =
                 else if (field.is_correct == 1){
                     txt += "correct-char o-correct-char ";
                 }
-                txt +="char-image' title='"+field.id+"'><img src='"+field.image_url+"' alt='加载中...' class='lazy'><span class='badge char-info'> "+ field.accuracy/1000+"</span> </div>"
+                txt +="char-image' title='"+field.id+"'><img src='"+field.image_url.replace(/\.png$/,'.jpg') +"' alt='加载中...' class='lazy'><span class='badge char-info'> "+ field.accuracy/1000+"</span> </div>"
                 $(area).append(txt);
               });
         },
