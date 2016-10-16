@@ -76,7 +76,7 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 djcelery.setup_loader()
 BROKER_URL = 'redis+socket:///var/run/redis/redis.sock'
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
-
+CELERY_DISABLE_RATE_LIMITS = True
 
 MIDDLEWARE_CLASSES = [
     'django.contrib.sessions.middleware.SessionMiddleware',

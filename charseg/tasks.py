@@ -7,7 +7,6 @@ from skimage import io
 from skimage.exposure import is_low_contrast
 from libs.charseg import binarisation
 import os
-from characters.tasks import add
 
 @task
 def append_char_stastics(pk):

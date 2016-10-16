@@ -80,14 +80,14 @@ class Character(models.Model):
 
     @property
     def image_url(self):
-        return '/character_images/'+self.page_id+'/'+self.image
+        return u'/character_images/'+self.page_id+u'/'+self.image.replace(u'.jpg', u'.png')
 
     def get_image_path(self):
-        return settings.CHARACTER_IMAGE_ROOT+self.page_id+'/'+self.image
+        return settings.CHARACTER_IMAGE_ROOT+self.page_id+u'/'+self.image
 
     def image_tag(self):
-        return u'<img src="%s" />' % (self.image_url)
-    image_tag.short_description = 'Image'
+        return u'<img src="%s" border="1" style="zoom: 20%%;" />' % (self.image_url)
+    image_tag.short_description = u'Image'
     image_tag.allow_tags = True
 
 class CharacterStatistics(models.Model):

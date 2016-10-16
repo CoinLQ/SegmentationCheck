@@ -11,4 +11,5 @@ urlpatterns = [
     url(r'^dashboard$', views.char_dashboard),
     url(r'^stackedareachart$', views.stacked_area_chart),
     url(r'^get_marked_char_count$', views.get_marked_char_count, name='get_marked_char_count'),
+    url(r'^classify$', views.classify, name='classify'),
 ]
