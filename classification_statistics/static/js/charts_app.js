@@ -5,7 +5,7 @@ var svg = d3.select("svg"),
 var tooltip = d3.select("body")
   .append("div")
   .style("position", "absolute")
-  .style("z-index", "10")
+  .style("z-index", "10000")
   .style("visibility", "hidden")
   .text("");
 

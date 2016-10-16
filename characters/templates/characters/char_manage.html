@@ -16,7 +16,7 @@
         <div class='col-md-4 col-xs-12' >
             <div class="box">
                 <div class="box-header">
-                  <h3 class="box-title">字形列表</h3>
+                  <h3 class="box-title">字型列表</h3>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
@@ -25,7 +25,7 @@
                     <tr>
                         <th>No</th>
                         <th>字</th>
-                        <th>字形总数</th>
+                        <th>字型总数</th>
                         <th>正样本</th>
                         <th>负样本</th>
                         <th>未标记</th>
@@ -44,8 +44,9 @@
         <div class='col-md-8 col-xs-12' style="margin-top:75px;">
             <div class='row'>
                 <div class="col-md-4" style="margin-top:-16px;">
-                <strong id='checkchar' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>口</strong>
+                <strong id='checkchar' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>？</strong>
                 <a href="javascript:;" onclick="checkDict()">查字典</a>
+                <a class="classifyChart" href="javascript:;" data-toggle="modal" data-target="#classifyChartModal" data-char="？">相似度分布</a>
                 </div>
                 <div id="accuracy_scope" class="form-inline dropdown" style="display: inline-block;margin-left: 2px;float:right">
                   <label>相似度:<input class="accuracy_input form-control-inline" placeholder="0.5" aria-controls="char_index" style="margin-top:2px;"/></label>
@@ -119,9 +120,11 @@
             </div>
         </div><!--end col-md-9 -->
     </div><!--endrow-->
-    <div class="modal"><!-- Place at bottom of page --></div>
+    {% include "characters/chart_modal.html" %}
+    <div class="loading_icon"><!-- Place at bottom of page --></div>
 </div><!-- /.container -->
 {% endblock %}
+
 {% block foot  %}
 <!-- DataTables -->
 <script src="/static/datatables/jquery.dataTables.js"></script>
@@ -205,7 +208,7 @@ var charListContainer =
                 else if (field.is_correct == 1){
                     txt += "correct-char o-correct-char ";
                 }
-                txt +="char-image' title='"+field.id+"'><img src='"+field.image_url.replace(/\.png$/,'.jpg') +"' alt='加载中...' class='lazy'><span class='badge char-info'> "+ field.accuracy/1000+"</span> </div>"
+                txt +="char-image' title='"+field.id+"'><img src='"+field.image_url +"' alt='加载中...' class='lazy'><span class='badge char-info'> "+ field.accuracy/1000+"</span> </div>"
                 $(area).append(txt);
               });
         },
@@ -328,6 +331,7 @@ $('#char_index #char_index_tbody').on('click', 'tr', function(event) {
     $(this).addClass("selected");
     charListContainer.char = $("tr.selected td:eq(1)").text();
     $("#checkchar").text(charListContainer.char);
+    $("a.classifyChart").data('char', charListContainer.char);
     charListContainer.page_number=1;
     charListContainer.filter="-10";
     $('.radio-btn').removeClass('actived');

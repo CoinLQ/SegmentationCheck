@@ -214,7 +214,7 @@ select.input-sm {
    with position:fixed. Width, height, top and left speak
    for themselves. Background we set to 80% white with
    our animation centered, and no-repeating */
-.modal {
+.loading_icon {
     display:    none;
     position:   fixed;
     z-index:    1000;
@@ -223,10 +223,11 @@ select.input-sm {
     height:     100%;
     width:      100%;
     background: rgba( 255, 255, 255, .8 )
-                url('http://i.stack.imgur.com/FhHRx.gif')
+                url('/static/img/FhHRx.gif')
                 50% 50%
                 no-repeat;
 }
+
 #clear_btn {
   position: absolute;
   right: 0px;
@@ -239,7 +240,7 @@ body.loading {
 
 /* Anytime the body has the loading class, our
    modal element will be visible */
-body.loading .modal {
+body.loading .loading_icon {
     display: block;
 }
 .form-control-inline {
@@ -294,4 +295,8 @@ fieldset[disabled] .form-control-inline {
 button.dropdown-toggle {
   height: 28px;
   line-height: 1;
+}
+
+.m-t-10 {
+  margin-top: 10px;
 }

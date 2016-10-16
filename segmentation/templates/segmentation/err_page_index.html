@@ -35,7 +35,7 @@ window.onload = function(){
         border: 1px solid #ddd;
     }
 
-    .toolbar { 
+    .toolbar {
         margin:20px;
         padding:10px;
         background-color:#40E0D0;
@@ -43,7 +43,7 @@ window.onload = function(){
     }
 
   .selected {
-      background-color: #aaa !important; 
+      background-color: #aaa !important;
   }
 
 .unchecked-box{
@@ -69,7 +69,7 @@ window.onload = function(){
 {% block mainbody %}
 <div class="container-fluid">
     <div class='row show-grid'>
-        <div class='col-md-2 sidecol' > 
+        <div class='col-md-2 sidecol' >
             <div class="input-group">
               <input id="gopage_id" type="text" class="form-control" placeholder="pageid for...">
               <span class="input-group-btn">
@@ -81,7 +81,7 @@ window.onload = function(){
                 <thead>
                   <tr>
                      <th>页面号</th>
-                     <th>含切错字形总数</th>
+                     <th>含切错字型总数</th>
                   </tr>
                 </thead>
               <tbody>
@@ -129,17 +129,17 @@ function renderSegmentGrid(draw,result){
         /*draw the column*/
         if(field.line_no == 1){
             var _column = draw.line(
-                field.right, 
-                0, 
-                field.right, 
+                field.right,
+                0,
+                field.right,
                 //window._height
                 900
                 ).addClass('segment-line');
         }
         var _column = draw.line(
-            field.left, 
-            0, 
-            field.left, 
+            field.left,
+            0,
+            field.left,
             //window._height
             900
             ).addClass('segment-line');
@@ -171,7 +171,7 @@ function renderSegmentGrid(draw,result){
               e.preventDefault();
               this.y(e.detail.p.y);
             })
-            .on('dragend', function(e){ 
+            .on('dragend', function(e){
               var key = 'char-' + field.line_no + '-' +item.char_no;
               console.log(key + ': y=' + this.y());
               this.addClass('highlight')
@@ -185,7 +185,7 @@ function renderSegmentGrid(draw,result){
 function renderPage(_pageid){
     window._pageid = _pageid;
     $('#segmentation_page').empty();
-   $.getJSON("/segmentation/"+_pageid+'/',function(result){ 
+   $.getJSON("/segmentation/"+_pageid+'/',function(result){
        console.log(result.image_url);
         var draw = new SVG('segmentation_page').size('200', '300');
         window.draw = draw;
@@ -251,16 +251,16 @@ $('#save_button').on('click', function(){
 var text_layer = new tingle.modal({
     cssClass: [ ]
 });
-$("#segmentation_page").mousedown(function(e){ 
-    if(e.button ==2){ 
+$("#segmentation_page").mousedown(function(e){
+    if(e.button ==2){
         text_layer.open();
         text_layer.setContent(window._page_content);
     }
-}); 
+});
 </script>
 <script>
 $('#setPageTag_btn input').on('click', function(){
-    var tag = $('#setPageTag_btn input[name="settag"]:checked ').val(); 
+    var tag = $('#setPageTag_btn input[name="settag"]:checked ').val();
     console.log(tag);
     var data = {'id': window._pageid };
     data['is_correct'] = tag;
@@ -272,9 +272,9 @@ $('#setPageTag_btn input').on('click', function(){
 $('#resegmentpage_btn').on('click', function(){
     var data = {'id': window._pageid };
     data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
-    $.getJSON("/segmentation/run_segment/"+window._pageid,function(result){ 
+    $.getJSON("/segmentation/run_segment/"+window._pageid,function(result){
             $("#segmentation_page line").remove()
-            renderSegmentGrid(window.draw,result); 
+            renderSegmentGrid(window.draw,result);
     });
 });
 </script>

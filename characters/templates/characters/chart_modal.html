@@ -1,0 +1,128 @@
+<style>
+
+.bar {
+  fill: steelblue;
+}
+
+.bar:hover {
+  fill: brown;
+}
+
+
+.chart rect {
+    fill: steelblue;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  font-size: 10px;
+}
+
+.chart .current {
+  fill: green;
+  cursor: pointer;
+}
+.modal { overflow: visible; }
+.modal-body { overflow-y: visible; }
+</style>
+<div class="bd-classifyChart">
+  <div class="modal fade" id="classifyChartModal" tabindex="-1" role="dialog" aria-labelledby="classifyChartModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <div class="h4 modal-title" style="display: inline" id="classifyChartModalLabel">相似度分布</div>
+          <div id="classify-grade" class="dropdown" style="display: inline;margin-left: 30px">精度：
+          <button class="btn btn-primary grade-btn" data-value=10>低</button>
+          <button class="btn btn-primary grade-btn" data-value=4>中</button>
+          <button class="btn btn-primary grade-btn active" data-value=1>高</button>
+            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" style="margin-top: -5px"><span>低</span>
+            <span class="caret"></span></button>
+
+            <ul class="dropdown-menu" style="margin-left:45%">
+              <li><a data-value=10 href="#">低</a></li>
+              <li><a data-value=4 href="#">中</a></li>
+              <li><a data-value=1 href="#">高</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="modal-body">
+        <div class='row'>
+                <div class="col-md-1"></div>
+                <div class="col-md-4" style="margin-left:10px;">
+                <h3>字型：<strong id='chart_char' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>？</strong></h3>
+                </div>
+        </div>
+          <div class="chart-container" style="margin-left:10px;margin-right: 10px;">
+            <svg class="chart" width="870" height="200">
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/jquery-2.2.4.min.js"></script>
+<script src="/static/StackedAreaChart/js/d3.min.js"></script>
+
+<script>
+function getSum(total, num) {
+    if (total)
+    {
+      total.count += num.count;
+    }
+    total = total || num;
+
+    return total;
+}
+
+var data =[];
+var chunk = 10;
+var current_char;
+
+function loadSvg() {
+  d3.json('/api/datapoint?char='+current_char,function(res){
+      data =[];
+      var i,j,temparray;
+      for (i=0,j=res.length; i<j; i+=chunk) {
+          temparray = res.slice(i,i+chunk);
+          data.push(temparray.reduce(getSum));
+          // do whatever
+      }
+      data = data.map(function(d) { d.range_idx = d.range_idx/200;return d });
+    $.getScript("/static/js/charts_app.js");
+  });
+}
+$(function(){
+  $('#classifyChartModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) // Button that triggered the modal
+    var recipient = current_char = button.data('char'); // Extract info from data-* attributes
+    // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+    // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+    var modal = $(this)
+    modal.find('.modal-title').text('分类分布图-' + recipient);
+    modal.find('#chart_char').text(recipient);
+    d3.selectAll("svg > *").remove();
+    loadSvg();
+  });
+
+  $("#classify-grade .dropdown-menu a").click(function() {
+        var li = $(this);
+        li.parent().parent().parent().find("button span:first-of-type").text(li.text());
+        chunk=li.data('value');
+        d3.selectAll("svg > *").remove();
+        loadSvg();
+    })
+});
+
+
+</script>
