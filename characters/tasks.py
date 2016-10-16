@@ -53,20 +53,28 @@ def update_char_stastics():
     return 'update CharacterStatistics'
 
 @task
-def classify_with_random_samples(char, positive_sample_count):
+def classify_with_random_samples(char, positive_sample_count, random_sample=0):
     print char, positive_sample_count
     started = datetime.now()
     start_time = time.time()
     query = Character.objects.filter(char=char)
     positive_samples, negative_samples, test_X, test_y, test_char_id_lst, test_accuracy_lst = \
         prepare_data_with_database2(query)
-    if positive_sample_count > 0:
-        if len(positive_samples) > positive_sample_count:
-            positive_samples = random.sample(positive_samples, positive_sample_count)
-        if len(negative_samples) > positive_sample_count:
-            negative_samples = random.sample(negative_samples, positive_sample_count)
     X = []
     y = []
+    if random_sample != 0:
+        if positive_sample_count > 0:
+            if len(positive_samples) > positive_sample_count:
+                positive_samples = random.sample(positive_samples, positive_sample_count)
+            if len(negative_samples) > positive_sample_count:
+                negative_samples = random.sample(negative_samples, positive_sample_count)
+    else:
+        if len(positive_samples) > positive_sample_count:
+            positive_samples.sort(key=itemgetter(2), reverse=True)
+            positive_samples = positive_samples[:positive_sample_count]
+        if len(negative_samples) > positive_sample_count:
+            negative_samples.sort(key=itemgetter(2))
+            negative_samples = negative_samples[:positive_sample_count]
     for sample in positive_samples:
         X.append(sample[0])
         y.append(sample[1])
@@ -212,9 +220,9 @@ def prepare_data_with_database2(char_lst):
             test_char_id_lst.append(char_id)
             test_accuracy_lst.append(char.accuracy)
             if label == 1:
-                positive_samples.append((feature_vector, label))
+                positive_samples.append([feature_vector, label, char.accuracy])
             elif label == -1:
-                negative_samples.append((feature_vector, label))
+                negative_samples.append([feature_vector, label, char.accuracy])
     return (positive_samples, negative_samples, test_x, test_y, test_char_id_lst, test_accuracy_lst)
 
 def fetch_negative_samples(char, X = [] * 1, y = [] * 1):
