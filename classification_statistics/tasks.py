@@ -16,7 +16,7 @@ def calculate_classification_statistics():
         query = 'SELECT id, char, accuracy FROM segmentation_character WHERE accuracy != -1 LIMIT 1000000 OFFSET %d' % start
         characters = Character.objects.raw(query)
         for ch in characters:
-            range_idx = int(ch.accuracy/1000 * DATA_POINT_NUM)
+            range_idx = int(ch.accuracy/1000.0 * DATA_POINT_NUM)
             if range_idx < 0:
                 continue
             if range_idx == DATA_POINT_NUM:
