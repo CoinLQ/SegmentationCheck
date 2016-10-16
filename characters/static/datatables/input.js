@@ -94,7 +94,7 @@
 				nLast.setAttribute('id', oSettings.sTableId + '_' + lastClassName);
 			}
 
-			nInput.type = 'text';
+			nInput.type = 'number';
 			nPage.innerHTML = 'Page ';
 
 			nPaging.appendChild(nFirst);

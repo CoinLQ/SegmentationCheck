@@ -51,7 +51,7 @@
                   <label>相似度:<input class="accuracy_input form-control-inline" placeholder="0.5" aria-controls="char_index" style="margin-top:2px;"/></label>
                   <label style="margin-left:6px;">±
 
-                  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span>0.01</span>
+                  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" style="margin-top: -5px"><span>0.01</span>
                   <span class="caret"></span></button>
 
                   <ul class="dropdown-menu" style="margin-left:45%">
@@ -205,7 +205,7 @@ var charListContainer =
                 else if (field.is_correct == 1){
                     txt += "correct-char o-correct-char ";
                 }
-                txt +="char-image' title='"+field.id+"'><img src='"+field.image_url+"' alt='加载中...' class='lazy'><span class='badge char-info'> "+ field.accuracy+"</span> </div>"
+                txt +="char-image' title='"+field.id+"'><img src='"+field.image_url+"' alt='加载中...' class='lazy'><span class='badge char-info'> "+ field.accuracy/1000+"</span> </div>"
                 $(area).append(txt);
               });
         },
@@ -242,8 +242,8 @@ var charListContainer =
                 +"&page=1";//+this.page_number;
             var accuracy_cap, accuracy_floor;
             if (this.accuracy_base) {
-                accuracy_cap = (this.accuracy_base + this.accuracy_scope/1000);
-                accuracy_floor = (this.accuracy_base - this.accuracy_scope/1000);
+                accuracy_cap = parseInt(this.accuracy_base*1000 + this.accuracy_scope);
+                accuracy_floor = parseInt(this.accuracy_base*1000 - this.accuracy_scope);
                 if (accuracy_cap <1) {
                     query += "&accuracy__lt="+accuracy_cap;
                 }
@@ -280,8 +280,8 @@ var charListContainer =
                 +"&page="+this.page_number;
             var accuracy_cap, accuracy_floor;
             if (this.accuracy_base) {
-                accuracy_cap = (this.accuracy_base + this.accuracy_scope/1000);
-                accuracy_floor = (this.accuracy_base - this.accuracy_scope/1000);
+                accuracy_cap = parseInt(this.accuracy_base*1000 + this.accuracy_scope);
+                accuracy_floor = parseInt(this.accuracy_base*1000 - this.accuracy_scope);
                 if (accuracy_cap <1) {
                     query += "&accuracy__lt="+accuracy_cap;
                 }
