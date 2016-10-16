@@ -39,30 +39,16 @@
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
-          <div class="h4 modal-title" style="display: inline" id="classifyChartModalLabel">相似度分布</div>
+          <div class="h4 modal-title" style="display: inline" id="classifyChartModalLabel">相似度分布</div><strong id='chart_char' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>？</strong>
           <div id="classify-grade" class="dropdown" style="display: inline;margin-left: 30px">精度：
-          <button class="btn btn-primary grade-btn" data-value=10>低</button>
-          <button class="btn btn-primary grade-btn" data-value=4>中</button>
-          <button class="btn btn-primary grade-btn active" data-value=1>高</button>
-            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" style="margin-top: -5px"><span>低</span>
-            <span class="caret"></span></button>
-
-            <ul class="dropdown-menu" style="margin-left:45%">
-              <li><a data-value=10 href="#">低</a></li>
-              <li><a data-value=4 href="#">中</a></li>
-              <li><a data-value=1 href="#">高</a></li>
-            </ul>
+          <button id='l-btn' class="btn btn-primary grade-btn" data-value=10>低</button>
+          <button id='m-btn' class="btn btn-primary grade-btn" data-value=4>中</button>
+          <button id='h-btn' class="btn btn-primary grade-btn active" data-value=1>高</button>
           </div>
         </div>
         <div class="modal-body">
-        <div class='row'>
-                <div class="col-md-1"></div>
-                <div class="col-md-4" style="margin-left:10px;">
-                <h3>字型：<strong id='chart_char' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>？</strong></h3>
-                </div>
-        </div>
-          <div class="chart-container" style="margin-left:10px;margin-right: 10px;">
-            <svg class="chart" width="870" height="200">
+          <div class="chart-container" style="margin-left:50px;margin-right: 10px;">
+            <svg class="chart" width="670" height="200">
             </svg>
           </div>
         </div>
@@ -102,6 +88,19 @@ function loadSvg() {
     $.getScript("/static/js/charts_app.js");
   });
 }
+
+function markActive(){
+  $(".grade-btn").removeClass("active");
+  var btn;
+  if (chunk == 10) {
+    btn = $("#l-btn")
+  } else if (chunk == 4) {
+    btn = $("#m-btn")
+  } else if (chunk == 1) {
+    btn = $("#h-btn")
+  }
+  btn.addClass('active');
+}
 $(function(){
   $('#classifyChartModal').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget) // Button that triggered the modal
@@ -109,16 +108,17 @@ $(function(){
     // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
     // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
     var modal = $(this)
-    modal.find('.modal-title').text('分类分布图-' + recipient);
+    modal.find('.modal-title').text('相似度分布');
     modal.find('#chart_char').text(recipient);
+    markActive();
     d3.selectAll("svg > *").remove();
     loadSvg();
   });
 
-  $("#classify-grade .dropdown-menu a").click(function() {
-        var li = $(this);
-        li.parent().parent().parent().find("button span:first-of-type").text(li.text());
-        chunk=li.data('value');
+  $(".grade-btn").click(function() {
+        var btn = $(this);
+        chunk=btn.data('value');
+        markActive();
         d3.selectAll("svg > *").remove();
         loadSvg();
     })
