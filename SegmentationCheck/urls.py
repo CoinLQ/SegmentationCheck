@@ -27,6 +27,7 @@ urlpatterns = [
     url(r'^managerawdata/', include('managerawdata.urls', namespace='managerawdata')),
     url(r'^preprocess/', include('preprocess.urls', namespace='preprocess')),
     url(r'^segmentation/', include('segmentation.urls', namespace='segmentation')),
+    url(r'^classification_statistics/', include('classification_statistics.urls', namespace='classification_statistics')),
     url(r'^layoutseg/', include('layoutseg.urls', namespace='layoutseg')),
     url(r'^charseg/', include('charseg.urls', namespace='charseg')),
     url(r'^characters/', include('characters.urls', namespace='characters')),
