@@ -135,7 +135,6 @@ $('#imagefile').on('fileuploaded', function(event, data, previewId, index) {
     var fname = data.files[index].name,
         out = '<li>' + '文件# ' + (index + 1) + ' - '  +
             fname + ' 已被成功上传.' + '</li>';
-            debugger;
     $('#kv-success ul').append(out);
     $('#kv-success').fadeIn('slow');
     $('#kv-success').delay(1000).fadeOut(100);

@@ -2,7 +2,10 @@ from rest_framework import viewsets, mixins
 from rest_framework.response import Response
 from rest_framework import generics, filters
 
-from .serializers import PageSerializer, OPageSerializer, TripitakaSerializer, VolumeSerializer,CharacterSerializer,CharacterStatisticsSerializer
+from .serializers import PageSerializer, OPageSerializer, TripitakaSerializer, VolumeSerializer, \
+    CharacterSerializer,CharacterStatisticsSerializer, DataPointSerializer
+
+from classification_statistics.models import DataPoint
 
 from managerawdata.models import OPage
 from catalogue.models import Tripitaka, Volume
@@ -63,3 +66,10 @@ class CharacterStatisticsViewSet(viewsets.ModelViewSet):
     serializer_class = CharacterStatisticsSerializer
     queryset = CharacterStatistics.objects.all().order_by('-total_cnt', 'char')
     filter_fields = ('char', )
+
+class DataPointViewSet(viewsets.ModelViewSet):
+    serializer_class = DataPointSerializer
+    filter_fields = ('char', )
+    paginator = None
+    queryset = DataPoint.objects.order_by('range_idx')
+

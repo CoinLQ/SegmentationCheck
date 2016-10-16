@@ -2,6 +2,8 @@ from managerawdata.models import OPage
 from rest_framework import serializers
 from catalogue.models import Tripitaka, Volume
 from segmentation.models import Page,Character,CharacterStatistics
+from classification_statistics.models import DataPoint
+
 
 class OPageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -44,3 +46,9 @@ class CharacterStatisticsSerializer(serializers.ModelSerializer):
     class Meta:
         model = CharacterStatistics
         fields = ('char','total_cnt', 'uncheck_cnt','err_cnt', 'correct_cnt')
+
+
+class DataPointSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DataPoint
+        fields = ('char','range_idx', 'count')
