@@ -179,7 +179,8 @@ def classify(request):
     if char is None:
         return JsonResponse({'status': 'error', 'msg': 'no char'})
     positive_sample_count = int(request.GET.get('positive_sample_count', 0))
-    classify_with_random_samples.delay(char, positive_sample_count)
+    random_sample = int(request.GET.get('random_sample', 0))
+    classify_with_random_samples.delay(char, positive_sample_count, random_sample)
     return JsonResponse({'status': 'ok'})
 '''
 def variant(request):
