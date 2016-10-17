@@ -142,8 +142,10 @@ select.input-sm {
   }
 
 .flow img{
-  float:left;
-  margin: 2px;
+  display: inherit;
+  margin: auto;
+  width: 80px;
+  height: 64px;
 }
 .char-info{
       margin: 3px 1px 2px 1px;
