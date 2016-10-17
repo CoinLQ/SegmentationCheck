@@ -305,8 +305,9 @@ button.dropdown-toggle {
   padding: 2px 18px !important;
 }
 
-.btn {
+.btn, .btn:focus {
   border-radius: 22px;
+  outline:0;
 }
 
 .btn-o {
