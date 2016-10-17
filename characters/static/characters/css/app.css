@@ -69,7 +69,7 @@ select.input-sm {
     cursor: not-allowed;
 }
 .paginate_input{
-    width: 55px;
+    width: 75px;
     height: 26px !important;
     padding: 3px 6px !important;
     line-height: 26px !important;
@@ -299,4 +299,44 @@ button.dropdown-toggle {
 
 .m-t-10 {
   margin-top: 10px;
+}
+
+.more-padding {
+  padding: 6px 18px !important;
+}
+
+.btn {
+  border-radius: 22px;
+}
+
+/* Tooltip text */
+.btn .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+    margin-left: -35px;
+    margin-top: 36px;
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.btn:hover .tooltiptext {
+    visibility: visible;
+}
+
+.tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: -18%;
+    right: 50%;
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent  transparent #555 transparent;
 }

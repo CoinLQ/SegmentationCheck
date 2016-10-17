@@ -1,0 +1,171 @@
+<style>
+
+.bar {
+  fill: steelblue;
+}
+
+.bar:hover {
+  fill: brown;
+}
+
+
+.chart rect {
+    fill: steelblue;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  font-size: 10px;
+}
+
+.chart .current {
+  fill: green;
+  cursor: pointer;
+}
+.modal { overflow: visible; }
+.modal-body { overflow-y: visible; }
+</style>
+<div class="bd-accuracy">
+  <div class="modal fade" id="accuracyModal" tabindex="-1" role="dialog" aria-labelledby="accuracyModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <div class="h4 modal-title" style="display: inline" id="accuracyModalLabel">相似度重计算</div><strong id='accuracy_char' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>？</strong>
+        </div>
+        <div class="modal-body" style="min-height:100px;">
+          <div class="accuracy-container" style="margin-left:50px;margin-right: 10px">
+            <div id="classify-grade" class="dropdown" style="display: inline;margin-left: 30px">范围：
+
+            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" style="margin-top: 0px"><span class="accuracy_option">全部</span>
+                  <span class="caret"></span></button>
+
+                  <ul class="dropdown-menu" style="margin-top: 12px">
+                    <li><a data-value="all" href="#">全部</a></li>
+                    <li><a data-value="random" href="#">指定个数</a></li>
+                  </ul>
+            </div>
+          </div>
+          <div class="row hidden" style="margin-left:22px;margin-top: 10px">
+            <div id="classify-mothod" class="dropdown" style="display: inline;margin-left: 30px">计算方式：
+
+            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" style="margin-top: 0px"><span class="method_option">随机</span>
+                  <span class="caret"></span></button>
+
+                  <ul class="dropdown-menu" style="margin-top: 12px;margin-left:20%">
+                    <li><a data-value="random" href="#">随机</a></li>
+                    <li><a data-value="postive" href="#">正序</a></li>
+                  </ul>
+            </div>
+            <input class="modal_ac_input form-control-inline" placeholder="100" aria-controls="char_index" style="margin-top:2px;width: 100px"></input>
+          </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div class="alert alert-danger alert-dismissible fade in" role="alert" style="display:none;">
+                  <strong>数字</strong> 不可为零.
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary cal">计算</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/jquery-2.2.4.min.js"></script>
+<script src="/static/StackedAreaChart/js/d3.min.js"></script>
+
+<script>
+function getSum(total, num) {
+
+    if (total)
+    {
+      total.count += num.count;
+    }
+    total = total || num;
+
+    return total;
+}
+
+var data =[];
+var ac_option = 'all';
+
+function makeOption(){
+  if (ac_option == 'all'){
+    $("span.accuracy_option").text('全部');
+    $("#classify-mothod").parent().addClass("hidden");
+  } else {
+    $("span.accuracy_option").text('指定个数');
+    $("#classify-mothod").parent().removeClass("hidden");
+    if (ac_option == 'random') {
+      $("span.method_option").text('随机');
+    } else {
+      $("span.method_option").text('正序');
+    }
+  }
+}
+$(function(){
+  $('#accuracyModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+    var modal = $(this);
+    modal.find('#accuracy_char').text(button.data('char'));
+    makeOption();
+  });
+
+
+  $("#classify-grade .dropdown-menu a").click(function() {
+    var li = $(this);
+    ac_option=li.data('value');
+    makeOption();
+  })
+
+  $("#classify-mothod .dropdown-menu a").click(function() {
+    var li = $(this);
+    ac_option=li.data('value');
+    makeOption();
+  })
+
+  $("button.cal").click(function(){
+    var count = $(".modal_ac_input").val();
+    var url = "/characters/classify?char=" + $('#accuracy_char').text();
+    if (ac_option == 'all') {
+      url = url + "&positive_sample_count=0&random_sample=1"
+    } else if (ac_option == 'random' && count !=0 ) {
+      url = url + "&positive_sample_count=" +count+"&random_sample=1";
+    } else if (ac_option == 'postive' && count !=0 ) {
+      url = url + "&positive_sample_count=" + count;
+    } else {
+      $('.alert').show();
+      $('.alert').fadeOut('slow');
+      return;
+    }
+    $.ajax({
+        url: url,
+        method: 'get',
+        cache: false,
+        success: function(data) {
+
+        },
+        error: function(xhr, status, err) {
+          console.log(err);
+        }
+    });
+    $("#accuracyModal").modal('hide');
+  });
+
+
+});
+
+
+</script>

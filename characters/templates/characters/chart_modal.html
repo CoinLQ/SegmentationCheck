@@ -36,14 +36,16 @@
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
+
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
-          <div class="h4 modal-title" style="display: inline" id="classifyChartModalLabel">相似度分布</div><strong id='chart_char' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>？</strong>
+          <div class="h4 modal-title" style="display: inline" id="classifyChartModalLabel"></div><strong id='chart_char' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>？</strong>
+          <a class="btn btn-default accuracy_cal hidden" href="javascript:;" data-toggle="modal" data-target="#accuracyModal" data-char="？" style="margin-top:-12px">重计算</a>
           <div id="classify-grade" class="dropdown" style="display: inline;margin-left: 30px">精度：
-          <button id='l-btn' class="btn btn-primary grade-btn" data-value=10>低</button>
-          <button id='m-btn' class="btn btn-primary grade-btn" data-value=4>中</button>
-          <button id='h-btn' class="btn btn-primary grade-btn active" data-value=1>高</button>
+          <button id='l-btn' class="btn btn-default grade-btn" data-value=10>低</button>
+          <button id='m-btn' class="btn btn-default grade-btn" data-value=4>中</button>
+          <button id='h-btn' class="btn btn-default grade-btn active" data-value=1>高</button>
           </div>
         </div>
         <div class="modal-body">
