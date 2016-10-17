@@ -45,7 +45,7 @@
             <div class='row'>
                 <div class="col-md-4" style="margin-top:-16px;">
                 <strong id='checkchar' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>？</strong>
-                <a href="javascript:;" onclick="checkDict()">查字典</a>
+                <a class="btn btn-default" href="javascript:;" onclick="checkDict()" style="margin-top:-12px">查字典</a>
                 <a class="btn btn-default classifyChart hidden" href="javascript:;" data-toggle="modal" data-target="#classifyChartModal" data-char="？" style="margin-top:-12px">相似度分布</a>
                 </div>
                 <div id="accuracy_scope" class="form-inline dropdown" style="display: inline-block;margin-left: 2px;float:right">
@@ -84,14 +84,14 @@
             </div>
             <div style="clear:both;"> </div>
             <div class="row" style="margin-top:10px;margin-left: 0px">
-                <div  class="btn btn-default batch-check" id="correct_btn" ><span class="tooltiptext">剩余全部标对</span><span style="color: pink;font-size:20px" class="fa fa-check"></span>&nbsp;<span style="color: pink;font-size:20px" class="fa fa-check"></span></div>
-                <div  class="btn btn-default batch-check" id="err_btn"><span class="tooltiptext">剩余全部标错</span><span style="color: #9AFF9A;font-size:20px" class="fa fa-times"></span>&nbsp;<span style="color: #9AFF9A;font-size:20px" class="fa fa-times"></span></div>
+                <div  class="btn btn-default batch-check" id="correct_btn" ><span class="tooltiptext">剩余全部标对</span><span style="color: #9AFF9A;font-size:20px;margin:0px 8px" class="fa fa-check"></span><span style="color: #9AFF9A;font-size:20px;margin:0px 8px" class="fa fa-check"></span></div>
+                <div  class="btn btn-default batch-check" id="err_btn"><span class="tooltiptext">剩余全部标错</span><span style="color: pink;font-size:20px;margin:0px 8px" class="fa fa-times"></span><span style="color: pink;font-size:20px;margin:0px 8px" class="fa fa-times"></span></div>
                 <div class='char-pagitor'>
                     <span class='pagitor first btn btn-default' id='char_index_first'><span class="fa fa-step-backward"></span></span>
-                    <span class='pagitor more-padding previous btn btn-default' id='char_index_previous'>❮</span>
+                    <span class='pagitor more-padding previous btn btn-default' id='char_index_previous' style="font-size:20px;">❮</span>
                     <input class='form-control-inline pagitor_input input-sm' type='number' min="1">
                     <span class='pagitor_of total_page'> </span>
-                    <span class='pagitor more-padding next btn btn-default' id='char_index_next'>❯</span>
+                    <span class='pagitor more-padding next btn btn-default' id='char_index_next' style="font-size:20px;">❯</span>
                     <span class='pagitor last btn btn-default' id='char_index_last'><span class="fa fa-step-forward"></span></span>
 
                     <div id="LineControler" class="btn-group" style="padding:0px; margin-left: 10px;">
@@ -110,7 +110,7 @@
                 </div>
                 </div>
 
-                <div  class="btn btn-default batch-check" id="clear_btn"><span class="tooltiptext">全部清空标记</span><span class="fa fa-repeat">&nbsp;&nbsp;清空</span></div>
+                <div  class="btn btn-default batch-check" id="clear_btn"><span class="tooltiptext">全部清空标记</span><span style="font-size:16px" class="fa fa-repeat">&nbsp;&nbsp;清空</span></div>
                 </div>
             <div style="clear:both;"> </div>
 
@@ -333,6 +333,7 @@ $('#char_index #char_index_tbody').on('click', 'tr', function(event) {
     charListContainer.char = $("tr.selected td:eq(1)").text();
     $("#checkchar").text(charListContainer.char);
     $(".classifyChart").data('char', charListContainer.char);
+    $(".accuracy_cal").data('char', charListContainer.char);
     $(".classifyChart").removeClass('hidden');
     $(".accuracy_cal").removeClass('hidden');
     charListContainer.page_number=1;

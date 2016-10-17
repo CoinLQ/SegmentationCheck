@@ -302,10 +302,10 @@ button.dropdown-toggle {
 }
 
 .more-padding {
-  padding: 6px 18px !important;
+  padding: 2px 18px !important;
 }
 
-.btn {
+.btn, .btn:focus {
   border-radius: 22px;
 }
 
@@ -326,7 +326,7 @@ button.dropdown-toggle {
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */
-.btn:hover .tooltiptext {
+.btn:focus .tooltiptext {
     visibility: visible;
 }
 
