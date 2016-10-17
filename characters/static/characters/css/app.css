@@ -168,7 +168,7 @@ select.input-sm {
 
 .char-pagitor{
   display: inline;
-  margin: 10%;
+  margin: 5%;
 }
 .pagitor {
   padding: 2px 8px;
@@ -305,8 +305,12 @@ button.dropdown-toggle {
   padding: 2px 18px !important;
 }
 
-.btn, .btn:focus {
+.btn {
   border-radius: 22px;
+}
+
+.btn-o {
+  border-radius: 6px;
 }
 
 /* Tooltip text */
@@ -318,7 +322,7 @@ button.dropdown-toggle {
     text-align: center;
     padding: 5px 0;
     border-radius: 6px;
-    margin-left: -35px;
+    margin-left: -30px;
     margin-top: 36px;
     /* Position the tooltip text - see examples below! */
     position: absolute;
@@ -326,7 +330,7 @@ button.dropdown-toggle {
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */
-.btn:focus .tooltiptext {
+.btn:hover .tooltiptext {
     visibility: visible;
 }
 
