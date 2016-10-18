@@ -30,9 +30,8 @@
   display: none;
 }*/
 
-
 .chart rect {
-    fill: steelblue;
+    fill: teal;
   }
 
   .axis path,
@@ -86,11 +85,13 @@ function getSum(total, num) {
             }
             data = data.map(function(d) { d.range_idx = d.range_idx/200;return d });
             data.push({range_idx: 1, count:0});
-          $.getScript("/static/js/charts_app.js");
+            $.getScript("/static/js/charts_app.js");
+
         });
 
 
     });
 
 </script>
+{# <script src="/static/js/charts_app.js"></script> #}
 </body>

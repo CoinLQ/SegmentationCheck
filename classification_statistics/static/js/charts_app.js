@@ -11,11 +11,11 @@ var tooltip = d3.select("body")
 
 var dx =0, dy =0;
 if (chunk == 1) {
-  dx = 3; dy = 7;
+  dx = 4; dy = 7;
 } else if (chunk ==4) {
-  dx = 6; dy = 11;
+  dx = 7; dy = 31;
 } else if (chunk ==10) {
-  dx = 16; dy = 20;
+  dx = 16; dy = 16;
 }
 
 var x = d3.scaleBand().rangeRound([0, width]),
@@ -34,11 +34,9 @@ function convert_count( n ){
 
 
 function _render_chart(data) {
-  //var index = data.filter(function(d) { if (d.range_idx%10==0) return d; });
-  //x.domain(index.map(function(d) { return d.range_idx%200; }));
-
+  var max_y = d3.max(data, function(d) { return d.count; } );
   x.domain(data.map(function(d) { return d.range_idx; }));
-  y.domain([0, d3.max(data, function(d) { return d.count; } )]);
+  y.domain([0, max_y]);
 
   g.append("g")
       .attr("class", "axis axis--x")
@@ -50,7 +48,7 @@ function _render_chart(data) {
   g.append("g")
       .attr("transform", "translate("+ dy +",0)")
       .attr("class", "axis axis--y")
-      .call(d3.axisLeft(y).tickValues( y.ticks(5).concat(y.domain()) ))
+      .call(d3.axisLeft(y).tickValues( y.ticks(5)))
     .append("text")
       .attr("transform", "rotate(-90)")
       .attr("dy", "0.71em")
@@ -60,14 +58,27 @@ function _render_chart(data) {
   g.selectAll(".bar")
     .data(data)
     .enter().append("rect")
+      .attr("y", height)
+      .attr("height", 0)
       .attr("class", "bar")
+      .on("mouseover", function(d){return tooltip.style("visibility", "visible").text(d.count+ "("+d.range_idx+")");})
+      .on("mousemove", function(){return tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");})
+      .on("mouseout", function(){return tooltip.style("visibility", "hidden");})
       .attr("x", function(d) { return x(d.range_idx)+dx; })
+      .transition()
+      .duration(1000)
       .attr("y", function(d) { return y(convert_count(d.count)); })
       .attr("width", x.bandwidth())
-      .attr("height", function(d) { return height - y(convert_count(d.count))})
-       .on("mouseover", function(d){return tooltip.style("visibility", "visible").text(d.count+ "("+d.range_idx+")");})
-  .on("mousemove", function(){return tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");})
-  .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
+      .attr("height", function(d) { return height - y(convert_count(d.count))});
 
+  d3.selectAll("g.axis--x g.tick line").attr("y2", function(d){
+      var a = $(this);
+      if ( (10*d)%1 || (d==6) ) { //小数被1整除
+        $(this).next().text("")
+        return 6;
+      }
+      else
+         return 10;
+  });
 };
 _render_chart(data);

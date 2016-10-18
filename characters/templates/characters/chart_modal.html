@@ -1,7 +1,7 @@
 <style>
 
 .bar {
-  fill: steelblue;
+  fill: teal;
 }
 
 .bar:hover {
@@ -9,9 +9,9 @@
 }
 
 
-.chart rect {
+/*.chart rect {
     fill: steelblue;
-}
+}*/
 
 .axis path,
 .axis line {
@@ -87,6 +87,7 @@ function loadSvg() {
           // do whatever
       }
       data = data.map(function(d) { d.range_idx = d.range_idx/200;return d });
+      data.push({range_idx: 1, count:0});
     $.getScript("/static/js/charts_app.js");
   });
 }
