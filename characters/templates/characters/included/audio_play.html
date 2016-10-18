@@ -1,0 +1,31 @@
+<div class="mute_checkbox">
+  <label><input type="checkbox" onchange="muted(this)" value="">静音</label>
+</div>
+<audio id="bingo_audio" autobuffer>
+  <source src="/static/audio/bingo.mp3" type="audio/mpeg" />
+</audio>
+<audio id="bingo_audio_2" autobuffer>
+  <source src="/static/audio/bingo.mp3" type="audio/mpeg" />
+</audio>
+
+<script type="text/javascript">
+var bingo_n = 0;
+function muted(ele){
+  if($(ele).is(':checked')){
+    document.getElementById('bingo_audio').muted = true;
+    document.getElementById('bingo_audio_2').muted = true;
+  }
+  else{
+    document.getElementById('bingo_audio').muted = false;
+    document.getElementById('bingo_audio_2').muted = true;
+  }
+};
+
+function play_bingo(){
+  bingo_n++;
+  if (bingo_n%2==0)
+    document.getElementById('bingo_audio').play();
+  else
+    document.getElementById('bingo_audio_2').play();
+}
+</script>

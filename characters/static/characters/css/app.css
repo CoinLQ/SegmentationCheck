@@ -418,3 +418,9 @@ button.dropdown-toggle {
     transform: perspective(400px);
   }
 }
+
+.mute_checkbox {
+  float: right;
+  margin-top: 4px;
+  font-size: 14px;
+}

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block head %}
-<title>字型列表</title>
+<title>字形列表</title>
 
 <link href="/static/css/simplePagination.css" rel="stylesheet">
 <link href="/static/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
@@ -25,7 +25,7 @@
                     <tr>
                         <th>No</th>
                         <th>字</th>
-                        <th>字型总数</th>
+                        <th>字形总数</th>
                         <th>正样本</th>
                         <th>负样本</th>
                         <th>未标记</th>
@@ -76,7 +76,7 @@
                     <li><a data-value="1" href="#">人工标对</a></li>
                   </ul>
                 </div>
-
+                {% include "characters/included/audio_play.html" %}
             </div>
 
             <div style="clear:both;"> </div>
@@ -123,6 +123,7 @@
     </div><!--endrow-->
     {% include "characters/chart_modal.html" %}
     {% include "characters/accuracy_modal.html" %}
+
     <div class="loading_icon"><!-- Place at bottom of page --></div>
 </div><!-- /.container -->
 {% endblock %}
@@ -219,6 +220,7 @@ var charListContainer =
             var _char = char;
             $(selector).click(function(){
                   var data = {'id': this.id};
+                  play_bingo();
                   data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
                   data['char'] = _char;
                   if ($(this).hasClass('error-char')) {
