@@ -133,24 +133,24 @@ select.input-sm {
   float:left;
   position:relative;
   width:90px;
-  height:110px;
+  height:120px;
   max-width:100%;
   max-height:100%;
   margin-left:3px;
   margin-top: 2px;
   border:solid blue 1px;
-  border-radius: 8px;
+  border-radius: 20px;
   }
 
 .flow img{
   display: inherit;
-  margin: auto;
+  margin: 8px auto;
   width: 80px;
   height: 80px;
 }
 .char-info{
   display: inherit;
-  margin: 5px auto;
+  margin: 8px auto;
   width: 60px;
 }
 
