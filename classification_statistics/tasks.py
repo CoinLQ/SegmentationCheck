@@ -32,3 +32,6 @@ def calculate_classification_statistics():
     with transaction.atomic():
         DataPoint.objects.all().delete()
         DataPoint.objects.bulk_create(data_points)
+
+def main():
+    calculate_classification_statistics()
