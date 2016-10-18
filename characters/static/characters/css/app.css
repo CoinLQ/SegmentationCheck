@@ -121,26 +121,27 @@ select.input-sm {
     border: 2px solid blue;
     color:azure;
 }
-  .error-char {
-    background-color: pink;
-    border:solid red 2px !important;
-  }
-  .correct-char {
-    background-color: #9AFF9A;
-    border:solid green 2px !important;
-  }
-  .flow {
-  float:left;
-  position:relative;
-  width:90px;
-  height:120px;
-  max-width:100%;
-  max-height:100%;
-  margin-left:3px;
-  margin-top: 2px;
-  border:solid blue 1px;
-  border-radius: 20px;
-  }
+.error-char {
+  background-color: pink;
+  border:solid red 4px !important;
+}
+.correct-char {
+  background-color: #9AFF9A;
+  border:solid green 4px !important;
+}
+
+.flow {
+float:left;
+position:relative;
+width:90px;
+height:120px;
+max-width:100%;
+max-height:100%;
+margin-left:3px;
+margin-top: 2px;
+border:solid blue 4px;
+border-radius: 20px;
+}
 
 .flow img{
   display: inherit;
