@@ -48,6 +48,7 @@ class Page(models.Model):
 
 
 class Character(models.Model):
+
     id = models.CharField(max_length=32, primary_key=True)
     page = models.ForeignKey(Page)
     char = models.CharField(max_length=4, db_index=True)
@@ -61,6 +62,11 @@ class Character(models.Model):
     region_no = models.SmallIntegerField(default=0)
     is_correct = models.SmallIntegerField(default=0,db_index=True)
     accuracy = models.SmallIntegerField(default=-1, db_index=True)
+
+    class Meta:
+        index_together = [
+            ("char", "is_correct"),
+        ]
 #is_correct value
 ## 0 unchecked(initial value )
 ## 1 correct
