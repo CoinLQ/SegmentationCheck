@@ -7,7 +7,7 @@ from django.db import transaction
 
 @task
 def calculate_classification_statistics():
-    DATA_POINT_NUM = 200
+    DATA_POINT_NUM = 1000
     char_statistics_map = {}
     total_count = Character.objects.filter(~Q(accuracy=-1)).count()
     iter_count = (total_count - 1) / 1000000
@@ -16,7 +16,7 @@ def calculate_classification_statistics():
         query = 'SELECT id, char, accuracy FROM segmentation_character WHERE accuracy != -1 LIMIT 1000000 OFFSET %d' % start
         characters = Character.objects.raw(query)
         for ch in characters:
-            range_idx = int(ch.accuracy/1000.0 * DATA_POINT_NUM)
+            range_idx = int(ch.accuracy)
             if range_idx < 0:
                 continue
             if range_idx == DATA_POINT_NUM:

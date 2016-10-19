@@ -3,6 +3,10 @@ from django.db import models
 from django.contrib.auth.models import User
 from segmentation.models import Character
 from datetime import datetime
+from django.db import transaction
+from django.db.models import Q
+from classification_statistics.models import DataPoint
+import time
 
 class UserCredit(models.Model):
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
@@ -82,4 +86,36 @@ class ClassificationCompareResult(models.Model):
         obj.difference = new_accuracy - origin_accuracy
         return obj
 
+class CharStock(models.Model):
+    character = models.CharField(u'字', max_length=4, primary_key=True)
+    total_num = models.SmallIntegerField(u'总数', default=0)
+    spent = models.IntegerField(u'总时间(秒)',blank=True, null=True)
 
+    @transaction.atomic
+    def calc_accuracy_stat(self):
+        start_time = time.time()
+        characters = Character.objects.filter(char=self.character).filter(~Q(accuracy=-1))
+        DataPoint.objects.filter(char=self.character).delete()
+        stat_points = [0] * 1001
+        data_points = []
+        for ch in characters:
+            idx = ch.accuracy
+            if idx < 0:
+                continue
+            stat_points[idx] += 1
+
+        for idx in range(1001):
+            dp = DataPoint(char=self.character, range_idx=idx, count=stat_points[idx])
+            data_points.append(dp)
+
+        DataPoint.objects.bulk_create(data_points)
+        self.spent = int(time.time() - start_time)
+        self.save
+
+    @classmethod
+    @transaction.atomic
+    def rebuild_table(cls):
+        CharStock.objects.all().delete()
+        for char_dict in Character.objects.values('char').distinct():
+            ch = CharStock(character=char_dict['char'])
+            ch.save()
