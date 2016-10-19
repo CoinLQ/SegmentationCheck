@@ -12,4 +12,6 @@ urlpatterns = [
     url(r'^stackedareachart$', views.stacked_area_chart),
     url(r'^get_marked_char_count$', views.get_marked_char_count, name='get_marked_char_count'),
     url(r'^classify$', views.classify, name='classify'),
+    url(r'^accuracy_count$', views.accuracy_count, name='accuracy_count'),
+    url(r'^marked_by_accuracy$', views.marked_by_accuracy, name='marked_by_accuracy'),
 ]

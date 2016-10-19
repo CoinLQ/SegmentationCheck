@@ -24,7 +24,8 @@ class ApproxCountPgQuerySet(models.query.QuerySet):
               else:
                   cursor.execute("select reltuples::bigint FROM pg_class c JOIN pg_namespace n on (c.relnamespace = n.oid) WHERE n.nspname = %s AND c.relname = %s", parts)
 
-          return cursor.fetchall()[0][0]
+              return cursor.fetchall()[0][0]
+
       return self.query.get_count(using=self.db)
 
 def estimate_count_fast(type):

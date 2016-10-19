@@ -40,16 +40,27 @@
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
-          <div class="h4 modal-title" style="display: inline" id="classifyChartModalLabel"></div><strong id='chart_char' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>？</strong>
-          <a class="btn btn-default accuracy_cal hidden" href="javascript:;" data-toggle="modal" data-target="#accuracyModal" data-char="？" style="margin-top:-12px">重计算</a>
-          <div id="classify-grade" class="dropdown" style="display: inline;margin-left: 30px">精度：
-          <button id='l-btn' class="btn btn-default grade-btn" data-value=10>低</button>
-          <button id='m-btn' class="btn btn-default grade-btn" data-value=4>中</button>
-          <button id='h-btn' class="btn btn-default grade-btn active" data-value=1>高</button>
+          <div class="row">
+          <div class="col-md-4"
+            <div class="h4 modal-title" style="display: inline" id="classifyChartModalLabel"><strong id='chart_char' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>？</strong>
+            </div>
+          <div class="col-md-5">
+            <div id="classify-grade" class="dropdown" style="display: inline;margin-left: 30px">精度：
+            <button id='l-btn' class="btn btn-default grade-btn" data-value=10>低</button>
+            <button id='m-btn' class="btn btn-default grade-btn" data-value=4>中</button>
+            <button id='h-btn' class="btn btn-default grade-btn active" data-value=1>高</button>
+            </div>
+          </div>
+
+
+          <div class="col-md-3">
+            <a class="btn btn-default accuracy_cal hidden" href="javascript:;" data-toggle="modal" data-target="#accuracyModal" data-char="？" style="margin-top:-12px">重算</a>
+            <a class="btn btn-default accuracy_cal hidden" href="javascript:;" data-toggle="modal" data-target="#markModal" data-char="？" style="margin-top:-12px">标记</a>
+          </div>
           </div>
         </div>
         <div class="modal-body">
-          <div class="chart-container" style="margin-left:50px;margin-right: 10px;">
+          <div class="chart-container" style="margin-left:100px;margin-right: 10px;">
             <svg class="chart" width="670" height="200">
             </svg>
           </div>

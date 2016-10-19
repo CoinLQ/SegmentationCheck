@@ -182,6 +182,35 @@ def classify(request):
     random_sample = int(request.GET.get('random_sample', 0))
     classify_with_random_samples.delay(char, positive_sample_count, random_sample)
     return JsonResponse({'status': 'ok'})
+
+def accuracy_count(request):
+    char = request.POST.get('char', None)
+    if char is None:
+        return JsonResponse({'status': 'error', 'msg': 'no char'})
+    l_value = int(request.POST.get('min_value'))
+    r_value = int(request.POST.get('max_value'))
+    if ((r_value <= 0) or (l_value == r_value)):
+        count = Character.objects.filter(char=char, is_correct=0, accuracy=l_value).count()
+    elif (l_value > r_value):
+        count = 0
+    else:
+        count = Character.objects.filter(char=char, is_correct=0, accuracy__gte=l_value, accuracy__lte=r_value).count()
+    return JsonResponse({'count': count})
+
+def marked_by_accuracy(request):
+    char = request.POST.get('char', None)
+    if char is None:
+        return JsonResponse({'status': 'error', 'msg': 'no char'})
+    l_value = int(request.POST.get('min_value'))
+    r_value = int(request.POST.get('max_value'))
+    if ((r_value <= 0) or (l_value == r_value)):
+        count = Character.objects.filter(char=char, is_correct=0, accuracy=l_value).update(is_correct=1)
+    elif (l_value > r_value):
+        count = 0
+    else:
+        count = Character.objects.filter(char=char, is_correct=0, accuracy__gte=l_value, accuracy__lte=r_value).update(is_correct=1)
+    return JsonResponse({'status': 'ok'})
+
 '''
 def variant(request):
     lq_variant = fetcher.fetch_variants(u'麤')
