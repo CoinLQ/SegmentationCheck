@@ -507,18 +507,21 @@ span.fa-volume-off {
 }
 
 .twinkling {
-  animation: blink-animation 3s steps(5, start) infinite;
+  animation: blink-animation 5s steps(5, start) infinite;
 }
 @keyframes blink-animation {
   0% {
     opacity: 1;
+    background: white;
   }
 
   50% {
-    opacity: 0.5;
+    opacity: 0.6;
+    background: gray;
   }
 
   100% {
     opacity: 1;
+    background: white;
   }
 }
