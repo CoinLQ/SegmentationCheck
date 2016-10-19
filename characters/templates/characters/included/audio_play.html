@@ -1,5 +1,5 @@
 <div class="mute_checkbox">
-  <label><input type="checkbox" onchange="muted(this)" value="">静音</label>
+<a class="btn btn-default" onclick="muted(this)"><span class="fa fa-volume-up" ></span></a>
 </div>
 <audio id="bingo_audio" autobuffer>
   <source src="/static/audio/bingo.mp3" type="audio/mpeg" />
@@ -11,11 +11,16 @@
 <script type="text/javascript">
 var bingo_n = 0;
 function muted(ele){
-  if($(ele).is(':checked')){
+  var sp = $(ele).find('span');
+  if(sp.hasClass('fa-volume-up')){
+    sp.removeClass('fa-volume-up');
+    sp.addClass('fa-volume-off');
     document.getElementById('bingo_audio').muted = true;
     document.getElementById('bingo_audio_2').muted = true;
   }
   else{
+    sp.removeClass('fa-volume-off');
+    sp.addClass('fa-volume-up');
     document.getElementById('bingo_audio').muted = false;
     document.getElementById('bingo_audio_2').muted = false;
   }

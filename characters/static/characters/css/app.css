@@ -421,6 +421,24 @@ button.dropdown-toggle {
 
 .mute_checkbox {
   float: right;
-  margin-top: 4px;
+  position: fixed;
+  top: 70%;
+  right: 4%;
   font-size: 14px;
+  z-index: 3;
+}
+span.fa-volume-up {
+  line-height: 26px;
+  font-size: 14px;
+}
+span.fa-volume-off {
+  line-height: 26px;
+  font-size: 14px;
+  padding: 0px 4px;
+}
+
+.btn:hover span.fa-volume-up,.btn:hover span.fa-volume-off{
+  line-height: 28px;
+  font-size: 20px;
+  border-radius: 26px;
 }
