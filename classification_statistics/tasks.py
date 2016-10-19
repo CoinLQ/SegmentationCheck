@@ -4,6 +4,7 @@ from celery import task
 from segmentation.models import Character
 from django.db.models import Q
 from django.db import transaction
+from characters.models import CharStock
 
 @task
 def calculate_classification_statistics():
@@ -32,6 +33,11 @@ def calculate_classification_statistics():
     with transaction.atomic():
         DataPoint.objects.all().delete()
         DataPoint.objects.bulk_create(data_points)
+
+@task
+def calc_accuracy_stat():
+    for char in CharStock.objects.all():
+        char.calc_accuracy_stat()
 
 def main():
     calculate_classification_statistics()

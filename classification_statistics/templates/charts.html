@@ -73,7 +73,7 @@ function getSum(total, num) {
     return total;
 }
     var data =[];
-    var chunk = 1;
+    var chunk = 50;
     $(function(){
         d3.json('/api/datapoint?char=不',function(res){
             //data = res;
@@ -83,8 +83,8 @@ function getSum(total, num) {
                 data.push(temparray.reduce(getSum));
                 // do whatever
             }
-            data = data.map(function(d) { d.range_idx = d.range_idx/200;return d });
-            data.push({range_idx: 1, count:0});
+            data = data.map(function(d) { d.range_idx = d.range_idx/1000;return d });
+            // data.push({range_idx: 1, count:0});
             $.getScript("/static/js/charts_app.js");
 
         });

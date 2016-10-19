@@ -1,9 +1,9 @@
 from django.core.management.base import BaseCommand, CommandError
-from classification_statistics.tasks import calculate_classification_statistics
+from classification_statistics.tasks import calc_accuracy_stat
 
 class Command(BaseCommand):
-    help = 'calculate_classification_statistics'
+    help = 'calc_accuracy_stat'
 
     def handle(self, *args, **options):
-        calculate_classification_statistics.delay()
+        calc_accuracy_stat.delay()
         self.stdout.write('Successfully')

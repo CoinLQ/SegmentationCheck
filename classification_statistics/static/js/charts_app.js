@@ -10,11 +10,11 @@ var tooltip = d3.select("body")
   .text("");
 
 var dx =0, dy =0;
-if (chunk == 1) {
-  dx = 4; dy = 7;
-} else if (chunk ==4) {
+if (chunk == 5) {
+  dx = 3; dy = 6;
+} else if (chunk ==20) {
   dx = 7; dy = 31;
-} else if (chunk ==10) {
+} else if (chunk ==50) {
   dx = 16; dy = 16;
 }
 
