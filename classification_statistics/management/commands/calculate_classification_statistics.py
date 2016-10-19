@@ -5,5 +5,5 @@ class Command(BaseCommand):
     help = 'calculate_classification_statistics'
 
     def handle(self, *args, **options):
-        calculate_classification_statistics()
-        self.stdout.write('Successfully closed poll')
+        calculate_classification_statistics.delay()
+        self.stdout.write('Successfully')
