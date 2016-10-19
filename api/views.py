@@ -46,7 +46,7 @@ class CharacterFilter(filters.FilterSet):
     class Meta:
         model = Character
         fields = {
-            'accuracy': ['lt', 'gt'],
+            'accuracy': ['lt', 'gt', 'lte', 'gte'],
             'page_id': ['exact'],
             'char': ['exact'],
             'is_correct': ['exact', 'lt', 'gt'],

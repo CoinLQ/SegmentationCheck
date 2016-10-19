@@ -57,6 +57,7 @@
                   <span class="caret"></span></button>
 
                   <ul class="dropdown-menu" style="margin-left:45%">
+                    <li><a data-value="0" href="#">0.000</a></li>
                     <li><a data-value="1" href="#">0.001</a></li>
                     <li><a data-value="2" href="#">0.002</a></li>
                     <li><a data-value="5" href="#">0.005</a></li>
@@ -294,10 +295,10 @@ var charListContainer =
                 accuracy_cap = parseInt(this.accuracy_base*1000 + this.accuracy_scope);
                 accuracy_floor = parseInt(this.accuracy_base*1000 - this.accuracy_scope);
                 if (accuracy_cap <1) {
-                    query += "&accuracy__lt="+accuracy_cap;
+                    query += "&accuracy__lte="+accuracy_cap;
                 }
                 if (accuracy_floor>-1) {
-                    query += "&accuracy__gt="+accuracy_floor;
+                    query += "&accuracy__gte="+accuracy_floor;
                 }
             }
             if(this.filter != -10){
