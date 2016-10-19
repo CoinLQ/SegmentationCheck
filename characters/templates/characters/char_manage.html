@@ -256,12 +256,14 @@ var charListContainer =
             if (this.accuracy_base) {
                 accuracy_cap = parseInt(this.accuracy_base*1000 + this.accuracy_scope);
                 accuracy_floor = parseInt(this.accuracy_base*1000 - this.accuracy_scope);
-                if (accuracy_cap <1) {
-                    query += "&accuracy__lt="+accuracy_cap;
+
+                if (accuracy_cap <1 || this.accuracy_scope ==0) {
+                    query += "&accuracy__lte="+accuracy_cap;
                 }
-                if (accuracy_floor>-1) {
-                    query += "&accuracy__gt="+accuracy_floor;
+                if (accuracy_floor>-1 || this.accuracy_scope ==0) {
+                    query += "&accuracy__gte="+accuracy_floor;
                 }
+
             }
             if(this.filter != -10){
                 query += "&is_correct="+this.filter;
@@ -294,12 +296,14 @@ var charListContainer =
             if (this.accuracy_base) {
                 accuracy_cap = parseInt(this.accuracy_base*1000 + this.accuracy_scope);
                 accuracy_floor = parseInt(this.accuracy_base*1000 - this.accuracy_scope);
-                if (accuracy_cap <1) {
+
+                if (accuracy_cap <1 || this.accuracy_scope ==0) {
                     query += "&accuracy__lte="+accuracy_cap;
                 }
-                if (accuracy_floor>-1) {
+                if (accuracy_floor>-1 || this.accuracy_scope ==0) {
                     query += "&accuracy__gte="+accuracy_floor;
                 }
+
             }
             if(this.filter != -10){
                 query += "&is_correct="+this.filter;
