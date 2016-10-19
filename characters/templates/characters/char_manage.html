@@ -212,7 +212,7 @@ var charListContainer =
                 else if (field.is_correct == 1){
                     txt += "correct-char o-correct-char ";
                 } else {
-                   txt += "puffIn ";
+                   txt += "twinkling ";
                 }
                 txt +="char-image' title='"+field.id+"'><img src='"+field.image_url +"' alt='加载中...' class='lazy'><span class='badge char-info'> "+ field.accuracy/1000+"</span> </div>"
                 $(area).append(txt);
@@ -235,7 +235,7 @@ var charListContainer =
                     $(this).addClass('error-char');
                     data['is_correct'] = -1;
                   }
-                $(this).removeClass("shake-chunk").removeClass("shake-constant")
+                $(this).removeClass("twinkling");
                 $.post('/characters/set_correct', data);
             });
         },
@@ -415,7 +415,7 @@ function handler(is_correct,btn) {
     {
         arr = charlist.map(function() {return this.id}).get();
     }else {
-        $(".char-image").removeClass("shake-chunk").removeClass("shake-constant")
+        $(".char-image").removeClass("twinkling")
     }
     var data = {};
     var updateNum = arr.length;
@@ -441,7 +441,7 @@ function handler(is_correct,btn) {
        if(res['clear']=='ok'){
         $('.correct-char').map(function() {return $(this).removeClass('correct-char')});
         $('.error-char').map(function() {return $(this).removeClass('error-char')});
-         ////$(".char-image").addClass("shake-chunk").addClass("shake-constant")
+        $(".char-image").addClass("twinkling")
        }
     });
 }
