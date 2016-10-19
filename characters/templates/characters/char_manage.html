@@ -212,7 +212,7 @@ var charListContainer =
                 else if (field.is_correct == 1){
                     txt += "correct-char o-correct-char ";
                 } else {
-                   txt += "shake-chunk shake-constant ";
+                   txt += "puffIn ";
                 }
                 txt +="char-image' title='"+field.id+"'><img src='"+field.image_url +"' alt='加载中...' class='lazy'><span class='badge char-info'> "+ field.accuracy/1000+"</span> </div>"
                 $(area).append(txt);
@@ -441,7 +441,7 @@ function handler(is_correct,btn) {
        if(res['clear']=='ok'){
         $('.correct-char').map(function() {return $(this).removeClass('correct-char')});
         $('.error-char').map(function() {return $(this).removeClass('error-char')});
-         $(".char-image").addClass("shake-chunk").addClass("shake-constant")
+         ////$(".char-image").addClass("shake-chunk").addClass("shake-constant")
        }
     });
 }
