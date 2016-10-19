@@ -2753,7 +2753,8 @@
 		var language = settings.oLanguage;
 		var previousSearch = settings.oPreviousSearch;
 		var features = settings.aanFeatures;
-		var input = '<input type="search" class="'+classes.sFilterInput+'"/>';
+		var input = "<div class='search'><span class='fa fa-search'></span>";
+		input += '<input type="search" class="'+classes.sFilterInput+'"/></div>';
 
 		var str = language.sSearch;
 		str = str.match(/_INPUT_/) ?

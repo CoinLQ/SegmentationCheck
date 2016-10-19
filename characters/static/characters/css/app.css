@@ -525,3 +525,33 @@ span.fa-volume-off {
     background: white;
   }
 }
+
+.search {
+  position: relative;
+  color: #aaa;
+  font-size: 16px;
+}
+
+.search input {
+  width: 200px;
+  height: 32px;
+
+  background: #fcfcfc;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+  box-shadow: 0 0 3px #ccc, 0 10px 15px #ebebeb inset;
+}
+
+.search input { text-indent: 28px;}
+.search .fa-search {
+  position: absolute;
+  top: 8px;
+  left: 16px;
+}
+.search .fa-search:after {
+    content: "";
+    border: solid 1px #ccc;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-left: 5px;
+}
