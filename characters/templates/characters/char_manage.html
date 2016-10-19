@@ -5,6 +5,7 @@
 <link href="/static/css/simplePagination.css" rel="stylesheet">
 <link href="/static/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
 <link rel="stylesheet" href="/static/treemap/css/font-awesome.min.css">
+<link href="/static/css/csshake.min.css" rel="stylesheet">
 
   <!-- DataTables -->
   <link rel="stylesheet" href="/static/datatables/dataTables.bootstrap.css">
@@ -210,6 +211,8 @@ var charListContainer =
                 }
                 else if (field.is_correct == 1){
                     txt += "correct-char o-correct-char ";
+                } else {
+                   txt += "shake-chunk shake-constant ";
                 }
                 txt +="char-image' title='"+field.id+"'><img src='"+field.image_url +"' alt='加载中...' class='lazy'><span class='badge char-info'> "+ field.accuracy/1000+"</span> </div>"
                 $(area).append(txt);
@@ -232,6 +235,7 @@ var charListContainer =
                     $(this).addClass('error-char');
                     data['is_correct'] = -1;
                   }
+                $(this).removeClass("shake-chunk").removeClass("shake-constant")
                 $.post('/characters/set_correct', data);
             });
         },
@@ -410,6 +414,8 @@ function handler(is_correct,btn) {
     if (is_correct == 0)
     {
         arr = charlist.map(function() {return this.id}).get();
+    }else {
+        $(".char-image").removeClass("shake-chunk").removeClass("shake-constant")
     }
     var data = {};
     var updateNum = arr.length;
@@ -435,6 +441,7 @@ function handler(is_correct,btn) {
        if(res['clear']=='ok'){
         $('.correct-char').map(function() {return $(this).removeClass('correct-char')});
         $('.error-char').map(function() {return $(this).removeClass('error-char')});
+         $(".char-image").addClass("shake-chunk").addClass("shake-constant")
        }
     });
 }
