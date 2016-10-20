@@ -36,6 +36,7 @@ class ClassificationTaskAdmin(admin.ModelAdmin):
             for result in ClassificationCompareResult.objects.filter(task_id__in=task_ids):
                 Character.objects.filter(id=result.character_id).update(accuracy=result.new_accuracy)
             ClassificationTask.objects.filter(id__in=task_ids).update(updated=True)
+        CharStock.objects.get(pk=task.char).calc_accuracy_stat()
     do_update.short_description = "更新到字表"
 
 class ClassificationCompareResultAdmin(admin.ModelAdmin):

@@ -204,13 +204,29 @@ def marked_by_accuracy(request):
     l_value = int(request.POST.get('min_value'))
     r_value = int(request.POST.get('max_value'))
     if ((r_value <= 0) or (l_value == r_value)):
-        count = Character.objects.filter(char=char, is_correct=0, accuracy=l_value).update(is_correct=1)
+        _mark_based_scope(l_value)
     elif (l_value > r_value):
         count = 0
     else:
-        count = Character.objects.filter(char=char, is_correct=0, accuracy__gte=l_value, accuracy__lte=r_value).update(is_correct=1)
+        if (r_value > 500):
+            updateNum = Character.objects.filter(char=char, is_correct=0, accuracy__gte=l_value, accuracy__lte=r_value).update(is_correct=1)
+            CharacterStatistics.objects.filter(char=char).\
+                    update(uncheck_cnt=F('uncheck_cnt')-updateNum, correct_cnt=F('correct_cnt')+updateNum)
+        else:
+            updateNum = Character.objects.filter(char=char, is_correct=0, accuracy__gte=l_value, accuracy__lte=r_value).update(is_correct=-1)
+            CharacterStatistics.objects.filter(char=char).\
+                    update(uncheck_cnt=F('uncheck_cnt')-updateNum, correct_cnt=F('err_cnt')+updateNum)
     return JsonResponse({'status': 'ok'})
 
+def _mark_based_scope(scope):
+    if scope > 500:
+        updateNum = Character.objects.filter(char=char, is_correct=0, accuracy=l_value).update(is_correct=1)
+        CharacterStatistics.objects.filter(char=char).\
+                    update(uncheck_cnt=F('uncheck_cnt')-updateNum, correct_cnt=F('correct_cnt')+updateNum)
+    else:
+        updateNum = Character.objects.filter(char=char, is_correct=0, accuracy=l_value).update(is_correct=-1)
+        CharacterStatistics.objects.filter(char=char).\
+                    update(uncheck_cnt=F('uncheck_cnt')-updateNum, correct_cnt=F('err_cnt')+updateNum)
 '''
 def variant(request):
     lq_variant = fetcher.fetch_variants(u'麤')

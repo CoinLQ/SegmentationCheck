@@ -92,6 +92,8 @@ class CharStock(models.Model):
     total_num = models.SmallIntegerField(u'总数', default=0)
     spent = models.IntegerField(u'总时间(秒)',blank=True, null=True)
     weight = models.DecimalField(default=0, max_digits=4, decimal_places=3, db_index= True)
+    l_value = models.DecimalField(default=0, max_digits=4, decimal_places=3)
+    r_value = models.DecimalField(default=0, max_digits=4, decimal_places=3)
 
     @transaction.atomic
     def calc_accuracy_stat(self):
@@ -140,7 +142,7 @@ class CharStock(models.Model):
         else:
             res = 0
 
+        self.l_value = (front/l_count)*1.0/1000
+        self.r_value = (end/r_count)*1.0/1000
+
         return res
-
-
-
