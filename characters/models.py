@@ -126,17 +126,21 @@ class CharStock(models.Model):
     def acc_weight(self, bp_query = None):
         bp_query = bp_query or DataPoint.objects.filter(char=self.pk)
         base = 500 # 1001 / 2
-        front, end, t_count = 0, 0, 0
+        front, end, l_count, r_count = 0, 0, 0, 0
         for dp in bp_query:
-            t_count += dp.count
-            if dp.range_idx >=base:
-                end += (dp.range_idx - base) * dp.count
+            if dp.range_idx >= base:
+                r_count += dp.count
+                end += dp.range_idx  * dp.count
             else:
-                front += (base - dp.range_idx) * dp.count
-        if t_count*base != 0:
-            res = round((end + front)*1.0/(t_count*base),3)
+                l_count += dp.count
+                front +=  dp.range_idx * dp.count
+
+        if r_count*l_count != 0:
+            res = (end/r_count - front/l_count)*1.0/1000
         else:
-            res = -1
+            res = 0
+
         return res
+
 
 
