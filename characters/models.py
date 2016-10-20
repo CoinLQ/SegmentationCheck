@@ -119,3 +119,7 @@ class CharStock(models.Model):
         for char_dict in Character.objects.values('char').distinct():
             ch = CharStock(character=char_dict['char'])
             ch.save()
+
+    def acc_weight(self):
+        # TODO
+        1 == 1

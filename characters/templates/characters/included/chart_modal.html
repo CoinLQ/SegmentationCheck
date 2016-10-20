@@ -97,8 +97,24 @@ function loadSvg() {
           data.push(temparray.reduce(getSum));
           // do whatever
       }
-      data = data.map(function(d) { d.range_idx = d.range_idx/1000;return d });
-      // data.push({range_idx: 1, count:0});
+
+
+    data.map(function(d) { d.range_idx = d.range_idx/1000;return d });
+    new_data = []
+    data.forEach(function (element, index, array) {
+      if (index == 0)
+      {
+        new_data.push({ range_idx: data[index].range_idx, count: data[index].count + data[index+1].count/2 });
+      }else if (index < data.length-2){
+        new_data.push({ range_idx: data[index].range_idx, count: data[index].count/2 + data[index+1].count/2 })
+      }else if (index == data.length-2) {
+        new_data.push({ range_idx: data[index].range_idx, count: data[index].count/2 + data[index+1].count })
+      }
+
+    })
+    data = new_data
+    data.push({range_idx: 1, count:0});
+
     $.getScript("/static/js/charts_app.js");
   });
 }

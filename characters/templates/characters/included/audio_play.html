@@ -8,6 +8,10 @@
   <source src="/static/audio/bingo.mp3" type="audio/mpeg" />
 </audio>
 
+<audio id="dingding" autobuffer>
+  <source src="/static/audio/dingding.mp3" type="audio/mpeg" />
+</audio>
+
 <script type="text/javascript">
 var bingo_n = 0;
 function muted(ele){
@@ -17,12 +21,14 @@ function muted(ele){
     sp.addClass('fa-volume-off');
     document.getElementById('bingo_audio').muted = true;
     document.getElementById('bingo_audio_2').muted = true;
+    document.getElementById('dingding').muted = true;
   }
   else{
     sp.removeClass('fa-volume-off');
     sp.addClass('fa-volume-up');
     document.getElementById('bingo_audio').muted = false;
     document.getElementById('bingo_audio_2').muted = false;
+    document.getElementById('dingding').muted = false;
   }
 };
 
@@ -32,5 +38,9 @@ function play_bingo(){
     document.getElementById('bingo_audio').play();
   else
     document.getElementById('bingo_audio_2').play();
+}
+
+function play_batch_mark(){
+  document.getElementById('dingding').play();
 }
 </script>

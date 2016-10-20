@@ -78,13 +78,28 @@ function getSum(total, num) {
         d3.json('/api/datapoint?char=不',function(res){
             //data = res;
             var i,j,temparray;
+            var combined = false;
             for (i=0,j=res.length; i<j; i+=chunk) {
                 temparray = res.slice(i,i+chunk);
                 data.push(temparray.reduce(getSum));
                 // do whatever
             }
-            data = data.map(function(d) { d.range_idx = d.range_idx/1000;return d });
-            // data.push({range_idx: 1, count:0});
+            data.map(function(d) { d.range_idx = d.range_idx/1000;return d });
+            new_data = []
+            data.forEach(function (element, index, array) {
+              console.log('a[' + index + '] = ' + element);
+              if (index == 0)
+              {
+                new_data.push({ range_idx: data[index].range_idx, count: data[index].count + data[index+1].count/2 });
+              }else if (index < data.length-2){
+                new_data.push({ range_idx: data[index].range_idx, count: data[index].count/2 + data[index+1].count/2 })
+              }else if (index == data.length-2) {
+                new_data.push({ range_idx: data[index].range_idx, count: data[index].count/2 + data[index+1].count })
+              }
+
+            })
+            data = new_data
+            data.push({range_idx: 1, count:0});
             $.getScript("/static/js/charts_app.js");
 
         });
