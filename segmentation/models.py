@@ -102,6 +102,6 @@ class CharacterStatistics(models.Model):
     uncheck_cnt = models.IntegerField(default=0)
     err_cnt = models.IntegerField(default=0)
     correct_cnt = models.IntegerField(default=0)
-
+    weight = models.DecimalField(default=0, max_digits=4, decimal_places=3, db_index= True)
     def __unicode__(self):
         return u'%s:%d' % (self.char,self.total_cnt )

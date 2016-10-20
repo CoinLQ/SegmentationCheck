@@ -24,7 +24,7 @@ class Index(generic.ListView):
         #     print 'no cache'
         #     char_lst = CharacterStatistics.objects.all().order_by('-total_cnt','char')
         #     cache.set('characterstatistics_lst', char_lst)
-        char_lst = CharacterStatistics.objects.all().order_by('-total_cnt','char')
+        char_lst = CharacterStatistics.objects.select_related('charstock').all().order_by('-total_cnt','char')
         return  char_lst
 
 def index(request):

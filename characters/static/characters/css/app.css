@@ -455,19 +455,21 @@ button.dropdown-toggle {
   z-index: 3;
 }
 span.fa-volume-up {
-  line-height: 26px;
-  font-size: 14px;
+  font-size: 26px;
+  padding: 8px 4px;
 }
 span.fa-volume-off {
-  line-height: 26px;
-  font-size: 14px;
-  padding: 0px 4px;
+  font-size: 26px;
+  padding: 8px 9px;
 }
 
 .btn:hover span.fa-volume-up,.btn:hover span.fa-volume-off{
-  line-height: 28px;
-  font-size: 20px;
-  border-radius: 26px;
+  font-size: 32px;
+  padding: 12px 8px;
+}
+.btn:hover span.fa-volume-off{
+  font-size: 32px;
+  padding: 11px 14px;
 }
 
 .puffIn {
@@ -559,4 +561,23 @@ span.fa-volume-off {
     padding-top: 5px;
     padding-bottom: 5px;
     margin-left: 5px;
+}
+
+.btn-default-big {
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+    border-radius: 100px;
+}
+
+.btn-default-big:focus,
+.btn-default-big.focus {
+  color: #333;
+  background-color: #e6e6e6;
+  border-color: #8c8c8c;
+}
+.btn-default-big:hover {
+  color: #333;
+  background-color: #e6e6e6;
+  border-color: #adadad;
 }
