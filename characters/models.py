@@ -6,6 +6,7 @@ from datetime import datetime
 from django.db import transaction
 from django.db.models import Q
 from classification_statistics.models import DataPoint
+from django.db.models.signals import post_save
 from segmentation.models import CharacterStatistics
 import time
 
@@ -48,6 +49,7 @@ class ClassificationTask(models.Model):
     training_spent = models.IntegerField(u'训练时间(秒)')
     predict_spent = models.IntegerField(u'预测时间(秒)')
     updated = models.BooleanField(u'是否已更新结果')
+    auto_apply = models.BooleanField(u'是否自动更新', default=False)
 
     class Meta:
         permissions = (
@@ -55,7 +57,7 @@ class ClassificationTask(models.Model):
         )
 
     @classmethod
-    def create(cls, char, algorithm, train_count, predict_count, started, completed, fetch_spent, training_spent, predict_spent):
+    def create(cls, char, algorithm, train_count, predict_count, started, completed, fetch_spent, training_spent, predict_spent, auto_apply):
         obj = cls()
         obj.char = char
         obj.algorithm = algorithm
@@ -68,7 +70,19 @@ class ClassificationTask(models.Model):
         obj.training_spent = training_spent
         obj.predict_spent = predict_spent
         obj.updated = False
+        obj.auto_apply = auto_apply
         return obj
+
+    def update_result(self):
+        if self.updated:
+            return
+        with transaction.atomic():
+            for result in ClassificationCompareResult.objects.filter(task_id=self.id):
+                Character.objects.filter(id=result.character_id).update(accuracy=result.new_accuracy)
+            CharStock.objects.get(pk=self.char).calc_accuracy_stat()
+            self.updated = True
+            self.save()
+
 
 class ClassificationCompareResult(models.Model):
     task = models.ForeignKey(ClassificationTask)

@@ -180,7 +180,8 @@ def classify(request):
         return JsonResponse({'status': 'error', 'msg': 'no char'})
     positive_sample_count = int(request.GET.get('positive_sample_count', 0))
     random_sample = int(request.GET.get('random_sample', 0))
-    classify_with_random_samples.delay(char, positive_sample_count, random_sample)
+    auto_apply = request.GET.get('auto_apply') == 'true'
+    classify_with_random_samples.delay(char, positive_sample_count, auto_apply, random_sample)
     return JsonResponse({'status': 'ok'})
 
 def accuracy_count(request):

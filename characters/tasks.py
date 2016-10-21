@@ -53,7 +53,7 @@ def update_char_stastics():
     return 'update CharacterStatistics'
 
 @task
-def classify_with_random_samples(char, positive_sample_count, random_sample=0):
+def classify_with_random_samples(char, positive_sample_count, auto_apply=False, random_sample=0):
     print char, positive_sample_count
     started = datetime.now()
     start_time = time.time()
@@ -110,7 +110,7 @@ def classify_with_random_samples(char, positive_sample_count, random_sample=0):
     print "predict done, spent %s seconds." % predict_spent
     completed = datetime.now()
     task = ClassificationTask.create(char, u'', train_count, predict_count,
-                                     started, completed, fetch_spent, training_spent, predict_spent)
+                                     started, completed, fetch_spent, training_spent, predict_spent, auto_apply)
     task.save()
     compare_results = []
     results = []
@@ -127,6 +127,9 @@ def classify_with_random_samples(char, positive_sample_count, random_sample=0):
             compare_results.append(result)
     if len(compare_results) > 0:
         ClassificationCompareResult.objects.bulk_create(compare_results)
+    if auto_apply:
+        task.update_result()
+
 
 # @task
 def classify(_char):
