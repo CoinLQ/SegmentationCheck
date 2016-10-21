@@ -1,6 +1,6 @@
 # coding: utf-8
 from django.contrib import admin
-from .models import CharMarkRecord, ClassificationTask, ClassificationCompareResult
+from .models import CharMarkRecord, ClassificationTask, ClassificationCompareResult, CharStock
 from segmentation.models import Character
 
 class CharMarkRecordAdmin(admin.ModelAdmin):
