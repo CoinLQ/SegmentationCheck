@@ -87,7 +87,7 @@ def segmentation_check():
     env.supervisor_stdout_logfile = '%(django_user_home)s/logs/projects/supervisord_%(project)s.log' % env
     env.supervisord_conf_file = '%(django_user_home)s/configs/supervisord/%(project)s.conf' % env
     ### END supervisor settings ###
-
+    env.supervisor_celery_worker_name = 'celery'
 
 @task
 def deploy():
@@ -109,6 +109,7 @@ def deploy():
     _prepare_django_project()
     _prepare_media_path()
     _supervisor_restart()
+    _celery_worker_restart()
 
     end_time = datetime.now()
     finish_message = '[%s] Correctly deployed in %i seconds' % \
@@ -152,3 +153,11 @@ def _supervisor_restart():
         print red_bg("%s NOT STARTED!" % env.supervisor_program_name)
     else:
         print green_bg("%s correctly started!" % env.supervisor_program_name)
+
+def _celery_worker_restart():
+    with settings(hide('running', 'stdout', 'stderr', 'warnings'), warn_only=True):
+        res = sudo('%(supervisorctl)s restart %(supervisor_celery_worker_name)s' % env)
+    if 'ERROR' in res:
+        print red_bg("%s NOT STARTED!" % env.supervisor_celery_worker_name)
+    else:
+        print green_bg("%s correctly started!" % env.supervisor_celery_worker_name)
