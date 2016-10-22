@@ -6,10 +6,10 @@
 <link href="/static/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
 <link rel="stylesheet" href="/static/treemap/css/font-awesome.min.css">
 <link href="/static/css/csshake.min.css" rel="stylesheet">
-
   <!-- DataTables -->
   <link rel="stylesheet" href="/static/datatables/dataTables.bootstrap.css">
 <link rel="stylesheet" href="/static/characters/css/app.css">
+<link rel="stylesheet" href="/static/characters/css/circle.css">
 {% endblock %}
 {% block mainbody %}
 <div class="container" style="min-width:1000px !important;">
@@ -47,11 +47,25 @@
             <div class='row'>
                 <div class="col-md-6" style="margin-top:-16px;">
                 <strong id='checkchar' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>？</strong>
-                <a class="btn btn-default" href="javascript:;" onclick="checkDict()" style="margin-top:-12px"><span class="tooltip_text">查字典</span><span class="fa fa-book"></span></a>
-                <a class="btn btn-default classifyChart hidden" href="javascript:;" data-toggle="modal" data-target="#classifyChartModal" data-char="？" style="margin-top:-12px"><span class="tooltip_text">相似度分布</span><span class="fa fa-bar-chart"></span></a>
+                <a class="btn btn-default" href="javascript:;" onclick="checkDict()" style="margin-top:-12px;padding:8px 12px;"><span class="tooltip_text">查字典</span><span class="fa fa-book"></span></a>
+                <a class="btn btn-default classifyChart hidden" href="javascript:;" data-toggle="modal" data-target="#classifyChartModal" data-char="？" style="margin-top:-12px;padding:8px 10px;"><span class="tooltip_text">相似度分布</span><span class="fa fa-bar-chart"></span></a>
 
-                <a class="btn btn-default accuracy_cal hidden" href="javascript:;" data-toggle="modal" data-target="#accuracyModal" data-char="？" style="margin-top:-12px"><span class="tooltip_text">重算</span><span class="fa fa-calculator"></span></a>
-                <a class="btn btn-default accuracy_cal hidden" href="javascript:;" data-toggle="modal" data-target="#markModal" data-char="？" style="margin-top:-12px"><span class="tooltip_text">标记</span><span class="fa fa-paw"></span></a>
+                <a class="btn btn-default circle-btn accuracy_cal hidden" href="javascript:;" data-toggle="modal" data-target="#accuracyModal" data-char="？"><span class="tooltip_text">重算</span><span class="fa fa-calculator"></span>                
+                <div class="radial-progress" data-progress="100">
+                    <div class="circle">
+                        <div class="mask full">
+                            <div class="fill"></div>
+                        </div>
+                        <div class="mask half">
+                            <div class="fill"></div>
+                            <div class="fill fix"></div>
+                        </div>
+                        <div class="shadow1"></div>
+                    </div>
+                    <div class="inset1"></div>
+                </div></a>
+
+                <a class="btn btn-default accuracy_cal hidden" href="javascript:;" data-toggle="modal" data-target="#markModal" data-char="？" style="margin-top:-12px;padding:8px 12px;"><span class="tooltip_text">标记</span><span class="fa fa-paw"></span></a>
 
                 </div>
                 <div id="accuracy_scope" class="form-inline dropdown" style="display: inline-block;margin-left: 2px;float:right">
@@ -196,12 +210,36 @@ var charListContainer =
         accuracy_base: NaN,
         accuracy_scope: 10,
         data: [],
+        total: 0,
+        timers: [],
         pagination: {},
         paginationRender: function(){
             var total_pages = this.pagination.total_pages;
             $('.pagitor_input').val(this.page_number);
             $('.pagitor_input').attr('max',total_pages);
             $('.total_page').text('/ '+total_pages);
+        },
+        startWaitingAnimate: function(char, least){
+          var t = new TimeLeft(char, least);
+          this.timers = this.timers.filter(function(el) {
+              return el.char != char;
+          });
+          this.timers.push(t);
+          t.Start();
+        },
+        recallWaitingAnimate: function(){
+          var that = this;
+          t = this.timers.filter(function(el) {
+              return el.char == that.char && el.Enable == true;
+          });
+          if (t[0]) t[0].showCircle();
+        },
+        hideWaitingAnimate: function(){
+          var that = this;
+          t = this.timers.filter(function(el) {
+              return el.char == that.char;
+          });
+          if (t[0]) t[0].hideCircle();
         },
         hello: function(){
             alert('hello');
@@ -348,7 +386,10 @@ $('.accuracy_input').on('input',function(e){
 $('#char_index #char_index_tbody').on('click', 'tr', function(event) {
     $('tr').removeClass("selected");
     $(this).addClass("selected");
+    charListContainer.hideWaitingAnimate();
     charListContainer.char = $("tr.selected td:eq(1)").text();
+    charListContainer.recallWaitingAnimate();
+    charListContainer.total = parseInt($("tr.selected td:eq(2)").text());
     $("#checkchar").text(charListContainer.char);
     $(".classifyChart").data('char', charListContainer.char);
     $(".accuracy_cal").data('char', charListContainer.char);
@@ -491,6 +532,7 @@ $('input').keypress(function( event ){
 
 
 <script src="/static/js/jquery.lazyload.min.js" charset="utf-8"></script>
+<script src="/static/js/time_left.js" charset="utf-8"></script>
 <script>
 $body = $("body");
 $(document).on({
@@ -500,8 +542,15 @@ $(document).on({
     // ajaxComplete: function() {
     //   $body.removeClass("loading");
     // }
-});
 
+//     ('head style[type="text/css"]').attr('type', 'text/less');
+// less.refreshStyles()
+
+});
+$('.radial-progress').click(function(evt) {
+  evt.stopPropagation();
+    //$('.radial-progress').attr('data-progress', Math.floor(Math.random() * 100));
+});
 $("img.lazy").lazyload({
     effect : "fadeIn"
 });

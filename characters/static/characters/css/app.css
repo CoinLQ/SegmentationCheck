@@ -351,9 +351,7 @@ button.dropdown-toggle {
 .btn:hover .tooltiptext, .btn:hover .tooltip_text{
     visibility: visible;
 }
-.btn:hover span.fa {
-  font-size: 16px;
-}
+
 .tooltiptext::after {
     content: "";
     position: absolute;
@@ -580,4 +578,12 @@ span.fa-volume-off {
   color: #333;
   background-color: #e6e6e6;
   border-color: #adadad;
+}
+.error-input {
+  border: 1px solid #ab6883;
+}
+.circle-btn {
+  position:relative !important;
+  margin-top:-12px;
+  padding:8px 11px;
 }

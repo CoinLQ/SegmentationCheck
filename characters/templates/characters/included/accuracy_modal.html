@@ -12,7 +12,7 @@
           </button>
           <div class="h4 modal-title" style="display: inline" id="accuracyModalLabel">相似度重算</div><strong id='accuracy_char' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>？</strong>
         </div>
-        <div class="modal-body" style="min-height:100px;">
+        <div class="modal-body" style="min-height:200px;">
           <div class="accuracy-container" style="margin-left:50px;margin-right: 10px">
             <div id="classify-grade" class="dropdown" style="display: inline;margin-left: 30px">范围：
 
@@ -24,6 +24,7 @@
                     <li><a data-value="random" href="#">指定个数</a></li>
                   </ul>
             </div>
+            <label style="margin-left:10px"><input id="auto-apply" type="checkbox" checked  value="">自动更新</label>
           </div>
           <div class="row hidden" style="margin-left:22px;margin-top: 10px">
             <div id="classify-mothod" class="dropdown" style="display: inline;margin-left: 30px">计算方式：
@@ -38,14 +39,16 @@
             </div>
             <input class="modal_ac_input form-control-inline" placeholder="100" aria-controls="char_index" style="margin-top:2px;width: 100px"></input>
           </div>
-        </div>
-        <div class="row">
+          <div class="row" style="position:absolute;bottom:0px;width:600px;">
             <div class="col-md-6 col-md-offset-3">
-                <div class="alert alert-danger alert-dismissible fade in" role="alert" style="display:none;">
-                  <strong>数字</strong> 不可为零.
+                <div class="alert alert-warning alert-dismissible fade in" role="alert" style="display:block;">
+                  预计计算时间为<strong id="estimate"></strong>秒.正负偏差<strong id="diff-scope"></strong>秒.
                 </div>
             </div>
+          </div>
         </div>
+  
+
         <div class="modal-footer">
           <button type="button" class="btn btn-primary cal">计算</button>
         </div>
@@ -85,6 +88,14 @@ function makeOption(){
       $("span.method_option").text('正序');
     }
   }
+  var time_left = Math.round(charListContainer.total/20);
+  var diff = Math.round(time_left/3)
+  if (time_left==0)
+    time_left = 1
+  if (diff == 0)
+    diff = 1
+  $("#estimate").text(time_left);
+  $("#diff-scope").text(diff);
 }
 $(function(){
   $('#accuracyModal').on('show.bs.modal', function (event) {
@@ -117,10 +128,10 @@ $(function(){
     } else if (ac_option == 'postive' && count !=0 ) {
       url = url + "&positive_sample_count=" + count;
     } else {
-      $('.alert').show();
-      $('.alert').fadeOut('slow');
+      $(".modal_ac_input").addClass("error-input");
       return;
     }
+    url+="&auto_apply=" + $("#auto-apply").prop("checked");
     $.ajax({
         url: url,
         method: 'get',
@@ -132,6 +143,7 @@ $(function(){
           console.log(err);
         }
     });
+    charListContainer.startWaitingAnimate(charListContainer.char, parseInt($("#estimate").text()));
     $("#accuracyModal").modal('hide');
   });
 
