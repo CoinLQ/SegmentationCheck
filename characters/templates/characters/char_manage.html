@@ -50,7 +50,7 @@
                 <a class="btn btn-default" href="javascript:;" onclick="checkDict()" style="margin-top:-12px;padding:8px 12px;"><span class="tooltip_text">查字典</span><span class="fa fa-book"></span></a>
                 <a class="btn btn-default classifyChart hidden" href="javascript:;" data-toggle="modal" data-target="#classifyChartModal" data-char="？" style="margin-top:-12px;padding:8px 10px;"><span class="tooltip_text">相似度分布</span><span class="fa fa-bar-chart"></span></a>
 
-                <a class="btn btn-default circle-btn accuracy_cal hidden" href="javascript:;" data-toggle="modal" data-target="#accuracyModal" data-char="？"><span class="tooltip_text">重算</span><span class="fa fa-calculator"></span>                
+                <a class="btn btn-default circle-btn accuracy_cal hidden" href="javascript:;" data-toggle="modal" data-target="#accuracyModal" data-char="？"><span class="tooltip_text">重算</span><span class="fa fa-calculator"></span>
                 <div class="radial-progress" data-progress="100">
                     <div class="circle">
                         <div class="mask full">
@@ -145,6 +145,7 @@
     {% include "characters/included/chart_modal.html" %}
     {% include "characters/included/accuracy_modal.html" %}
     {% include "characters/included/mark_modal.html" %}
+    {% include "characters/included/compare_result_modal.html" %}
     <div class="loading_icon"><!-- Place at bottom of page --></div>
 </div><!-- /.container -->
 {% endblock %}

@@ -6,7 +6,7 @@ from django.db.models import F
 from utils.get_checked_character import get_checked_character
 import datetime
 from django.contrib.auth.decorators import user_passes_test
-from .models import UserCredit, CharMarkRecord
+from .models import UserCredit, CharMarkRecord, ClassificationTask, ClassificationCompareResult
 import redis
 from django.views import generic
 from django.core.cache import cache
@@ -228,6 +228,26 @@ def _mark_based_scope(scope):
         updateNum = Character.objects.filter(char=char, is_correct=0, accuracy=l_value).update(is_correct=-1)
         CharacterStatistics.objects.filter(char=char).\
                     update(uncheck_cnt=F('uncheck_cnt')-updateNum, correct_cnt=F('err_cnt')+updateNum)
+
+def last_task_result(request):
+    char = request.GET.get('char', None)
+    last_task = ClassificationTask.objects.filter(char=char).last()
+    data = []
+    n = 0;
+    for result in ClassificationCompareResult.objects.filter(task=last_task).select_related('character'):
+        n+=1
+        data.append({
+                u'id': n,
+                u'char': char,
+                u'origin_accuracy': result.origin_accuracy*1.0/1000,
+                u'new_accuracy': result.new_accuracy*1.0/1000,
+                u'difference': result.difference*1.0/1000,
+                u'url': result.character.image_url,
+            })
+        # data.append([n, char, result.origin_accuracy, result.new_accuracy,
+        #      result.difference, result.character.image_url])
+    return JsonResponse({'status': 'ok', 'data': data})
+
 '''
 def variant(request):
     lq_variant = fetcher.fetch_variants(u'麤')
