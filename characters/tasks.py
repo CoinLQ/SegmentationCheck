@@ -120,7 +120,8 @@ def classify_with_random_samples(char, positive_sample_count, auto_apply=False, 
         difference = new_accuracy - origin_accuracy
         results.append( (test_char_id_lst[i], origin_accuracy, new_accuracy, difference) )
     results.sort(key=itemgetter(3), reverse=True)
-    selected_count = max(predict_count/10, 1000)
+    # selected_count = max(predict_count/10, 1000)
+    selected_count = max(predict_count/2, 1000)
     for char_id, origin_accuracy, new_accuracy, difference in results[:selected_count]:
         if difference != 0:
             result = ClassificationCompareResult.create(task, char_id, origin_accuracy, new_accuracy)
