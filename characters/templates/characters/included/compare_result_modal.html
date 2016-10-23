@@ -16,11 +16,13 @@
             <span aria-hidden="true">&times;</span>
           </button>
           <div class="row">
-          <div class="col-md-3 ">
-            <div class="h4 modal-title" style="display: inline" id="compareResultModalLabel">对比结果</div><strong id='result_char' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>？</strong>
-          <div class="col-md-5">
-
-          </div>
+            <div class="col-md-3 ">
+              <div class="h4 modal-title" style="display: inline" id="compareResultModalLabel">对比结果
+              </div><strong id='result_char' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>？</strong>
+            </div>
+            <div class="col-md-5">
+            <a class="btn btn-default more-task" href="javascript:;" style="margin-top:8px;padding:8px 12px;margin-left: 80%"><span class="tooltip_text">更多</span><span class="fa fa-modx"></span></a>
+            </div>
           </div>
         </div>
         <div class="modal-body">
@@ -73,6 +75,10 @@ $(function(){
     $('#resultArea').DataTable().ajax.url('/characters/last_task_result?char='+charListContainer.char).load();
   });
 
+  $(".more-task").click(function(){
+    $('#resultArea').DataTable().ajax.url('/characters/more_task_result?char='+charListContainer.char).load();
+  });
+
   $("#resultArea").DataTable({
       "pagingType": "input",
         "info":     false,
@@ -108,7 +114,9 @@ $(function(){
           }
         },
         language: {
+            emptyTable:    "目前没有数据",
             search:         "",
+            processing:     "载入数据中...请稍等",
             lengthMenu:    " _MENU_ 结果/页",
             loadingRecords: "载入数据中...",
             paginate: {

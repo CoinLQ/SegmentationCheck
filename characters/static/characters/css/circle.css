@@ -38,7 +38,7 @@
 }
 .radial-progress .circle .mask .fill {
   clip: rect(0px, 20px, 39px, 0px);
-  background-color: #ccc;
+  background-color: #ffd74d;
 
 }
 .radial-progress .inset {

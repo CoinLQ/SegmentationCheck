@@ -15,4 +15,5 @@ urlpatterns = [
     url(r'^accuracy_count$', views.accuracy_count, name='accuracy_count'),
     url(r'^marked_by_accuracy$', views.marked_by_accuracy, name='marked_by_accuracy'),
     url(r'^last_task_result$', views.last_task_result, name='last_task_result'),
+    url(r'^more_task_result$', views.more_task_result, name='more_task_result'),
 ]

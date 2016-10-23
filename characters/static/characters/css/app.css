@@ -461,11 +461,11 @@ span.fa-volume-off {
   padding: 8px 9px;
 }
 
-.btn:hover span.fa-volume-up,.btn:hover span.fa-volume-off{
+.btn:hover span.fa-volume-up,.btn:hover span.fa-volume-off {
   font-size: 32px;
   padding: 12px 8px;
 }
-.btn:hover span.fa-volume-off{
+.btn:hover span.fa-volume-off {
   font-size: 32px;
   padding: 11px 14px;
 }
@@ -586,4 +586,5 @@ span.fa-volume-off {
   position:relative !important;
   margin-top:-12px;
   padding:8px 11px;
+  outline: 0;
 }

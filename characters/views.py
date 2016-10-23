@@ -248,6 +248,22 @@ def last_task_result(request):
         #      result.difference, result.character.image_url])
     return JsonResponse({'status': 'ok', 'data': data})
 
+def more_task_result(request):
+    char = request.GET.get('char', None)
+    task_ids = ClassificationTask.objects.filter(char=char).values_list('id', flat=True)
+    data = []
+    n = 0;
+    for result in ClassificationCompareResult.objects.filter(task_id__in=task_ids).order_by('-task_id').select_related('character'):
+        n+=1
+        data.append({
+                u'id': n,
+                u'char': char,
+                u'origin_accuracy': result.origin_accuracy*1.0/1000,
+                u'new_accuracy': result.new_accuracy*1.0/1000,
+                u'difference': result.difference*1.0/1000,
+                u'url': result.character.image_url,
+            })
+    return JsonResponse({'status': 'ok', 'data': data})
 '''
 def variant(request):
     lq_variant = fetcher.fetch_variants(u'麤')
