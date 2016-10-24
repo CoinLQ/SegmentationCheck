@@ -207,6 +207,8 @@ LOCALE_PATHS = (
 )
 
 LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse',
@@ -224,7 +226,7 @@ LOGGING = {
             'level': 'ERROR',
             'handlers': ['slack_admins'],
         },
-    },
+    }
 }
 
 CACHES = {
