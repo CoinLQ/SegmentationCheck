@@ -11,7 +11,7 @@ fabric==1.11.1
 pillow==3.2.0
 
 scikit-image==0.12.3
-scikit-learn==0.17.1 
+scikit-learn==0.17.1
 scipy==0.18.0
 matplotlib==1.5.1
 redis==2.10.5
@@ -22,7 +22,8 @@ django_fagungis==0.1
 
 Werkzeug==0.11.10
 
-django-celery==3.1.17 
+django-celery==3.1.17
+django-slack==5.7.1
 
 django-debug-toolbar==1.5
 BeautifulSoup==3.2.1

@@ -39,3 +39,27 @@ DEBUG_TOOLBAR_PANELS = [
 DEBUG_TOOLBAR_CONFIG ={
     'JQUERY_URL': '//lib.sinaapp.com/js/jquery/3.1.0/jquery-3.1.0.min.js',
 }
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/segmentation_web.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}

@@ -21,6 +21,7 @@ import time
 from itertools import chain
 
 from utils.image_normalization.normalization import normalize
+from utils.to_slack import push_to_slack
 from thinning import convert_image, thinning
 import cPickle
 import numpy as np
@@ -217,6 +218,8 @@ def prepare_data_with_database2(char_lst):
             binary = normalize(img_path)
             feature_vector = binary.ravel()
         except:
+            msg = "ID: %s  %s feature_vector fetch failure!" % (char.id, char.char)
+            push_to_slack(msg)
             feature_vector = None
         if feature_vector is not None:
             test_x.append(feature_vector)

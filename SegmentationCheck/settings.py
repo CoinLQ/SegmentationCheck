@@ -48,7 +48,7 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     'rest_framework',
     'djcelery',
-]
+    'django_slack', ]
 #   'qiniustorage',
 #    'kombu.transport.django',
 
@@ -207,25 +207,22 @@ LOCALE_PATHS = (
 )
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+    },
     'handlers': {
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': 'logs/segmentation_web.log',
+        'slack_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django_slack.log.SlackExceptionHandler',
         },
     },
     'loggers': {
         'django': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-        'django.request': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
-            'propagate': True,
+            'level': 'ERROR',
+            'handlers': ['slack_admins'],
         },
     },
 }
@@ -239,3 +236,8 @@ CACHES = {
         }
     }
 }
+
+SLACK_TOKEN='xoxb-95069586514-PfaVFAZ2ALHAwLnlTAKde8bt'
+SLACK_USERNAME='django-bot'
+SLACK_CHANNEL='#bugs-here'
+SLACK_BACKEND='django_slack.backends.UrllibBackend'
