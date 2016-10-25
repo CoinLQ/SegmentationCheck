@@ -153,10 +153,9 @@ class CharStock(models.Model):
 
         if r_count*l_count != 0:
             res = (end/r_count - front/l_count)*1.0/1000
+            self.l_value = (front/l_count)*1.0/1000
+            self.r_value = (end/r_count)*1.0/1000
         else:
             res = 0
-
-        self.l_value = (front/l_count)*1.0/1000
-        self.r_value = (end/r_count)*1.0/1000
 
         return res
