@@ -4,7 +4,8 @@ from managerawdata.models import OPage
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
-
+import math
+import random
 
 # Create your models here.
 class Page(models.Model):
@@ -86,7 +87,8 @@ class Character(models.Model):
 
     @property
     def image_url(self):
-        return u'/character_images/'+self.page_id+u'/'+self.image.replace(u'.jpg', u'.png')
+        server_host = "http://asset-c%d.dzj3000.com" % int(math.ceil(random.random()*3))
+        return server_host + u'/web/character_images/'+self.page_id+u'/'+self.image.replace(u'.jpg', u'.png')
 
     def get_image_path(self):
         return settings.CHARACTER_IMAGE_ROOT+self.page_id+u'/'+self.image
