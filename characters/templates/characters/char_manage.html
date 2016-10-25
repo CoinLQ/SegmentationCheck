@@ -31,6 +31,8 @@
                         <th>负<br>样本</th>
                         <th>未<br>标记</th>
                         <th>区<br>分度</th>
+                        <th class="hidden">左重心</th>
+                        <th class="hidden">右重心</th>
                     </tr>
                     </thead>
                     <tbody id="char_index_tbody">
@@ -165,7 +167,9 @@
             "{{char.correct_cnt}}",
             "{{char.err_cnt}}",
             "{{char.uncheck_cnt}}",
-            "{{char.charstock.weight}}"
+            "{{char.charstock.weight}}",
+            "{{char.charstock.l_value}}",
+            "{{char.charstock.r_value}}"
         ],
     {% endfor %}
     ]
@@ -210,6 +214,8 @@ var charListContainer =
         filter: '-10',//show all
         accuracy_base: NaN,
         accuracy_scope: 10,
+        l_value: 0,
+        r_value: 0.99,
         data: [],
         total: 0,
         timers: [],
@@ -389,6 +395,8 @@ $('#char_index #char_index_tbody').on('click', 'tr', function(event) {
     $(this).addClass("selected");
     charListContainer.hideWaitingAnimate();
     charListContainer.char = $("tr.selected td:eq(1)").text();
+    charListContainer.l_value = parseFloat($("tr.selected td:eq(7)").text());
+    charListContainer.r_value = parseFloat($("tr.selected td:eq(8)").text());
     charListContainer.recallWaitingAnimate();
     charListContainer.total = parseInt($("tr.selected td:eq(2)").text());
     $("#checkchar").text(charListContainer.char);

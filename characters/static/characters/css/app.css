@@ -588,3 +588,7 @@ span.fa-volume-off {
   padding:8px 11px;
   outline: 0;
 }
+
+#char_index_tbody tr > *:nth-child(8), #char_index_tbody tr > *:nth-child(9) {
+    display: none;
+}

@@ -29,11 +29,27 @@
 .axis--x path {
   display: none;
 }*/
+.line {
+  fill: none;
+  stroke: black;
+  stroke-width: 1px;
+  stroke-dasharray: [3, 3];
+}
+
+text.shadow {
+  stroke: #c8dec6;
+  stroke-width: 4px;
+  opacity: 0.8;
+}
 
 .chart rect {
     fill: teal;
   }
-
+  rect.checkbox {
+    fill-opacity: 0,
+    stroke-width: boxStrokeWidth,
+    stroke: "black"
+  }
   .axis path,
   .axis line {
     fill: none;
@@ -49,6 +65,25 @@
     fill: green;
     cursor: pointer;
   }
+
+
+  .arrow{
+    stroke-width:5;
+    stroke:#000;
+    stroke-dasharray:5, 5;
+  }
+
+  circle{
+    stroke-width:5;
+    stroke:#000;
+    fill:#FFF;
+  }
+
+  #turtle-icon, #arrow{
+    stroke-width:1;
+    stroke-dasharray:0;
+  }
+
     </style>
 </head>
 
@@ -101,7 +136,7 @@ function getSum(total, num) {
             data = new_data
             data.push({range_idx: 1, count:0});
             $.getScript("/static/js/charts_app.js");
-
+            //_render_chart(data);
         });
 
 

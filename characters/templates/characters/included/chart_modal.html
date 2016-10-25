@@ -8,11 +8,6 @@
   fill: brown;
 }
 
-
-/*.chart rect {
-    fill: steelblue;
-}*/
-
 .axis path,
 .axis line {
   fill: none;
@@ -30,6 +25,12 @@
 }
 .modal { overflow: visible; }
 .modal-body { overflow-y: visible; }
+
+text.shadow {
+  stroke: #c8dec6;
+  stroke-width: 4px;
+  opacity: 0.8;
+}
 </style>
 <div class="bd-classifyChart">
   <div class="modal fade" id="classifyChartModal" tabindex="-1" role="dialog" aria-labelledby="classifyChartModalLabel" aria-hidden="true">
@@ -44,12 +45,15 @@
           <div class="col-md-1 col-md-offset-3"
             <div class="h4 modal-title" style="display: inline" id="classifyChartModalLabel"><strong id='chart_char' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>？</strong>
             </div>
-          <div class="col-md-5">
+          <div class="col-md-4">
             <div id="classify-grade" class="dropdown" style="display: inline;margin-left: 30px">精度：
             <button id='l-btn' class="btn btn-default grade-btn" data-value=50>低</button>
             <button id='m-btn' class="btn btn-default grade-btn" data-value=20>中</button>
             <button id='h-btn' class="btn btn-default grade-btn active" data-value=5>高</button>
             </div>
+          </div>
+          <div class="col-md-2">
+            <label><input id="gravity_checker" type="checkbox" checked/>重心线显示</label>
           </div>
           </div>
         </div>
@@ -66,7 +70,6 @@
 
 <script src="/static/js/jquery-2.2.4.min.js"></script>
 <script src="/static/StackedAreaChart/js/d3.min.js"></script>
-
 <script>
 function getSum(total, num) {
     if (total)
@@ -146,6 +149,16 @@ $(function(){
         d3.selectAll("svg > *").remove();
         loadSvg();
     })
+
+  $("#gravity_checker").click(function(){
+    if ($(this).prop('checked')){
+      $(".gravity").removeClass("hidden");
+    } else {
+      $(".gravity").addClass("hidden");
+    }
+  })
+
+
 });
 
 
