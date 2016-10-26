@@ -8,3 +8,5 @@ celerybeat-schedule
 celerybeat.pid
 frontend/node_modules/ 
 frontend/build/js/
+*.sublime-project
+*.sublime-workspace

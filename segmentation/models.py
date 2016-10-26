@@ -40,12 +40,11 @@ class Page(models.Model):
         return s_text
 
     def get_image_path(self):
-        #return settings.PAGE_IMAGE_ROOT+self.image
-        return 'http://ob21oo6fl.bkt.clouddn.com/page_images/'+self.image
+        return settings.PAGE_IMAGE_ROOT+self.image
 
     @property
     def image_url(self):
-        return 'http://ob21oo6fl.bkt.clouddn.com/page_images/'+self.image
+        return '/dzj_characters/page_images'+self.image
 
 
 class Character(models.Model):
