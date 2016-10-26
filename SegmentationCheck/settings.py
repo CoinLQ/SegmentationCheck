@@ -239,7 +239,7 @@ CACHES = {
     }
 }
 
-SLACK_TOKEN='xoxb-95069586514-XTQowtlcTim5O2Lx97vpZoOl'
+SLACK_TOKEN='xoxb-95069586514-591wdlKPEvnWdaye3PBcoGxr'
 SLACK_USERNAME='django-bot'
 SLACK_CHANNEL='#bugs-here'
 SLACK_BACKEND='django_slack.backends.UrllibBackend'
