@@ -184,4 +184,5 @@ function _render_chart(data) {
 };
 
 _render_chart(data);
+$(".gravity").addClass("hidden");
 

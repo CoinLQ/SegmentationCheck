@@ -239,6 +239,7 @@ CACHES = {
     }
 }
 
+
 SLACK_TOKEN='xoxb-95069586514-5EGQtB6vkQKZ21WI5ITtCC7c'
 SLACK_USERNAME='django-bot'
 SLACK_CHANNEL='#bugs-here'

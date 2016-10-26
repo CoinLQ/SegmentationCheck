@@ -53,7 +53,7 @@ text.shadow {
             </div>
           </div>
           <div class="col-md-2">
-            <label><input id="gravity_checker" type="checkbox" checked/>重心线显示</label>
+            <label><input id="gravity_checker" type="checkbox" />重心线显示</label>
           </div>
           </div>
         </div>
@@ -140,6 +140,7 @@ $(function(){
     markActive();
     d3.selectAll("svg > *").remove();
     loadSvg();
+    $("#gravity_checker").prop('checked', false);
   });
 
   $(".grade-btn").click(function() {
