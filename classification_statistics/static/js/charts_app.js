@@ -55,7 +55,7 @@ function draw_gravity_line(val) {
         .text(val)
         .attr("text-anchor", "middle")
       .style("font-size", "0.6em")
-      .style("text-decoration", "underline")
+//      .style("text-decoration", "underline")
       .attr("class", "gravity shadow");
   g.append("text")
         .attr("transform", "translate("+ dy +",0)")
@@ -64,7 +64,7 @@ function draw_gravity_line(val) {
         .text(val)
         .attr("text-anchor", "middle")
       .style("font-size", "0.6em")
-      .style("text-decoration", "underline")
+//      .style("text-decoration", "underline")
       .attr("class", "gravity");
 
 }
@@ -89,7 +89,7 @@ function draw_title_line(min, max) {
         .text(text)
         .attr("text-anchor", "middle")
       .style("font-size", "1em")
-      .style("text-decoration", "underline")
+//      .style("text-decoration", "underline")
       .attr("class", "shadow gravity");
    g.append("text")
         .attr("transform", "translate("+ dy +",0)")
@@ -98,7 +98,7 @@ function draw_title_line(min, max) {
         .text(text)
         .attr("text-anchor", "middle")
       .style("font-size", "1em")
-      .style("text-decoration", "underline")
+//      .style("text-decoration", "underline")
       .attr("class", "gravity");
 }
 
