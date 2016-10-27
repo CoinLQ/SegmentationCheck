@@ -103,9 +103,24 @@
             </div>
 
             <div style="clear:both;"> </div>
-            <div id='charBrowseArea' style="margin-right:-15px;margin-left:18px;">
+            <div id='charBrowseArea' style="margin-right:-15px;margin-left:18px;display:none">
             </div>
             <div style="clear:both;"> </div>
+            {% verbatim %}
+            <div id="example-1" style="margin-right:-15px;margin-left:18px;display: inline-block">
+                <template v-for="item in items">
+                    <div v-on:click='showPanel($index)' id="{{item.id}}" class="flow  char-image {{item.cls_name}}" v-click-outside="clickedOutside">
+                        <img src={{item.image_url}} alt="加载中..." class="lazy">
+                        <span class="badge char-info">{{item.accuracy}}</span>
+                        <div class="cmd-panel {{item.show ? '' : 'hidden'}}">
+                            <div class="btn btn-default btn-correct tooltip_t" title='标对'>
+                                <span style="color: #9AFF9A;font-size:20px;padding:0px 8px" class="fa fa-check">
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+            {% endverbatim %}
             <div class="row" style="margin-top:10px;margin-left: 0px">
                 <div  class="btn btn-default batch-check" id="correct_btn" ><span class="tooltiptext">剩余全部标对</span><span style="color: #9AFF9A;font-size:20px;padding:0px 8px" class="fa fa-check"></span><span style="color: #9AFF9A;font-size:20px;padding:0px 8px" class="fa fa-check"></span></div>
                 <div  class="btn btn-default batch-check" id="err_btn"><span class="tooltiptext">剩余全部标错</span><span style="color: pink;font-size:20px;padding:0px 10px" class="fa fa-times"></span><span style="color: pink;font-size:20px;padding:0px 10px" class="fa fa-times"></span></div>
@@ -153,6 +168,8 @@
 {% endblock %}
 
 {% block foot  %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.min.js"></script>
+<script src="/static/js/vue-click-outside.js"></script>
 <script src="/static/datatables/jquery.dataTables.js"></script>
 <script src="/static/datatables/dataTables.bootstrap.js"></script>
 <script src="/static/datatables/input.js"></script>
@@ -175,8 +192,41 @@
 </script>
 <script src="/static/js/jquery.simplePagination.js" charset="utf-8"></script>
 <script src="/static/js/jquery.cookie.js" charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.16.4/lodash.min.js" charset="utf-8"></script>
 <script src="/static/js/jquery.lazyload.min.js" charset="utf-8"></script>
 <script src="/static/js/time_left.js" charset="utf-8"></script>
 <script src="/static/js/char_manage.js" charset="utf-8"></script>
+<script type="text/javascript">
+
+var example1 = new Vue({
+  el: '#example-1',
+  data: {
+    selection: 0,
+    items: charListContainer.data,
+  },
+  methods: {
+    showPanel: function (index) {
+      if (this.selection!=index)
+      {
+        this.ClickedOutside();
+      }
+      this.selection = index;
+      const item = this.items[index];
+      if (this.items[index].show)
+         return ;
+       this.items.$set(index, { show: true, id: item.id, image_url: item.image_url, cls_name: item.cls_name, accuracy: item.accuracy})
+      event.preventDefault()
+      event.stopPropagation()
+    },
+    ClickedOutside: function(){
+      const item = this.items[this.selection];
+      if (!item.show)
+         return ;
+      this.items.$set(this.selection, { show: false, id: item.id, image_url: item.image_url, cls_name: item.cls_name, accuracy: item.accuracy})
+    },
+  }
+});
+
+</script>
 
 {% endblock %}
