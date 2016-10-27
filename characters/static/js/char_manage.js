@@ -353,6 +353,19 @@ var charListContainer =
 
             $.getJSON(query,function(result){
                 that.data = result.models;
+                new_models = result.models.map(function(item) {
+                    var class_name;
+                    if (item.is_correct == 1) {
+                        cls_name = 'correct-char o-correct-char'
+                    } else if (item.is_correct == -1) {
+                        cls_name = 'error-char o-error-char'
+                    } else {
+                        cls_name = ''
+                    }
+                    item['cls_name'] = cls_name;
+                    return item;
+                });
+                example1.items = new_models;
                 that.pagination = result.pagination;
                 that.renderCharAndBind();
                 that.paginationRender();
