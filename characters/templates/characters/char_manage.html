@@ -107,14 +107,17 @@
             </div>
             <div style="clear:both;"> </div>
             {% verbatim %}
-            <div id="example-1" style="margin-right:-15px;margin-left:18px;display: inline-block">
+            <div id="charListArea" style="margin-right:-15px;margin-left:18px;display: inline-block">
                 <template v-for="item in items">
-                    <div v-on:click='showPanel($index)' id="{{item.id}}" class="flow  char-image {{item.cls_name}}" v-click-outside="clickedOutside">
+                    <div v-on:click='showPanel($index)' id="{{item.id}}" class="flow  char-image {{item.cls_name}} {{gen_cls(item)}}" v-click-outside="clickedOutside">
                         <img src={{item.image_url}} alt="加载中..." class="lazy">
                         <span class="badge char-info">{{item.accuracy}}</span>
                         <div class="cmd-panel {{item.show ? '' : 'hidden'}}">
-                            <div class="btn btn-default btn-correct tooltip_t" title='标对'>
-                                <span style="color: #9AFF9A;font-size:20px;padding:0px 8px" class="fa fa-check">
+                            <div class="btn btn-default btn-correct tooltip_t" title='标对' v-on:click="mark_it(item, 1)">
+                                <span style="color: #9AFF9A;font-size:30px;" class="fa fa-check">
+                            </div>
+                             <div class="btn btn-default btn-error tooltip_t" title='标错' v-on:click="mark_it(item, -1)">
+                                <span style="color: pink;font-size:30px;" class="fa fa-times">
                             </div>
                         </div>
                     </div>
@@ -197,14 +200,27 @@
 <script src="/static/js/time_left.js" charset="utf-8"></script>
 <script src="/static/js/char_manage.js" charset="utf-8"></script>
 <script type="text/javascript">
-
-var example1 = new Vue({
-  el: '#example-1',
+var char_list = new Vue({
+  el: '#charListArea',
   data: {
     selection: 0,
     items: charListContainer.data,
   },
+  csrf_token: '{% csrf_token %}',
   methods: {
+    gen_cls: function(item){
+        var class_name;
+        if (item.is_correct == 1) {
+            cls_name = 'correct-char flip-inx'
+        } else if (item.is_correct == -1) {
+            cls_name = 'error-char flip-inx'
+        } else {
+            cls_name = 'twinkling'
+        }
+        // if (this.items.indexOf(item) == this.selection)
+        //     cls_name = cls_name.replace(/flip-inx/, '')
+        return cls_name;
+    },
     showPanel: function (index) {
       if (this.selection!=index)
       {
@@ -214,7 +230,13 @@ var example1 = new Vue({
       const item = this.items[index];
       if (this.items[index].show)
          return ;
-       this.items.$set(index, { show: true, id: item.id, image_url: item.image_url, cls_name: item.cls_name, accuracy: item.accuracy})
+       this.items.$set(index, { show: true,
+            id: item.id,
+            image_url: item.image_url,
+            cls_name: item.cls_name,
+            accuracy: item.accuracy,
+            char: item.char,
+            is_correct: item.is_correct})
       event.preventDefault()
       event.stopPropagation()
     },
@@ -222,8 +244,40 @@ var example1 = new Vue({
       const item = this.items[this.selection];
       if (!item.show)
          return ;
-      this.items.$set(this.selection, { show: false, id: item.id, image_url: item.image_url, cls_name: item.cls_name, accuracy: item.accuracy})
+      this.items.$set(this.selection, { show: false,
+                id: item.id,
+                image_url: item.image_url,
+                cls_name: item.cls_name,
+                accuracy: item.accuracy,
+                char: item.char,
+                is_correct: item.is_correct})
     },
+    mark_it: function(item, is_correct){
+
+      var data = {'id': item.id};
+      play_bingo();
+      data['csrfmiddlewaretoken'] = this.csrf_token;
+      data['is_correct'] = is_correct;
+      data['char'] = item.char;
+      if (item.is_correct != is_correct){
+        $.post('/characters/set_correct', data);
+      }
+      this.items.$set(this.selection, { show: false,
+                id: item.id,
+                image_url: item.image_url,
+                cls_name: item.cls_name,
+                accuracy: item.accuracy,
+                char: item.char,
+                is_correct: is_correct})
+    },
+    batchMark: function(is_correct){
+        this.items = _.map(this.items,function(item){
+            if (item.is_correct == 0 || is_correct == 0) {
+                item.is_correct = is_correct
+            }
+            return item;
+        });
+    }
   }
 });
 
