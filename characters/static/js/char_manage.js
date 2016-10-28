@@ -187,22 +187,23 @@ var charListContainer =
             if ( is_correct == 1) {
                 data['c_charArr'] = arr;
                 data['c_updateNum'] = arr.length;
+                char_list.batchMark(1);
             } else if ( is_correct == -1) {
                 data['e_charArr'] = arr;
                 data['e_updateNum'] = arr.length;
+                char_list.batchMark(-1);
             } else if ( is_correct == 0) {
                 data['cl_charArr'] = arr;
                 data['cl_updateNum'] = arr.length;
                 data['e_num'] = e_num;
                 data['c_num'] = c_num;
-                $('.correct-char').map(function() {return $(this).removeClass('correct-char')});
-                $('.error-char').map(function() {return $(this).removeClass('error-char')});
+                // $('.correct-char').map(function() {return $(this).removeClass('correct-char')});
+                // $('.error-char').map(function() {return $(this).removeClass('error-char')});
+                char_list.batchMark(0);
             }
             $.post('/characters/set_correct', data, function(res) {
                if(res['clear']=='ok'){
-                $('.correct-char').map(function() {return $(this).removeClass('correct-char')});
-                $('.error-char').map(function() {return $(this).removeClass('error-char')});
-                $(".char-image").addClass("twinkling")
+                //char_list.batchClean();
                }
             });
             play_batch_mark();
@@ -356,16 +357,16 @@ var charListContainer =
                 new_models = result.models.map(function(item) {
                     var class_name;
                     if (item.is_correct == 1) {
-                        cls_name = 'correct-char o-correct-char'
+                        cls_name = 'o-correct-char'
                     } else if (item.is_correct == -1) {
-                        cls_name = 'error-char o-error-char'
+                        cls_name = 'o-error-char'
                     } else {
                         cls_name = ''
                     }
                     item['cls_name'] = cls_name;
                     return item;
                 });
-                example1.items = new_models;
+                char_list.items = new_models;
                 that.pagination = result.pagination;
                 that.renderCharAndBind();
                 that.paginationRender();

@@ -124,14 +124,15 @@ select.input-sm {
 .error-char {
   background-color: pink;
   border:solid red 4px !important;
-  animation:0.5s flipOutX ease;
 }
 .correct-char {
   background-color: #9AFF9A;
   border:solid green 4px !important;
-  animation:0.5s flipInX ease;
 }
 
+.flip-inx {
+  animation:0.5s flipInX ease;
+}
 .flow {
 float:left;
 position:relative;
@@ -146,6 +147,7 @@ border-radius: 20px;
 }
 
 .flow img{
+  border-radius: 8px;
   display: inherit;
   margin: 8px auto;
   width: 80px;
@@ -153,7 +155,7 @@ border-radius: 20px;
 }
 .char-info{
   display: inherit;
-  margin: 8px auto;
+  margin: -2px auto;
   width: 60px;
 }
 
@@ -599,7 +601,7 @@ span.fa-volume-off {
     left: -34px;
     width: 150px;
     height: 150px;
-    background-color: rgba(200,200,200,0.85);
+    background-color: rgba(200,200,200,0);
     z-index: 1;
     border-radius: 20px;
 }
@@ -613,10 +615,10 @@ span.fa-volume-off {
     background: #333;
     background: rgba(0, 0, 0, .8);
     border-radius: 5px;
-    bottom: 33px;
+    bottom: 110%;
     color: #fff;
     content: attr(title);
-    padding: 10px;
+    padding: 0px 11px;
     position: absolute;
     z-index: 98;
     left: 50%;
@@ -626,10 +628,41 @@ span.fa-volume-off {
     border: solid;
     border-color: #333 transparent;
     border-width: 6px 6px 0 6px;
-    bottom: 27px;
+    bottom: 102%;
     content:"";
     left: 50%;
     transform: translateX(-50%);
     position: absolute;
     z-index: 99;
+}
+
+.btn-correct {
+  bottom: 2px;
+  position: absolute;
+  line-height: 42px;
+  border-radius: 78px;
+  padding: 15px 15px 4px 15px;
+  box-shadow: rgba(28, 195, 28, 0.9) 0px 0px 20px 0px;
+  animation:0.5s vanishIn ease;
+}
+
+.btn-correct:hover {
+  background-color: #eeffee;
+  border-color: white;
+}
+.btn-error {
+  bottom: 2px;
+  right: 0px;
+  position: absolute;
+  line-height: 42px;
+  border-radius: 78px;
+  padding: 15px 18px 4px 19px;
+  box-shadow: rgba(230, 40, 14, 0.9) 0px 0px 20px 0px;
+  animation:0.5s vanishIn ease;
+
+}
+
+.btn-error:hover {
+  background-color: #ffe8e8;
+  border-color: white;
 }
