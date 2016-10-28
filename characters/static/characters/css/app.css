@@ -684,13 +684,13 @@ span.fa-volume-off {
   line-height: 42px;
   border-radius: 78px;
   padding: 0px;
-  background-color: #ffe8e8;
+  background-color: rgba(230, 40, 14, 0.7);
   animation:0.5s vanishIn ease;
 
 }
 
 .btn-error-o:hover {
-  background-color: #ffe8e8;
+  background-color: rgba(230, 40, 14, 0.8);
   box-shadow: rgba(230, 40, 14, 0.9) 0px 0px 20px 2px;
   border-color: white;
 }
@@ -706,13 +706,13 @@ span.fa-volume-off {
   line-height: 42px;
   border-radius: 78px;
   padding: 15px 15px 4px 15px;
-  background-color: #eeffee;
+  background-color: rgba(28, 195, 28, 0.7);
   animation:0.5s vanishIn ease;
 }
 
 .btn-correct-o:hover {
+  background-color: rgba(28, 195, 28, 0.8);
   box-shadow: rgba(28, 195, 28, 0.9) 0px 0px 20px 2px;
-  background-color: #eeffee;
   border-color: white;
 }
 

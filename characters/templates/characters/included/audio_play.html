@@ -8,12 +8,18 @@
   <source src="/static/audio/bingo.mp3" type="audio/mpeg" />
 </audio>
 
+<audio id="fail_audio" autobuffer>
+  <source src="/static/audio/fail.mp3" type="audio/mpeg" />
+</audio>
+<audio id="fail_audio_2" autobuffer>
+  <source src="/static/audio/fail.mp3" type="audio/mpeg" />
+</audio>
 <audio id="dingding" autobuffer>
   <source src="/static/audio/dingding.mp3" type="audio/mpeg" />
 </audio>
 
 <script type="text/javascript">
-var bingo_n = 0;
+var bingo_n = 0, fail_n=0;
 function muted(ele){
   var sp = $(ele).find('span');
   if(sp.hasClass('fa-volume-up')){
@@ -21,6 +27,8 @@ function muted(ele){
     sp.addClass('fa-volume-off');
     document.getElementById('bingo_audio').muted = true;
     document.getElementById('bingo_audio_2').muted = true;
+    document.getElementById('fail_audio').muted = true;
+    document.getElementById('fail_audio_2').muted = true;
     document.getElementById('dingding').muted = true;
   }
   else{
@@ -28,6 +36,8 @@ function muted(ele){
     sp.addClass('fa-volume-up');
     document.getElementById('bingo_audio').muted = false;
     document.getElementById('bingo_audio_2').muted = false;
+    document.getElementById('fail_audio').muted = false;
+    document.getElementById('fail_audio_2').muted = false;
     document.getElementById('dingding').muted = false;
   }
 };
@@ -39,7 +49,13 @@ function play_bingo(){
   else
     document.getElementById('bingo_audio_2').play();
 }
-
+function play_fail(){
+  fail_n++;
+  if (fail_n%2==0)
+    document.getElementById('fail_audio').play();
+  else
+    document.getElementById('fail_audio_2').play();
+}
 function play_batch_mark(){
   document.getElementById('dingding').play();
 }
