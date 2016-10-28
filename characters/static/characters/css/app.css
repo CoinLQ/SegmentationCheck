@@ -676,13 +676,13 @@ span.fa-volume-off {
 
 .btn-error-o {
   visibility: hidden;
-  top: 37px;
-  width: 44px;
-  height: 44px;
-  left: 1px;
+  bottom: 0px;
+  width: 90px;
+  height: 60px;
+  left: 0px;
   position: absolute;
   line-height: 42px;
-  border-radius: 78px;
+  border-radius: 0px 0px 18px 18px;
   padding: 0px;
   background-color: rgba(230, 40, 14, 0.7);
   animation:0.5s vanishIn ease;
@@ -696,16 +696,15 @@ span.fa-volume-off {
 }
 
 .btn-correct-o {
-  width: 44px;
-  height: 44px;
-  right: 1px;
-  top: 37px;
+  width: 90px;
+  height: 60px;
+  left: 0px;
+  top: 0px;
   visibility: hidden;
-  bottom: 2px;
   position: absolute;
   line-height: 42px;
-  border-radius: 78px;
   padding: 15px 15px 4px 15px;
+  border-radius: 18px 18px 0px 0px ;
   background-color: rgba(28, 195, 28, 0.7);
   animation:0.5s vanishIn ease;
 }

@@ -113,9 +113,9 @@
                         <img src={{item.image_url}} alt="加载中..." class="lazy">
                         <span class="badge char-info">{{item.accuracy}}</span>
                         <div class="cmd-panel">
-                            <div class="btn btn-correct-o" title='正确' v-on:click="mark_it(item, 1)">
+                            <div class="btn-correct-o" title='正确' v-on:click="mark_it(item, 1)">
                             </div>
-                             <div class="btn btn-error-o" title='错误' v-on:click="mark_it(item, -1)">
+                             <div class="btn-error-o" title='错误' v-on:click="mark_it(item, -1)">
                             </div>
                             <div class="btn btn-split-o" title='切错' v-on:click="mark_glyph(item, 1)">
                             </div>
