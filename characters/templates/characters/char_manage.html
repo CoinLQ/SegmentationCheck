@@ -264,7 +264,7 @@ var char_list = new Vue({
       if (item.is_correct != is_correct){
         $.post('/characters/set_correct', data);
         play_bingo();
-        this.items.$set(this.selection, { show: false,
+        this.items.$set(this.items.indexOf(item), { show: false,
                 id: item.id,
                 image_url: item.image_url,
                 cls_name: item.cls_name,
