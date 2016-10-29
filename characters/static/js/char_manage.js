@@ -368,6 +368,7 @@ var charListContainer =
                         cls_name = ''
                     }
                     item['cls_name'] = cls_name;
+                    item.accuracy = item.accuracy*1.0/1000
                     return item;
                 });
                 char_list.items = new_models;
