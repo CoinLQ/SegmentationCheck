@@ -49,7 +49,7 @@
 </div>
     <div id="fade" class="black_overlay"> </div>
     <div style="clear:both;"> </div>
- <!-- 
+ <!--
     <div  class="btn btn-primary batch-check" >批量审核通过(除了有错误标记的都会通过)</div>
     -->
 
@@ -84,7 +84,6 @@ $('.setPageTag_btn').on('click', function(){
 
     var data = {'id': this.id};
     data['is_correct'] = tag;
-    data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
     $.post('/pagecheck/set_page_correct', data, function() {
         $that.parent().parent().parent().animate({
             height: 'toggle'

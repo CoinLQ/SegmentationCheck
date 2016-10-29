@@ -11,7 +11,6 @@ function binding_char_check(area){
     var selector = area + ' .char-image'
     $(selector).click(function(){
           var data = {'id': this.id};
-          data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
           if ($(this).hasClass('error-char')) {
             $(this).removeClass('error-char');
             $(this).addClass('correct-char');

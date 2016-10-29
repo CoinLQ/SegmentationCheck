@@ -221,7 +221,6 @@ $('#save').click(function(){
     }
    var post_data = {
     'data': JSON.stringify(data),
-    'csrfmiddlewaretoken': '{{ csrf_token }}'
   }
   $.post('/preprocess/opage_cut', post_data).always(function() {
     $("tr.selected").remove();

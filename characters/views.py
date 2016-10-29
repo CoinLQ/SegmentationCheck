@@ -4,9 +4,8 @@ from django.http import JsonResponse
 from segmentation.models import Character, CharacterStatistics
 from django.db.models import F
 from utils.get_checked_character import get_checked_character
-import datetime
 from django.utils import timezone
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test, login_required
 from .models import UserCredit, CharMarkRecord, ClassificationTask, ClassificationCompareResult
 import redis
 from django.views import generic
@@ -78,7 +77,7 @@ def task(request):
                                                         } )
 
 
-#@login_required(login_url='/segmentation/login/')
+@login_required(login_url='/segmentation/login/')
 def set_correct(request):
     if 'id' in request.POST:
         char_id = request.POST['id']

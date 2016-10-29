@@ -173,7 +173,6 @@ function binding_char_check(area){
     var selector = area + ' .char-image';
     $(selector).click(function(){
           var data = {'id': this.id};
-          data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
           data['char'] = $('#checkchar').text();
         if (!$(this).hasClass('error-char')) {
             $(this).removeClass('correct-char');
@@ -186,7 +185,6 @@ function binding_char_check(area){
     });
     $(selector).dblclick(function(){
           var data = {'id': this.id};
-          data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
           data['char'] = $('#checkchar').text();
         if ($(this).hasClass('error-char')) {
             $(this).removeClass('error-char');
@@ -233,7 +231,6 @@ function step() {
         return;
     }
     var data = {'e_charArr':error_arr};
-    data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
     data['char'] = $('#checkchar').text();
     data['e_updateNum'] = error_arr.length;
     data['c_charArr'] = correct_arr;

@@ -183,7 +183,6 @@ var charListContainer =
             var updateNum = arr.length;
             var e_num = $("#charBrowseArea .error-char").length;
             var c_num = $("#charBrowseArea .correct-char").length;
-            data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
             data['char'] = charListContainer.char;
             if ( is_correct == 1) {
                 data['c_charArr'] = arr;
@@ -272,7 +271,6 @@ var charListContainer =
             // $(selector).click(function(){
             //       var data = {'id': this.id};
             //       play_bingo();
-            //       data['csrfmiddlewaretoken'] = '{{ csrf_token }}';
             //       data['char'] = _char;
             //       if ($(this).hasClass('error-char')) {
             //         $(this).removeClass('error-char');

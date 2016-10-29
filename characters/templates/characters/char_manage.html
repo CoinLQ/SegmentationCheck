@@ -208,7 +208,7 @@ var char_list = new Vue({
     selection: 0,
     items: charListContainer.data,
   },
-  csrf_token: '{% csrf_token %}',
+  csrf_token: '{{ csrf_token }}',
   methods: {
     gen_cls: function(item){
         var class_name;
@@ -258,7 +258,6 @@ var char_list = new Vue({
 
       var data = {'id': item.id};
 
-      data['csrfmiddlewaretoken'] = this.csrf_token;
       data['is_correct'] = is_correct;
       data['char'] = item.char;
       if (item.is_correct != is_correct){

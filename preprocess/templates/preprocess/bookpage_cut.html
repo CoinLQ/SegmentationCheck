@@ -11,7 +11,7 @@
   #bookpage_cut {
     margin-top: 30px;
   }
-</style> 
+</style>
 
 {% endblock %}
 
@@ -110,7 +110,6 @@ $('#save').click(function(){
   {% endif %}
   var post_data = {
     'data': JSON.stringify(data),
-    'csrfmiddlewaretoken': '{{ csrf_token }}'
   }
   $.post('', post_data,
   function(d) {
