@@ -5,6 +5,7 @@ from segmentation.models import Character, CharacterStatistics
 from django.db.models import F
 from utils.get_checked_character import get_checked_character
 import datetime
+from django.utils import timezone
 from django.contrib.auth.decorators import user_passes_test
 from .models import UserCredit, CharMarkRecord, ClassificationTask, ClassificationCompareResult
 import redis
@@ -46,7 +47,7 @@ def task(request):
     select_cnt = query.filter(uncheck_cnt__gt=0).count()
     done_cnt = total_cnt - select_cnt
 
-    today = datetime.datetime.now().strftime("%Y%m%d")
+    today = timezone.now().strftime("%Y%m%d")
     checkin_date = request.session.get('checkin_date', 0)
     if checkin_date != today:
         #active_date=time.strptime(checkin_date,'%Y%m%d')
@@ -95,7 +96,7 @@ def set_correct(request):
             CharacterStatistics.objects.filter(char=char).\
                 update(err_cnt=F('err_cnt')-is_correct, correct_cnt=F('correct_cnt')+is_correct)
         Character.objects.filter(id=char_id).update(is_correct=is_correct)
-        record = CharMarkRecord.create(request.user, char_id, is_correct, datetime.datetime.now())
+        record = CharMarkRecord.create(request.user, char_id, is_correct, timezone.now())
         record.save()
         data = {'status': 'ok'}
     elif (('e_charArr[]' in request.POST) or ('c_charArr[]' in request.POST)): # uncheck -> check
@@ -103,7 +104,7 @@ def set_correct(request):
         request.session['check_char_number'] = check_char_number+1
         charArr = request.POST.getlist('e_charArr[]')
         char = request.POST['char']
-        time = datetime.datetime.now()
+        time = timezone.now()
         records = []
         if charArr:
             updateNum = Character.objects.filter(id__in =charArr).update(is_correct=-1)
@@ -134,7 +135,7 @@ def set_correct(request):
         CharacterStatistics.objects.filter(char=char).\
                     update(uncheck_cnt=F('uncheck_cnt')+unset_num, correct_cnt=F('correct_cnt')-c_num,
                         err_cnt=F('err_cnt')-e_num)
-        time = datetime.datetime.now()
+        time = timezone.now()
         records = []
         for char_id in charArr:
             record = CharMarkRecord.create(request.user, char_id, 0, time)

@@ -188,10 +188,12 @@ var charListContainer =
                 data['c_charArr'] = arr;
                 data['c_updateNum'] = arr.length;
                 char_list.batchMark(1);
+                play_batch_mark();
             } else if ( is_correct == -1) {
                 data['e_charArr'] = arr;
                 data['e_updateNum'] = arr.length;
                 char_list.batchMark(-1);
+                play_fail();
             } else if ( is_correct == 0) {
                 data['cl_charArr'] = arr;
                 data['cl_updateNum'] = arr.length;
@@ -200,13 +202,14 @@ var charListContainer =
                 // $('.correct-char').map(function() {return $(this).removeClass('correct-char')});
                 // $('.error-char').map(function() {return $(this).removeClass('error-char')});
                 char_list.batchMark(0);
+                play_batch_mark();
             }
             $.post('/characters/set_correct', data, function(res) {
                if(res['clear']=='ok'){
                 //char_list.batchClean();
                }
             });
-            play_batch_mark();
+
         },
         paginationRender: function(){
             var total_pages = this.pagination.total_pages;
