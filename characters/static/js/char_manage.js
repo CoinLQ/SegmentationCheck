@@ -132,10 +132,11 @@ var charListContainer =
                 $("#checkchar").text(charListContainer.char);
                 $(".classifyChart").data('char', charListContainer.char);
                 $(".accuracy_cal").data('char', charListContainer.char);
-                $(".classifyChart").removeClass('hidden');
-                $(".accuracy_cal").removeClass('hidden');
+                if (charListContainer.total > 20) {
+                    $(".classifyChart").removeClass('hidden');
+                    $(".accuracy_cal").removeClass('hidden');
+                }
                 charListContainer.page_number=1;
-                //charListContainer.filter="-10";
                 $('.radio-btn').removeClass('actived');
                 $('.radio-btn.show-all').addClass('actived');
                 charListContainer.fetchDataAndRender();
