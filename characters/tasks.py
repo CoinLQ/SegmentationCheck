@@ -224,6 +224,7 @@ def prepare_data_with_database2(char_lst):
         except Exception, e:
             #push_to_slack(msg)
             # Get an instance of a logger
+            msg = "ID: %s  %s feature_vector fetch failure!" % (char.id, char.char)
             logger.error(e)
             logger.error(msg)
             feature_vector = None
