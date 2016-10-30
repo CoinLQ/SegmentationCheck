@@ -176,7 +176,7 @@ COVER_IMAGE_ROOT = MEDIA_ROOT+'cover/'
 OPAGE_IMAGE_ROOT = MEDIA_ROOT+'opage_images/'
 PAGE_IMAGE_ROOT = MEDIA_ROOT+'page_images/'
 CHARACTER_IMAGE_ROOT = MEDIA_ROOT+'character_images/'
-CHARACTER_IMAGE_ROOT = MEDIA_ROOT+'cut_character_images/'
+CUT_CHARACTER_IMAGE_ROOT = MEDIA_ROOT+'cut_character_images/'
 
 STATIC_ROOT = "/site_media/static"
 STATICFILES_DIRS = (
