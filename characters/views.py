@@ -219,8 +219,8 @@ def marked_by_accuracy(request):
                     update(uncheck_cnt=F('uncheck_cnt')-updateNum, correct_cnt=F('err_cnt')+updateNum)
     return JsonResponse({'status': 'ok'})
 
-def _mark_based_scope(scope, char):
-    if scope > 500:
+def _mark_based_scope(l_value, char):
+    if l_value > 500:
         updateNum = Character.objects.filter(char=char, is_correct=0, accuracy=l_value).update(is_correct=1)
         CharacterStatistics.objects.filter(char=char).\
                     update(uncheck_cnt=F('uncheck_cnt')-updateNum, correct_cnt=F('correct_cnt')+updateNum)
