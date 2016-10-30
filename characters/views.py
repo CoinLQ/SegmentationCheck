@@ -205,7 +205,7 @@ def marked_by_accuracy(request):
     l_value = int(request.POST.get('min_value'))
     r_value = int(request.POST.get('max_value'))
     if ((r_value <= 0) or (l_value == r_value)):
-        _mark_based_scope(l_value)
+        _mark_based_scope(l_value, char)
     elif (l_value > r_value):
         count = 0
     else:
@@ -219,7 +219,7 @@ def marked_by_accuracy(request):
                     update(uncheck_cnt=F('uncheck_cnt')-updateNum, correct_cnt=F('err_cnt')+updateNum)
     return JsonResponse({'status': 'ok'})
 
-def _mark_based_scope(scope):
+def _mark_based_scope(scope, char):
     if scope > 500:
         updateNum = Character.objects.filter(char=char, is_correct=0, accuracy=l_value).update(is_correct=1)
         CharacterStatistics.objects.filter(char=char).\
