@@ -176,6 +176,7 @@ COVER_IMAGE_ROOT = MEDIA_ROOT+'cover/'
 OPAGE_IMAGE_ROOT = MEDIA_ROOT+'opage_images/'
 PAGE_IMAGE_ROOT = MEDIA_ROOT+'page_images/'
 CHARACTER_IMAGE_ROOT = MEDIA_ROOT+'character_images/'
+CHARACTER_IMAGE_ROOT = MEDIA_ROOT+'cut_character_images/'
 
 STATIC_ROOT = "/site_media/static"
 STATICFILES_DIRS = (
@@ -209,24 +210,59 @@ LOCALE_PATHS = (
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+        },
+    },
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse',
         },
     },
     'handlers': {
-        'slack_admins': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'django_slack.log.SlackExceptionHandler',
+        'default': {
+            'level':'ERROR',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': 'logs/error.log',
+            'maxBytes': 1024*1024*50, # 50 MB
+            'backupCount': 5,
+            'formatter':'standard',
         },
     },
     'loggers': {
         'django': {
             'level': 'ERROR',
-            'handlers': ['slack_admins'],
+            'handlers': ['default'],
         },
     }
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+        },
+    },
+    'handlers': {
+        'default': {
+            'level':'ERROR',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': 'logs/error.log',
+            'maxBytes': 1024*1024*50, # 50 MB
+            'backupCount': 5,
+            'formatter':'standard',
+        }
+    },
+    'loggers': {
+        '': {
+            'handlers': ['default'],
+            'level': 'INFO',
+            'propagate': True
+        }
+    },
 }
 
 CACHES = {

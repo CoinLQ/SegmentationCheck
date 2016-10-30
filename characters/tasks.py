@@ -29,6 +29,8 @@ import traceback
 import random
 from datetime import datetime
 from operator import itemgetter
+# import the logging library
+import logging
 
 # @task
 def update_char_stastics():
@@ -210,6 +212,8 @@ def prepare_data_with_database2(char_lst):
     test_y = []
     test_char_id_lst = []
     test_accuracy_lst = []
+    logger = logging.getLogger()
+
     for char in char_lst:
         label = char.is_correct
         img_path = char.get_image_path()
@@ -217,9 +221,11 @@ def prepare_data_with_database2(char_lst):
         try:
             binary = normalize(img_path)
             feature_vector = binary.ravel()
-        except:
-            #msg = "ID: %s  %s feature_vector fetch failure!" % (char.id, char.char)
+        except Exception, e:
             #push_to_slack(msg)
+            # Get an instance of a logger
+            logger.error(e)
+            logger.error(msg)
             feature_vector = None
         if feature_vector is not None:
             test_x.append(feature_vector)

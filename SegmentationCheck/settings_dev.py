@@ -43,7 +43,20 @@ DEBUG_TOOLBAR_CONFIG ={
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+        },
+    },
     'handlers': {
+        'default': {
+            'level':'INFO',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': 'logs/error.log',
+            'maxBytes': 1024*1024*50, # 5 MB
+            'backupCount': 5,
+            'formatter':'standard',
+        },
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
@@ -51,6 +64,11 @@ LOGGING = {
         },
     },
     'loggers': {
+        '': {
+            'handlers': ['default'],
+            'level': 'INFO',
+            'propagate': True
+        },
         'django': {
             'handlers': ['file'],
             'level': 'DEBUG',
