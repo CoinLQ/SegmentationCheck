@@ -248,7 +248,7 @@ LOGGING = {
     },
     'handlers': {
         'default': {
-            'level':'ERROR',
+            'level':'INFO',
             'class':'logging.handlers.RotatingFileHandler',
             'filename': 'logs/error.log',
             'maxBytes': 1024*1024*50, # 50 MB
