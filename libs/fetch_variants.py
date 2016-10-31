@@ -4,26 +4,26 @@ from BeautifulSoup import BeautifulSoup
 
 class VariantsFetcher:
     def __init__(self):
-        self.session = requests.Session()
-        url = 'http://hanzi.lqdzj.cn/user/sign-in/login'
-        r = self.session.get(url)
-        if r.status_code == 200:
-            soup = BeautifulSoup(r.text)
-            self.csrf = soup.find('input').get('value')
+        # self.session = requests.Session()
+        # url = 'http://hanzi.lqdzj.cn/user/sign-in/login'
+        # r = self.session.get(url)
+        # if r.status_code == 200:
+        #     soup = BeautifulSoup(r.text)
+        #     self.csrf = soup.find('input').get('value')
 
-        data = {
-            '_csrf': self.csrf,
-            'LoginForm[identity]': 'fetchvariant',
-            'LoginForm[password]': 'fetchvariant',
-            'LoginForm[rememberMe]': '1',
-        }
-        r = self.session.post(url, data)
-        self.is_login = ( u'ETag' in r.headers )
-        char =u'塡'
-        url = 'http://hanzi.lqdzj.cn/hanzi-dict/search?param=%s' % char.encode('utf-8')
-        r = self.session.get(url)
-        soup = BeautifulSoup(r.text)
-        self.soup = soup
+        # data = {
+        #     '_csrf': self.csrf,
+        #     'LoginForm[identity]': 'fetchvariant',
+        #     'LoginForm[password]': 'fetchvariant',
+        #     'LoginForm[rememberMe]': '1',
+        # }
+        # r = self.session.post(url, data)
+        # self.is_login = ( u'ETag' in r.headers )
+        # char =u'塡'
+        # url = 'http://hanzi.lqdzj.cn/hanzi-dict/search?param=%s' % char.encode('utf-8')
+        # r = self.session.get(url)
+        # soup = BeautifulSoup(r.text)
+        # self.soup = soup
 
     def fetch_variants(self, char):
         if not self.is_login:

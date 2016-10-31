@@ -159,12 +159,12 @@ var charListContainer =
         },
         handlerAction: function(is_correct,btn) {
             var arr =[];
-            var charlist = $("#charBrowseArea").children();
+            var charlist = $("#charListArea").children();
             for (var i=0;i<charlist.length;i++){
                 var tmp = charlist[i];
 
                 if (! ($(tmp).hasClass('error-char') || $(tmp).hasClass('correct-char') )){
-                    if(is_correct==-1){
+                    if (is_correct==-1) {
                         $(tmp).addClass('error-char');
                     }
                     else if (is_correct==1){
@@ -181,8 +181,8 @@ var charListContainer =
             }
             var data = {};
             var updateNum = arr.length;
-            var e_num = $("#charBrowseArea .error-char").length;
-            var c_num = $("#charBrowseArea .correct-char").length;
+            var e_num = $("#charListArea .error-char").length;
+            var c_num = $("#charListArea .correct-char").length;
             data['char'] = charListContainer.char;
             if ( is_correct == 1) {
                 data['c_charArr'] = arr;
