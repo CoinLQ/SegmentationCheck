@@ -4,6 +4,7 @@ from BeautifulSoup import BeautifulSoup
 
 class VariantsFetcher:
     def __init__(self):
+	pass
         # self.session = requests.Session()
         # url = 'http://hanzi.lqdzj.cn/user/sign-in/login'
         # r = self.session.get(url)
