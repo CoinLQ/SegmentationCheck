@@ -6,6 +6,9 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 import math
 import random
+from skimage import io
+import cStringIO
+from django.core.files.storage import default_storage
 import os
 
 # Create your models here.
@@ -105,12 +108,13 @@ class Character(models.Model):
         image_path = "/%s/%s-%s-%s", self.page_id, direction, degree, self.image
         return '/cut_character_images'+ image_path
 
-    def danger_rebuild_image(self)
+    def danger_rebuild_image(self):
         pageimg_file = self.page.get_image_path()
         page_image = io.imread(pageimg_file, 0)
         char_image = page_image[self.top:self.bottom, self.left:self.right]
         memfile = cStringIO.StringIO()
         io.imsave(memfile, char_image)
+        memfile.seek(0)
         default_storage.save(self.get_image_path(), memfile)
 
     def image_tag(self):
