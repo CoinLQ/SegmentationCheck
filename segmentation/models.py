@@ -92,14 +92,14 @@ class Character(models.Model):
         return settings.CHARACTER_IMAGE_ROOT+self.page_id+u'/'+self.image
 
     def get_cut_image_path(self, direction, degree):
-        base_path = settings.CUT_CHARACTER_IMAGE_ROOT+"/"+self.page_id
+        base_path = settings.CUT_CHARACTER_IMAGE_ROOT+self.page_id
         if not os.access(base_path, os.X_OK):
             os.mkdir(base_path)
-        image_path = "/%s/%s-%s-%s", self.page_id, direction, degree, self.image
+        image_path = "/%s/%s-%s-%s" % (self.page_id, direction, degree, self.image)
         return settings.CUT_CHARACTER_IMAGE_ROOT + image_path
 
     def get_cut_image_url(self, direction, degree):
-        image_path = "/%s/%s-%s-%s", self.page_id, direction, degree, self.image
+        image_path = "/%s/%s-%s-%s" % (self.page_id, direction, degree, self.image)
         return '/cut_character_images'+ image_path
 
     def danger_rebuild_image(self):

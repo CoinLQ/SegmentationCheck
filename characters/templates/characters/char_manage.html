@@ -279,6 +279,7 @@ var char_list = new Vue({
     },
     batchMark: function(is_correct){
         this.items = _.map(this.items,function(item){
+            // is_correct == 0 意义在于批量清除
             if (item.is_correct == 0 || is_correct == 0) {
                 item.is_correct = is_correct
             }

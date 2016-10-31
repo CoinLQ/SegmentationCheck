@@ -51,4 +51,8 @@ if settings.DEBUG:
         url(r'^character_images/(?P<path>.*)$', serve, {
             'document_root': settings.CHARACTER_IMAGE_ROOT,
         }),
+        url(r'^cut_character_images/(?P<path>.*)$', serve, {
+            'document_root': settings.CUT_CHARACTER_IMAGE_ROOT,
+        }),
+
     ]
