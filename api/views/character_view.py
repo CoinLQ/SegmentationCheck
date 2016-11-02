@@ -101,4 +101,22 @@ class CharacterViewSet(viewsets.ModelViewSet):
             character.save()
             character.danger_rebuild_image()
             ret = character.upload_png_to_qiniu()
-            return Response({'status': ret })
+
+        key_prefix = pk.split('L')[0]
+        num = int(pk.split('L')[1])
+        try:
+            if 't' in direct:
+                neighbor_key = "%sL%s" %(key_prefix, num-90)
+                neighbor_ch = Character.objects.get(pk=neighbor_key)
+                neighbor_ch.bottom = neighbor_ch.bottom + int(image_no)
+            else:
+                neighbor_key = "%sL%s" %(key_prefix, num+90)
+                neighbor_ch = Character.objects.get(pk=neighbor_key)
+                neighbor_ch.top = neighbor_ch.top + int(image_no)
+            neighbor_ch.save()
+            neighbor_ch.danger_rebuild_image()
+            ret = character.upload_png_to_qiniu()
+        except:
+            print 'not found neighbor char.'
+
+        return Response({'status': ret })

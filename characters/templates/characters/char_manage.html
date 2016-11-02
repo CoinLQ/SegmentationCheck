@@ -369,7 +369,6 @@ $(function() {
         $.get('/api/character/' + char_list.item_id + '/direct/' + char_list.item_direct + '/cut', function(res) {
             if (res.direct !== char_list.item_direct) alert(res.direct)
             cut_detail.cut_items = res.cut_list
-            console.log(res)
         }, 'json')
     });
 
@@ -429,6 +428,7 @@ var cut_detail = new Vue({
         {
             $.post('/api/character/' + char_list.item_id + '/direct/' + char_list.item_direct + '/cut/' + this.final_item.degree,
                 function(d){}, 'json')
+            $("#cutDetailModal").modal('show')
         }
       }
     }
