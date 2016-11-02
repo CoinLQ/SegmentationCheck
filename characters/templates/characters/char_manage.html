@@ -126,7 +126,7 @@
                 <div style="display: none" v-bind:style="menu_style" class="ctx-menu-container">
                     <div class="ctx-menu">
                         <div class="ctx-item" v-on:click="cut_image_modal()">
-                            abc
+                           重新切分
                         </div>
                     </div>
                 </div>
@@ -365,6 +365,7 @@ $(function() {
         modal.find('.cut_image_char').text(charListContainer.char)
         // TODO: delete it
         char_list.item_id = 'K0001V01P0247b05L13'
+        cut_detail.more_items = []
         $.get('/api/character/' + char_list.item_id + '/direct/' + char_list.item_direct + '/cut', function(res) {
             if (res.direct !== char_list.item_direct) alert(res.direct)
             cut_detail.cut_items = res.cut_list
@@ -421,6 +422,13 @@ var cut_detail = new Vue({
             return 'cyan-border'
         } else {
             return ''
+        }
+      },
+      confirm() {
+        if (this.final_item)
+        {
+            $.post('/api/character/' + char_list.item_id + '/direct/' + char_list.item_direct + '/cut/' + this.final_item.degree,
+                function(d){}, 'json')
         }
       }
     }

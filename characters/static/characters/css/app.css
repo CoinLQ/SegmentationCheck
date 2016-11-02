@@ -896,7 +896,7 @@ div.ctx-menu-container {
 .t-down {
   position: inherit;
   top: 27px;
-  left: -21px;
+  left: -20px;
   padding: 8px 12px;
 }
 
@@ -910,7 +910,7 @@ div.ctx-menu-container {
 .b-down {
   position: inherit;
   top: 107px;
-  left: -21px;
+  left: -20px;
   padding: 8px 12px;
 }
 .cut-image-info {

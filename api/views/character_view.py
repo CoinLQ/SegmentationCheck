@@ -3,6 +3,9 @@ from rest_framework.response import Response
 from segmentation.models import Character
 from api.serializers import CharacterSerializer
 from skimage import io
+import base64
+import six
+from PIL import Image
 
 class CharacterFilter(filters.FilterSet):
     class Meta:
@@ -42,11 +45,10 @@ class CharacterViewSet(viewsets.ModelViewSet):
                 top = character.top
                 bottom= character.bottom + degree
             char_image = page_image[top:bottom, character.left:character.right ]
-            cut_filename = character.get_cut_image_path(direct,degree)
-            io.imsave(cut_filename, char_image)
+            base64_code = self.base64(char_image)
             cut_list.append({
                 'degree': degree,
-                'image_url': character.get_cut_image_url(direct,degree)})
+                'image_url': "data:image/png;base64,%s" % base64_code})
 
 
         return Response({
@@ -69,16 +71,23 @@ class CharacterViewSet(viewsets.ModelViewSet):
                 top = character.top
                 bottom= character.bottom + int(image_no) + degree
             char_image = page_image[top:bottom, character.left:character.right ]
-            cut_filename = character.get_cut_image_path(direct,int(image_no) + degree)
-            io.imsave(cut_filename, char_image)
+            base64_code = self.base64(char_image)
             cut_list.append({
                 'degree': int(image_no) + degree,
-                'image_url': character.get_cut_image_url(direct,int(image_no) + degree)})
+                'image_url': "data:image/png;base64,%s" % base64_code})
 
         return Response({
                         'id': pk,
                         'direct': direct,
                         'cut_list': cut_list })
+
+    def base64(self, char_image, fmt='PNG'):
+        buffer = six.BytesIO()
+        io.imsave(buffer, char_image)
+        image = Image.open(buffer)
+        image = image.convert('1')
+        image.save(buffer, 'png')
+        return base64.b64encode(buffer.getvalue())
 
     def apply_cut(self, request, pk=None, direct=None, image_no=None):
         character = Character.objects.get(pk=pk)
