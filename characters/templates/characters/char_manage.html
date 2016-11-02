@@ -1,58 +1,60 @@
 {% extends "base.html" %}
 {% block head %}
 <title>字形列表</title>
-
 <link href="/static/css/simplePagination.css" rel="stylesheet">
 <link href="/static/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
 <link rel="stylesheet" href="/static/treemap/css/font-awesome.min.css">
 <link href="/static/css/csshake.min.css" rel="stylesheet">
-  <!-- DataTables -->
-  <link rel="stylesheet" href="/static/datatables/dataTables.bootstrap.css">
+<!-- DataTables -->
+<link rel="stylesheet" href="/static/datatables/dataTables.bootstrap.css">
 <link rel="stylesheet" href="/static/characters/css/app.css">
-<link rel="stylesheet" href="/static/characters/css/circle.css">
-{% endblock %}
-{% block mainbody %}
+<link rel="stylesheet" href="/static/characters/css/circle.css"> {% endblock %} {% block mainbody %}
 <div class="container" style="min-width:1000px !important;">
     <div class='row'>
-        <div class='col-md-4 col-xs-12' >
+        <div class='col-md-4 col-xs-12'>
             <div class="box">
                 <div class="box-header">
-                  <h3 class="box-title">&nbsp;</h3>
+                    <h3 class="box-title">&nbsp;</h3>
                 </div>
+
                 <!-- /.box-header -->
                 <div class="box-body">
-                  <table id="char_index" class="table table-bordered table-striped">
-                    <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>字<br>形</th>
-                        <th>总<br>数</th>
-                        <th>正<br>样本</th>
-                        <th>负<br>样本</th>
-                        <th>未<br>标记</th>
-                        <th>区<br>分度</th>
-                        <th class="hidden">左重心</th>
-                        <th class="hidden">右重心</th>
-                    </tr>
-                    </thead>
-                    <tbody id="char_index_tbody">
-
-                    </tbody>
-                  </table>
+                    <table id="char_index" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>字
+                                    <br>形</th>
+                                <th>总
+                                    <br>数</th>
+                                <th>正
+                                    <br>样本</th>
+                                <th>负
+                                    <br>样本</th>
+                                <th>未
+                                    <br>标记</th>
+                                <th>区
+                                    <br>分度</th>
+                                <th class="hidden">左重心</th>
+                                <th class="hidden">右重心</th>
+                            </tr>
+                        </thead>
+                        <tbody id="char_index_tbody">
+                        </tbody>
+                    </table>
                 </div>
-            <!-- /.box-body -->
-          </div>
-          <!-- /.box -->
-        </div><!--end col-md-3 -->
-
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+        <!--end col-md-3 -->
         <div class='col-md-8 col-xs-12' style="margin-top:75px;">
             <div class='row'>
                 <div class="col-md-6" style="margin-top:-16px;">
-                <strong id='checkchar' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>？</strong>
-                <a class="btn btn-default" href="javascript:;" onclick="charListContainer.checkDict()" style="margin-top:-12px;padding:8px 12px;"><span class="tooltip_text">查字典</span><span class="fa fa-book"></span></a>
-                <a class="btn btn-default classifyChart hidden" href="javascript:;" data-toggle="modal" data-target="#classifyChartModal" data-char="？" style="margin-top:-12px;padding:8px 10px;"><span class="tooltip_text">相似度分布</span><span class="fa fa-bar-chart"></span></a>
-
-                <a class="btn btn-default circle-btn accuracy_cal hidden" href="javascript:;" data-toggle="modal" data-target="#accuracyModal" data-char="？"><span class="tooltip_text">重算</span><span class="fa fa-calculator"></span>
+                    <strong id='checkchar' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>？</strong>
+                    <a class="btn btn-default" href="javascript:;" onclick="charListContainer.checkDict()" style="margin-top:-12px;padding:8px 12px;"><span class="tooltip_text">查字典</span><span class="fa fa-book"></span></a>
+                    <a class="btn btn-default classifyChart hidden" href="javascript:;" data-toggle="modal" data-target="#classifyChartModal" data-char="？" style="margin-top:-12px;padding:8px 10px;"><span class="tooltip_text">相似度分布</span><span class="fa fa-bar-chart"></span></a>
+                    <a class="btn btn-default circle-btn accuracy_cal hidden" href="javascript:;" data-toggle="modal" data-target="#accuracyModal" data-char="？"><span class="tooltip_text">重算</span><span class="fa fa-calculator"></span>
                 <div class="radial-progress" data-progress="100">
                     <div class="circle">
                         <div class="mask full">
@@ -66,42 +68,39 @@
                     </div>
                     <div class="inset1"></div>
                 </div></a>
-
-                <a class="btn btn-default accuracy_cal hidden" href="javascript:;" data-toggle="modal" data-target="#markModal" data-char="？" style="margin-top:-12px;padding:8px 12px;"><span class="tooltip_text">标记</span><span class="fa fa-paw"></span></a>
-
+                    <a class="btn btn-default accuracy_cal hidden" href="javascript:;" data-toggle="modal" data-target="#markModal" data-char="？" style="margin-top:-12px;padding:8px 12px;"><span class="tooltip_text">标记</span><span class="fa fa-paw"></span></a>
                 </div>
                 <div id="accuracy_scope" class="form-inline dropdown" style="display: inline-block;margin-left: 2px;float:right">
-                  <label>相似度:<input class="accuracy_input form-control-inline" placeholder="0.5" aria-controls="char_index" style="margin-top:2px;"/></label>
-                  <label style="margin-left:6px;">±
-
-                  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" style="margin-top: -5px"><span>0.01</span>
-                  <span class="caret"></span></button>
-
-                  <ul class="dropdown-menu" style="margin-left:45%">
-                    <li><a data-value="0" href="#">0.000</a></li>
-                    <li><a data-value="1" href="#">0.001</a></li>
-                    <li><a data-value="2" href="#">0.002</a></li>
-                    <li><a data-value="5" href="#">0.005</a></li>
-                    <li><a data-value="10" href="#">0.01</a></li>
-                    <li><a data-value="20" href="#">0.02</a></li>
-                    <li><a data-value="50" href="#">0.05</a></li>
-                    <li><a data-value="100" href="#">0.1</a></li>
-                  </ul>
-                  </label>
+                    <label>相似度:
+                        <input class="accuracy_input form-control-inline" placeholder="0.5" aria-controls="char_index" style="margin-top:2px;" />
+                    </label>
+                    <label style="margin-left:6px;">±
+                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" style="margin-top: -5px"><span>0.01</span>
+                            <span class="caret"></span></button>
+                        <ul class="dropdown-menu" style="margin-left:45%">
+                            <li><a data-value="0" href="#">0.000</a></li>
+                            <li><a data-value="1" href="#">0.001</a></li>
+                            <li><a data-value="2" href="#">0.002</a></li>
+                            <li><a data-value="5" href="#">0.005</a></li>
+                            <li><a data-value="10" href="#">0.01</a></li>
+                            <li><a data-value="20" href="#">0.02</a></li>
+                            <li><a data-value="50" href="#">0.05</a></li>
+                            <li><a data-value="100" href="#">0.1</a></li>
+                        </ul>
+                    </label>
                 </div>
                 <div id="find_scope" class="dropdown" style="display: inline-block;float:right;margin: 0px 10px;">
-                  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span>显示全部&nbsp;</span>
-                  <span class="caret"></span></button>
-                  <ul class="dropdown-menu" style="margin-top:8px;">
-                    <li><a data-value="-10" href="#">显示全部</a></li>
-                    <li><a data-value="0" href="#">未标记</a></li>
-                    <li><a data-value="-1" href="#">人工标错</a></li>
-                    <li><a data-value="1" href="#">人工标对</a></li>
-                  </ul>
+                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span>显示全部&nbsp;</span>
+                        <span class="caret"></span></button>
+                    <ul class="dropdown-menu" style="margin-top:8px;">
+                        <li><a data-value="-10" href="#">显示全部</a></li>
+                        <li><a data-value="0" href="#">未标记</a></li>
+                        <li><a data-value="-1" href="#">人工标错</a></li>
+                        <li><a data-value="1" href="#">人工标对</a></li>
+                    </ul>
                 </div>
                 {% include "characters/included/audio_play.html" %}
             </div>
-
             <div style="clear:both;"> </div>
             <div id='charBrowseArea' style="margin-right:-15px;margin-left:18px;display:none">
             </div>
@@ -109,13 +108,13 @@
             {% verbatim %}
             <div id="charListArea" style="margin-right:-15px;margin-left:18px;display: inline-block">
                 <template v-for="item in items">
-                    <div  id="{{item.id}}" class="flow  char-image {{item.cls_name}} {{gen_cls(item)}}" contextmenu="handler($event)">
+                    <div id="{{item.id}}" class="flow  char-image {{item.cls_name}} {{gen_cls(item)}}" @contextmenu.prevent="handleContextmenu(item,$event)">
                         <img src={{item.image_url}} alt="加载中..." class="lazy">
                         <span class="badge char-info">{{item.accuracy}}</span>
                         <div class="cmd-panel">
                             <div class="btn-correct-o" title='正确' v-on:click="mark_it(item, 1)">
                             </div>
-                             <div class="btn-error-o" title='错误' v-on:click="mark_it(item, -1)">
+                            <div class="btn-error-o" title='错误' v-on:click="mark_it(item, -1)">
                             </div>
                             <div class="btn btn-split-o" title='切错' v-on:click="mark_glyph(item, 1)">
                             </div>
@@ -124,11 +123,18 @@
                         </div>
                     </div>
                 </template>
+                <div v-bind:style="menu_style" class="ctx-menu-container">
+                    <div class="ctx-menu">
+                        <div class="ctx-item" v-on:click="cut_image_modal()">
+                            abc
+                        </div>
+                    </div>
+                </div>
+                {% endverbatim %} {% include "characters/included/command_panel.html" %}
             </div>
-            {% endverbatim %}
             <div class="row" style="margin-top:10px;margin-left: 0px">
-                <div  class="btn btn-default batch-check" id="correct_btn" ><span class="tooltiptext">剩余全部标对</span><span style="color: #9AFF9A;font-size:20px;padding:0px 8px" class="fa fa-check"></span><span style="color: #9AFF9A;font-size:20px;padding:0px 8px" class="fa fa-check"></span></div>
-                <div  class="btn btn-default batch-check" id="err_btn"><span class="tooltiptext">剩余全部标错</span><span style="color: pink;font-size:20px;padding:0px 10px" class="fa fa-times"></span><span style="color: pink;font-size:20px;padding:0px 10px" class="fa fa-times"></span></div>
+                <div class="btn btn-default batch-check" id="correct_btn"><span class="tooltiptext">剩余全部标对</span><span style="color: #9AFF9A;font-size:20px;padding:0px 8px" class="fa fa-check"></span><span style="color: #9AFF9A;font-size:20px;padding:0px 8px" class="fa fa-check"></span></div>
+                <div class="btn btn-default batch-check" id="err_btn"><span class="tooltiptext">剩余全部标错</span><span style="color: pink;font-size:20px;padding:0px 10px" class="fa fa-times"></span><span style="color: pink;font-size:20px;padding:0px 10px" class="fa fa-times"></span></div>
                 <div class='char-pagitor'>
                     <span class='pagitor first btn btn-default' id='char_index_first'><span class="fa fa-step-backward"></span></span>
                     <span class='pagitor more-padding previous btn btn-default' id='char_index_previous' style="font-size:20px;">❮</span>
@@ -136,64 +142,61 @@
                     <span class='pagitor_of total_page'> </span>
                     <span class='pagitor more-padding next btn btn-default' id='char_index_next' style="font-size:20px;">❯</span>
                     <span class='pagitor last btn btn-default' id='char_index_last'><span class="fa fa-step-forward"></span></span>
-
                     <div id="LineControler" class="btn-group" style="padding:0px; margin-left: 10px;">
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-top:3px">
-                        <span>100&nbsp;</span><span class="caret"></span> </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <li><a href="javascript:;">10&nbsp;</a></li>
-                        <li><a href="javascript:;">20&nbsp;</a></li>
-                        <li><a href="javascript:;">50&nbsp;</a></li>
-                        <li><a href="javascript:;">100&nbsp;</a></li>
-                        <li><a href="javascript:;">200&nbsp;</a></li>
-                        <li><a href="javascript:;">500&nbsp;</a></li>
-                        <li><a href="javascript:;">1000&nbsp; </a></li>
-                        <li><a href="javascript:;">2000&nbsp; </a></li>
-                    </ul>
-                    <label style="line-height: 31px;">字/页</label>
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-top:3px">
+                            <span>100&nbsp;</span><span class="caret"></span> </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                            <li><a href="javascript:;">10&nbsp;</a></li>
+                            <li><a href="javascript:;">20&nbsp;</a></li>
+                            <li><a href="javascript:;">50&nbsp;</a></li>
+                            <li><a href="javascript:;">100&nbsp;</a></li>
+                            <li><a href="javascript:;">200&nbsp;</a></li>
+                            <li><a href="javascript:;">500&nbsp;</a></li>
+                            <li><a href="javascript:;">1000&nbsp; </a></li>
+                            <li><a href="javascript:;">2000&nbsp; </a></li>
+                        </ul>
+                        <label style="line-height: 31px;">字/页</label>
+                    </div>
                 </div>
-                </div>
-
-                <div  class="btn btn-default batch-check" id="clear_btn"><span class="tooltiptext">全部清空标记</span><span style="font-size:16px" class="fa fa-repeat">&nbsp;&nbsp;清空</span></div>
-                </div>
+                <div class="btn btn-default batch-check" id="clear_btn"><span class="tooltiptext">全部清空标记</span><span style="font-size:16px" class="fa fa-repeat">&nbsp;&nbsp;清空</span></div>
+            </div>
             <div style="clear:both;"> </div>
-
             <div class="pagec" id="pagearea">
                 <ul class="pagination">
                 </ul>
             </div>
-        </div><!--end col-md-9 -->
-    </div><!--endrow-->
-    {% include "characters/included/chart_modal.html" %}
-    {% include "characters/included/accuracy_modal.html" %}
-    {% include "characters/included/mark_modal.html" %}
-    {% include "characters/included/compare_result_modal.html" %}
-    <div class="loading_icon"><!-- Place at bottom of page --></div>
-</div><!-- /.container -->
-{% endblock %}
-
-{% block foot  %}
+        </div>
+        <!--end col-md-9 -->
+    </div>
+    <!--endrow-->
+    {% include "characters/included/chart_modal.html" %} {% include "characters/included/accuracy_modal.html" %} {% include "characters/included/mark_modal.html" %} {% include "characters/included/compare_result_modal.html" %}
+    <div class="loading_icon">
+        <!-- Place at bottom of page -->
+    </div>
+</div>
+<!-- /.container -->
+{% endblock %} {% block foot %}
 <script src="https://cdn.jsdelivr.net/vue/1.0.26/vue.min.js"></script>
 <script src="/static/js/vue-click-outside.js"></script>
 <script src="/static/datatables/jquery.dataTables.js"></script>
 <script src="/static/datatables/dataTables.bootstrap.js"></script>
 <script src="/static/datatables/input.js"></script>
 <script type="text/javascript">
-    var chars = [
+var chars = [
     {% for char in characterstatistics_list %}
-        [
-            "{{forloop.counter}}",
-            "{{char.char}}",
-            "{{char.total_cnt}}",
-            "{{char.correct_cnt}}",
-            "{{char.err_cnt}}",
-            "{{char.uncheck_cnt}}",
-            "{{char.charstock.weight}}",
-            "{{char.charstock.l_value}}",
-            "{{char.charstock.r_value}}"
-        ],
+    [
+        "{{forloop.counter}}",
+        "{{char.char}}",
+        "{{char.total_cnt}}",
+        "{{char.correct_cnt}}",
+        "{{char.err_cnt}}",
+        "{{char.uncheck_cnt}}",
+        "{{char.charstock.weight}}",
+        "{{char.charstock.l_value}}",
+        "{{char.charstock.r_value}}"
+    ],
     {% endfor %}
-    ]
+]
 </script>
 <script src="/static/js/jquery.simplePagination.js" charset="utf-8"></script>
 <script src="/static/js/jquery.cookie.js" charset="utf-8"></script>
@@ -203,96 +206,159 @@
 <script src="/static/js/char_manage.js" charset="utf-8"></script>
 <script type="text/javascript">
 var char_list = new Vue({
-  el: '#charListArea',
-  data: {
-    selection: 0,
-    items: charListContainer.data,
-  },
-  csrf_token: '{{ csrf_token }}',
-  methods: {
-    gen_cls: function(item){
-        var class_name;
-        if (item.is_correct == 1) {
-            cls_name = 'correct-char flip-inx'
-        } else if (item.is_correct == -1) {
-            cls_name = 'error-char flip-inx'
-        } else {
-            cls_name = 'twinkling'
+    el: '#charListArea',
+    data: {
+        selection: 0,
+        item_id: '',
+        item_url: '',
+        item_direct: '',
+        items: charListContainer.data,
+        menu_style: {
+            top: 0,
+            left: 0,
+            display: 'none'
         }
-        // if (this.items.indexOf(item) == this.selection)
-        //     cls_name = cls_name.replace(/flip-inx/, '')
-        return cls_name;
     },
-    showPanel: function (index) {
-      if (this.selection!=index)
-      {
-        this.ClickedOutside();
-      }
-      this.selection = index;
-      const item = this.items[index];
-      if (this.items[index].show)
-         return ;
-       this.items.$set(index, { show: true,
-            id: item.id,
-            image_url: item.image_url,
-            cls_name: item.cls_name,
-            accuracy: item.accuracy,
-            char: item.char,
-            is_correct: item.is_correct})
-      event.preventDefault()
-      event.stopPropagation()
-    },
-    ClickedOutside: function(){
-      const item = this.items[this.selection];
-      if (!item.show)
-         return ;
-      this.items.$set(this.selection, { show: false,
-                id: item.id,
-                image_url: item.image_url,
-                cls_name: item.cls_name,
-                accuracy: item.accuracy,
-                char: item.char,
-                is_correct: item.is_correct})
-    },
-    mark_it: function(item, is_correct){
 
-      var data = {'id': item.id};
-
-      data['is_correct'] = is_correct;
-      data['char'] = item.char;
-      if (item.is_correct != is_correct){
-        $.post('/characters/set_correct', data);
-        if (is_correct == 1) {
-            play_bingo();
-        }else {
-            play_fail();
-        }
-
-        this.items.$set(this.items.indexOf(item), { show: false,
-                id: item.id,
-                image_url: item.image_url,
-                cls_name: item.cls_name,
-                accuracy: item.accuracy,
-                char: item.char,
-                is_correct: is_correct})
-      }
-    },
-    batchMark: function(is_correct){
-        this.items = _.map(this.items,function(item){
-            // is_correct == 0 意义在于批量清除
-            if (item.is_correct == 0 || is_correct == 0) {
-                item.is_correct = is_correct
+    csrf_token: '{{ csrf_token }}',
+    methods: {
+        gen_cls: function(item) {
+            var class_name;
+            if (item.is_correct == 1) {
+                cls_name = 'correct-char flip-inx'
+            } else if (item.is_correct == -1) {
+                cls_name = 'error-char flip-inx'
+            } else {
+                cls_name = 'twinkling'
             }
-            return item;
-        });
-    },
-     handler: function(e) {
-        //do stuff
-        e.preventDefault();
-     }
-  }
+            // if (this.items.indexOf(item) == this.selection)
+            //     cls_name = cls_name.replace(/flip-inx/, '')
+            return cls_name;
+        },
+        showPanel: function(index) {
+            if (this.selection != index) {
+                this.ClickedOutside();
+            }
+            this.selection = index;
+            const item = this.items[index];
+            if (this.items[index].show)
+                return;
+            this.items.$set(index, {
+                show: true,
+                id: item.id,
+                image_url: item.image_url,
+                cls_name: item.cls_name,
+                accuracy: item.accuracy,
+                char: item.char,
+                is_correct: item.is_correct
+            })
+            event.preventDefault()
+            event.stopPropagation()
+        },
+        ClickedOutside: function() {
+            const item = this.items[this.selection];
+            if (!item.show)
+                return;
+            this.items.$set(this.selection, {
+                show: false,
+                id: item.id,
+                image_url: item.image_url,
+                cls_name: item.cls_name,
+                accuracy: item.accuracy,
+                char: item.char,
+                is_correct: item.is_correct
+            })
+        },
+        mark_it: function(item, is_correct) {
+
+            var data = {
+                'id': item.id
+            };
+
+            data['is_correct'] = is_correct;
+            data['char'] = item.char;
+            if (item.is_correct != is_correct) {
+                $.post('/characters/set_correct', data);
+                if (is_correct == 1) {
+                    play_bingo();
+                } else {
+                    play_fail();
+                }
+
+                this.items.$set(this.items.indexOf(item), {
+                    show: false,
+                    id: item.id,
+                    image_url: item.image_url,
+                    cls_name: item.cls_name,
+                    accuracy: item.accuracy,
+                    char: item.char,
+                    is_correct: is_correct
+                })
+            }
+        },
+        batchMark: function(is_correct) {
+            this.items = _.map(this.items, function(item) {
+                // is_correct == 0 意义在于批量清除
+                if (item.is_correct == 0 || is_correct == 0) {
+                    item.is_correct = is_correct
+                }
+                return item;
+            });
+        },
+        handleContextmenu: function(item, e) {
+            this.menu_style = {
+                top: e.pageY + 'px',
+                left: e.pageX + 'px',
+                display: 'block'
+            }
+            document.addEventListener('click', this._onContextMenuClick)
+
+        },
+        _onContextMenuClick: function(e) {
+            e.stopPropagation()
+           if ($('.ctx-menu-container').get(0) !== e.target){
+                char_list.menu_style = {
+                    display: 'none'
+                }
+           }
+           document.removeEventListener('click', char_list._onContextMenuClick)
+        },
+        cut_image_modal: function() {
+            var item = this.items[this.selection]
+            this.item_url = item.image_url
+            this.item_id = item.id
+            $("#cutImageModal").modal('show')
+            this.menu_style = {
+                display: 'none'
+            }
+            document.removeEventListener('click', char_list._onContextMenuClick)
+        },
+        cut_detail_modal: function(direct) {
+            this.item_direct = direct
+            $("#cutDetailModal").modal('show')
+        }
+    }
 });
 
-</script>
+$(function() {
+    $('#cutImageModal').on('show.bs.modal', function(event) {
+        var button = $(event.relatedTarget) // Button that triggered
+        var modal = $(this)
+        modal.find('.modal-title').text('字符切分')
+        modal.find('.cut_image_char').text(charListContainer.char)
+        modal.find('.cut-container img').prop('src', char_list.item_url)
+    });
 
+    $('#cutDetailModal').on('show.bs.modal', function(event) {
+        var button = $(event.relatedTarget) // Button that triggered
+        var modal = $(this)
+        modal.find('.modal-title').text('字符选择')
+        modal.find('.cut_image_char').text(charListContainer.char)
+        $.get('/api/character/' + char_list.item_id + '/direct/' + char_list.item_direct + '/cut', function(res) {
+            console.log(res)
+        })
+    });
+
+});
+</script>
 {% endblock %}
