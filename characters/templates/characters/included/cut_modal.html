@@ -1,0 +1,32 @@
+<div class="bd-cutImage">
+  <div class="modal fade" id="cutImageModal" tabindex="-1" role="dialog" aria-labelledby="cutImageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <div class="row">
+            <div class="h4 modal-title" style="display: inline;margin-left: 10px;" id="cutImageModalLabel">
+            </div>
+            <strong class='cut_image_char' style='font-size:24px; margin:0px;padding:8px;color:#483D8B;'></strong>
+          </div>
+        </div>
+        <div class="modal-body" style="min-height: 300px">
+          <div class="cut-container">
+            <div  id="{{item.id}}" class="flow  char-image" style="margin: 40px  57px;zoom: 130%">
+              <img alt="加载中...">
+              <div class='up-down-buttons'>
+                <div class='btn btn-primary t-up' v-on:click="cut_detail_modal('t-up')"><span class="fa fa-arrow-up"/></div>
+                <div class='btn btn-primary t-down' v-on:click="cut_detail_modal('t-down')"><span class="fa fa-arrow-down"/></div>
+                <div class='btn btn-primary b-up' v-on:click="cut_detail_modal('b-up')"><span class="fa fa-arrow-up"/></div>
+                <div class='btn btn-primary b-down' v-on:click="cut_detail_modal('b-down')"><span class="fa fa-arrow-down"/></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

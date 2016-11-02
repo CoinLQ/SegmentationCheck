@@ -26,5 +26,5 @@ urlpatterns = patterns(
   '',
   url(r'^', include(router.urls)),
   url(r'^character/(?P<pk>[0-9A-Za-z-]+)/direct/(?P<direct>[a-z-]+)/cut$', character_cut_list, name='character_cut_list'),
-  url(r'^character/(?P<pk>[0-9A-Za-z-]+)/direct/(?P<direct>[a-z-]+)/cut/(?P<image_no>[1-5-]+)$', character_cut, name='character_cut'),
+  url(r'^character/(?P<pk>[0-9A-Za-z-]+)/direct/(?P<direct>[a-z-]+)/cut/(?P<image_no>[1-9-]+)$', character_cut, name='character_cut'),
 )

@@ -109,7 +109,7 @@
             <div id="charListArea" style="margin-right:-15px;margin-left:18px;display: inline-block">
                 <template v-for="item in items">
                     <div id="{{item.id}}" class="flow  char-image {{item.cls_name}} {{gen_cls(item)}}" @contextmenu.prevent="handleContextmenu(item,$event)">
-                        <img src={{item.image_url}} alt="加载中..." class="lazy">
+                        <img v-bind:src="item.image_url" alt="加载中..." class="lazy">
                         <span class="badge char-info">{{item.accuracy}}</span>
                         <div class="cmd-panel">
                             <div class="btn-correct-o" title='正确' v-on:click="mark_it(item, 1)">
@@ -123,15 +123,17 @@
                         </div>
                     </div>
                 </template>
-                <div v-bind:style="menu_style" class="ctx-menu-container">
+                <div style="display: none" v-bind:style="menu_style" class="ctx-menu-container">
                     <div class="ctx-menu">
                         <div class="ctx-item" v-on:click="cut_image_modal()">
                             abc
                         </div>
                     </div>
                 </div>
-                {% endverbatim %} {% include "characters/included/command_panel.html" %}
+                {% endverbatim %}
+                {% include "characters/included/cut_modal.html" %}
             </div>
+            {% include "characters/included/command_panel.html" %}
             <div class="row" style="margin-top:10px;margin-left: 0px">
                 <div class="btn btn-default batch-check" id="correct_btn"><span class="tooltiptext">剩余全部标对</span><span style="color: #9AFF9A;font-size:20px;padding:0px 8px" class="fa fa-check"></span><span style="color: #9AFF9A;font-size:20px;padding:0px 8px" class="fa fa-check"></span></div>
                 <div class="btn btn-default batch-check" id="err_btn"><span class="tooltiptext">剩余全部标错</span><span style="color: pink;font-size:20px;padding:0px 10px" class="fa fa-times"></span><span style="color: pink;font-size:20px;padding:0px 10px" class="fa fa-times"></span></div>
@@ -169,13 +171,17 @@
         <!--end col-md-9 -->
     </div>
     <!--endrow-->
-    {% include "characters/included/chart_modal.html" %} {% include "characters/included/accuracy_modal.html" %} {% include "characters/included/mark_modal.html" %} {% include "characters/included/compare_result_modal.html" %}
+    {% include "characters/included/chart_modal.html" %}
+    {% include "characters/included/accuracy_modal.html" %}
+    {% include "characters/included/mark_modal.html" %}
+    {% include "characters/included/compare_result_modal.html" %}
     <div class="loading_icon">
         <!-- Place at bottom of page -->
     </div>
 </div>
 <!-- /.container -->
-{% endblock %} {% block foot %}
+{% endblock %}
+{% block foot %}
 <script src="https://cdn.jsdelivr.net/vue/1.0.26/vue.min.js"></script>
 <script src="/static/js/vue-click-outside.js"></script>
 <script src="/static/datatables/jquery.dataTables.js"></script>
@@ -200,7 +206,7 @@ var chars = [
 </script>
 <script src="/static/js/jquery.simplePagination.js" charset="utf-8"></script>
 <script src="/static/js/jquery.cookie.js" charset="utf-8"></script>
-<script src="//cdn.bootcss.com/lodash.js/4.16.4/lodash.min.js" charset="utf-8"></script>
+<script src="//cdn.jsdelivr.net/lodash/4.16.6/lodash.min.js" charset="utf-8"></script>
 <script src="/static/js/jquery.lazyload.min.js" charset="utf-8"></script>
 <script src="/static/js/time_left.js" charset="utf-8"></script>
 <script src="/static/js/char_manage.js" charset="utf-8"></script>
@@ -213,6 +219,9 @@ var char_list = new Vue({
         item_url: '',
         item_direct: '',
         items: charListContainer.data,
+        cut_items: [],
+        degree: 0,
+        final_degree: 0,
         menu_style: {
             top: 0,
             left: 0,
@@ -336,7 +345,7 @@ var char_list = new Vue({
         cut_detail_modal: function(direct) {
             this.item_direct = direct
             $("#cutDetailModal").modal('show')
-        }
+        },
     }
 });
 
@@ -354,11 +363,67 @@ $(function() {
         var modal = $(this)
         modal.find('.modal-title').text('字符选择')
         modal.find('.cut_image_char').text(charListContainer.char)
+        // TODO: delete it
+        char_list.item_id = 'K0001V01P0247b05L13'
         $.get('/api/character/' + char_list.item_id + '/direct/' + char_list.item_direct + '/cut', function(res) {
+            if (res.direct !== char_list.item_direct) alert(res.direct)
+            cut_detail.cut_items = res.cut_list
             console.log(res)
-        })
+        }, 'json')
     });
 
+});
+</script>
+
+<script type="text/javascript">
+var cut_detail = new Vue({
+    el: '#cutDetailModal',
+    data: {
+        current_item: {},
+        direct: '',
+        cut_items: [],
+        degree: 0,
+        more_items:[],
+        final_item: {},
+    },
+    methods: {
+      item_choice: function(item) {
+        if (item === this.current_item)
+        {
+            this.final_item = this.current_item = item
+            cut_detail.more_items=[]
+            return;
+        }
+        this.final_item = this.current_item = item
+        this.more()
+      },
+      more: function() {
+        $.get('/api/character/' + char_list.item_id + '/direct/' + char_list.item_direct + '/cut/' + this.current_item.degree, function(res) {
+            if (res.direct !== char_list.item_direct) alert(res.direct)
+            cut_detail.more_items = res.cut_list
+            console.log(res)
+        }, 'json')
+      },
+      item_final: function(item) {
+        this.final_item = item
+      },
+      gen_cls(item) {
+        if (this.final_item === item) {
+            return 'cyan-border'
+        } else if (this.current_item === item) {
+            return 'gold-border'
+        } else {
+            return ''
+        }
+      },
+      gen_n_cls(item) {
+        if (this.final_item === item) {
+            return 'cyan-border'
+        } else {
+            return ''
+        }
+      }
+    }
 });
 </script>
 {% endblock %}
