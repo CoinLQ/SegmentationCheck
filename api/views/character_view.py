@@ -112,7 +112,7 @@ class CharacterViewSet(viewsets.ModelViewSet):
             character.save()
             character.danger_rebuild_image()
             ret = character.upload_png_to_qiniu()
-        cache.set('ch_url' + character.id, character.local_image_url())
+        cache.set('ch_url' + character.id, character.local_image_url(), 3600*24)
 
         key_prefix = pk.split('L')[0]
         num = int(pk.split('L')[1])
