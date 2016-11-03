@@ -2,6 +2,7 @@ from rest_framework import viewsets, filters
 from rest_framework.response import Response
 from segmentation.models import Character
 from api.serializers import CharacterSerializer
+from django.core.cache import cache
 from skimage import io
 import base64
 import six
@@ -105,6 +106,7 @@ class CharacterViewSet(viewsets.ModelViewSet):
             character.save()
             character.danger_rebuild_image()
             ret = character.upload_png_to_qiniu()
+        cache.set('ch_url'+character.id, character.local_image_url())
 
         key_prefix = pk.split('L')[0]
         num = int(pk.split('L')[1])
@@ -123,4 +125,4 @@ class CharacterViewSet(viewsets.ModelViewSet):
         except:
             print 'not found neighbor char.'
 
-        return Response({'status': ret })
+        return Response({'status': ret , 'image_url': character.local_image_url()})

@@ -356,7 +356,6 @@ $(function() {
         var modal = $(this)
         modal.find('.modal-title').text('字符切分')
         modal.find('.cut_image_char').text(charListContainer.char)
-        modal.find('.cut-container img').prop('src', char_list.item_url)
     });
 
     $('#cutDetailModal').on('show.bs.modal', function(event) {
@@ -426,8 +425,22 @@ var cut_detail = new Vue({
         if (this.final_item)
         {
             $.post('/api/character/' + char_list.item_id + '/direct/' + char_list.item_direct + '/cut/' + this.final_item.degree,
-                function(d){}, 'json')
+                function(res){
+                    var url = res.image_url +"?v="+Math.random()
+                    var item = char_list.items[char_list.selection]
+                    char_list.items.$set(char_list.selection, {
+                        show: false,
+                        id: item.id,
+                        image_url: url,
+                        cls_name: item.cls_name,
+                        accuracy: item.accuracy,
+                        char: item.char,
+                        is_correct: item.is_correct
+                    })
+                    char_list.item_url = url
+                }, 'json')
             $("#cutDetailModal").modal('hide')
+            
         }
       }
     }

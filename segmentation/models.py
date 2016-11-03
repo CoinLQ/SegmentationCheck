@@ -4,6 +4,7 @@ from managerawdata.models import OPage
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
+from django.core.cache import cache
 import math
 import random
 from skimage import io
@@ -84,9 +85,15 @@ class Character(models.Model):
 
     @property
     def image_url(self):
+        url = cache.get('ch_url' + self.id, None)
+        if url is not None:
+            return url
         server_host = "http://asset-c%d.dzj3000.com" % int(math.ceil(random.random()*1))
         return server_host + '/' +self.resource_key()
-        #return u'/character_images/'+self.page_id+u'/'+self.image.replace(u'.jpg', u'.png')
+    #    return u'/character_images/'+self.page_id+u'/'+self.image.replace(u'.jpg', u'.png')
+
+    def local_image_url(self):
+        return u'/character_images/'+self.page_id+u'/'+self.image
 
     def get_image_path(self):
         base_path = settings.CHARACTER_IMAGE_ROOT+self.page_id
@@ -113,12 +120,9 @@ class Character(models.Model):
 
     def upload_png_to_qiniu(self):
         png_filename = self.get_image_path().replace('.jpg', '.png')
-        if os.path.exists(png_filename):
-            pass
-        else:
-            image_file = Image.open(self.get_image_path())
-            image_file = image_file.convert('1')
-            image_file.save(png_filename)
+        image_file = Image.open(self.get_image_path())
+        #image_file = image_file.convert('1')
+        image_file.save(png_filename)
         return upload_file(png_filename, self.resource_key())
 
     def image_tag(self):
