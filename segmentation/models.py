@@ -89,6 +89,9 @@ class Character(models.Model):
         #return u'/character_images/'+self.page_id+u'/'+self.image.replace(u'.jpg', u'.png')
 
     def get_image_path(self):
+        base_path = settings.CHARACTER_IMAGE_ROOT+self.page_id
+        if not os.access(base_path, os.X_OK):
+            os.mkdir(base_path)
         return settings.CHARACTER_IMAGE_ROOT+self.page_id+u'/'+self.image
 
     def get_cut_image_path(self, direction, degree):

@@ -82,12 +82,16 @@ class CharacterViewSet(viewsets.ModelViewSet):
                         'cut_list': cut_list })
 
     def base64(self, char_image, fmt='PNG'):
-        buffer = six.BytesIO()
-        io.imsave(buffer, char_image)
-        image = Image.open(buffer)
-        image = image.convert('1')
-        image.save(buffer, 'png')
-        return base64.b64encode(buffer.getvalue())
+        try:
+            buffer = six.BytesIO()
+            io.imsave(buffer, char_image)
+            image = Image.open(buffer)
+            image = image.convert('1')
+            image.save(buffer, 'png')
+            return base64.b64encode(buffer.getvalue())
+        except IndexError,e:
+            print e
+            return ''
 
     def apply_cut(self, request, pk=None, direct=None, image_no=None):
         character = Character.objects.get(pk=pk)

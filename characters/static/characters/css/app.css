@@ -943,6 +943,17 @@ div.ctx-menu-container {
   justify-content:center
 }
 
+.intro-image-info {
+  position: relative;
+  width: 24px;
+  height: 32px;
+  max-width: 100%;
+  max-height: 100%;
+  border: solid blue 4px;
+  border-radius: 10px;
+  display:inline-block;
+}
+
 .gold-border {
   border: solid #FFB32B 4px;;
 }
@@ -957,4 +968,15 @@ div.ctx-menu-container {
   max-width: 80px;
   max-height: 80px;
 }
+.cut-intro {
+  float:right;
+  display: inline-block;
+  margin-right: 15px;
+}
+.cut-intro span{
+  top: -8px;
+  color: grey;
+  position: relative;
+}
+
 
