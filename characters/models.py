@@ -2,8 +2,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from segmentation.models import Character
-from datetime import datetime
 from django.db import transaction
+from django.utils import timezone
 from django.db.models import Q
 from classification_statistics.models import DataPoint
 from django.db.models.signals import post_save
@@ -158,4 +158,45 @@ class CharStock(models.Model):
         else:
             res = 0
 
-        return res
+        return abs(res)
+
+
+class CharCutRecord(models.Model):
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
+    character = models.ForeignKey(Character)
+    is_correct = models.SmallIntegerField()
+    img_filename = models.CharField(max_length=512)
+    left = models.SmallIntegerField()
+    right = models.SmallIntegerField()
+    top = models.SmallIntegerField()
+    bottom = models.SmallIntegerField()
+    line_no = models.SmallIntegerField()
+    char_no = models.SmallIntegerField()
+    region_no = models.SmallIntegerField(default=0)
+    time = models.DateTimeField()
+    direct = models.CharField(max_length=7)
+    degree = models.SmallIntegerField()
+
+    @classmethod
+    def create(cls, user, ch, file_path, direct, degree):
+        obj = cls()
+        obj.user = user
+        obj.character_id = ch.pk
+        obj.is_correct = ch.is_correct
+        obj.left = ch.left
+        obj.right = ch.right
+        obj.top = ch.top
+        obj.bottom = ch.bottom
+        obj.line_no = ch.line_no
+        obj.char_no = ch.char_no
+        obj.region_no = ch.region_no
+        obj.time = timezone.now()
+        obj.img_filename = file_path
+        obj.direct = direct
+        obj.degree = degree
+        print obj
+        return obj
+
+    def __unicode__(self):
+        return u'时间%s: %s 被 %s 往 %s 方向切分 %s 像素' % (self.time, self.character_id, self.user, self.direct, self.degree )
+

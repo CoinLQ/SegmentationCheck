@@ -435,12 +435,11 @@ var cut_detail = new Vue({
                         cls_name: item.cls_name,
                         accuracy: item.accuracy,
                         char: item.char,
-                        is_correct: item.is_correct
+                        is_correct: 1
                     })
                     char_list.item_url = url
                 }, 'json')
             $("#cutDetailModal").modal('hide')
-            
         }
       }
     }

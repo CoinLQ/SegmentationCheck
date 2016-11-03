@@ -9,8 +9,10 @@ import math
 import random
 from skimage import io
 import os
+import shutil
 from PIL import Image
 from utils.qiniu_uploader import upload_file
+
 
 # Create your models here.
 class Page(models.Model):
@@ -65,11 +67,10 @@ class Character(models.Model):
     line_no = models.SmallIntegerField()
     char_no = models.SmallIntegerField()
     region_no = models.SmallIntegerField(default=0)
-    ## is_correct value
-    ## 0 unchecked(initial value )
-    ## 1 correct
-    ## -1 erro
-    is_correct = models.SmallIntegerField(default=0,db_index=True)
+    ## the field values. [1, 0, -1]. 1 means correct, -1 not, 0 default
+    is_correct = models.SmallIntegerField(default=0, db_index=True)
+    ## the field values. [1, 0, -1]. 1 means integrity, -1 not, 0 default
+    is_integrity = models.SmallIntegerField(default=0, db_index=True)
     accuracy = models.SmallIntegerField(default=-1, db_index=True)
 
     class Meta:
@@ -81,7 +82,13 @@ class Character(models.Model):
         return u'%s:%s' % (self.id, self.char)
 
     def resource_key(self):
-        return u'web/character_images/'+self.page_id+u'/'+self.image.replace(u'.jpg', u'.png')
+        modified_time = 0
+        try:
+            statbuf = os.stat(self.get_image_path())
+            modified_time = statbuf.st_mtime
+        except:
+            pass
+        return self.page_id+u'/'+self.image.replace(u'.jpg', u'.png') + ("?v=%d" % modified_time)
 
     @property
     def image_url(self):
@@ -89,11 +96,12 @@ class Character(models.Model):
         if url is not None:
             return url
         server_host = "http://asset-c%d.dzj3000.com" % int(math.ceil(random.random()*1))
-        return server_host + '/' +self.resource_key()
-    #    return u'/character_images/'+self.page_id+u'/'+self.image.replace(u'.jpg', u'.png')
+        return server_host + '/web/character_images/' +self.resource_key()
+        # return u'/character_images/'+self.page_id+u'/'+self.image.replace(u'.jpg', u'.png')
 
     def local_image_url(self):
-        return u'/character_images/'+self.page_id+u'/'+self.image
+        statbuf = os.stat(self.get_image_path())
+        return u'/character_images/'+self.page_id+u'/'+self.image +  ("?v=%d" % statbuf.st_mtime)
 
     def get_image_path(self):
         base_path = settings.CHARACTER_IMAGE_ROOT+self.page_id
@@ -101,16 +109,13 @@ class Character(models.Model):
             os.mkdir(base_path)
         return settings.CHARACTER_IMAGE_ROOT+self.page_id+u'/'+self.image
 
-    def get_cut_image_path(self, direction, degree):
+    def get_cut_image_path(self):
         base_path = settings.CUT_CHARACTER_IMAGE_ROOT+self.page_id
         if not os.access(base_path, os.X_OK):
             os.mkdir(base_path)
-        image_path = "/%s/%s-%s-%s" % (self.page_id, direction, degree, self.image)
+        image_path = self.resource_key()
         return settings.CUT_CHARACTER_IMAGE_ROOT + image_path
 
-    def get_cut_image_url(self, direction, degree):
-        image_path = "/%s/%s-%s-%s" % (self.page_id, direction, degree, self.image)
-        return '/cut_character_images'+ image_path
 
     def danger_rebuild_image(self):
         pageimg_file = self.page.get_image_path()
@@ -124,6 +129,11 @@ class Character(models.Model):
         #image_file = image_file.convert('1')
         image_file.save(png_filename)
         return upload_file(png_filename, self.resource_key())
+
+    def backup_orig_character(self):
+        new_file = self.get_cut_image_path()
+        shutil.copy(self.get_image_path(), new_file)
+        return new_file
 
     def image_tag(self):
         return u'<img src="%s" border="1" style="zoom: 20%%;" />' % (self.image_url)

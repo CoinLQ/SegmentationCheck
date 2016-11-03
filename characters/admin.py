@@ -1,6 +1,6 @@
 # coding: utf-8
 from django.contrib import admin
-from .models import CharMarkRecord, ClassificationTask, ClassificationCompareResult, CharStock
+from .models import CharMarkRecord, ClassificationTask, ClassificationCompareResult, CharStock, CharCutRecord
 from segmentation.models import Character
 
 class CharMarkRecordAdmin(admin.ModelAdmin):
@@ -86,7 +86,11 @@ class ClassificationCompareResultAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
 
+class CharCutRecordAdmin(admin.ModelAdmin):
+    list_display = ('time', 'user', 'character_id', 'img_filename', 'direct', 'degree')
+
 admin.site.register(CharMarkRecord, CharMarkRecordAdmin)
 admin.site.register(ClassificationTask, ClassificationTaskAdmin)
+admin.site.register(CharCutRecord, CharCutRecordAdmin)
 admin.site.register(ClassificationCompareResult, ClassificationCompareResultAdmin)
 
