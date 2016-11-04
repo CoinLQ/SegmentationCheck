@@ -8,7 +8,9 @@
 <!-- DataTables -->
 <link rel="stylesheet" href="/static/datatables/dataTables.bootstrap.css">
 <link rel="stylesheet" href="/static/characters/css/app.css">
-<link rel="stylesheet" href="/static/characters/css/circle.css"> {% endblock %} {% block mainbody %}
+<link rel="stylesheet" href="/static/characters/css/circle.css">
+<link rel="stylesheet" href="/static/characters/css/switch.css">
+{% endblock %} {% block mainbody %}
 <div class="container" style="min-width:1000px !important;">
     <div class='row'>
         <div class='col-md-4 col-xs-12'>
@@ -134,7 +136,7 @@
                 {% include "characters/included/cut_modal.html" %}
             </div>
             {% include "characters/included/command_panel.html" %}
-            <div class="row" style="margin-top:10px;margin-left: 0px">
+            <div class="row commands" style="margin-top:10px;margin-left: 0px">
                 <div class="btn btn-default batch-check" id="correct_btn"><span class="tooltiptext">剩余全部标对</span><span style="color: #9AFF9A;font-size:20px;padding:0px 8px" class="fa fa-check"></span><span style="color: #9AFF9A;font-size:20px;padding:0px 8px" class="fa fa-check"></span></div>
                 <div class="btn btn-default batch-check" id="err_btn"><span class="tooltiptext">剩余全部标错</span><span style="color: pink;font-size:20px;padding:0px 10px" class="fa fa-times"></span><span style="color: pink;font-size:20px;padding:0px 10px" class="fa fa-times"></span></div>
                 <div class='char-pagitor'>
@@ -389,13 +391,14 @@ var cut_detail = new Vue({
         if (item === this.current_item)
         {
             this.final_item = this.current_item = item
-            cut_detail.more_items=[]
             return;
         }
+        cut_detail.more_items =[]
         this.final_item = this.current_item = item
         this.more()
       },
       more: function() {
+        if (!$("input.cut-option").prop('checked')) return ;
         $.get('/api/character/' + char_list.item_id + '/direct/' + char_list.item_direct + '/cut/' + this.current_item.degree, function(res) {
             if (res.direct !== char_list.item_direct) alert(res.direct)
             cut_detail.more_items = res.cut_list

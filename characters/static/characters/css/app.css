@@ -1,4 +1,7 @@
 
+#char_index_wrapper {
+  position: fixed;
+}
 .sidecol {
     height:80%;
     overflow:auto;
@@ -235,7 +238,7 @@ border-radius: 20px;
 
 #clear_btn {
   position: absolute;
-  right: 0px;
+  right: 10px;
 }
 /* When the body has the loading class, we turn
    the scrollbar off with overflow:hidden */
@@ -888,18 +891,18 @@ div.ctx-menu-container {
 }
 
 .t-up {
-  position: inherit;
+  position: absolute;
   left: 23px;
-  top: -17px;
+  top: -18px;
   padding: 0px 12px;
   border-radius: 4px;
   opacity: 0.7;
 }
 
 .t-down {
-  position: inherit;
+  position: absolute;
   top: 10px;
-  left: -20px;
+  left: 23px;
   padding: 0px 12px;
   border-radius: 4px;
   opacity: 0.7;
@@ -1006,4 +1009,13 @@ div.ctx-menu-container {
     position: absolute;
     bottom: 5px;
     left: 29px;
+}
+.commands {
+    background: aliceblue;
+    position: fixed;
+    top: 626px;
+    width: 60%;
+    margin: 20px;
+    padding: 5px 10px 5px 0px;
+    border-radius: 10px;
 }
