@@ -15,8 +15,8 @@
         </div>
         <div class="modal-body" style="min-height: 300px">
           <div class="cut-container">
-            <div  id="{{item.id}}" class="flow  char-image" style="margin: 40px  57px;zoom: 130%">
-              <img alt="加载中..." v-bind:src="item_url">
+            <div  id="{{item.id}}" class="flow  char-image" style="margin: 40px  57px;zoom: 130%;background-color: gainsboro;">
+              <img alt="加载中..." v-bind:src="item_url" style="margin: 16px auto;" >
               <div class='up-down-buttons'>
                 <div class='btn btn-primary t-up' v-on:click="cut_detail_modal('t-up')"><span class="fa fa-arrow-up"/></div>
                 <div class='btn btn-primary t-down' v-on:click="cut_detail_modal('t-down')"><span class="fa fa-arrow-down"/></div>

@@ -20,9 +20,9 @@ class CharacterFilter(filters.FilterSet):
         }
 
 
-stage_map = {'t-up': [ -3, -8, -13, -18, -23 ],
+stage_map = {'t-up': [ -3, -8, -13, -18, -23 ][::-1],
              't-down': [ 3, 8, 13, 18, 23 ],
-             'b-up': [ -3, -8, -13, -18, -23 ],
+             'b-up': [ -3, -8, -13, -18, -23 ][::-1],
              'b-down': [ 3, 8, 13, 18, 23 ], }
 
 class CharacterViewSet(viewsets.ModelViewSet):
@@ -59,7 +59,7 @@ class CharacterViewSet(viewsets.ModelViewSet):
                         'cut_list': cut_list })
 
     def cut_detail(self, request, pk=None, direct=None, image_no=None):
-        detail_stage = [-1, -2, 1, 2]
+        detail_stage = [ -2, -1, 1, 2]
         character = Character.objects.get(pk=pk)
         pageimg_file = character.page.get_image_path()
         page_image = io.imread(pageimg_file, 0)

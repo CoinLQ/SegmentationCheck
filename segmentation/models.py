@@ -95,6 +95,9 @@ class Character(models.Model):
         url = cache.get('ch_url' + self.id, None)
         if url is not None:
             return url
+
+        if self.is_integrity == 1:
+            return self.local_image_url()
         server_host = "http://asset-c%d.dzj3000.com" % int(math.ceil(random.random()*1))
         return server_host + '/web/character_images/' +self.resource_key()
         # return u'/character_images/'+self.page_id+u'/'+self.image.replace(u'.jpg', u'.png')

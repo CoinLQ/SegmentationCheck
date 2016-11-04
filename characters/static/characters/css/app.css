@@ -763,7 +763,7 @@ span.fa-volume-off {
   z-index: 1000;
   display: block;
   float: left;
-  min-width: 160px;
+  min-width: 90px;
   padding: 5px 0;
   margin: 2px 0 0;
   font-size: .9rem;
@@ -790,7 +790,8 @@ span.fa-volume-off {
   padding: 3px 20px;
   clear: both;
   font-weight: normal;
-  line-height: 1.5;
+  font-size: 12px;
+  line-height: 1.1;
   color: #373a3c;
   text-align: inherit;
   white-space: nowrap;
@@ -890,32 +891,40 @@ div.ctx-menu-container {
   position: inherit;
   left: 23px;
   top: -17px;
-  padding: 8px 12px;
+  padding: 0px 12px;
+  border-radius: 4px;
+  opacity: 0.7;
 }
 
 .t-down {
   position: inherit;
-  top: 27px;
+  top: 10px;
   left: -20px;
-  padding: 8px 12px;
+  padding: 0px 12px;
+  border-radius: 4px;
+  opacity: 0.7;
 }
 
 .b-up {
-  position: inherit;
-  top: 63px;
+  position: absolute;
+  top: 100px;
   left: 23px;
-  padding: 8px 12px;
+  padding: 0px 12px;
+  border-radius: 4px;
+  opacity: 0.7;
 }
 
 .b-down {
-  position: inherit;
-  top: 107px;
-  left: -20px;
-  padding: 8px 12px;
+  position: absolute;
+  top: 129px;
+  left: 23px;
+  padding: 0px 12px;
+  border-radius: 4px;
+  opacity: 0.7;
 }
 .cut-image-info {
   float: left;
-  margin: 0 3% 0 6%;
+  margin: 0 1% 0 3%;
   position: relative;
   width: 90px;
   height: 120px;
@@ -925,12 +934,13 @@ div.ctx-menu-container {
   border-radius: 20px;
   display:flex;
   align-items:center;
-  justify-content:center
+  justify-content:center;
+  background-color: gainsboro;
 }
 
 .more-image-info {
   float: left;
-  margin: 20px 3% 0 10%;
+  margin: 20px -2.5% 0 9%;
   position: relative;
   width: 90px;
   height: 120px;
@@ -940,7 +950,8 @@ div.ctx-menu-container {
   border-radius: 20px;
   display:flex;
   align-items:center;
-  justify-content:center
+  justify-content:center;
+  background-color: gainsboro;
 }
 
 .intro-image-info {
@@ -979,4 +990,20 @@ div.ctx-menu-container {
   position: relative;
 }
 
+.cut-badge {
 
+    min-width: 10px;
+    padding: 3px 7px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    background-color: #777;
+    border-radius: 10px;
+    position: absolute;
+    bottom: 5px;
+    left: 29px;
+}
