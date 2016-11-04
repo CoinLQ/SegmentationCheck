@@ -315,23 +315,23 @@ var char_list = new Vue({
             });
         },
         handleContextmenu: function(item, e) {
+            document.removeEventListener('click', char_list._onContextMenuClick)
             this.menu_style = {
-                top: e.pageY + 'px',
+                top: e.pageY - window.scrollY + 'px',
                 left: e.pageX + 'px',
                 display: 'block'
             }
             this.selection = this.items.indexOf(item)
-            document.addEventListener('click', this._onContextMenuClick)
-
+            setTimeout(function(){ document.addEventListener('click', char_list._onContextMenuClick) }, 200)
         },
         _onContextMenuClick: function(e) {
             e.stopPropagation()
-           if ($('.ctx-menu-container').get(0) !== e.target){
+            if ($('.ctx-menu-container').get(0) !== e.target){
                 char_list.menu_style = {
                     display: 'none'
                 }
-           }
-           document.removeEventListener('click', char_list._onContextMenuClick)
+            }
+            document.removeEventListener('click', char_list._onContextMenuClick)
         },
         cut_image_modal: function() {
             var item = this.items[this.selection]
