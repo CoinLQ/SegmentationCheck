@@ -187,10 +187,9 @@ def prepare_data_with_database(char_lst):
     test_accuracy_lst = []
     for char in char_lst:
         label = char.is_correct
-        img_path = char.get_image_path()
         char_id = char.id
         try:
-            binary = normalize(img_path)
+            binary = normalize(char)
             feature_vector = binary.ravel()
         except:
             feature_vector = None
@@ -215,10 +214,9 @@ def prepare_data_with_database2(char_lst):
 
     for char in char_lst:
         label = char.is_correct
-        img_path = char.get_image_path()
         char_id = char.id
         try:
-            binary = normalize(img_path)
+            binary = normalize(char)
             feature_vector = binary.ravel()
         except Exception, e:
             #push_to_slack(msg)
@@ -251,9 +249,8 @@ def fetch_negative_samples(char, X = [] * 1, y = [] * 1):
             if count >= 5:
                 continue
             label = -1
-            img_path = ch.get_image_path()
             try:
-                binary = normalize(img_path)
+                binary = normalize(ch)
                 feature_vector = binary.ravel()
             except:
                 feature_vector = None

@@ -42,8 +42,9 @@ def nln(src_image):
                 binary_new[y2:y2_end, x2:x2_end] = binary[y,x]
     return binary_new.astype('ubyte')
 
-def normalize(image_path):
-    nln_path = image_path.replace('.jpg', '.nln.npy')
+def normalize(char):
+    image_path = char.get_image_path()
+    nln_path = char.npy_path()
     if os.path.exists(nln_path):
         binary = np.load(nln_path)
     else:

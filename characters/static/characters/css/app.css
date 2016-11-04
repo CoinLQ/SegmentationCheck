@@ -1013,8 +1013,8 @@ div.ctx-menu-container {
 .commands {
     background: aliceblue;
     position: fixed;
-    top: 626px;
-    width: 60%;
+    top: 90%;
+    width: 56%;
     margin: 20px;
     padding: 5px 10px 5px 0px;
     border-radius: 10px;

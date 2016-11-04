@@ -16,7 +16,7 @@ image_list_key = 'seg_classify:image_list'
 def normalize_image(char_id):
     page_id = char_id[:-5]
     img_path = '/data/share/dzj_characters/character_images/%s/%s.jpg' % (page_id, char_id)
-    nln_path = img_path.replace('.jpg', '.nln.npy')
+    nln_path = '/data/share/dzj_characters/character_images/npy/character_images/%s/%s.nln.npy' % (page_id, char_id)
     x = None
     if not os.path.exists(nln_path):
         if not os.path.isfile(img_path):

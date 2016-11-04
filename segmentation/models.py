@@ -25,15 +25,9 @@ class Page(models.Model):
     height = models.SmallIntegerField(default=0)
     left = models.SmallIntegerField(default=0)
     right = models.SmallIntegerField(default=0)
+    ## the field values. [1, 0, -1]. 1 means correct, -1 not, 0 default
     is_correct = models.SmallIntegerField(default=0)
     erro_char_cnt = models.IntegerField(default=0)
-#is_correct value
-## 0 unchecked(initial value )
-## 1 correct
-## -1 erro
-## -2 Character erro
-## -3 line erro
-## -4 page  erro
 
     def __unicode__(self):
         return self.id
@@ -51,7 +45,7 @@ class Page(models.Model):
 
     @property
     def image_url(self):
-        return '/dzj_characters/page_images'+self.image
+        return '/dzj_characters/page_images/'+self.image
 
 
 class Character(models.Model):
@@ -88,7 +82,15 @@ class Character(models.Model):
             modified_time = statbuf.st_mtime
         except:
             pass
-        return self.page_id+u'/'+self.image.replace(u'.jpg', u'.png') + ("?v=%d" % modified_time)
+        return self.page_id+u'/'+self.image + ("?v=%d" % modified_time)
+
+    def npy_path(self):
+        _path = 'npy/character_images/%s/%s.nln.npy' % (self.page_id, self.id)
+        return settings.CHARACTER_IMAGE_ROOT + _path
+
+    def png_path(self):
+        _path = 'png/character_images/%s/%s.png' % (self.page_id, self.id)
+        return settings.CHARACTER_IMAGE_ROOT + _path
 
     @property
     def image_url(self):
@@ -99,8 +101,7 @@ class Character(models.Model):
         if self.is_integrity == 1:
             return self.local_image_url()
         server_host = "http://asset-c%d.dzj3000.com" % int(math.ceil(random.random()*1))
-        return server_host + '/web/character_images/' +self.resource_key()
-        # return u'/character_images/'+self.page_id+u'/'+self.image.replace(u'.jpg', u'.png')
+        return server_host + '/web/character_images/' +self.resource_key().replace(u'.jpg', u'.png')
 
     def local_image_url(self):
         statbuf = os.stat(self.get_image_path())
@@ -127,11 +128,12 @@ class Character(models.Model):
         io.imsave(self.get_image_path(), char_image)
 
     def upload_png_to_qiniu(self):
-        png_filename = self.get_image_path().replace('.jpg', '.png')
+        png_filename = self.png_path()
         image_file = Image.open(self.get_image_path())
-        #image_file = image_file.convert('1')
         image_file.save(png_filename)
-        return upload_file(png_filename, self.resource_key())
+        qiniu_key = 'web/character_images/' + self.page_id+u'/'+self.image.replace(u'.jpg', u'.png')
+        # return upload_file(png_filename, qiniu_key)
+        return 'qiniu disabled'
 
     def backup_orig_character(self):
         new_file = self.get_cut_image_path()

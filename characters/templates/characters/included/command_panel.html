@@ -40,7 +40,7 @@
                 <template v-for="item in cut_items">
                         <div class="cut-image-info {{gen_cls(item)}}" v-on:click="item_choice(item)">
                             <img v-bind:src='item.image_url' alt='尺寸过小，无法裁剪'/>
-                             <span class="cut-badge">{{item.degree}}</span>
+                             <span class="cut-badge">{{item.degree}}px</span>
                         </div>
 
                 </template>
@@ -49,7 +49,7 @@
                 <template v-for="item in more_items">
                         <div class="more-image-info gold-border {{gen_n_cls(item)}}" v-on:click="item_final(item)">
                             <img v-bind:src='item.image_url' alt="尺寸过小，无法裁剪"/>
-                            <span class="cut-badge">{{item.degree}}</span>
+                            <span class="cut-badge">{{item.degree}}px</span>
                         </div>
                 </template>
               </div>

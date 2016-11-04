@@ -113,7 +113,8 @@ class CharacterViewSet(viewsets.ModelViewSet):
             character.save()
             character.danger_rebuild_image()
             ret = character.upload_png_to_qiniu()
-        cache.set('ch_url' + character.id, character.local_image_url(), 3600*24)
+        # TODO: when we re-use qiniu, uncommet it for waiting cdn cache expired.
+        #cache.set('ch_url' + character.id, character.local_image_url(), 3600)
 
         key_prefix = pk.split('L')[0]
         num = int(pk.split('L')[1])
