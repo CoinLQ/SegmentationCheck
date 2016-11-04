@@ -85,10 +85,11 @@ class CharacterViewSet(viewsets.ModelViewSet):
 
     def base64(self, char_image, fmt='PNG'):
         try:
+            _buffer = six.BytesIO()
+            io.imsave(_buffer, char_image)
+            image = Image.open(_buffer)
+            #image = image.convert('1')
             buffer = six.BytesIO()
-            io.imsave(buffer, char_image)
-            image = Image.open(buffer)
-            image = image.convert('1')
             image.save(buffer, 'png')
             return base64.b64encode(buffer.getvalue())
         except IndexError, e:
