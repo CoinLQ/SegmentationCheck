@@ -939,7 +939,7 @@ div.ctx-menu-container {
 
 .more-image-info {
   float: left;
-  margin: 20px -2.5% 0 9%;
+  margin: 20px -2.5% 0 4%;
   position: relative;
   width: 90px;
   height: 120px;
@@ -1004,7 +1004,7 @@ div.ctx-menu-container {
     border-radius: 10px;
     position: absolute;
     bottom: 5px;
-    left: 29px;
+    left: 23px;
 }
 .commands {
     background: aliceblue;

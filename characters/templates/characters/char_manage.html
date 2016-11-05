@@ -91,6 +91,14 @@
                         </ul>
                     </label>
                 </div>
+                <div id="order_scope" class="dropdown" style="display: inline-block;float:right;margin: 0px 10px;">
+                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span>升序&nbsp;</span>
+                        <span class="caret"></span></button>
+                    <ul class="dropdown-menu" style="margin-top:8px;">
+                        <li><a data-value="accuracy" href="#">升序</a></li>
+                        <li><a data-value="-accuracy" href="#">降序</a></li>
+                    </ul>
+                </div>
                 <div id="find_scope" class="dropdown" style="display: inline-block;float:right;margin: 0px 10px;">
                     <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span>显示全部&nbsp;</span>
                         <span class="caret"></span></button>
@@ -380,11 +388,19 @@ var cut_detail = new Vue({
     el: '#cutDetailModal',
     data: {
         current_item: {},
-        direct: '',
         cut_items: [],
         degree: 0,
         more_items:[],
         final_item: {},
+        great_on_ground: {},
+    },
+    computed: {
+        user_degree: function() {
+        if (char_list.item_direct.indexOf('t') != -1)
+            return this.current_item.degree * -1
+        else
+            return this.current_item.degree
+      },
     },
     methods: {
       item_choice: function(item) {
@@ -393,17 +409,24 @@ var cut_detail = new Vue({
             this.final_item = this.current_item = item
             return;
         }
+        var idx = this.cut_items.indexOf(item);
+        this.great_on_ground = {marginLeft: -20 +110*idx + 'px'}
         cut_detail.more_items =[]
         this.final_item = this.current_item = item
         this.more()
       },
       more: function() {
-        if (!$("input.cut-option").prop('checked')) return ;
+        if (!$("input.cut-option").prop('checked')) {
+            cut_detail.more_items =[]
+            return ;
+        }
         $.get('/api/character/' + char_list.item_id + '/direct/' + char_list.item_direct + '/cut/' + this.current_item.degree, function(res) {
             if (res.direct !== char_list.item_direct) alert(res.direct)
             cut_detail.more_items = res.cut_list
-            console.log(res)
         }, 'json')
+      },
+      toggle_detail: function(){
+        cut_detail.more()
       },
       item_final: function(item) {
         this.final_item = item

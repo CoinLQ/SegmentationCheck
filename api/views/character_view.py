@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from segmentation.models import Character
 from characters.models import CharCutRecord
 from api.serializers import CharacterSerializer
+from rest_framework.filters import DjangoFilterBackend, OrderingFilter
 from django.core.cache import cache
 from skimage import io
 import base64
@@ -19,7 +20,6 @@ class CharacterFilter(filters.FilterSet):
             'is_correct': ['exact', 'lt', 'gt'],
         }
 
-
 stage_map = {'t-up': [ -3, -8, -13, -18, -23 ][::-1],
              't-down': [ 3, 8, 13, 18, 23 ],
              'b-up': [ -3, -8, -13, -18, -23 ][::-1],
@@ -27,10 +27,12 @@ stage_map = {'t-up': [ -3, -8, -13, -18, -23 ][::-1],
 
 class CharacterViewSet(viewsets.ModelViewSet):
     serializer_class = CharacterSerializer
+    filter_backends = (filters.DjangoFilterBackend, filters.OrderingFilter)
     filter_class = CharacterFilter
     queryset = Character.objects.order_by('accuracy')
 
-
+    def get_queryset(self):
+        return Character.objects.all()
 
     def cut_list(self, request, pk=None, direct=None):
         character = Character.objects.get(pk=pk)

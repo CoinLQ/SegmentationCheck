@@ -22,7 +22,7 @@
             </div>
             <div class="col-md-4 col-md-offset-2">
                 <div class="switch-box is-primary">
-                  <input id="primary" class="switch-box-input cut-option" type="checkbox" />
+                  <input id="primary" class="switch-box-input cut-option" type="checkbox" v-on:click="toggle_detail()" />
                   <label for="primary" class="switch-box-slider"></label>
                   <label for="primary" class="switch-box-label">细节调整</label>
                 </div>
@@ -45,7 +45,7 @@
 
                 </template>
               </div>
-              <div class='col-md-offset-2 col-md-8'>
+              <div class='col-md-12' v-bind:style="great_on_ground">
                 <template v-for="item in more_items">
                         <div class="more-image-info gold-border {{gen_n_cls(item)}}" v-on:click="item_final(item)">
                             <img v-bind:src='item.image_url' alt="尺寸过小，无法裁剪"/>

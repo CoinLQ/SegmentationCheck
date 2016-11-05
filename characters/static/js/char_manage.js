@@ -3,6 +3,7 @@ var charListContainer = {
     page_size: 50,
     page_number: 1,
     filter: '-10', //show all
+    order: 'accuracy',
     accuracy_base: NaN,
     accuracy_scope: 10,
     l_value: 0,
@@ -104,6 +105,14 @@ var charListContainer = {
             charListContainer.switchAndRender();
         })
 
+        $("#order_scope .dropdown-menu a").click(function() {
+            var li = $(this);
+            li.parent().parent().parent().find("button span:first-of-type").text(li.text());
+            charListContainer.order = li.data('value');
+            charListContainer.switchAndRender();
+        })
+
+
         $("#accuracy_scope .dropdown-menu a").click(function() {
             var li = $(this);
             li.parent().parent().parent().find("button span:first-of-type").text(li.text());
@@ -160,25 +169,19 @@ var charListContainer = {
             var tmp = charlist[i];
 
             if (!($(tmp).hasClass('error-char') || $(tmp).hasClass('correct-char'))) {
-                if (is_correct == -1) {
-                    $(tmp).addClass('error-char');
-                } else if (is_correct == 1) {
-                    $(tmp).addClass('correct-char');
-                }
                 arr.push(tmp.id);
             }
         }
-        if (is_correct == 0) {
-            arr = charlist.map(function() {
-                return this.id }).get();
+        if (is_correct === 0) {
+            arr = charlist.map(function() { return this.id; }).get();
         } else {
-            $(".char-image").removeClass("twinkling")
+            $(".char-image").removeClass("twinkling");
         }
         var data = {};
         var updateNum = arr.length;
         var e_num = $("#charListArea .error-char").length;
         var c_num = $("#charListArea .correct-char").length;
-        data['char'] = charListContainer.char;
+        data.char = charListContainer.char;
         if (is_correct == 1) {
             data['c_charArr'] = arr;
             data['c_updateNum'] = arr.length;
@@ -197,7 +200,7 @@ var charListContainer = {
             // $('.correct-char').map(function() {return $(this).removeClass('correct-char')});
             // $('.error-char').map(function() {return $(this).removeClass('error-char')});
             char_list.batchMark(0);
-            play_batch_mark();
+            play_clean();
         }
         $.post('/characters/set_correct', data, function(res) {
             if (res['clear'] == 'ok') {
@@ -326,7 +329,7 @@ var charListContainer = {
         if (this.char == '') {
             return;
         }
-        var query = "/api/character?page_size=" + this.page_size + "&char=" + this.char + "&page=" + this.page_number;
+        var query = "/api/character?page_size=" + this.page_size + "&char=" + this.char + "&page=" + this.page_number + "&ordering=" + this.order;
         var accuracy_cap, accuracy_floor;
         if (this.accuracy_base) {
             accuracy_cap = parseInt(this.accuracy_base * 1000 + this.accuracy_scope);
