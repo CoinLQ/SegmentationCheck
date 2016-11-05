@@ -99,7 +99,7 @@ def set_correct(request):
         record.save()
         data = {'status': 'ok'}
     elif (('e_charArr[]' in request.POST) or ('c_charArr[]' in request.POST)): # uncheck -> check
-        check_char_number = request.session.get('check_char_number',0)
+        check_char_number = request.session.get('check_char_number', 0)
         request.session['check_char_number'] = check_char_number+1
         charArr = request.POST.getlist('e_charArr[]')
         char = request.POST['char']

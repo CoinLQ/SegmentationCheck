@@ -70,6 +70,7 @@ class Character(models.Model):
     class Meta:
         index_together = [
             ("char", "is_correct"),
+            ("char", "accuracy"),
         ]
 
     def __unicode__(self):
