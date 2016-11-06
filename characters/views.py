@@ -84,17 +84,9 @@ def set_correct(request):
         is_correct = int(request.POST['is_correct'])
         char = request.POST['char']
         char.encode('utf-8')
-        if Character.objects.filter(id=char_id).filter(is_correct=0).exists():  # uncheck -> check
-            if 1 == is_correct:
-                CharacterStatistics.objects.filter(char=char).\
-                    update(uncheck_cnt=F('uncheck_cnt')-1, correct_cnt=F('correct_cnt')+1)
-            else:
-                CharacterStatistics.objects.filter(char=char).\
-                    update(uncheck_cnt=F('uncheck_cnt')-1, err_cnt=F('err_cnt')+1)
-        else:  # correct <-> err  in check
-            CharacterStatistics.objects.filter(char=char).\
-                update(err_cnt=F('err_cnt')-is_correct, correct_cnt=F('correct_cnt')+is_correct)
-        Character.objects.filter(id=char_id).update(is_correct=is_correct)
+        query_set = Character.objects.filter(id=char_id)
+        query_set.update(is_correct=is_correct)
+        Character.update_statistics(char)
         record = CharMarkRecord.create(request.user, char_id, is_correct, timezone.now())
         record.save()
         data = {'status': 'ok'}
@@ -106,22 +98,22 @@ def set_correct(request):
         time = timezone.now()
         records = []
         if charArr:
-            updateNum = Character.objects.filter(id__in =charArr).update(is_correct=-1)
-            CharacterStatistics.objects.filter(char=char). \
-                    update(uncheck_cnt=F('uncheck_cnt')-updateNum, err_cnt=F('err_cnt')+updateNum)
+            query_set = Character.objects.filter(id__in =charArr)
+            query_set.update(is_correct=-1)
+            Character.update_statistics(char)
             for char_id in charArr:
                 record = CharMarkRecord.create(request.user, char_id, -1, time)
                 records.append(record)
-
+            CharMarkRecord.objects.bulk_create(records)
         charArr = request.POST.getlist('c_charArr[]')
         if charArr:
-            updateNum = Character.objects.filter(id__in =charArr).update(is_correct=1)
-            CharacterStatistics.objects.filter(char=char).\
-                    update(uncheck_cnt=F('uncheck_cnt')-updateNum, correct_cnt=F('correct_cnt')+updateNum)
+            query_set = Character.objects.filter(id__in =charArr)
+            query_set.update(is_correct=1)
+            Character.update_statistics(char)
             for char_id in charArr:
                 record = CharMarkRecord.create(request.user, char_id, 1, time)
                 records.append(record)
-        CharMarkRecord.objects.bulk_create(records)
+            CharMarkRecord.objects.bulk_create(records)
 
         data = {'status': 'ok'}
     elif ('cl_charArr[]' in request.POST):
@@ -130,16 +122,15 @@ def set_correct(request):
         unset_num = e_num + c_num;
         char = request.POST['char']
         charArr = request.POST.getlist('cl_charArr[]')
-        updateNum = Character.objects.filter(id__in =charArr).update(is_correct=0)
-        CharacterStatistics.objects.filter(char=char).\
-                    update(uncheck_cnt=F('uncheck_cnt')+unset_num, correct_cnt=F('correct_cnt')-c_num,
-                        err_cnt=F('err_cnt')-e_num)
+        Character.objects.filter(id__in =charArr).update(is_correct=0)
+        Character.update_statistics(char)
         time = timezone.now()
         records = []
         for char_id in charArr:
             record = CharMarkRecord.create(request.user, char_id, 0, time)
             records.append(record)
-        CharMarkRecord.objects.bulk_create(records)
+        if charArr:
+            CharMarkRecord.objects.bulk_create(records)
         data = {'status': 'ok', 'clear': 'ok'}
     else:
         data = {'status': 'error'}
@@ -211,23 +202,17 @@ def marked_by_accuracy(request):
     else:
         if (r_value > 500):
             updateNum = Character.objects.filter(char=char, is_correct=0, accuracy__gte=l_value, accuracy__lte=r_value).update(is_correct=1)
-            CharacterStatistics.objects.filter(char=char).\
-                    update(uncheck_cnt=F('uncheck_cnt')-updateNum, correct_cnt=F('correct_cnt')+updateNum)
         else:
             updateNum = Character.objects.filter(char=char, is_correct=0, accuracy__gte=l_value, accuracy__lte=r_value).update(is_correct=-1)
-            CharacterStatistics.objects.filter(char=char).\
-                    update(uncheck_cnt=F('uncheck_cnt')-updateNum, correct_cnt=F('err_cnt')+updateNum)
+    Character.update_statistics(char)
     return JsonResponse({'status': 'ok'})
 
 def _mark_based_scope(l_value, char):
     if l_value > 500:
         updateNum = Character.objects.filter(char=char, is_correct=0, accuracy=l_value).update(is_correct=1)
-        CharacterStatistics.objects.filter(char=char).\
-                    update(uncheck_cnt=F('uncheck_cnt')-updateNum, correct_cnt=F('correct_cnt')+updateNum)
     else:
         updateNum = Character.objects.filter(char=char, is_correct=0, accuracy=l_value).update(is_correct=-1)
-        CharacterStatistics.objects.filter(char=char).\
-                    update(uncheck_cnt=F('uncheck_cnt')-updateNum, correct_cnt=F('err_cnt')+updateNum)
+    Character.update_statistics(char)
 
 def last_task_result(request):
     char = request.GET.get('char', None)

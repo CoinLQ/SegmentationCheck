@@ -4,6 +4,7 @@ from managerawdata.models import OPage
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
+from django.db.models import SmallIntegerField,Sum, Case, When, Value, Count
 from django.core.cache import cache
 import math
 import random
@@ -140,6 +141,24 @@ class Character(models.Model):
         new_file = self.get_cut_image_path()
         shutil.copy(self.get_image_path(), new_file)
         return new_file
+
+    @classmethod
+    def update_statistics(cls, char):
+        result = Character.objects.filter(char=char).aggregate(
+            correct_cnt=Sum(Case(When(is_correct=1, then=Value(1)),
+            default=Value(0),
+            output_field=SmallIntegerField())),
+            err_cnt=Sum(Case(When(is_correct=-1, then=Value(1)),
+            default=Value(0),
+            output_field=SmallIntegerField())),
+            uncheck_cnt=Sum(Case(When(is_correct=0, then=Value(1)),
+            default=Value(0),
+            output_field=SmallIntegerField())),
+            total_cnt=Count('is_correct') )
+        # add character statistics, if it's missing.
+        statistics, created = CharacterStatistics.objects.get_or_create(char=char)
+        CharacterStatistics.objects.filter(char=char).update(uncheck_cnt=result['uncheck_cnt'], correct_cnt=result['correct_cnt'],
+                        err_cnt=result['err_cnt'], total_cnt=result['total_cnt'])
 
     def image_tag(self):
         return u'<img src="%s" border="1" style="zoom: 20%%;" />' % (self.image_url)
