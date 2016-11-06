@@ -160,6 +160,35 @@ class Character(models.Model):
         CharacterStatistics.objects.filter(char=char).update(uncheck_cnt=result['uncheck_cnt'], correct_cnt=result['correct_cnt'],
                         err_cnt=result['err_cnt'], total_cnt=result['total_cnt'])
 
+    def up_neighbor_char(self):
+        key_prefix = self.pk.split('L')[0]
+        num = int(self.pk.split('L')[1])
+        neighbor_key = "%sL%s" % (key_prefix, num - 1)
+        return Character.objects.filter(pk=neighbor_key).first()
+
+    def down_neighbor_char(self):
+        key_prefix = self.pk.split('L')[0]
+        num = int(self.pk.split('L')[1])
+        neighbor_key = "%sL%s" % (key_prefix, num + 1)
+        return Character.objects.filter(pk=neighbor_key).first()
+
+    def reformat_self(self):
+        up_char = self.up_neighbor_char()
+        if up_char:
+            up_char.bottom = self.top
+            up_char.danger_rebuild_image()
+            up_char.is_integrity = 1
+            up_char.is_correct = 0
+            up_char.save()
+        down_char = self.down_neighbor_char()
+        if down_char:
+            down_char.top = self.bottom
+            down_char.danger_rebuild_image()
+            down_char.is_integrity = 1
+            down_char.is_correct = 0
+            down_char.save()
+
+
     def image_tag(self):
         return u'<img src="%s" border="1" style="zoom: 20%%;" />' % (self.image_url)
     image_tag.short_description = u'Image'
