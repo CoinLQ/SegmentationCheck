@@ -124,15 +124,13 @@ class CharacterViewSet(viewsets.ModelViewSet):
         num = int(pk.split('L')[1])
         try:
             if 't' in direct:
-                neighbor_key = '{0}L{1:02}'.format(key_prefix, num - 1)
-                neighbor_ch = Character.objects.get(pk=neighbor_key)
+                neighbor_ch = character.up_neighbor_char()
                 neighbor_ch.bottom = neighbor_ch.bottom + int(image_no)
                 new_file = neighbor_ch.backup_orig_character()
                 record = CharCutRecord.create(request.user, neighbor_ch, new_file, direct.replace('t', 'b'), int(image_no))
                 record.save()
             else:
-                neighbor_key = '{0}L{1:02}'.format(key_prefix, num + 1)
-                neighbor_ch = Character.objects.get(pk=neighbor_key)
+                neighbor_ch = character.down_neighbor_char()
                 neighbor_ch.top = neighbor_ch.top + int(image_no)
                 new_file = neighbor_ch.backup_orig_character()
                 record = CharCutRecord.create(request.user, neighbor_ch, new_file, direct.replace('b', 't'), int(image_no))
