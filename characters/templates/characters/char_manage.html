@@ -375,7 +375,20 @@ $(function() {
         cut_detail.more_items = []
         $.get('/api/character/' + char_list.item_id + '/direct/' + char_list.item_direct + '/cut', function(res) {
             if (res.direct !== char_list.item_direct) alert(res.direct)
-            cut_detail.cut_items = res.cut_list
+            var _items = _.map(res.cut_list, function(item) {
+                if (char_list.item_direct.indexOf('t')!= -1) {
+                    item.display_degree = item.degree * -1
+                }
+                else{
+                    item.display_degree = item.degree
+                }
+                return item;
+            });
+            if (char_list.item_direct.indexOf('b')!= -1){
+               _items = _.reverse(_items)
+            }
+            //_.reverse()
+            cut_detail.cut_items = _items
         }, 'json')
     });
 
@@ -421,7 +434,19 @@ var cut_detail = new Vue({
         }
         $.get('/api/character/' + char_list.item_id + '/direct/' + char_list.item_direct + '/cut/' + this.current_item.degree, function(res) {
             if (res.direct !== char_list.item_direct) alert(res.direct)
-            cut_detail.more_items = res.cut_list
+            var _items = _.map(res.cut_list, function(item) {
+                if (char_list.item_direct.indexOf('t')!= -1) {
+                    item.display_degree = item.degree * -1
+                }
+                else{
+                    item.display_degree = item.degree
+                }
+                return item;
+            });
+            if (char_list.item_direct.indexOf('b')!= -1){
+               _items = _.reverse(_items)
+            }
+            cut_detail.more_items = _items
         }, 'json')
       },
       toggle_detail: function(){

@@ -264,11 +264,10 @@ var charListContainer = {
     },
     renderCharAndBind: function() {
         this.renderCharArea();
-        this.binding_char_check(this.char);
     },
     switchAndRender: function() {
         var that = this;
-        if (this.char == '') {
+        if (this.char === '') {
             return;
         }
         var query = "/api/character?page_size=" + this.page_size + "&char=" + this.char + "&page=1"; //+this.page_number;
