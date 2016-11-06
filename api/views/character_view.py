@@ -125,12 +125,18 @@ class CharacterViewSet(viewsets.ModelViewSet):
                 neighbor_key = "%sL%s" % (key_prefix, num - 1)
                 neighbor_ch = Character.objects.get(pk=neighbor_key)
                 neighbor_ch.bottom = neighbor_ch.bottom + int(image_no)
+                new_file = neighbor_ch.backup_orig_character()
+                record = CharCutRecord.create(request.user, neighbor_ch, new_file, direct.replace('t', 'b'), int(image_no))
+                record.save()
             else:
                 neighbor_key = "%sL%s" % (key_prefix, num + 1)
                 neighbor_ch = Character.objects.get(pk=neighbor_key)
                 neighbor_ch.top = neighbor_ch.top + int(image_no)
+                new_file = neighbor_ch.backup_orig_character()
+                record = CharCutRecord.create(request.user, neighbor_ch, new_file, direct.replace('b', 't'), int(image_no))
+                record.save()
             neighbor_ch.is_correct = 0
-            neighbor_ch.is_integrity = 0
+            neighbor_ch.is_integrity = 1
             neighbor_ch.save()
             neighbor_ch.danger_rebuild_image()
             ret = character.upload_png_to_qiniu()

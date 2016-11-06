@@ -291,11 +291,10 @@ var char_list = new Vue({
         mark_it: function(item, is_correct) {
 
             var data = {
-                'id': item.id
+                id: item.id,
+                is_correct: is_correct,
+                char: item.char,
             };
-
-            data['is_correct'] = is_correct;
-            data['char'] = item.char;
             if (item.is_correct != is_correct) {
                 $.post('/characters/set_correct', data);
                 if (is_correct == 1) {
@@ -317,8 +316,8 @@ var char_list = new Vue({
         },
         batchMark: function(is_correct) {
             this.items = _.map(this.items, function(item) {
-                // is_correct == 0 意义在于批量清除
-                if (item.is_correct == 0 || is_correct == 0) {
+                // is_correct === 0 意义在于批量清除
+                if (item.is_correct === 0 || is_correct === 0) {
                     item.is_correct = is_correct
                 }
                 return item;
@@ -332,7 +331,7 @@ var char_list = new Vue({
                 display: 'block'
             }
             this.selection = this.items.indexOf(item)
-            setTimeout(function(){ document.addEventListener('click', char_list._onContextMenuClick) }, 200)
+            setTimeout(function(){ document.addEventListener('click', char_list._onContextMenuClick)}, 200)
         },
         _onContextMenuClick: function(e) {
             e.stopPropagation()
