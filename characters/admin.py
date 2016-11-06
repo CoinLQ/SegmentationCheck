@@ -6,6 +6,10 @@ from segmentation.models import Character
 class CharMarkRecordAdmin(admin.ModelAdmin):
     list_display = ('time', 'user', 'character_id', 'is_correct')
 
+    def __init__(self, *args, **kwargs):
+        super(CharMarkRecordAdmin, self).__init__(*args, **kwargs)
+        self.list_display_links = (None, )
+
 class ClassificationTaskAdmin(admin.ModelAdmin):
     list_display = ('id', 'char', 'train_count', 'predict_count', 'started', 'completed',
                     'spent', 'fetch_spent', 'training_spent', 'predict_spent', 'updated')
@@ -88,6 +92,10 @@ class ClassificationCompareResultAdmin(admin.ModelAdmin):
 
 class CharCutRecordAdmin(admin.ModelAdmin):
     list_display = ('time', 'user', 'character_id', 'img_filename', 'direct', 'degree')
+
+    def __init__(self, *args, **kwargs):
+        super(CharCutRecordAdmin, self).__init__(*args, **kwargs)
+        self.list_display_links = (None, )
 
 admin.site.register(CharMarkRecord, CharMarkRecordAdmin)
 admin.site.register(ClassificationTask, ClassificationTaskAdmin)
