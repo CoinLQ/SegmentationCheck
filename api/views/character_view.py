@@ -4,6 +4,7 @@ from segmentation.models import Character
 from characters.models import CharCutRecord
 from api.serializers import CharacterSerializer
 from rest_framework.filters import DjangoFilterBackend, OrderingFilter
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.cache import cache
 from skimage import io
 import base64
@@ -118,18 +119,19 @@ class CharacterViewSet(viewsets.ModelViewSet):
         # TODO: when we re-use qiniu, uncommet it for waiting cdn cache expired.
         #cache.set('ch_url' + character.id, character.local_image_url(), 3600)
 
+        # cut neighbor character.
         key_prefix = pk.split('L')[0]
         num = int(pk.split('L')[1])
         try:
             if 't' in direct:
-                neighbor_key = "%sL%s" % (key_prefix, num - 1)
+                neighbor_key = '{0}L{1:02}'.format(key_prefix, num - 1)
                 neighbor_ch = Character.objects.get(pk=neighbor_key)
                 neighbor_ch.bottom = neighbor_ch.bottom + int(image_no)
                 new_file = neighbor_ch.backup_orig_character()
                 record = CharCutRecord.create(request.user, neighbor_ch, new_file, direct.replace('t', 'b'), int(image_no))
                 record.save()
             else:
-                neighbor_key = "%sL%s" % (key_prefix, num + 1)
+                neighbor_key = '{0}L{1:02}'.format(key_prefix, num + 1)
                 neighbor_ch = Character.objects.get(pk=neighbor_key)
                 neighbor_ch.top = neighbor_ch.top + int(image_no)
                 new_file = neighbor_ch.backup_orig_character()
@@ -140,7 +142,10 @@ class CharacterViewSet(viewsets.ModelViewSet):
             neighbor_ch.save()
             neighbor_ch.danger_rebuild_image()
             ret = character.upload_png_to_qiniu()
-        except:
-            print 'not found neighbor char.'
-
+        except ObjectDoesNotExist:
+            ret = 'not found neighbor char. '
+        except Exception, e:
+            logging.error('exception: %s', e)
+            ret = e
+            
         return Response({'status': ret, 'image_url': character.local_image_url()})
