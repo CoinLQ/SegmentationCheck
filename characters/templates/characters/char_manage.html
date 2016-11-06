@@ -432,16 +432,9 @@ var cut_detail = new Vue({
       },
       gen_cls(item) {
         if (this.final_item === item) {
-            return 'cyan-border'
-        } else if (this.current_item === item) {
             return 'gold-border'
-        } else {
+        } else if (this.current_item === item) {
             return ''
-        }
-      },
-      gen_n_cls(item) {
-        if (this.final_item === item) {
-            return 'cyan-border'
         } else {
             return ''
         }

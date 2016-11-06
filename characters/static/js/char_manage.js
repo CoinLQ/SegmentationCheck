@@ -262,26 +262,6 @@ var charListContainer = {
             $(area).append(txt);
         });
     },
-    binding_char_check: function(char) {
-        // var selector = '#charBrowseArea .char-image'
-        // var _char = char;
-        // $(selector).click(function(){
-        //       var data = {'id': this.id};
-        //       play_bingo();
-        //       data['char'] = _char;
-        //       if ($(this).hasClass('error-char')) {
-        //         $(this).removeClass('error-char');
-        //         $(this).addClass('correct-char');
-        //         data['is_correct'] = 1;
-        //       } else {
-        //         $(this).removeClass('correct-char');
-        //         $(this).addClass('error-char');
-        //         data['is_correct'] = -1;
-        //       }
-        //     $(this).removeClass("twinkling");
-        //     $.post('/characters/set_correct', data);
-        // });
-    },
     renderCharAndBind: function() {
         this.renderCharArea();
         this.binding_char_check(this.char);

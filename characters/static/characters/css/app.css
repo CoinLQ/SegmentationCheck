@@ -932,7 +932,6 @@ div.ctx-menu-container {
   border: solid blue 4px;
   border-radius: 20px;
   display:flex;
-  align-items:center;
   justify-content:center;
   background-color: gainsboro;
 }
@@ -948,7 +947,6 @@ div.ctx-menu-container {
   border: solid blue 4px;
   border-radius: 20px;
   display:flex;
-  align-items:center;
   justify-content:center;
   background-color: gainsboro;
 }
@@ -971,12 +969,13 @@ div.ctx-menu-container {
 .cyan-border {
   border: solid cyan 4px;;
 }
-.cut-image-info img {
+.cut-image-info img, .more-image-info img {
   border-radius: 8px;
   display: inherit;
-  margin: 8px auto;
+  margin: 2px auto;
   max-width: 80px;
-  max-height: 80px;
+  max-height: 85px;
+  width: 90%;
 }
 .cut-intro {
   float:right;
@@ -1003,8 +1002,8 @@ div.ctx-menu-container {
     background-color: #777;
     border-radius: 10px;
     position: absolute;
-    bottom: 5px;
-    left: 23px;
+    display: flex;
+    bottom: 0px;
 }
 .commands {
     background: aliceblue;
@@ -1014,4 +1013,11 @@ div.ctx-menu-container {
     margin: 20px;
     padding: 5px 10px 5px 0px;
     border-radius: 10px;
+}
+
+.img_rect {
+    display: flex;
+    height: 100px;
+    width: 80px;
+    align-items: center;
 }

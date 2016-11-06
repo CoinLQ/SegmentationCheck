@@ -1,65 +1,66 @@
  {% verbatim %}
 <div class="bd-cutDetail">
-  <div class="modal fade" id="cutDetailModal" tabindex="-1" role="dialog" aria-labelledby="cutDetailModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <div class="row">
-            <div class="col-md-6">
-            <div class="h4 modal-title" style="display: inline;margin-left: 10px;" id="cutDetailModalLabel">
-            </div>
-            <strong class='cut_image_char' style='font-size:24px; margin:0px;padding:8px;color:#483D8B;'></strong>
-            <div class='cut-intro'>
-              <span>待选中:</span>
-              <div class="intro-image-info">
-              </div>
-              <div class="intro-image-info gold-border">
-              </div>
-              <span>已确定:</span>
-              <div class="intro-image-info cyan-border">
-              </div>
-            </div>
-            </div>
-            <div class="col-md-4 col-md-offset-2">
-                <div class="switch-box is-primary">
-                  <input id="primary" class="switch-box-input cut-option" type="checkbox" v-on:click="toggle_detail()" />
-                  <label for="primary" class="switch-box-slider"></label>
-                  <label for="primary" class="switch-box-label">细节调整</label>
+    <div class="modal fade" id="cutDetailModal" tabindex="-1" role="dialog" aria-labelledby="cutDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="h4 modal-title" style="display: inline;margin-left: 10px;" id="cutDetailModalLabel">
+                            </div>
+                            <strong class='cut_image_char' style='font-size:24px; margin:0px;padding:8px;color:#483D8B;'></strong>
+                            <div class='cut-intro'>
+                                <span>待选中:</span>
+                                <div class="intro-image-info">
+                                </div>
+                                <span>已确定:</span>
+                                <div class="intro-image-info gold-border">
+                                </div>
+                                <!--div class="intro-image-info cyan-border">
+                                </div!-->
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-md-offset-2">
+                            <div class="switch-box is-primary">
+                                <input id="primary" class="switch-box-input cut-option" type="checkbox" v-on:click="toggle_detail()" />
+                                <label for="primary" class="switch-box-slider"></label>
+                                <label for="primary" class="switch-box-label">细节调整</label>
+                            </div>
+                            <a class="btn btn-primary btn-lg" v-on:click="confirm()">确定</a>
+                            <a type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
-                <a class="btn btn-primary btn-lg" v-on:click="confirm()">确定</a>
-                <a type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </a>
-            </div>
-          </div>
-        </div>
-        <div class="modal-body" style="min-height: 300px">
-          <div class="cut-container">
-            <div class='row'>
-              <div class='col-md-offset-2 col-md-8'>
-                <template v-for="item in cut_items">
-                        <div class="cut-image-info {{gen_cls(item)}}" v-on:click="item_choice(item)">
-                            <img v-bind:src='item.image_url' alt='尺寸过小，无法裁剪'/>
-                             <span class="cut-badge">{{item.degree}}px</span>
+                <div class="modal-body" style="min-height: 300px">
+                    <div class="cut-container">
+                        <div class='row'>
+                            <div class='col-md-offset-2 col-md-8'>
+                                <template v-for="item in cut_items">
+                                    <div class="cut-image-info {{gen_cls(item)}}" v-on:click="item_choice(item)">
+                                        <div class='img_rect'>
+                                            <img v-bind:src='item.image_url' alt='尺寸过小，无法裁剪' />
+                                        </div>
+                                        <span class="cut-badge">{{item.degree}}px</span>
+                                    </div>
+                                </template>
+                            </div>
+                            <div class='col-md-12' v-bind:style="great_on_ground">
+                                <template v-for="item in more_items">
+                                    <div class="more-image-info {{gen_cls(item)}}" v-on:click="item_final(item)">
+                                        <div class='img_rect'>
+                                            <img v-bind:src='item.image_url' alt="尺寸过小，无法裁剪" />
+                                        </div>
+                                        <span class="cut-badge">{{item.degree}}px</span>
+                                    </div>
+                                </template>
+                            </div>
                         </div>
-
-                </template>
-              </div>
-              <div class='col-md-12' v-bind:style="great_on_ground">
-                <template v-for="item in more_items">
-                        <div class="more-image-info gold-border {{gen_n_cls(item)}}" v-on:click="item_final(item)">
-                            <img v-bind:src='item.image_url' alt="尺寸过小，无法裁剪"/>
-                            <span class="cut-badge">{{item.degree}}px</span>
-                        </div>
-                </template>
-              </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
-
 {% endverbatim %}
-
