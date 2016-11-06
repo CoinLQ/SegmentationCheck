@@ -164,32 +164,30 @@ class Character(models.Model):
         key_prefix = self.pk.split('L')[0]
         num = int(self.pk.split('L')[1])
         neighbor_key = '{0}L{1:02}'.format(key_prefix, num - 1)
-        return Character.objects.filter(pk=neighbor_key).first()
+        return Character.objects.get(pk=neighbor_key)
 
     def down_neighbor_char(self):
         key_prefix = self.pk.split('L')[0]
         num = int(self.pk.split('L')[1])
         neighbor_key = '{0}L{1:02}'.format(key_prefix, num + 1)
-        return Character.objects.filter(pk=neighbor_key).first()
+        return Character.objects.get(pk=neighbor_key)
 
     def reformat_self(self):
         up_char = self.up_neighbor_char()
-        if up_char:
-            up_char.bottom = self.top
-            up_char.backup_orig_character()
-            up_char.is_integrity = 1
-            up_char.is_correct = 0
-            up_char.save()
-            up_char.danger_rebuild_image()
+        up_char.bottom = self.top
+        up_char.backup_orig_character()
+        up_char.is_integrity = 1
+        up_char.is_correct = 0
+        up_char.save()
+        up_char.danger_rebuild_image()
         down_char = self.down_neighbor_char()
-        if down_char:
-            down_char.top = self.bottom
-            down_char.backup_orig_character()
-            down_char.is_integrity = 1
-            down_char.is_correct = 0
-            down_char.save()
-            down_char.danger_rebuild_image()
-            
+        down_char.top = self.bottom
+        down_char.backup_orig_character()
+        down_char.is_integrity = 1
+        down_char.is_correct = 0
+        down_char.save()
+        down_char.danger_rebuild_image()
+
 
 
     def image_tag(self):

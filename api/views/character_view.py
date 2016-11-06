@@ -1,14 +1,19 @@
+import base64
+import six
+import logging
+
+from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist
+
 from rest_framework import viewsets, filters
+from rest_framework.filters import DjangoFilterBackend, OrderingFilter
 from rest_framework.response import Response
+
 from segmentation.models import Character
 from characters.models import CharCutRecord
 from api.serializers import CharacterSerializer
-from rest_framework.filters import DjangoFilterBackend, OrderingFilter
-from django.core.exceptions import ObjectDoesNotExist
-from django.core.cache import cache
+
 from skimage import io
-import base64
-import six
 from PIL import Image
 
 class CharacterFilter(filters.FilterSet):
@@ -145,5 +150,5 @@ class CharacterViewSet(viewsets.ModelViewSet):
         except Exception, e:
             logging.error('exception: %s', e)
             ret = e
-            
+
         return Response({'status': ret, 'image_url': character.local_image_url()})
