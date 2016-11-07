@@ -1,19 +1,22 @@
-from django.db import models
-from catalogue.models import Volume
-from managerawdata.models import OPage
-from django.contrib.auth.models import User
-from django.utils.translation import ugettext_lazy as _
-from django.conf import settings
-from django.db.models import SmallIntegerField,Sum, Case, When, Value, Count
-from django.core.cache import cache
 import math
-import random
-from skimage import io
 import os
+import random
 import shutil
+import logging
+
+from django.core.cache import cache
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.db import models
+from django.db.models import SmallIntegerField,Sum, Case, When, Value, Count
+from django.utils.translation import ugettext_lazy as _
+
 from PIL import Image
+from skimage import io
 from utils.qiniu_uploader import upload_file
 
+from catalogue.models import Volume
+from managerawdata.models import OPage
 
 # Create your models here.
 class Page(models.Model):
@@ -84,7 +87,7 @@ class Character(models.Model):
             modified_time = statbuf.st_mtime
         except:
             pass
-        return self.page_id+u'/'+self.image + ("?v=%d" % modified_time)
+        return self.page_id + u'/' + self.image + ("?v=%d" % modified_time)
 
     def npy_path(self):
         _path = 'npy/character_images/%s/%s.nln.npy' % (self.page_id, self.id)
@@ -102,8 +105,8 @@ class Character(models.Model):
 
         if self.is_integrity == 1:
             return self.local_image_url()
-        server_host = "http://asset-c%d.dzj3000.com" % int(math.ceil(random.random()*1))
-        return server_host + '/web/character_images/' +self.resource_key().replace(u'.jpg', u'.png')
+        server_host = "http://asset-c%d.dzj3000.com" % int(math.ceil(random.random() * 1))
+        return server_host + '/web/character_images/' + self.resource_key().replace(u'.jpg', u'.png')
 
     def local_image_url(self):
         statbuf = os.stat(self.get_image_path())
@@ -164,12 +167,18 @@ class Character(models.Model):
         key_prefix = self.pk.split('L')[0]
         num = int(self.pk.split('L')[1])
         neighbor_key = '{0}L{1:02}'.format(key_prefix, num - 1)
+        if not Character.objects.filter(pk=neighbor_key).exists():
+            logger = logging.getLogger('char_log')
+            logger.info(neighbor_key)
         return Character.objects.get(pk=neighbor_key)
 
     def down_neighbor_char(self):
         key_prefix = self.pk.split('L')[0]
         num = int(self.pk.split('L')[1])
         neighbor_key = '{0}L{1:02}'.format(key_prefix, num + 1)
+        if not Character.objects.filter(pk=neighbor_key).exists():
+            logger = logging.getLogger('char_log')
+            logger.info(neighbor_key)
         return Character.objects.get(pk=neighbor_key)
 
     def reformat_self(self):
@@ -191,7 +200,7 @@ class Character(models.Model):
 
 
     def image_tag(self):
-        return u'<img src="%s" border="1" style="zoom: 20%%;" />' % (self.image_url)
+        return u'<img src="%s" border="1" style="zoom: 100%%;" />' % (self.image_url)
     image_tag.short_description = u'Image'
     image_tag.allow_tags = True
 

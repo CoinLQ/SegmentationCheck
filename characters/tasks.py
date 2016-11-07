@@ -210,7 +210,7 @@ def prepare_data_with_database2(char_lst):
     test_y = []
     test_char_id_lst = []
     test_accuracy_lst = []
-    logger = logging.getLogger()
+    logger = logging.getLogger(__name__)
 
     for char in char_lst:
         label = char.is_correct
@@ -222,7 +222,6 @@ def prepare_data_with_database2(char_lst):
             #push_to_slack(msg)
             # Get an instance of a logger
             msg = "ID: %s  %s feature_vector fetch failure!" % (char.id, char.char)
-            logger.error(e)
             logger.error(msg)
             feature_vector = None
         if feature_vector is not None:

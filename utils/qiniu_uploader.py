@@ -35,7 +35,7 @@ def init_qiniu():
 	secret_key = QINIU_SECRET_KEY
 
 	#构建鉴权对象
-	q = Auth(access_key, secret_key)	
+	q = Auth(access_key, secret_key)
 
 	return q
 
@@ -45,7 +45,6 @@ def upload_file(file_name, key, prefix=''):
 	token = q.upload_token(QINIU_BUCKET_NAME, resource_key, 3600)
 	ret, info = put_file(token, resource_key, file_name)
 	if not ret:
-		logger = logging.getLogger()
+		logger = logging.getLogger(__name__)
 		logger.error(info)
-		print info
 	return ret

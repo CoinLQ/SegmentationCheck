@@ -214,54 +214,66 @@ LOGGING = {
         'standard': {
             'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
         },
+        'char_log': {
+         'format':'char: %(message)s',
+        },
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
     },
     'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse',
         },
     },
     'handlers': {
         'default': {
-            'level':'ERROR',
+            'level':'DEBUG',
             'class':'logging.handlers.RotatingFileHandler',
-            'filename': 'logs/error.log',
+            'filters': ['require_debug_true'],
+            'filename': 'logs/web_log.log',
             'maxBytes': 1024*1024*50, # 50 MB
             'backupCount': 5,
             'formatter':'standard',
         },
-    },
-    'loggers': {
-        'django': {
+        'production_logfile': {
             'level': 'ERROR',
-            'handlers': ['default'],
-        },
-    }
-}
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'standard': {
-            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
-        },
-    },
-    'handlers': {
-        'default': {
-            'level':'INFO',
+            'filters': ['require_debug_false'],
             'class':'logging.handlers.RotatingFileHandler',
-            'filename': 'logs/error.log',
-            'maxBytes': 1024*1024*50, # 50 MB
+            'filename': 'logs/django_production.log',
+            'maxBytes': 1024*1024*200, # 200 MB
             'backupCount': 5,
             'formatter':'standard',
-        }
+        },
+        'console': {
+            'level': 'INFO',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'char_file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/char_file.log',
+            'formatter':'char_log',
+        },
+    },
+    'root': {
+        'handlers': ['console', 'default', 'production_logfile'],
+        'level': 'DEBUG'
     },
     'loggers': {
-        '': {
-            'handlers': ['default'],
-            'level': 'INFO',
-            'propagate': True
-        }
+        'char_log': {
+          'handlers': ['char_file'],
+          'level': 'INFO',
+          'propagate': False,
+        },
     },
 }
 

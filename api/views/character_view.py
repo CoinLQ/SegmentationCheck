@@ -32,6 +32,8 @@ stage_map = {'t-up': [ -3, -8, -13, -18, -23 ][::-1],
              'b-down': [ 3, 8, 13, 18, 23 ], }
 
 class CharacterViewSet(viewsets.ModelViewSet):
+    logger = logging.getLogger(__name__)
+
     serializer_class = CharacterSerializer
     filter_backends = (filters.DjangoFilterBackend, filters.OrderingFilter)
     filter_class = CharacterFilter
@@ -130,15 +132,15 @@ class CharacterViewSet(viewsets.ModelViewSet):
         try:
             if 't' in direct:
                 neighbor_ch = character.up_neighbor_char()
-                neighbor_ch.bottom = neighbor_ch.bottom + int(image_no)
+                neighbor_ch.bottom = character.top
                 new_file = neighbor_ch.backup_orig_character()
-                record = CharCutRecord.create(request.user, neighbor_ch, new_file, direct.replace('t', 'b'), int(image_no))
+                record = CharCutRecord.create(request.user, neighbor_ch, new_file, direct.replace('t', 'b'), int(neighbor_ch.bottom-character.top))
                 record.save()
             else:
                 neighbor_ch = character.down_neighbor_char()
-                neighbor_ch.top = neighbor_ch.top + int(image_no)
+                neighbor_ch.top = character.bottom
                 new_file = neighbor_ch.backup_orig_character()
-                record = CharCutRecord.create(request.user, neighbor_ch, new_file, direct.replace('b', 't'), int(image_no))
+                record = CharCutRecord.create(request.user, neighbor_ch, new_file, direct.replace('b', 't'), int(neighbor_ch.top-character.bottom))
                 record.save()
             neighbor_ch.is_correct = 0
             neighbor_ch.is_integrity = 1
@@ -148,7 +150,7 @@ class CharacterViewSet(viewsets.ModelViewSet):
         except ObjectDoesNotExist:
             ret = 'not found neighbor char. '
         except Exception, e:
-            logging.error('exception: %s', e)
+            logger.exception('Apply cut An error occurred')
             ret = e
 
         return Response({'status': ret, 'image_url': character.local_image_url()})
