@@ -132,11 +132,11 @@ class CharacterViewSet(viewsets.ModelViewSet):
         try:
             if 't' in direct:
                 neighbor_ch, backup_file = character.reformat_self(direct)
-                record = CharCutRecord.create(request.user, neighbor_ch, backup_file, direct.replace('t', 'b'), int(neighbor_ch.bottom-character.top))
+                record = CharCutRecord.create(request.user, neighbor_ch, backup_file, direct.replace('t', 'b'), int(image_no))
                 record.save()
             else:
                 neighbor_ch, backup_file = character.reformat_self(direct)
-                record = CharCutRecord.create(request.user, neighbor_ch, new_file, direct.replace('b', 't'), int(neighbor_ch.top-character.bottom))
+                record = CharCutRecord.create(request.user, neighbor_ch, new_file, direct.replace('b', 't'), int(image_no))
                 record.save()
             ret = neighbor_ch.upload_png_to_qiniu()
         except ObjectDoesNotExist:
