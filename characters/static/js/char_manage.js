@@ -1,3 +1,16 @@
+jQuery.fn.dataTableExt.oSort['numeric-abs-asc']  = function(a,b) {
+    var x = Math.abs(a);
+    var y = Math.abs(b);
+    return ((x < y) ? -1 : ((x > y) ?  1 : 0));
+};
+
+jQuery.fn.dataTableExt.oSort['numeric-abs-desc'] = function(a,b) {
+    var x = Math.abs(a);
+    var y = Math.abs(b);
+    return ((x < y) ?  1 : ((x > y) ? -1 : 0));
+};
+
+
 var charListContainer = {
     char: '',
     page_size: 50,
@@ -35,7 +48,15 @@ var charListContainer = {
             "bDeferRender": true,
             "bProcessing": true,
             "bDeferRender": true,
-
+            "columns": [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                { "sType": "numeric-abs" },
+            ],
             // Rows and column headers stored in a "data" object:
             "aaData": chars,
             language: {
@@ -164,16 +185,18 @@ var charListContainer = {
     },
     handlerAction: function(is_correct, btn) {
         var arr = [];
-        var charlist = $("#charListArea").children();
+        var clean_arr = []
+        var charlist = $("#charListArea .char-image");
         for (var i = 0; i < charlist.length; i++) {
             var tmp = charlist[i];
-
+            if (tmp.id === "") { continue; }
             if (!($(tmp).hasClass('error-char') || $(tmp).hasClass('correct-char'))) {
                 arr.push(tmp.id);
             }
+            clean_arr.push(tmp.id);
         }
         if (is_correct === 0) {
-            arr = charlist.map(function() { return this.id; }).get();
+            arr = clean_arr;
         } else {
             $(".char-image").removeClass("twinkling");
         }
@@ -328,7 +351,7 @@ var charListContainer = {
 
         $.getJSON(query, function(result) {
             that.data = result.models;
-            new_models = result.models.map(function(item) {
+            new_models = _.map(result.models,function(item) {
                 var class_name;
                 if (item.is_correct == 1) {
                     cls_name = 'o-correct-char'
@@ -341,6 +364,15 @@ var charListContainer = {
                 item.accuracy = item.accuracy * 1.0 / 1000
                 return item;
             });
+            var mean = _.mean(_.map(new_models, function (item) { return item.accuracy;}))
+            if (mean > 0.5) {
+                $('#correct_btn').removeClass('hidden');
+                $('#err_btn').addClass('hidden');
+            }
+            else {
+                $('#err_btn').removeClass('hidden');
+                $('#correct_btn').addClass('hidden');
+            }
             char_list.items = new_models;
             that.pagination = result.pagination;
             that.renderCharAndBind();

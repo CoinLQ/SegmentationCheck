@@ -105,6 +105,7 @@ def set_correct(request):
                 record = CharMarkRecord.create(request.user, char_id, -1, time)
                 records.append(record)
             CharMarkRecord.objects.bulk_create(records)
+
         charArr = request.POST.getlist('c_charArr[]')
         if charArr:
             query_set = Character.objects.filter(id__in =charArr)

@@ -158,7 +158,7 @@ class CharStock(models.Model):
         else:
             res = 0
 
-        return abs(res)
+        return res
 
 
 class CharCutRecord(models.Model):
