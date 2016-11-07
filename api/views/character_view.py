@@ -131,22 +131,14 @@ class CharacterViewSet(viewsets.ModelViewSet):
         num = int(pk.split('L')[1])
         try:
             if 't' in direct:
-                neighbor_ch = character.up_neighbor_char()
-                neighbor_ch.bottom = character.top
-                new_file = neighbor_ch.backup_orig_character()
-                record = CharCutRecord.create(request.user, neighbor_ch, new_file, direct.replace('t', 'b'), int(neighbor_ch.bottom-character.top))
+                neighbor_ch, backup_file = character.reformat_self(direct)
+                record = CharCutRecord.create(request.user, neighbor_ch, backup_file, direct.replace('t', 'b'), int(neighbor_ch.bottom-character.top))
                 record.save()
             else:
-                neighbor_ch = character.down_neighbor_char()
-                neighbor_ch.top = character.bottom
-                new_file = neighbor_ch.backup_orig_character()
+                neighbor_ch, backup_file = character.reformat_self(direct)
                 record = CharCutRecord.create(request.user, neighbor_ch, new_file, direct.replace('b', 't'), int(neighbor_ch.top-character.bottom))
                 record.save()
-            neighbor_ch.is_correct = 0
-            neighbor_ch.is_integrity = 1
-            neighbor_ch.save()
-            neighbor_ch.danger_rebuild_image()
-            ret = character.upload_png_to_qiniu()
+            ret = neighbor_ch.upload_png_to_qiniu()
         except ObjectDoesNotExist:
             ret = 'not found neighbor char. '
         except Exception, e:

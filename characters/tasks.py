@@ -119,7 +119,7 @@ def classify_with_random_samples(char, positive_sample_count, auto_apply=False, 
     for i in range(predict_count):
         new_accuracy = int(predicted[i][1] * 1000)
         origin_accuracy = test_accuracy_lst[i]
-        difference = new_accuracy - origin_accuracy
+        difference = abs(new_accuracy - origin_accuracy)
         results.append( (test_char_id_lst[i], origin_accuracy, new_accuracy, difference) )
     results.sort(key=itemgetter(3), reverse=True)
     # selected_count = max(predict_count/10, 1000)

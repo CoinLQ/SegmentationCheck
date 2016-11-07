@@ -194,7 +194,6 @@ class CharCutRecord(models.Model):
         obj.img_filename = file_path
         obj.direct = direct
         obj.degree = degree
-        print obj
         return obj
 
     def __unicode__(self):

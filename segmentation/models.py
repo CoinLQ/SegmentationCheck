@@ -141,9 +141,9 @@ class Character(models.Model):
         return 'qiniu disabled'
 
     def backup_orig_character(self):
-        new_file = self.get_cut_image_path()
-        shutil.copy(self.get_image_path(), new_file)
-        return new_file
+        backup_file = self.get_cut_image_path()
+        shutil.copy(self.get_image_path(), backup_file)
+        return backup_file
 
     @classmethod
     def update_statistics(cls, char):
@@ -181,21 +181,21 @@ class Character(models.Model):
             logger.info(neighbor_key)
         return Character.objects.get(pk=neighbor_key)
 
-    def reformat_self(self):
-        up_char = self.up_neighbor_char()
-        up_char.bottom = self.top
-        up_char.backup_orig_character()
-        up_char.is_integrity = 1
-        up_char.is_correct = 0
-        up_char.save()
-        up_char.danger_rebuild_image()
-        down_char = self.down_neighbor_char()
-        down_char.top = self.bottom
-        down_char.backup_orig_character()
-        down_char.is_integrity = 1
-        down_char.is_correct = 0
-        down_char.save()
-        down_char.danger_rebuild_image()
+    def reformat_self(self, direct):
+        if 't' in direct:
+            char = self.up_neighbor_char()
+            char.bottom = self.top
+        else:
+            char = self.down_neighbor_char()
+            char.top = self.bottom
+
+        backup_file = char.backup_orig_character()
+        char.danger_rebuild_image()
+        char.is_integrity = 1
+        char.is_correct = 0
+        char.save()
+        return char, backup_file
+
 
 
 
