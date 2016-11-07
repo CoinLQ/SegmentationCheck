@@ -21,7 +21,14 @@ div.dataTables_paginate span {
     color: #8c96a0;
     text-shadow:1px 1px 1px #fff;
 }
-
+.modal { overflow: visible; }
+.modal-body { overflow-y: visible; }
+#compareResultModal .search{
+  display: none;
+}
+.result-container {
+  margin: 20px 80px;
+}
 select.input-sm {
   height: 27px;
   line-height: 27px;
@@ -1019,4 +1026,36 @@ div.ctx-menu-container {
     height: 95px;
     width: 82px;
     align-items: center;
+}
+
+.bar {
+  fill: teal;
+}
+
+.bar:hover {
+  fill: brown;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  font-size: 10px;
+}
+
+.chart .current {
+  fill: green;
+  cursor: pointer;
+}
+.modal { overflow: visible; }
+.modal-body { overflow-y: visible; }
+
+text.shadow {
+  stroke: #c8dec6;
+  stroke-width: 4px;
+  opacity: 0.8;
 }

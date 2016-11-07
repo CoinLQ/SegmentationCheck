@@ -1,3 +1,4 @@
+{% load compress %}
 <!DOCTYPE html>
 <html lang="zh-hans">
   <head>
@@ -7,23 +8,20 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="">
     <meta name="author" content="">
-   <meta name="renderer" content="webkit">
+    <meta name="renderer" content="webkit">
     <link rel="icon" href="/static/fa.ico">
 
 
     <!-- Bootstrap core CSS -->
-    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    {% compress css %}
     <link href="/static/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
-
-    <!-- Custom styles for this template -->
     <link href="/static/css/starter-template.css" rel="stylesheet">
-    <link href="/static/css/sticky-footer.css" rel="stylesheet">
-
+    <script src="/static/js/ie-emulation-modes-warning.js"></script>
+    {% endcompress %}
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="/static/js/ie8-responsive-file-warning.js"></script><![endif]-->
-    <script src="/static/js/ie-emulation-modes-warning.js"></script>
+
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -107,12 +105,17 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="/static/js/jquery-2.2.4.min.js"></script>
-    <script>window.jQuery || document.write('<script src="/static/js/jquery-2.2.4.min.js"><\/script>')</script>
-    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/vue/1.0.26/vue.min.js"></script>
+    <script src="//cdn.jsdelivr.net/lodash/4.16.6/lodash.min.js" charset="utf-8"></script>
+    {% compress js %}
+    <script src="/static/js/jquery-2.2.4.min.js" charset="utf-8"></script>
+    <script src="/static/js/jquery.cookie.js" charset="utf-8"></script>
+    <script src="/static/StackedAreaChart/js/d3.min.js" charset="utf-8"></script>
+    <script src="/static/js/bootstrap.min.js" charset="utf-8"></script>
     <script src="/static/js/setupAjax.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="/static/js/ie10-viewport-bug-workaround.js"></script>
+    {% endcompress %}
     {% block foot %}
     <!-- Just for add more static resource -->
     {# 用于在body标签闭合前添加代码，如引入js代码等 #}

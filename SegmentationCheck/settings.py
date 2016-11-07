@@ -48,9 +48,9 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     'rest_framework',
     'djcelery',
-    'django_slack', ]
-#   'qiniustorage',
-#    'kombu.transport.django',
+    'django_slack',
+    "compressor",
+    ]
 
 LOCAL_APPS = [
     'home',
@@ -111,6 +111,12 @@ TEMPLATES = [
         },
     },
 ]
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    # other finders..
+    'compressor.finders.CompressorFinder',
+)
 
 TEMPLATE_LOADERS = (
     ('django.template.loaders.cached.Loader', (
@@ -287,8 +293,10 @@ CACHES = {
     }
 }
 
+COMPRESS_CSS_FILTERS=['compressor.filters.cssmin.CSSCompressorFilter']
+COMPRESS_DATA_URI_MAX_SIZE='1024'
 
-SLACK_TOKEN='xoxb-95069586514-5EGQtB6vkQKZ21WI5ITtCC7c'
-SLACK_USERNAME='django-bot'
+SLACK_TOKEN=''
+SLACK_USERNAME=''
 SLACK_CHANNEL='#bugs-here'
 SLACK_BACKEND='django_slack.backends.UrllibBackend'

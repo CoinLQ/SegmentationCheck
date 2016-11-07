@@ -1,3 +1,4 @@
+{% load compress %}
 <!DOCTYPE html>
 <meta charset="utf-8">
 
@@ -35,12 +36,14 @@
             <li>
         </ul>
     </div>
-    <script src="/static/treemap/js/d3/d3.min.js" charset="utf-8"></script>
-    <script src="/static/treemap/js/jquery/jquery-1.12.4.min.js"></script>
+    {% compress js %}
+    <script src="/static/js/jquery-2.2.4.min.js"></script>
+    <script src="/static/StackedAreaChart/js/d3.min.js"></script>
     <script src="/static/treemap/js/jquery/jquery.resizeend.min.js"></script>
     <!--<script src="/static/treemap/data.json"></script>-->
     <script src="/static/treemap/js/d3/liquidFillGauge.js"></script>
     <!--<script src="/static/treemap/js/new.js"></script>-->
+
     <script>
         var data;
         $(function(){
@@ -50,10 +53,9 @@
 
             });
         });
-    </script>
-    <script>
         $("#ReturnBtn").click(function(){
             window.location.href = "/characters/dashboard";
         });
     </script>
+    {% endcompress %}
 </body>

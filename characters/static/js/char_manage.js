@@ -1,15 +1,14 @@
-jQuery.fn.dataTableExt.oSort['numeric-abs-asc']  = function(a,b) {
+jQuery.fn.dataTableExt.oSort['numeric-abs-asc'] = function(a, b) {
     var x = Math.abs(a);
     var y = Math.abs(b);
-    return ((x < y) ? -1 : ((x > y) ?  1 : 0));
+    return ((x < y) ? -1 : ((x > y) ? 1 : 0));
 };
 
-jQuery.fn.dataTableExt.oSort['numeric-abs-desc'] = function(a,b) {
+jQuery.fn.dataTableExt.oSort['numeric-abs-desc'] = function(a, b) {
     var x = Math.abs(a);
     var y = Math.abs(b);
-    return ((x < y) ?  1 : ((x > y) ? -1 : 0));
+    return ((x < y) ? 1 : ((x > y) ? -1 : 0));
 };
-
 
 var charListContainer = {
     char: '',
@@ -189,7 +188,8 @@ var charListContainer = {
         var charlist = $("#charListArea .char-image");
         for (var i = 0; i < charlist.length; i++) {
             var tmp = charlist[i];
-            if (tmp.id === "") { continue; }
+            if (tmp.id === "") {
+                continue; }
             if (!($(tmp).hasClass('error-char') || $(tmp).hasClass('correct-char'))) {
                 arr.push(tmp.id);
             }
@@ -351,7 +351,7 @@ var charListContainer = {
 
         $.getJSON(query, function(result) {
             that.data = result.models;
-            new_models = _.map(result.models,function(item) {
+            new_models = _.map(result.models, function(item) {
                 var class_name;
                 if (item.is_correct == 1) {
                     cls_name = 'o-correct-char'
@@ -364,12 +364,12 @@ var charListContainer = {
                 item.accuracy = item.accuracy * 1.0 / 1000
                 return item;
             });
-            var mean = _.mean(_.map(new_models, function (item) { return item.accuracy;}))
+            var mean = _.mean(_.map(new_models, function(item) {
+                return item.accuracy; }))
             if (mean > 0.5) {
                 $('#correct_btn').removeClass('hidden');
                 $('#err_btn').addClass('hidden');
-            }
-            else {
+            } else {
                 $('#err_btn').removeClass('hidden');
                 $('#correct_btn').addClass('hidden');
             }
@@ -380,7 +380,6 @@ var charListContainer = {
         });
     }
 }
-
 
 $(function() {
     charListContainer.init();
