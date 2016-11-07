@@ -1,35 +1,36 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from celery import task
+import logging
+import random
+from operator import itemgetter
+import os
+import sys
+import time
+import traceback
+
 from django.db import connection
 from django.db.models import Q
-from segmentation.models import Character, CharacterStatistics
-from .models import ClassificationTask, ClassificationCompareResult
-import sys
-import os
+from django.utils import timezone
+
+from celery import task
+from itertools import chain
+import numpy as np
 from scipy.misc import imresize  # for image resize
 from skimage import io
 from skimage.color import rgb2gray, gray2rgb
-
 from skimage.filters import threshold_otsu
 # sys.path.append('/home/can/PycharmProjects/imageprocess/libsvm/python')
-from sklearn import preprocessing
-from sklearn import metrics
+from sklearn import preprocessing, metrics
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.linear_model import LogisticRegressionCV
-import time
-from itertools import chain
-
-from utils.image_normalization.normalization import normalize
-from utils.to_slack import push_to_slack
 from thinning import convert_image, thinning
 import cPickle
-import numpy as np
-import traceback
-import random
-from datetime import datetime
-from operator import itemgetter
-import logging
+
+
+from segmentation.models import Character, CharacterStatistics
+from utils.image_normalization.normalization import normalize
+from utils.to_slack import push_to_slack
+from .models import ClassificationTask, ClassificationCompareResult
 
 # @task
 def update_char_stastics():
@@ -57,7 +58,7 @@ def update_char_stastics():
 @task
 def classify_with_random_samples(char, positive_sample_count, auto_apply=False, random_sample=0):
     print char, positive_sample_count
-    started = datetime.now()
+    started = timezone.now()
     start_time = time.time()
     query = Character.objects.filter(char=char)
     positive_samples, negative_samples, test_X, test_y, test_char_id_lst, test_accuracy_lst = \
@@ -110,7 +111,7 @@ def classify_with_random_samples(char, positive_sample_count, auto_apply=False, 
     #predicted = map(lambda x: x[1], predicted)
     predict_spent = int(time.time() - start_time)
     print "predict done, spent %s seconds." % predict_spent
-    completed = datetime.now()
+    completed = timezone.now()
     task = ClassificationTask.create(char, u'', train_count, predict_count,
                                      started, completed, fetch_spent, training_spent, predict_spent, auto_apply)
     task.save()
