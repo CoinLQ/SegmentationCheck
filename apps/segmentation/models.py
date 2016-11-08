@@ -17,9 +17,10 @@ from utils.qiniu_uploader import upload_file
 
 from catalogue.models import Volume
 from managerawdata.models import OPage
-
+logger = logging.getLogger(__name__)
 # Create your models here.
 class Page(models.Model):
+
     id = models.CharField(max_length=32, primary_key=True)
     image = models.CharField(max_length=512)
     volume = models.ForeignKey(Volume, related_name='pages', blank=True, null=True)
@@ -56,7 +57,12 @@ class Page(models.Model):
         return ret
 
     def locate_char(self, character):
-        return self.summary[character.line_no_text][character.line_no-1]
+        try:
+            word = self.summary[character.line_no_text][character.line_no-1]
+        except KeyError, e:
+            logger.error("not found %s in %s" % (character.line_no_text, self.id))
+            word='NAN'
+        return word
 
     def get_image_path(self):
         return settings.PAGE_IMAGE_ROOT+self.image
