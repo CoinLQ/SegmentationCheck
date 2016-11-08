@@ -8,7 +8,7 @@ DEBUG = True
 
 TEMPLATE_DEBUG = DEBUG
 
-COMPRESS_ENABLED = False
+COMPRESS_ENABLED = True
 
 DEV_APPS = [
     'django_extensions',
