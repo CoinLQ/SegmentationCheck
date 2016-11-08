@@ -10,16 +10,12 @@
 {% block mainbody %}
 <div class="container">
     <div class='row show-grid' style="margin-top:20px">
-        <div class='col-md-8 col-xs-8'>
+        <div class='col-md-4 col-xs-4'>
             <div class='t-h2' style="float: left">{{character.char}}-{{character.id}}({{t_char}})</div>
         </div>
-        <div class='col-md-4 col-xs-4'>
+        <div class='col-md-8 col-xs-8'>
             <div class="ui segment" style="float: left">
                 <img src="{{character.image_url}}"></img>
-            </div>
-        </div>
-        <div class='col-md-8 col-xs-12'>
-            <div id='page_img' class="ui segment" style='heihgt:300px'>
             </div>
         </div>
         <div class='col-md-4 col-xs-12'>
@@ -27,6 +23,10 @@
                 <div class='text_lines' style='background-color:white'>
                     <pre></pre>
                 </div>
+            </div>
+        </div>
+        <div class='col-md-8 col-xs-12'>
+            <div id='page_img' class="ui segment" style='heihgt:300px'>
             </div>
         </div>
     </div>
@@ -70,7 +70,7 @@ _.map(sortKeysBy(summary),function(value, key) {
       return true;
     }else{ i++ }
     if (line_text === key && i === line_no){
-      pre_node.append($('<span style="color:red;"></span>').addClass(key).addClass(i+'').text(char))
+      pre_node.append($('<span style="border: solid 2px #7744b0;background-color: rgba(77,44,130,0.3);"></span>').addClass(key).addClass(i+'').text(char))
     }
     else{
       pre_node.append($('<span></span>').addClass(key).addClass(i+'').text(char))
