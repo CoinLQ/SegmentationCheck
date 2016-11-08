@@ -14,12 +14,13 @@ function getImageDimension(el, onReady) {
 }
 function aysnc_drawSVG(dom_id, rect, url ='http://od843aa4c.bkt.clouddn.com/hongwu/040.jpg') {
   getImageDimension({src: url}, function(data){
+    console.log(data.width,'-',data.height);
       drawSVG(dom_id, url,rect,data.width,data.height);
   })
 }
 function drawSVG(dom_id, url, rect, width=0, height=0) {
 
-  var drawing = window.drawing = new SVG(dom_id).viewbox(0,0, width, height).attr("overflow-y", "auto");
+  var drawing = window.drawing = new SVG(dom_id).viewbox(0,0, width, height).attr("overflow", "auto");
   //url = "http://img10.360buyimg.com/N0/21866/bf171b60-f562-49aa-b8d1-89699aedb231.jpg"
   var image = drawing.image(url)//+'?imageView2/2/w/1000/interlace/1/q/100');
 

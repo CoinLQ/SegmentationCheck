@@ -58,7 +58,7 @@ class Page(models.Model):
 
     def locate_char(self, character):
         try:
-            word = self.summary[character.line_no_text][character.line_no-1]
+            word = self.summary[character.line_no_text][character.char_pos-1]
         except KeyError, e:
             logger.error("not found %s in %s" % (character.line_no_text, self.id))
             word='NAN'
@@ -137,7 +137,7 @@ class Character(models.Model):
         return self.id.split('L')[0]+"L"
 
     @property
-    def line_no(self):
+    def char_pos(self):
         return int(self.id.split('L')[1])
 
     def local_image_url(self):

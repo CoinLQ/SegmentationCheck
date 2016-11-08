@@ -5,17 +5,36 @@
 {% compress css %}
 <link rel="stylesheet" href="/static/characters/css/app.css">
 <link rel="stylesheet" href="/static/characters/css/switch.css">
+<style>
+.modal-dialog{
+    overflow: initial !important
+}
+.modal-body{
+    overflow: auto;
+}
+</style>
 {% endcompress %}
 {% endblock %}
 {% block mainbody %}
 <div class="container">
     <div class='row show-grid' style="margin-top:20px">
-        <div class='col-md-4 col-xs-4'>
-            <div class='t-h2' style="float: left">{{character.char}}-{{character.id}}({{t_char}})</div>
-        </div>
         <div class='col-md-8 col-xs-8'>
             <div class="ui segment" style="float: left">
                 <img src="{{character.image_url}}"></img>
+            </div>
+            <div style="float: right;margin-top: 60px;" onclick="zoom_pic()" >
+                <span class='fa fa-search-plus' style='font-size:30px'></span>
+            </div>
+        </div>
+        <div class='col-md-4 col-xs-4'>
+            <div class='t-h2 hidden' style="float: left">{{character.char}}-{{character.id}}({{t_char}})</div>
+
+        </div>
+    </div>
+    <div class='row'>
+
+        <div class='col-md-8 col-xs-12'>
+            <div id='page_img' class="ui segment" style='heihgt:300px'>
             </div>
         </div>
         <div class='col-md-4 col-xs-12'>
@@ -25,11 +44,8 @@
                 </div>
             </div>
         </div>
-        <div class='col-md-8 col-xs-12'>
-            <div id='page_img' class="ui segment" style='heihgt:300px'>
-            </div>
-        </div>
     </div>
+    {% include "characters/included/zoom_image.html" %}
 </div>
 
 
@@ -51,7 +67,7 @@ function sortKeysBy(obj, comparator) {
 }
 var rect= {{character.rect}}
 var line_text = "{{character.line_no_text}}"
-var line_no = {{character.line_no}}
+var char_pos = {{character.char_pos}}
 var summary = {{summary|safe}}
 
 //TODO: <> $$
@@ -69,7 +85,7 @@ _.map(sortKeysBy(summary),function(value, key) {
       pre_node.append(char);
       return true;
     }else{ i++ }
-    if (line_text === key && i === line_no){
+    if (line_text === key && i === char_pos){
       pre_node.append($('<span style="border: solid 2px #7744b0;background-color: rgba(77,44,130,0.3);"></span>').addClass(key).addClass(i+'').text(char))
     }
     else{
@@ -82,5 +98,26 @@ _.map(sortKeysBy(summary),function(value, key) {
   aysnc_drawSVG('page_img', rect, "{{character.page.image_url}}" )
 })
 
+function zoom_pic() {
+  $('#zoomImageModal').modal('show')
+  $('.wrapper').width($(window).width()).height($(window).height()-$('.modal-header').height());
+  if (!$('.wrapper svg')[0])
+    aysnc_drawSVG('lg-image', rect, "{{character.page.image_url}}" )
+}
+
+var toggle= false;
+function toggle_image() {
+  var width = $('#page_img image').attr('width');
+  var height = $('#page_img image').attr('height');
+  if (toggle)
+  {
+    toggle = false
+    $('.wrapper').width($(window).width()).height($(window).height()-$('.modal-header').height());
+  }else{
+    toggle = true
+    $('.wrapper').width(width).height(height);
+  }
+  $('#zoomImageModal .modal-content')//.attr('width', width).attr('height', height)
+}
 </script>
 {% endblock %}
