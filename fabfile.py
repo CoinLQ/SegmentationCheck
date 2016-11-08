@@ -52,7 +52,7 @@ def segmentation_check():
     #  location of your pip requirements file
     #  http://www.pip-installer.org/en/latest/requirements.html#the-requirements-file-format
     #  set it to None to not use
-    env.requirements_file = join(env.code_root, 'requirements.txt')
+    env.requirements_file = join(env.code_root, 'requirements/production.txt')
     #  always ask user for confirmation when run any tasks
     env.ask_confirmation = False
 
@@ -138,8 +138,8 @@ def _reload_supervisorctl():
 def _prepare_django_project():
     with cd(env.django_project_root):
         if env.south_used:
-            virtenvrun('python manage.py migrate --noinput --verbosity=1')
-        virtenvsudo('python manage.py collectstatic --noinput')
+            virtenvrun('python manage.py migrate --noinput --verbosity=1 --setting=apps.settings.production')
+        virtenvsudo('python manage.py collectstatic --noinput --setting=apps.settings.production')
 
 def _prepare_media_path():
     path = env.django_media_path.rstrip('/')

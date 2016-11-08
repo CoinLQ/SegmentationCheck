@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+{% block head %}
+<title>切字平台</title>
+{# 用于在html head部分添加内容，如引入css，js资源等#}
+<link href="/static/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
+<link href="/static/css/quiz.css" rel="stylesheet">
+{% endblock %}
+
+
+{% block mainbody %}
+{# 主内容区 #}
+
+<div class="container">
+    <div id="welcome_area">
+        <div id="flashContent">
+			<object type="application/x-shockwave-flash" data="/page_images/Tutorial.swf" width="1120" height="548" id="Tutorial" style="float: none; vertical-align:middle">
+				<param name="movie" value="/page_images/Tutorial.swf" />
+				<param name="quality" value="high" />
+				<param name="bgcolor" value="#ffffff" />
+				<param name="play" value="true" />
+				<param name="loop" value="false" />
+				<param name="wmode" value="window" />
+				<param name="scale" value="showall" />
+				<param name="menu" value="false" />
+				<param name="devicefont" value="false" />
+				<param name="salign" value="" />
+				<param name="allowScriptAccess" value="sameDomain" />
+				<a href="https://www.adobe.com/go/getflash">
+					<img src="https://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player" />
+				</a>
+			</object>
+		</div>
+        <p class="text-right" ><a href="javascript:;" id="start_quiz_btn"> 跳过演示教程 直接开始测验&gt; </a></p>
+    </div><!-- end welcome_area-->
+    <div id="tasks_area" class="hidden" >
+        <div class='row show-grid'>
+            <div class='col-md-12 col-xs-12'>
+                <div class="unchecked-box">
+                  <div class="progress progress-striped">
+                      <div class="progress-bar " role="progressbar" data-transitiongoal="0" aria-valuemax="4"></div>
+                  </div>
+                </div>
+                <strong id='checkchar' style='font-size:36px; margin:10px;padding:8px;color:#483D8B;'>now</strong> 点选字形不正确或切错的字(详细说明见下方)
+                <div style="float:right; margin-right:64px;">
+                    每页显示
+                    <div id="LineControler" class="btn-group" style="padding:0 16px;">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span>30&nbsp;</span><span class="caret"></span> </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                            <li><a href="javascript:;">30&nbsp;</a></li>
+                            <li><a href="javascript:;">50&nbsp;</a></li>
+                            <li><a href="javascript:;">70&nbsp;</a></li>
+                            <li><a href="javascript:;">90&nbsp; </a></li>
+                        </ul>
+                    </div>
+                    字
+                </div>
+                <div id='charlistArea'>
+                    <p class="bg-info" style='margin:20px;padding:10px;'>审核模式只显示未审核的字形，浏览模式分页显示所有字形。</p>
+                </div><!--end charlistArea -->
+                <div style="clear:both;"> </div>
+                <div  class="btn btn-primary batch-check" >批量审核通过(除了有错误标记的都会通过)</div>
+
+            </div>
+        </div>
+    </div><!--end tasks_area-->
+    <blockquote style="margin:5px">
+        <p>通过鼠标左键点选字形不正确或切错的字，
+        然后点击【批量审核通过按钮】，之后页面会自动弹出新的一页；
+        请大家仔细认真核查，按以下标准点选：
+          </p>
+          <ol>
+              <li>不要点选正确字形，即没有明显的少切、多切、切错等现象的字形；</li>
+              <li>不要点选异体字字形，比如无、無，都算是正确的；</li>
+              <li>不要点选跟正确字形相差非常小的字形，比如字的边缘存在多余的小黑点（而不是笔划）；</li>
+              <li>不要点选不认识的生僻字形，除非经过准确的考证后可以认定并非本字的异体字形的情况。</li>
+          </ol>
+    </blockquote>
+    <div id="myModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">测试结束</h4>
+                </div>
+                <div class="modal-body">
+                    <blockquote id="success" class="success hidden">
+                        <p>您的正确率为<strong id="success_score">98%</strong>!</p>
+                        <footer>已顺利通过测试，请继续保持。&nbsp;&nbsp;&lt;o(￣▽￣)ｄ&gt;</footer>
+                    </blockquote>
+                    <blockquote id="failure" class="failure hidden">
+                        <p>您的正确率为<strong id="failure_score">15%</strong>!</p>
+                        <footer>需要重新测试，请注意要求。&nbsp;&nbsp;(。﹏。*)</footer>
+                    </blockquote>
+                </div>
+                <div class="modal-footer">
+                    <button id="success_btn" type="button" class="btn btn-default" data-dismiss="modal">重来</button>
+                    <button id="failure_btn" type="button" class="btn btn-primary btn-lg">&nbsp;&nbsp;继续&nbsp;&nbsp;</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+</div><!-- /.container -->
+{% endblock %}
+
+{% block foot %}
+{# 用于在body标签闭合前添加代码，如引入js代码等 #}
+
+<script src="/static/js/jquery.cookie.js" charset="utf-8"></script>
+<script type="text/javascript" src="/static/js/app.js"> </script>
+<script>
+
+function start_quiz() {
+    $("#welcome_area").addClass('hidden');
+    $("#tasks_area").removeClass('hidden');
+    $.getJSON("/quiz/create",function(result){
+        batch_id = result.batch_id;
+        console.log(batch_id);
+        render_char_area();
+    });
+}
+
+function render_char_area(){
+    var _char = $('#checkchar').text();
+    var page_size = $.cookie('quiz_charcheck_page_size');
+    if ( page_size==null) {
+        page_size = 30;
+    }
+    $.getJSON("/quiz/"+batch_id+"/characters?page_size="+page_size,function(result){
+        var char = result[0].char;
+        $('#checkchar').text(char);
+        renderCharArea("#charlistArea",result);
+        binding_char_check('#charlistArea');
+    });
+}
+
+//- call by swf video--
+function goTest(){
+    start_quiz();
+}
+$("#start_quiz_btn").click(start_quiz)
+
+$(function(){
+    $('.batch-check').click(handler);
+})
+$('.modal-footer button').click(function() {
+    if( $('#success').hasClass('hidden')) {
+        location.reload();
+    }
+    else {
+        window.location.replace("/characters/task/");
+    }
+})
+$(function() {
+    var page_size = $.cookie('quiz_charcheck_page_size');
+    if ( page_size==null) {
+        page_size = 30;
+        $.cookie('charcheck_page_size', page_size, { expires: 30 });
+    }
+    $("#LineControler button span:first-of-type").text(page_size);
+})
+$("#LineControler li a").click(function () {
+    var page_size = $(this).text();
+    $("#LineControler button span:first-of-type").text($(this).text());
+    $.cookie('quiz_charcheck_page_size', page_size, { expires: 30 });
+    render_char_area();
+})
+
+</script>
+<script type="text/javascript" src="/static/js/bootstrap-progressbar.min.js"></script>
+{% endblock %}

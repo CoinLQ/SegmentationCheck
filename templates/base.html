@@ -36,7 +36,7 @@
   </head>
 
   <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <nav class="navbar-inverse navbar-top">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -66,7 +66,7 @@
                 <li><a href="/preprocess/preprocess_page">文本预处理 </a></li>
               </ul>
             </li>
-            <li><a href="/characters/task">说一不二</a></li>
+            <li><a href="/characters/task/">说一不二</a></li>
           {% endif %}
             <li><a href="/characters/dashboard">可视化</a></li>
             <li><a href="/characters/task/help">帮助信息</a></li>
@@ -94,7 +94,7 @@
     </nav>
 
     {% block mainbody %}
-       <p>original</p>
+
     {% endblock %}
     <footer class="footer hidden">
       <div class="container">
@@ -107,7 +107,7 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://cdn.jsdelivr.net/vue/1.0.26/vue.min.js"></script>
-    <script src="//cdn.jsdelivr.net/lodash/4.16.6/lodash.min.js" charset="utf-8"></script>
+    <script src="//cdn.jsdelivr.net/lodash/4.16.6/lodash.js" charset="utf-8"></script>
     {% compress js %}
     <script src="/static/js/jquery-2.2.4.min.js" charset="utf-8"></script>
     <script src="/static/js/jquery.cookie.js" charset="utf-8"></script>

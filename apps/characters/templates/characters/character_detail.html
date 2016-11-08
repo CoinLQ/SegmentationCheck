@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load compress %}
+{% block head %}
+<title>字形详情页</title>
+{% compress css %}
+<link rel="stylesheet" href="/static/characters/css/app.css">
+<link rel="stylesheet" href="/static/characters/css/switch.css">
+{% endcompress %}
+{% endblock %}
+{% block mainbody %}
+<div class="container">
+    <div class='row show-grid' style="margin-top:20px">
+        <div class='col-md-8 col-xs-8'>
+            <div class='t-h2' style="float: left">{{character.char}}-{{character.id}}({{t_char}})</div>
+        </div>
+        <div class='col-md-4 col-xs-4'>
+            <div class="ui segment" style="float: left">
+                <img src="{{character.image_url}}"></img>
+            </div>
+        </div>
+        <div class='col-md-8 col-xs-12'>
+            <div id='page_img' class="ui segment" style='heihgt:300px'>
+            </div>
+        </div>
+        <div class='col-md-4 col-xs-12'>
+            <div id='page_text' class="ui segment">
+                <div class='text_lines' style='background-color:white'>
+                    <pre></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+{% block foot  %}
+{% compress js %}
+<script src="/static/js/svg/svg.js" charset="utf-8"></script>
+<script src="/static/js/svg/svg_helper.js" charset="utf-8"></script>
+{% endcompress%}
+<script>
+function sortKeysBy(obj, comparator) {
+    var keys = _.sortBy(_.keys(obj), function (key) {
+        return comparator ? comparator(obj[key], key) : key;
+    });
+
+    return _.zipObject(keys, _.map(keys, function (key) {
+        return obj[key];
+    }));
+}
+var rect= {{character.rect}}
+var line_text = "{{character.line_no_text}}"
+var line_no = {{character.line_no}}
+var summary = {{summary|safe}}
+
+//TODO: <> $$
+function _pre_process(value) {
+  if (value === " ")
+    return false;
+  return true;
+}
+$(function(){
+  var pre_node = $('#page_text pre');
+_.map(sortKeysBy(summary),function(value, key) {
+  var i = 0;
+  _.each(value,function(char, j) {
+    if (!_pre_process(char)) {
+      pre_node.append(char);
+      return true;
+    }else{ i++ }
+    if (line_text === key && i === line_no){
+      pre_node.append($('<span style="color:red;"></span>').addClass(key).addClass(i+'').text(char))
+    }
+    else{
+      pre_node.append($('<span></span>').addClass(key).addClass(i+'').text(char))
+    }
+
+  })
+  $('#page_text pre').append('<br/>')
+})
+  aysnc_drawSVG('page_img', rect, "{{character.page.image_url}}" )
+})
+
+</script>
+{% endblock %}

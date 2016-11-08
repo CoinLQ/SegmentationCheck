@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+{% load compress %}
+{% block head %}
+<title>字形列表</title>
+{% compress css %}
+<link href="/static/css/simplePagination.css" rel="stylesheet">
+<link href="/static/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/static/datatables/dataTables.bootstrap.css">
+<link rel="stylesheet" href="/static/characters/css/app.css">
+<link rel="stylesheet" href="/static/characters/css/circle.css">
+<link rel="stylesheet" href="/static/characters/css/switch.css">
+{% endcompress %}
+{% endblock %}
+{% block mainbody %}
+<div class="container" style="min-width:1000px !important;">
+    <div class='row'>
+        <div class='col-md-4 col-xs-12'>
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title"></h3>
+                </div>
+                <div class="box-body">
+                    <table id="char_index" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>字
+                                    <br>形</th>
+                                <th>总
+                                    <br>数</th>
+                                <th>正
+                                    <br>样本</th>
+                                <th>负
+                                    <br>样本</th>
+                                <th>未
+                                    <br>标记</th>
+                                <th>区
+                                    <br>分度</th>
+                                <th class="hidden">左重心</th>
+                                <th class="hidden">右重心</th>
+                            </tr>
+                        </thead>
+                        <tbody id="char_index_tbody">
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+        <!--end col-md-3 -->
+        <div class='col-md-8 col-xs-12' style="margin-top:20px;">
+            <div class='row'>
+                <div class="col-md-5" style="margin-top:-16px;">
+                    <strong id='checkchar' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>？</strong>
+                    <a class="btn btn-default" href="javascript:;" onclick="charListContainer.checkDict()" style="margin-top:-12px;padding:8px 12px;"><span class="tooltip_text">查字典</span><span class="fa fa-book"></span></a>
+                    <a class="btn btn-default classifyChart hidden" href="javascript:;" data-toggle="modal" data-target="#classifyChartModal" data-char="？" style="margin-top:-12px;padding:8px 10px;"><span class="tooltip_text">相似度分布</span><span class="fa fa-bar-chart"></span></a>
+                    <a class="btn btn-default circle-btn accuracy_cal hidden" href="javascript:;" data-toggle="modal" data-target="#accuracyModal" data-char="？"><span class="tooltip_text">重算</span><span class="fa fa-calculator"></span>
+                <div class="radial-progress" data-progress="100">
+                    <div class="circle">
+                        <div class="mask full">
+                            <div class="fill"></div>
+                        </div>
+                        <div class="mask half">
+                            <div class="fill"></div>
+                            <div class="fill fix"></div>
+                        </div>
+                        <div class="shadow1"></div>
+                    </div>
+                    <div class="inset1"></div>
+                </div></a>
+                    <a class="btn btn-default accuracy_cal hidden" href="javascript:;" data-toggle="modal" data-target="#markModal" data-char="？" style="margin-top:-12px;padding:8px 12px;"><span class="tooltip_text">标记</span><span class="fa fa-paw"></span></a>
+                </div>
+                <div id="accuracy_scope" class="form-inline dropdown" style="display: inline-block;margin-left: 2px;float:right">
+                    <label>相似度:
+                        <input class="accuracy_input form-control-inline" placeholder="0.5" aria-controls="char_index" style="margin-top:2px;" />
+                    </label>
+                    <label style="margin-left:6px;">±
+                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" style="margin-top: -5px"><span>0.01</span>
+                            <span class="caret"></span></button>
+                        <ul class="dropdown-menu" style="margin-left:45%">
+                            <li><a data-value="0" href="#">0.000</a></li>
+                            <li><a data-value="1" href="#">0.001</a></li>
+                            <li><a data-value="2" href="#">0.002</a></li>
+                            <li><a data-value="5" href="#">0.005</a></li>
+                            <li><a data-value="10" href="#">0.01</a></li>
+                            <li><a data-value="20" href="#">0.02</a></li>
+                            <li><a data-value="50" href="#">0.05</a></li>
+                            <li><a data-value="100" href="#">0.1</a></li>
+                        </ul>
+                    </label>
+                </div>
+                <div id="order_scope" class="dropdown" style="display: inline-block;float:right;margin: 0px 10px;">
+                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span>升序&nbsp;</span>
+                        <span class="caret"></span></button>
+                    <ul class="dropdown-menu" style="margin-top:8px;">
+                        <li><a data-value="accuracy" href="#">升序</a></li>
+                        <li><a data-value="-accuracy" href="#">降序</a></li>
+                    </ul>
+                </div>
+                <div id="find_scope" class="dropdown" style="display: inline-block;float:right;margin: 0px 10px;">
+                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span>显示全部&nbsp;</span>
+                        <span class="caret"></span></button>
+                    <ul class="dropdown-menu" style="margin-top:8px;">
+                        <li><a data-value="-10" href="#">显示全部</a></li>
+                        <li><a data-value="0" href="#">未标记</a></li>
+                        <li><a data-value="-1" href="#">人工标错</a></li>
+                        <li><a data-value="1" href="#">人工标对</a></li>
+                    </ul>
+                </div>
+                {% include "characters/included/audio_play.html" %}
+            </div>
+            <div style="clear:both;"> </div>
+            <div id='charBrowseArea' style="margin-right:-15px;margin-left:18px;display:none">
+            </div>
+            <div style="clear:both;"> </div>
+            {% verbatim %}
+            <div id="charListArea" style="margin-right:-15px;margin-left:18px;display: inline-block">
+                <template v-for="item in items">
+                    <div id="{{item.id}}" class="flow  char-image {{item.cls_name}} {{gen_cls(item)}}" @contextmenu.prevent="handleContextmenu(item,$event)">
+                        <img v-bind:src="item.image_url" alt="加载中..." class="lazy">
+                        <span class="badge char-info">{{item.accuracy}}</span>
+                        <div class="cmd-panel">
+                            <div class="btn-correct-o" title='正确' v-on:click="mark_it(item, 1)">
+                            </div>
+                            <div class="btn-error-o" title='错误' v-on:click="mark_it(item, -1)">
+                            </div>
+                            <div class="btn btn-split-o" title='切错' v-on:click="mark_glyph(item, 1)">
+                            </div>
+                            <div class="btn btn-fuzzy-o" title='模糊' v-on:click="mark_glyph(item, 1)">
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <div style="display: none" v-bind:style="menu_style" class="ctx-menu-container">
+                    <div class="ctx-menu">
+                        <div class="ctx-item" v-on:click="cut_image_modal()">
+                           重新切分
+                        </div>
+                        <div class="ctx-divider"></div>
+                        <div class="ctx-item" v-on:click="goto_detail()">
+                           字形详情
+                        </div>
+                    </div>
+                </div>
+                {% endverbatim %}
+                {% include "characters/included/cut_modal.html" %}
+            </div>
+            {% include "characters/included/command_panel.html" %}
+            <div class="row" style="margin-top:10px;margin-left: 0px">
+                <div class="btn btn-default batch-check" id="correct_btn"><span class="tooltiptext">剩余全部标对</span><span style="color: #9AFF9A;font-size:20px;padding:0px 8px" class="fa fa-check"></span><span style="color: #9AFF9A;font-size:20px;padding:0px 8px" class="fa fa-check"></span></div>
+                <div class="btn btn-default batch-check" id="err_btn"><span class="tooltiptext">剩余全部标错</span><span style="color: pink;font-size:20px;padding:0px 10px" class="fa fa-times"></span><span style="color: pink;font-size:20px;padding:0px 10px" class="fa fa-times"></span></div>
+                <div class='char-pagitor'>
+                    <span class='pagitor first btn btn-default' id='char_index_first'><span class="fa fa-step-backward"></span></span>
+                    <span class='pagitor more-padding previous btn btn-default' id='char_index_previous' style="font-size:20px;">❮</span>
+                    <input class='form-control-inline pagitor_input input-sm' type='number' min="1">
+                    <span class='pagitor_of total_page'> </span>
+                    <span class='pagitor more-padding next btn btn-default' id='char_index_next' style="font-size:20px;">❯</span>
+                    <span class='pagitor last btn btn-default' id='char_index_last'><span class="fa fa-step-forward"></span></span>
+                    <div id="LineControler" class="btn-group" style="padding:0px; margin-left: 10px;">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-top:3px">
+                            <span>100&nbsp;</span><span class="caret"></span> </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                            <li><a href="javascript:;">10&nbsp;</a></li>
+                            <li><a href="javascript:;">20&nbsp;</a></li>
+                            <li><a href="javascript:;">50&nbsp;</a></li>
+                            <li><a href="javascript:;">100&nbsp;</a></li>
+                            <li><a href="javascript:;">200&nbsp;</a></li>
+                            <li><a href="javascript:;">500&nbsp;</a></li>
+                            <li><a href="javascript:;">1000&nbsp; </a></li>
+                            <li><a href="javascript:;">2000&nbsp; </a></li>
+                        </ul>
+                        <label style="line-height: 31px;">字/页</label>
+                    </div>
+                </div>
+                <div class="btn btn-default batch-check" id="clear_btn"><span class="tooltiptext">全部清空标记</span><span style="font-size:16px" class="fa fa-repeat">&nbsp;&nbsp;清空</span></div>
+            </div>
+            <div style="clear:both;"> </div>
+            <div class="pagec" id="pagearea">
+                <ul class="pagination">
+                </ul>
+            </div>
+        </div>
+        <!--end col-md-9 -->
+    </div>
+    <!--endrow-->
+    {% include "characters/included/chart_modal.html" %}
+    {% include "characters/included/accuracy_modal.html" %}
+    {% include "characters/included/mark_modal.html" %}
+    {% include "characters/included/compare_result_modal.html" %}
+    <div class="loading_icon">
+        <!-- Place at bottom of page -->
+    </div>
+</div>
+<!-- /.container -->
+{% endblock %}
+{% block foot %}
+<script type="text/javascript">
+var chars = [
+    {% for char in characterstatistics_list %}
+    [
+        "{{forloop.counter}}",
+        "{{char.char}}",
+        "{{char.total_cnt}}",
+        "{{char.correct_cnt}}",
+        "{{char.err_cnt}}",
+        "{{char.uncheck_cnt}}",
+        "{{char.charstock.weight}}",
+        "{{char.charstock.l_value}}",
+        "{{char.charstock.r_value}}"
+    ],
+    {% endfor %}
+]
+</script>
+{% compress js %}
+<script src="/static/js/vue-click-outside.js"></script>
+<script src="/static/datatables/jquery.dataTables.js"></script>
+<script src="/static/datatables/dataTables.bootstrap.js"></script>
+<script src="/static/datatables/input.js"></script>
+<script src="/static/js/jquery.simplePagination.js" charset="utf-8"></script>
+<script src="/static/js/jquery.lazyload.min.js" charset="utf-8"></script>
+<script src="/static/js/modal_action.js" charset="utf-8"></script>
+<script src="/static/js/time_left.js" charset="utf-8"></script>
+<script src="/static/js/char_manage.js" charset="utf-8"></script>
+<script src="/static/js/char_list.js" charset="utf-8"></script>
+{% endcompress %}
+{% endblock %}
