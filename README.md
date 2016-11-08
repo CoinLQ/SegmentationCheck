@@ -19,7 +19,7 @@
 
 3. 安装项目依赖文件.
 
-        $ pip install -r requirements.txt
+        $ pip install -r requirements/dev.txt
         # 请稍等一段时间!
 
 4. 假定你已经安装了postgres，下面进行初步的数据库设置
@@ -31,26 +31,19 @@
 5. 为设置manage.py正确的执行权限，运行migration.
 
         $ chmod +x manage.py
-        $ python manage.py migrate
+        $ python manage.py migrate --setting=apps.settings.dev
 
 6. 设置超级用户
 
-        $ python manage.py createsuperuser
+        $ python manage.py createsuperuser --setting=apps.settings.dev
 
-7. 准备本地测试数据
-
-        $ python manage.py loaddata segmentation/fixtures/page.json
-        $ python manage.py loaddata segmentation/fixtures/character.json
-
-8. 运行本地开发服务器
-        如果要使用dev环境配置,可以在.bashrc 类似的脚本中加入:
-        DJANGO_SETTINGS_MODULE="SegmentationCheck.settings_dev"
-        export DJANGO_SETTINGS_MODULE
-
+7. 运行本地开发服务器
+        如果默认使用dev环境配置,可以在环境变量中加入,就避免了--setting:
+        export DJANGO_SETTINGS_MODULE="apps.settings.dev"
 
         $ python manage.py runserver
 
-9. 自动化部署
+8. 自动化部署
 
         $ fab segmentation_check deploy
 
