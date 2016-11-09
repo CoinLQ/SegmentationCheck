@@ -137,6 +137,10 @@ class Character(models.Model):
         return self.id.split('L')[0]+"L"
 
     @property
+    def line_no(self):
+        return int(self.id.split('L')[0][-2:])
+
+    @property
     def char_pos(self):
         return int(self.id.split('L')[1])
 
