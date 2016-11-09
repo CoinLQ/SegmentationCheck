@@ -77,3 +77,10 @@ label.switch-box-label {
   background: #e67e22;
 }
 
+.switch-box.is-segment .switch-box-input:checked:not(:disabled) ~ .switch-box-slider:after {
+  background: #bbaeae;
+}
+.switch-box.is-segment .switch-box-input:checked:not(:disabled) ~ .switch-box-slider{
+  background: #9C9494;
+}
+
