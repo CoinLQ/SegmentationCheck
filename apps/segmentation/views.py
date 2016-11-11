@@ -66,9 +66,14 @@ class Index(generic.ListView):
     model = Tripitaka
     template_name = 'segmentation/index.html'
 
+def page_detail(request, page_id):
+    page = get_object_or_404(Page, pk=page_id)
+    #char = Character.objects.order_by('?').first()
+    summary = json.dumps(page.summary)
+    return render(request,'segmentation/page_detail.html',{'page': page, 'summary': summary})
 
 #@login_required(login_url='/segmentation/login/')
-def page_detail(request, page_id):
+def page_detail2(request, page_id):
     page = get_object_or_404(Page, pk=page_id)
     text_line_lst = []
     for line in page.text.split(u'\n'):

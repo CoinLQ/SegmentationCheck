@@ -49,12 +49,15 @@ class Page(models.Model):
     @property
     def summary(self):
         ret = {}
+        if not self.text:
+            return ret
         lines = self.text.replace('\r\n','\n').split(u'\n')
         for line in lines:
             if len(line)==0:
                 continue
-            key, value = line.split(';')
-            ret[key.strip()]=value.strip()
+            if ';' in line:
+                key, value = line.split(';')
+                ret[key.strip()]=value.strip()
         return ret
 
     def locate_char(self, character):
@@ -91,6 +94,7 @@ class Character(models.Model):
     ## the field values. [1, 0, -1]. 1 means integrity, -1 not, 0 default
     is_integrity = models.SmallIntegerField(default=0, db_index=True)
     accuracy = models.SmallIntegerField(default=-1, db_index=True)
+    is_dirty = models.BooleanField(default=False)
 
     class Meta:
         index_together = [

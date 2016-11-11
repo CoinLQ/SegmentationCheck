@@ -35,7 +35,8 @@ select.input-sm {
 }
 #char_index_length {
   position: absolute;
-  right: -10%;
+  right: 0;
+  bottom: -30px;
 }
 .paginate_page {
   display: none !important;
@@ -150,6 +151,7 @@ margin-left:3px;
 margin-top: 2px;
 border:solid blue 2px;
 border-radius: 20px;
+box-sizing: border-box;
 }
 
 .flow img{
@@ -1092,3 +1094,16 @@ text.shadow {
   left: 0;
 }
 
+.cell-table {
+  position: relative;
+  background-color: #bbaeae;
+  box-shadow: 0px 0px 0px 1px rgba(39,41,43,0.15),0px 1px 2px 0 rgba(0,0,0,0.05);
+  margin: 1rem 3em;
+  padding: 0.1em 0.1em;
+  border-radius: 0.2857rem;
+  border: none;
+  float:left;
+}
+.cell-table td {
+  padding: 3px 6px;
+}

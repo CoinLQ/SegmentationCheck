@@ -1,18 +1,22 @@
 # -*- coding:utf-8 -*-
-from django.shortcuts import render, render_to_response, get_object_or_404
-from django.http import JsonResponse
-from segmentation.models import Character, CharacterStatistics
-from django.db.models import F
-from utils.get_checked_character import get_checked_character
-from django.utils import timezone
-from django.contrib.auth.decorators import user_passes_test, login_required
-from .models import UserCredit, CharMarkRecord, ClassificationTask, ClassificationCompareResult
-import redis
-from django.views import generic
-from django.core.cache import cache
-from libs.fetch_variants import fetcher
 import json
 import random
+import redis
+
+from django.http import JsonResponse
+from django.contrib.auth.decorators import user_passes_test, login_required, permission_required
+from django.core.cache import cache
+from django.db.models import F
+from django.shortcuts import render, render_to_response, get_object_or_404
+from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views import generic
+
+from segmentation.models import Character, CharacterStatistics
+from libs.fetch_variants import fetcher
+from utils.get_checked_character import get_checked_character
+
+from .models import UserCredit, CharMarkRecord, ClassificationTask, ClassificationCompareResult
 from .tasks import classify_with_random_samples
 
 class Index(generic.ListView):
@@ -22,6 +26,7 @@ class Index(generic.ListView):
         return  char_lst
 
 def index(request):
+    import pdb;pdb.set_trace()
     return render(request, 'characters/character_index.html')
 
 def help(request):
@@ -37,10 +42,12 @@ def detail(request, character_id):
     char = get_object_or_404(Character, pk=character_id)
     #char = Character.objects.order_by('?').first()
     summary = json.dumps(char.page.summary)
-    t_char = char.page.locate_char(char)
-    return render(request,'characters/character_detail.html',{'character': char, 't_char': t_char, 'summary': summary})
+    page = char.page
+    t_char = page.locate_char(char)
+    return render(request,'characters/character_detail.html',{'character': char, 'page': page,'t_char': t_char, 'summary': summary})
 
 #@user_passes_test(lambda u:u.is_staff, login_url='/quiz')
+@login_required(login_url='/account/login/')
 def task(request):
     query = CharacterStatistics.objects.filter(total_cnt__lte=5,total_cnt__gt=0)
     total_cnt = query.count()
@@ -78,7 +85,7 @@ def task(request):
                                                         } )
 
 
-@login_required(login_url='/segmentation/login/')
+@login_required(login_url='/account/login/')
 def set_correct(request):
     if 'id' in request.POST:
         char_id = request.POST['id']

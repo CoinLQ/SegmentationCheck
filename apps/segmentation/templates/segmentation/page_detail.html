@@ -1,5 +1,5 @@
 {% extends "base.html" %} {% load compress %} {% block head %}
-<title>字形详情页</title>
+<title>页面详情页</title>
 {% compress css %}
 <link rel="stylesheet" href="/static/characters/css/app.css">
 <link rel="stylesheet" href="/static/characters/css/switch.css">
@@ -7,6 +7,7 @@
 .modal-dialog {
     overflow: initial !important
 }
+
 .modal-body {
     overflow: auto;
 }
@@ -15,34 +16,26 @@
 <div class="container">
     <div class='row show-grid' style="margin-top:20px">
         <div class='col-md-8 col-xs-8'>
-            <div class="ui segment" style="float: left">
-                <img src="{{character.image_url}}"></img>
-            </div>
             <div class='cell-table'>
-            <table class='table-bordered'>
-            <tbody>
-            <tr><td>藏经名</td><td>{{page.sutra.tripitaka.name}}</td></tr>
-            <tr><td>经名</td><td>{{page.sutra}}</td></tr>
-            <tr><td>页信息</td><td><a href="/page/{{page.id}}">{{page.id}}</a></td></tr>
-            </tbody>
-            </table>
+                <table class='table-bordered'>
+                <tbody>
+                <tr><td>藏经名</td><td>{{page.sutra.tripitaka.name}}</td></tr>
+                <tr><td>经名</td><td>{{page.sutra}}</td></tr>
+                <tr><td>页信息</td><td><a href="/page/{{page.id}}">{{page.id}}</a></td></tr>
+                </tbody>
+                </table>
             </div>
 
             <div style="float: right;margin-top: 60px;" onclick="zoom_pic()">
                 <span class='fa fa-search-plus' style='font-size:30px'></span>
             </div>
-            <div class="switch-box is-segment" style="float: right;margin-top: 64px;">
-                <input id="primary" class="switch-box-input underline-option" type="checkbox" v-on:click="toggle_detail()" />
-                <label for="primary" class="switch-box-slider"></label>
-                <label for="primary" class="switch-box-label">行标记</label>
-            </div>
         </div>
         <div class='col-md-4 col-xs-4'>
-            <div class='t-h2 hidden' style="float: left">{{character.char}}-{{character.id}}({{t_char}})</div>
+
             <div class="switch-box is-segment" style="float: right;margin-top: 64px;">
-                <input id="match" class="switch-box-input match-option" type="checkbox" v-on:click="toggle_match()" />
-                <label for="match" class="switch-box-slider"></label>
-                <label for="match" class="switch-box-label">图文不匹配</label>
+                <input id="primary" class="switch-box-input match-option" type="checkbox" v-on:click="toggle_match()" />
+                <label for="primary" class="switch-box-slider"></label>
+                <label for="primary" class="switch-box-label">图文不匹配</label>
             </div>
         </div>
     </div>
@@ -75,12 +68,10 @@ function sortKeysBy(obj, comparator) {
         return obj[key];
     }));
 }
-var rect = {{character.rect}}
-var line_text = "{{character.line_no_text}}"
-var char_pos = {{character.char_pos}}
 var summary = {{summary | safe}}
+var rect= [0,0,0,0]
+var line_text = ''
 
-//TODO: <> $$
 function _pre_process(value) {
     if (value === " ")
         return false;
@@ -113,9 +104,6 @@ $(function() {
     })
     aysnc_drawSVG('page_img', rect, "{{page.image_url}}")
 
-    $("input.underline-option").click(function(e) {
-        toggle_underline()
-    })
     $("input.match-option").click(function(e) {
         toggle_match()
     })
@@ -142,25 +130,14 @@ function toggle_image() {
     }
 }
 
-function toggle_underline() {
-    if ($('svg line').hasClass('hidden')) {
-        $('span.' + line_text).css('text-decoration', 'underline')
-        $('svg line').removeClass('hidden')
-    } else {
-        $('span.' + line_text).css('text-decoration', 'none')
-        $('svg line').addClass('hidden')
-    }
-
-}
-
 function toggle_match() {
     var checked = $('input.match-option').prop('checked')
     console.log(checked)
     if (checked){
-        $('input.match-option').nextAll('.switch-box-label').text('图文匹配');
+        $('.switch-box-label').text('图文匹配');
     }
     else {
-        $('input.match-option').nextAll('.switch-box-label').text('图文不匹配');
+        $('.switch-box-label').text('图文不匹配');
     }
 }
 </script>
