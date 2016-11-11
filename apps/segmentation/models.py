@@ -15,7 +15,7 @@ from PIL import Image
 from skimage import io
 from utils.qiniu_uploader import upload_file
 
-from catalogue.models import Volume
+from catalogue.models import Volume, Sutra
 from managerawdata.models import OPage
 logger = logging.getLogger(__name__)
 # Create your models here.
@@ -25,6 +25,7 @@ class Page(models.Model):
     image = models.CharField(max_length=512)
     volume = models.ForeignKey(Volume, related_name='pages', blank=True, null=True)
     o_page = models.ForeignKey(OPage, related_name='pages', blank=True, null=True)
+    sutra = models.ForeignKey(Sutra, related_name='pages', blank=True, null=True)
     text = models.TextField()
     width = models.SmallIntegerField(default=0)
     height = models.SmallIntegerField(default=0)
