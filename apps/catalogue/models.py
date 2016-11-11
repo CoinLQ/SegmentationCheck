@@ -62,7 +62,7 @@ class NormalizeSutra(models.Model):
 class Sutra(models.Model):
     id = models.CharField(max_length=12, default='', primary_key=True)
     tripitaka = models.ForeignKey(Tripitaka)
-    normal_sutra = models.ForeignKey(NormalizeSutra)
+    normal_sutra = models.ForeignKey(NormalizeSutra,null=True)
     name = models.CharField(max_length=128, default='')
     era = models.CharField(max_length=12, default='')
     translator = models.CharField(max_length=64, default='')

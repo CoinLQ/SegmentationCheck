@@ -14,7 +14,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='sutra',
             name='normal_sutra',
-            field=models.ForeignKey(default='', to='catalogue.NormalizeSutra'),
-            preserve_default=False,
+            field=models.ForeignKey(to='catalogue.NormalizeSutra', null=True),
         ),
     ]
