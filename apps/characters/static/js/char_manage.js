@@ -55,6 +55,8 @@ var charListContainer = {
                 null,
                 null,
                 { "sType": "numeric-abs" },
+                null,
+                null
             ],
             // Rows and column headers stored in a "data" object:
             "aaData": chars,
