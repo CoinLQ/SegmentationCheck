@@ -48,6 +48,11 @@ class Page(models.Model, ThumbnailMixin):
         return s_text
 
     @property
+    def gaolizang_id(self):
+        return self.id[8:]
+
+
+    @property
     def summary(self):
         ret = {}
         if not self.text:

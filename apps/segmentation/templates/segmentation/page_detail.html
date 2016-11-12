@@ -21,7 +21,7 @@
                 <tbody>
                 <tr><td>藏经名</td><td>{{page.sutra.tripitaka.name}}</td></tr>
                 <tr><td>经名</td><td>{{page.sutra}}</td><td>经编号</td><td>{{page.sutra.gaolizang_id}}</td></tr>
-                <tr><td>页信息</td><td><a href="/page/{{page.id}}">{{page.id}}</a></td><td>页编号</td><td>{{page.id}}</td></tr>
+                <tr><td>页信息</td><td><a href="/page/{{page.id}}">{{page.id}}</a></td><td>页编号</td><td>{{page.gaolizang_id}}</td></tr>
                 </tbody>
                 </table>
             </div>
@@ -35,7 +35,7 @@
             <div class="switch-box is-segment" style="float: right;margin-top: 64px;">
                 <input id="primary" class="switch-box-input match-option" type="checkbox" v-on:click="toggle_match()" />
                 <label for="primary" class="switch-box-slider"></label>
-                <label for="primary" class="switch-box-label">图文不匹配</label>
+                <label for="primary" class="switch-box-label">整页图文不匹配</label>
             </div>
         </div>
     </div>
@@ -81,7 +81,7 @@ $(function() {
     var is_correct = {{page.is_correct}}
     if (is_correct === 1) {
         $('input.match-option').prop('checked', true)
-        $('.switch-box-label').text('图文匹配')
+        $('.switch-box-label').text('整页图文匹配')
     }
     var pre_node = $('#page_text pre');
     _.map(sortKeysBy(summary), function(value, key) {
@@ -134,10 +134,10 @@ function toggle_match() {
     var checked = $('input.match-option').prop('checked')
     console.log(checked)
     if (checked){
-        $('.switch-box-label').text('图文匹配');
+        $('.switch-box-label').text('整页图文匹配');
     }
     else {
-        $('.switch-box-label').text('图文不匹配');
+        $('.switch-box-label').text('整页图文不匹配');
     }
 }
 </script>
