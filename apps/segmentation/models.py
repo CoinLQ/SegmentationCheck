@@ -17,9 +17,10 @@ from utils.qiniu_uploader import upload_file
 
 from catalogue.models import Volume, Sutra
 from managerawdata.models import OPage
+from libs.thumbnail import ThumbnailMixin
 logger = logging.getLogger(__name__)
 # Create your models here.
-class Page(models.Model):
+class Page(models.Model, ThumbnailMixin):
 
     id = models.CharField(max_length=32, primary_key=True)
     image = models.CharField(max_length=512)

@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load compress %}
+{% block head %}
+<title>经书列表</title>
+{% compress css %}
+<link href="/static/css/simplePagination.css" rel="stylesheet">
+<link href="/static/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/static/datatables/dataTables.bootstrap.css">
+<link rel="stylesheet" href="/static/characters/css/app.css">
+<link rel="stylesheet" href="/static/characters/css/circle.css">
+<link rel="stylesheet" href="/static/characters/css/switch.css">
+{% endcompress %}
+{% endblock %}
+{% block mainbody %}
+<div class="container">
+    <div class='row'>
+        <div class='col-md-12 col-xs-12'>
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title"></h3>
+                </div>
+                <div class="box-body">
+                    <table id="sutra_index" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>名
+                                    <br>称</th>
+                                <th>经
+                                    <br>编号</th>
+                                <th>卷
+                                    <br>数</th>
+                                <th>起
+                                    <br>始页</th>
+                                <th>终
+                                    <br>止页</th>
+                                <th>页
+                                    <br>数</th>
+                            </tr>
+                        </thead>
+                        <tbody >
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block foot %}
+<script type="text/javascript">
+var sutras = [
+    {% for sutra in sutra_list %}
+    [
+        "{{forloop.counter}}",
+        "{{sutra.name}}",
+        "{{sutra.gaolizang_id}}",
+        "{{sutra.reel_nm}}",
+        "{{sutra.start_page}}",
+        "{{sutra.end_page}}",
+        "{{sutra.page_nm}}",
+
+    ],
+    {% endfor %}
+]
+</script>
+<script type="text/javascript">
+var app = {
+    init: function () {
+      $("#sutra_index").DataTable({
+            "pagingType": "input",
+            "info": false,
+            "borderClasses": false,
+            "bSortClasses": false,
+            "bProcessing": true,
+            "bDeferRender": true,
+            "bProcessing": true,
+            "bDeferRender": true,
+            "columns": [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+            ],
+            // Rows and column headers stored in a "data" object:
+            "aaData": sutras,
+            language: {
+                search: "",
+                lengthMenu: " _MENU_ 字/页",
+                loadingRecords: "载入数据中...",
+                paginate: {
+                    first: "<span class='fa fa-step-backward'></span>",
+                    previous: "❮",
+                    next: "❯",
+                    last: "<span class='fa fa-step-forward'></span>"
+                }
+            }
+        });
+    },
+}
+
+$(function(){
+  app.init();
+})
+</script>
+{% compress js %}
+<script src="/static/js/vue-click-outside.js"></script>
+<script src="/static/datatables/jquery.dataTables.js"></script>
+<script src="/static/datatables/dataTables.bootstrap.js"></script>
+<script src="/static/datatables/input.js"></script>
+<script src="/static/js/jquery.simplePagination.js" charset="utf-8"></script>
+{% endcompress %}
+{% endblock %}
+

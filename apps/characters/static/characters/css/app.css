@@ -1107,3 +1107,10 @@ text.shadow {
 .cell-table td {
   padding: 3px 6px;
 }
+
+
+#sutra_index_length {
+  position: absolute;
+  bottom: -5px;
+  left: 5%;
+}

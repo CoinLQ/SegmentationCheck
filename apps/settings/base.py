@@ -62,12 +62,8 @@ LOCAL_APPS = [
     'account',
     'catalogue',
     'managerawdata',
-    'preprocess',
     'segmentation',
-    'layoutseg',
-    'charseg',
     'characters',
-    'pagecheck',
     'classification_statistics',
 ]
 

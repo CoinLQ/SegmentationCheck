@@ -30,16 +30,13 @@ urlpatterns = [
     url(r'^account/', include('account.urls', namespace='account')),
     url(r'^home/', include('home.urls', namespace='home')),
     url(r'^managerawdata/', include('managerawdata.urls', namespace='managerawdata')),
-    url(r'^preprocess/', include('preprocess.urls', namespace='preprocess')),
     url(r'^page/', include('segmentation.urls', namespace='segmentation')),
     url(r'^classification_statistics/', include('classification_statistics.urls', namespace='classification_statistics')),
-    url(r'^layoutseg/', include('layoutseg.urls', namespace='layoutseg')),
-    url(r'^charseg/', include('charseg.urls', namespace='charseg')),
     url(r'^characters/', include('characters.urls', namespace='characters')),
-    url(r'^pagecheck/', include('pagecheck.urls', namespace='pagecheck')),
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^api/', include('api.urls', namespace='api')),
     url(r'^quiz/', include('quiz.urls', namespace='quiz')),
+    url(r'^tripitaka/', include('catalogue.urls', namespace='tripitaka'))
 ]
 
 if settings.DEBUG:

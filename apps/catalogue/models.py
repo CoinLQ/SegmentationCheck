@@ -77,5 +77,13 @@ class Sutra(models.Model):
     def format_sutra(cls, tripitaka, number):
         return '{0}-TS{1:04}'.format(tripitaka.code, number)
 
+    @property
+    def gaolizang_id(self):
+        return 'K' + self.id[4:]
+
+    @property
+    def page_nm(self):
+        return self.pages.count()
+
     def __unicode__(self):
          return self.name

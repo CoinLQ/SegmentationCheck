@@ -1,10 +1,10 @@
 from django.conf.urls import include, url
+from django.contrib.auth.decorators import user_passes_test, login_required, permission_required
+
+
 from . import views
 
 urlpatterns = [
-    url(r'^$', views.Index.as_view(), name='index'),
-    url(r'tripitaka_create', views.TripitakaCreate.as_view(), name='tripitaka_create'),
-    url(r'tripitaka_update/(?P<pk>[0-9A-Za-z-]+)$', views.TripitakaUpdate.as_view(), name='tripitaka_update'),
-    url(r'tripitaka_delete/(?P<pk>[0-9A-Za-z-]+)$', views.TripitakaDelete.as_view(), name='tripitaka_delete'),
-    url(r'volume/(?P<pk>[0-9A-Za-z-]+)$', views.VolumeIndex.as_view(), name='volume_index'),
+  url(r'sutras$', login_required(views.SutraList.as_view()), name='sutra_index'),
+  url(r'sutras/(?P<pk>([0-9a-zA-Z-]+)$)', views.SutraDetail.as_view(), name='sutra_detail'),
 ]
