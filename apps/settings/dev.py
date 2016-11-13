@@ -38,6 +38,6 @@ DEBUG_TOOLBAR_PANELS = [
 ]
 
 DEBUG_TOOLBAR_CONFIG ={
-    'JQUERY_URL': '//lib.sinaapp.com/js/jquery/3.1.0/jquery-3.1.0.min.js',
+    'JQUERY_URL': '/static/js/jquery-2.2.4.min.js',
 }
 

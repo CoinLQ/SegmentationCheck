@@ -34,7 +34,7 @@ class TripitakaSerializer(serializers.ModelSerializer):
 class PageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Page
-        fields = ('id', 'text', 'is_correct','image','width','height','image_url')
+        fields = ('id', 'text', 'is_correct','image','width','height','image_url', 'thumbnail_image_url')
 
 
 class CharacterSerializer(serializers.ModelSerializer):

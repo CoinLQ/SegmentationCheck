@@ -32,7 +32,7 @@ class OPageViewSet(viewsets.ModelViewSet):
 class PageViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     serializer_class = PageSerializer
     queryset = Page.objects.all()
-    filter_fields = ('id', 'text', 'volume')
+    filter_fields = ('id', 'text', 'volume', 'sutra')
 
     def update(self, request, pk=None):
         instance = Page.objects.get(pk=pk)
@@ -41,6 +41,15 @@ class PageViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         serializer = PageSerializer(instance)
         return Response(serializer.data)
 
+    def toggle_correct(self, request, pk):
+        instance = Page.objects.get(pk=pk)
+        if (instance.is_correct != 1):
+            instance.is_correct = 1
+        else:
+            instance.is_correct = -1
+        instance.save()
+        serializer = PageSerializer(instance)
+        return Response(serializer.data)
 
 class CharacterStatisticsViewSet(viewsets.ModelViewSet):
     serializer_class = CharacterStatisticsSerializer

@@ -51,6 +51,9 @@ class Page(models.Model, ThumbnailMixin):
     def gaolizang_id(self):
         return self.id[8:]
 
+    @property
+    def thumbnail_image_url(self):
+        return self.get_thumbnail_url()
 
     @property
     def summary(self):

@@ -21,7 +21,7 @@
                 <tbody>
                 <tr><td>藏经名</td><td>{{page.sutra.tripitaka.name}}</td></tr>
                 <tr><td>经名</td><td>{{page.sutra}}</td><td>经编号</td><td>{{page.sutra.gaolizang_id}}</td></tr>
-                <tr><td>页信息</td><td><a href="/page/{{page.id}}">{{page.id}}</a></td><td>页编号</td><td>{{page.gaolizang_id}}</td></tr>
+                <tr><td>页信息</td><td><a id='page_id' href="/page/{{page.id}}">{{page.id}}</a></td><td>页编号</td><td>{{page.gaolizang_id}}</td></tr>
                 </tbody>
                 </table>
             </div>
@@ -132,13 +132,25 @@ function toggle_image() {
 
 function toggle_match() {
     var checked = $('input.match-option').prop('checked')
-    console.log(checked)
-    if (checked){
-        $('.switch-box-label').text('整页图文匹配');
-    }
-    else {
-        $('.switch-box-label').text('整页图文不匹配');
-    }
+    var url = '/api/page/' + $('#page_id').text() + '/toggle_correct'
+    $.ajax({
+        url: url,
+        method: 'post',
+        cache: false,
+        dataType: 'json',
+        data: {},
+        success: function(res) {
+            if (res.is_correct == 1){
+                $('input.match-option').nextAll('.switch-box-label').text('整页图文匹配');
+            }
+            else {
+                $('input.match-option').nextAll('.switch-box-label').text('整页图文不匹配');
+            }
+        },
+        error: function(xhr, status, err) {
+            console.log(err);
+        }
+    });
 }
 </script>
 {% endblock %}
