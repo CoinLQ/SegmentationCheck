@@ -87,14 +87,16 @@ class Sutra(models.Model):
 
     @property
     def accuracy_average(self):
-        from segmentation.models import Character
-        avg = cache.get("pages_avg", None)
-        if not avg:
-            avg = Character.objects.values('page_id').order_by().annotate(avg=Avg('accuracy'))
-            cache.set("pages_avg", avg)
-        g_id = self.gaolizang_id
-        return np.mean(map(lambda y: y['avg'], filter(lambda x: g_id == x['page_id'][0:5], avg)))
-
+        from segmentation.models import Page
+        avg = cache.get("sutras_avg", None)
+        try:
+            if not avg:
+                avg = Page.objects.values('sutra_id').order_by().annotate(avg=Avg('accuracy'))
+                avg = dict((x['sutra_id'], x['avg']) for x in avg)
+                cache.set("sutras_avg", avg)
+            return int(avg[self.id])/1000.0
+        except:
+            return 0
 
     @property
     def page_nm(self):
@@ -103,9 +105,9 @@ class Sutra(models.Model):
         try:
             if not total:
                 total = Page.objects.values('sutra_id').order_by().annotate(total=Count('sutra_id'))
+                total = dict((x['sutra_id'], x['total']) for x in total)
                 cache.set("pages_total", total)
-
-            return filter(lambda x: self.id == x['sutra_id'], total)[0]['total']
+            return total[self.id]
         except:
             return 0
 

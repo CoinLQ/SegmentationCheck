@@ -7,10 +7,10 @@ GET_THUMB_PATTERN = re.compile(r'^get_thumbnail_(\d+)x(\d+)_(url|filename)$')
 
 class ThumbnailMixin(object):
     def get_thumbnail_url(self):
-        return self.build_thumb('get_thumbnail_320x240_url')
+        return self.build_thumb('get_thumbnail_80x60_url')
 
     def get_thumbnail_filename(self):
-        return self.build_thumb('get_thumbnail_320x240_filename')
+        return self.build_thumb('get_thumbnail_80x60_filename')
 
     def build_thumb(self, name):
         """

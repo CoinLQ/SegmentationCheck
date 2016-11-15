@@ -7,8 +7,8 @@ import logging
 from django.core.cache import cache
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.db import models
-from django.db.models import SmallIntegerField,Sum, Case, When, Value, Count
+from django.db import models, transaction
+from django.db.models import SmallIntegerField,Sum, Case, When, Value, Count, Avg
 from django.utils.translation import ugettext_lazy as _
 
 from PIL import Image
@@ -34,7 +34,7 @@ class Page(models.Model, ThumbnailMixin):
     right = models.SmallIntegerField(default=0)
     ## the field values. [1, 0, -1]. 1 means correct, -1 not, 0 default
     is_correct = models.SmallIntegerField(default=0)
-    erro_char_cnt = models.IntegerField(default=0)
+    accuracy = models.IntegerField(default=0)
 
     def __unicode__(self):
         return self.id
@@ -46,6 +46,28 @@ class Page(models.Model, ThumbnailMixin):
         if start_pos != -1:
             s_text = self.text[start_pos + 1:pos].strip()
         return s_text
+
+    @staticmethod
+    def rebuild_accuracy():
+        pages_avg = cache.get("pages_avg", None)
+        if not pages_avg:
+            pages_avg = Character.objects.values('page_id').order_by().annotate(avg=Avg('accuracy'))
+            cache.set("pages_avg", pages_avg)
+            pages = []
+            for i, page in enumerate(pages_avg, start=1):
+                pages.append(page)
+                if i % 5000 == 0:
+                    with transaction.atomic():
+                        for page in pages:
+                            dp = Page.objects.get(pk=page['page_id'])
+                            dp.accuracy = page['avg']
+                            dp.save()
+                    pages = []
+            with transaction.atomic():
+                for page in pages:
+                    dp = Page.objects.get(pk=page['page_id'])
+                    dp.accuracy = page['avg']
+                    dp.save()
 
     @property
     def gaolizang_id(self):

@@ -30,7 +30,7 @@
 
         <div class='ui segment' style='float: left;margin: 1em 0.2em'>
           <img src={{page.thumbnail_image_url}}></img>
-          <a style='margin: 0;display: block;clear:both' href="/page/{{page.id}}">{{page.id}}</a>
+          <a style='margin: 0;display: block;clear:both' href="/page/{{page.id}}">{{page.accuracy/1000}}</a>
         </div>
       </template>
       {% endverbatim %}
@@ -48,7 +48,7 @@ var sutra = new Vue({
     },
     methods: {
       load_pages: function(page_num = 1) {
-        var url = "/api/page?stura_id=" + $('#sutra_view').data('id')+ '&page_size=12' + "&page=" + page_num
+        var url = "/api/page?stura_id=" + $('#sutra_view').data('id')+ '&page_size=30' + "&page=" + page_num
         $.ajax({
           url: url,
           dataType: 'json',
