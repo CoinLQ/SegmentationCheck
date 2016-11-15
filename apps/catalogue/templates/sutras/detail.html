@@ -14,9 +14,59 @@
 {% block mainbody %}
 <div class="container">
     <div class='row'>
+      <h1>{{sutra.name}}</h1>
+    </div>
+    <div id='sutra_view' data-id='{{sutra.id}}' class='hidden'>
+      {% verbatim %}
+      <div>
+        <span class='pagitor first btn btn-default' id='char_index_first' v-on:click="load_pages()" ><span class="fa fa-step-backward"></span></span>
+        <span class='pagitor more-padding previous btn btn-default' id='char_index_previous' style="font-size:20px;" v-on:click="load_pages(pagination.previous_page)">❮</span>
+        <input class='form-control-inline pagitor_input input-sm' value={{pagination.page}} type='number' min="1">
+        <span class='pagitor_of total_page'> /{{pagination.total_pages}}</span>
+        <span class='pagitor more-padding next btn btn-default' style="font-size:20px;" v-on:click="load_pages(pagination.next_page)">❯</span>
+        <span class='pagitor last btn btn-default' id='char_index_last' v-on:click="load_pages(pagination.total_pages)"><span class="fa fa-step-forward"></span></span>
+      </div>
+      <template v-for="page in pages">
+
+        <div class='ui segment' style='float: left;margin: 1em 0.2em'>
+          <img src={{page.thumbnail_image_url}}></img>
+          <a style='margin: 0;display: block;clear:both' href="/page/{{page.id}}">{{page.id}}</a>
+        </div>
+      </template>
+      {% endverbatim %}
     </div>
 </div>
 {% endblock %}
 
 {% block foot %}
+<script type="text/javascript">
+var sutra = new Vue({
+    el: '#sutra_view',
+    data: {
+        pages: [],
+        pagination: {}
+    },
+    methods: {
+      load_pages: function(page_num = 1) {
+        var url = "/api/page?stura_id=" + $('#sutra_view').data('id')+ '&page_size=12' + "&page=" + page_num
+        $.ajax({
+          url: url,
+          dataType: 'json',
+          cache: false,
+          success: function(data) {
+            sutra.pages = data.models
+            sutra.pagination = data.pagination
+            $('#sutra_view').removeClass('hidden')
+          },
+          error: function(xhr, status, err) {
+            console.log('error');
+          }
+        })
+      },
+    }
+});
+$(function(){
+  sutra.load_pages()
+})
+</script>
 {% endblock %}

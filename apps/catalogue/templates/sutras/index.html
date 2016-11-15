@@ -36,6 +36,8 @@
                                     <br>止页</th>
                                 <th>页
                                     <br>数</th>
+                                <th>相似
+                                    <br>度均值</th>
                             </tr>
                         </thead>
                         <tbody >
@@ -55,13 +57,14 @@
 var sutras = [
     {% for sutra in sutra_list %}
     [
-        "{{forloop.counter}}",
+        "{{sutra.id}}",
         "{{sutra.name}}",
         "{{sutra.gaolizang_id}}",
         "{{sutra.reel_nm}}",
         "{{sutra.start_page}}",
         "{{sutra.end_page}}",
         "{{sutra.page_nm}}",
+        "{{sutra.accuracy_average}}"
 
     ],
     {% endfor %}
@@ -81,12 +84,18 @@ var app = {
             "bDeferRender": true,
             "columns": [
                 null,
+                {
+                    "title": "佛经名称",
+                    "render": function (data, type, row, meta) {
+                        return '<a href="/tripitaka/sutras/' + row[0] + '">' + data + '</a>';
+                    }
+                },
                 null,
                 null,
                 null,
                 null,
                 null,
-                null,
+                null
             ],
             // Rows and column headers stored in a "data" object:
             "aaData": sutras,

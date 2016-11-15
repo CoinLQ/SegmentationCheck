@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
-from django.db import models
-from django.utils.translation import ugettext_lazy as _
+import numpy as np
+
 from django.contrib.postgres.fields import ArrayField
+from django.core.cache import cache
+from django.db import models
+from django.db.models import Avg, Count
+from django.utils.translation import ugettext_lazy as _
 
 # Create your models here.
 class Tripitaka(models.Model):
@@ -82,8 +86,28 @@ class Sutra(models.Model):
         return 'K' + self.id[4:]
 
     @property
+    def accuracy_average(self):
+        from segmentation.models import Character
+        avg = cache.get("pages_avg", None)
+        if not avg:
+            avg = Character.objects.values('page_id').order_by().annotate(avg=Avg('accuracy'))
+            cache.set("pages_avg", avg)
+        g_id = self.gaolizang_id
+        return np.mean(map(lambda y: y['avg'], filter(lambda x: g_id == x['page_id'][0:5], avg)))
+
+
+    @property
     def page_nm(self):
-        return self.pages.count()
+        from segmentation.models import Page
+        total = cache.get("pages_total", None)
+        try:
+            if not total:
+                total = Page.objects.values('sutra_id').order_by().annotate(total=Count('sutra_id'))
+                cache.set("pages_total", total)
+
+            return filter(lambda x: self.id == x['sutra_id'], total)[0]['total']
+        except:
+            return 0
 
     def __unicode__(self):
          return self.name
