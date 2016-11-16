@@ -62,14 +62,26 @@
                     </div>
                 </div>
               </div>
-              <div>
+              <div  style="float: left;">
                 <span class='pagitor first btn btn-default' id='char_index_first' v-on:click="load_pages(1)" ><span class="fa fa-step-backward"></span></span>
                 <span class='pagitor more-padding previous btn btn-default' id='char_index_previous' style="font-size:20px;" v-on:click="load_pages(pagination.previous_page)">❮</span>
-                <input class='form-control-inline pagitor_input input-sm' value={{pagination.page}} type='number' min="1">
+                <input class='form-control-inline pagitor_input input-sm' value={{pagination.page}} type='number' min="1" v-on:keyup.13="goto_pages($event)">
                 <span class='pagitor_of total_page'> /{{pagination.total_pages}}</span>
                 <span class='pagitor more-padding next btn btn-default' style="font-size:20px;" v-on:click="load_pages(pagination.next_page)">❯</span>
                 <span class='pagitor last btn btn-default' id='char_index_last' v-on:click="load_pages(pagination.total_pages)"><span class="fa fa-step-forward"></span></span>
               </div>
+              <div class="btn-group" style="padding:0px; margin-left: 20px; float: left;">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-top:3px">
+                    <span>{{page_size}}&nbsp;</span><span class="caret"></span> </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <li><a href="javascript:;" v-on:click="pagesize(10)">10</a></li>
+                    <li><a href="javascript:;" v-on:click="pagesize(20)">20</a></li>
+                    <li><a href="javascript:;" v-on:click="pagesize(50)">50</a></li>
+                    <li><a href="javascript:;" v-on:click="pagesize(100)">100</a></li>
+                    <li><a href="javascript:;" v-on:click="pagesize(200)">200</a></li>
+                </ul>
+                <label style="line-height: 31px;">字/页</label>
+            </div>
       {% endverbatim %}
     </div>
 </div>
@@ -86,7 +98,7 @@ var sutra = new Vue({
         acc_order: 'accuracy',
         correct_scope: '显示全部',
         order_scope: '升序',
-        page_size: 30,
+        page_size: 50,
         current_page: 1
     },
     methods: {
@@ -129,6 +141,9 @@ var sutra = new Vue({
           }
         })
       },
+      goto_pages: function(evt) {
+        this.load_pages(evt.target.value)
+      },
       set_order: function(order_by, evt) {
         this.order_scope = evt.target.text
         this.acc_order = order_by
@@ -137,6 +152,10 @@ var sutra = new Vue({
       filter_content: function(is_correct, evt) {
         this.correct_scope = evt.target.text
         this.is_correct = is_correct
+        this.load_pages()
+      },
+      pagesize: function(page_size){
+        this.page_size = page_size;
         this.load_pages()
       },
       mark_it: function(item, is_correct) {
