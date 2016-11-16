@@ -12,7 +12,6 @@ from django.conf.urls import url, patterns, include
 
 character_cut = CharacterViewSet.as_view({'get': 'cut_detail','post': 'apply_cut'})
 character_cut_list = CharacterViewSet.as_view({'get': 'cut_list'})
-toggle_correct = PageViewSet.as_view({'post': 'toggle_correct'})
 
 router = routers.SimpleRouter(trailing_slash=False)
 router.register(r'tripitaka', TripitakaViewSet)
@@ -28,5 +27,4 @@ urlpatterns = patterns(
   url(r'^', include(router.urls)),
   url(r'^character/(?P<pk>[0-9A-Za-z-]+)/direct/(?P<direct>[a-z-]+)/cut$', character_cut_list, name='character_cut_list'),
   url(r'^character/(?P<pk>[0-9A-Za-z-]+)/direct/(?P<direct>[a-z-]+)/cut/(?P<image_no>[0-9-]+)$', character_cut, name='character_cut'),
-  url(r'^page/(?P<pk>([0-9\w]+))/toggle_correct$', toggle_correct, name='page_toggle_correct'),
 )

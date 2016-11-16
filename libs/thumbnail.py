@@ -2,12 +2,19 @@ import re
 from os import path
 from PIL import Image
 from resizeimage import resizeimage
+import logging
 
 GET_THUMB_PATTERN = re.compile(r'^get_thumbnail_(\d+)x(\d+)_(url|filename)$')
 
 class ThumbnailMixin(object):
+
     def get_thumbnail_url(self):
-        return self.build_thumb('get_thumbnail_80x60_url')
+        try:
+            return self.build_thumb('get_thumbnail_80x60_url')
+        except Exception, e:
+            logger = logging.getLogger(__name__)
+            logger.error(e)
+            return ''
 
     def get_thumbnail_filename(self):
         return self.build_thumb('get_thumbnail_80x60_filename')

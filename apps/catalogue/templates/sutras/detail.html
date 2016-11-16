@@ -18,21 +18,58 @@
     </div>
     <div id='sutra_view' data-id='{{sutra.id}}' class='hidden'>
       {% verbatim %}
-      <div>
-        <span class='pagitor first btn btn-default' id='char_index_first' v-on:click="load_pages()" ><span class="fa fa-step-backward"></span></span>
-        <span class='pagitor more-padding previous btn btn-default' id='char_index_previous' style="font-size:20px;" v-on:click="load_pages(pagination.previous_page)">❮</span>
-        <input class='form-control-inline pagitor_input input-sm' value={{pagination.page}} type='number' min="1">
-        <span class='pagitor_of total_page'> /{{pagination.total_pages}}</span>
-        <span class='pagitor more-padding next btn btn-default' style="font-size:20px;" v-on:click="load_pages(pagination.next_page)">❯</span>
-        <span class='pagitor last btn btn-default' id='char_index_last' v-on:click="load_pages(pagination.total_pages)"><span class="fa fa-step-forward"></span></span>
-      </div>
-      <template v-for="page in pages">
-
-        <div class='ui segment' style='float: left;margin: 1em 0.2em'>
-          <img src={{page.thumbnail_image_url}}></img>
-          <a style='margin: 0;display: block;clear:both' href="/page/{{page.id}}">{{page.accuracy/1000}}</a>
-        </div>
-      </template>
+          <div class='row'>
+          <div id="order_scope" class="dropdown" style="display: inline-block;float:right;margin: 0px 10px;">
+                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span>{{order_scope}}</span>
+                        <span class="caret"></span></button>
+                    <ul class="dropdown-menu" style="margin-top:8px;">
+                        <li><a v-on:click="set_order('accuracy', $event)" href="#">升序</a></li>
+                        <li><a v-on:click="set_order('-accuracy', $event)" href="#">降序</a></li>
+                    </ul>
+                </div>
+                <div id="find_scope" class="dropdown" style="display: inline-block;float:right;margin: 0px 10px;">
+                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span id='correct_scope'>{{correct_scope}}</span>
+                        <span class="caret"></span></button>
+                    <ul class="dropdown-menu" style="margin-top:8px;">
+                        <li><a v-on:click="filter_content(0, $event)" href="#">显示全部</a></li>
+                        <li><a v-on:click="filter_content(-1, $event)" href="#">人工标错</a></li>
+                        <li><a v-on:click="filter_content(1, $event)" href="#">人工标对</a></li>
+                    </ul>
+                </div>
+          </div>
+            <div  style="margin-top:20px;display: inline-block">
+                <template v-for="item in pages">
+                    <div id="{{item.id}}" class="flow char-image {{gen_cls(item)}}">
+                        <img v-bind:src="item.thumbnail_image_url" alt="加载中..." class="lazy">
+                        <span class="badge char-info">{{item.accuracy}}</span>
+                        <div class="cmd-panel">
+                            <div class="btn-correct-o" title='正确' v-on:click="mark_it(item, 1)">
+                            </div>
+                            <div class="btn-error-o" title='错误' v-on:click="mark_it(item, -1)">
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <div style="display: none" v-bind:style="menu_style" class="ctx-menu-container">
+                    <div class="ctx-menu">
+                        <div class="ctx-item" v-on:click="cut_image_modal()">
+                           重新切分
+                        </div>
+                        <div class="ctx-divider"></div>
+                        <div class="ctx-item" v-on:click="goto_detail()">
+                           字形详情
+                        </div>
+                    </div>
+                </div>
+              </div>
+              <div>
+                <span class='pagitor first btn btn-default' id='char_index_first' v-on:click="load_pages(1)" ><span class="fa fa-step-backward"></span></span>
+                <span class='pagitor more-padding previous btn btn-default' id='char_index_previous' style="font-size:20px;" v-on:click="load_pages(pagination.previous_page)">❮</span>
+                <input class='form-control-inline pagitor_input input-sm' value={{pagination.page}} type='number' min="1">
+                <span class='pagitor_of total_page'> /{{pagination.total_pages}}</span>
+                <span class='pagitor more-padding next btn btn-default' style="font-size:20px;" v-on:click="load_pages(pagination.next_page)">❯</span>
+                <span class='pagitor last btn btn-default' id='char_index_last' v-on:click="load_pages(pagination.total_pages)"><span class="fa fa-step-forward"></span></span>
+              </div>
       {% endverbatim %}
     </div>
 </div>
@@ -44,11 +81,40 @@ var sutra = new Vue({
     el: '#sutra_view',
     data: {
         pages: [],
-        pagination: {}
+        pagination: {},
+        is_correct: 0,
+        acc_order: 'accuracy',
+        correct_scope: '显示全部',
+        order_scope: '升序',
+        page_size: 30,
+        current_page: 1
     },
     methods: {
+      gen_url: function(){
+        var base_url = "/api/page?sutra=" + $('#sutra_view').data('id')
+        base_url = base_url + '&page_size=' + sutra.page_size + "&page=" + this.current_page
+        if (sutra.is_correct!= 0) {
+           base_url = base_url + '&is_correct=' + sutra.is_correct
+        }
+        base_url = base_url + '&ordering=' + sutra.acc_order
+        return base_url
+      },
+      gen_cls: function(item) {
+            var class_name;
+            if (item.is_correct == 1) {
+                cls_name = 'correct-char flip-inx'
+            } else if (item.is_correct == -1) {
+                cls_name = 'error-char flip-inx'
+            } else {
+                cls_name = 'twinkling'
+            }
+            // if (this.items.indexOf(item) == this.selection)
+            //     cls_name = cls_name.replace(/flip-inx/, '')
+            return cls_name;
+        },
       load_pages: function(page_num = 1) {
-        var url = "/api/page?stura_id=" + $('#sutra_view').data('id')+ '&page_size=30' + "&page=" + page_num
+        this.current_page = page_num
+        var url = this.gen_url()
         $.ajax({
           url: url,
           dataType: 'json',
@@ -63,6 +129,39 @@ var sutra = new Vue({
           }
         })
       },
+      set_order: function(order_by, evt) {
+        this.order_scope = evt.target.text
+        this.acc_order = order_by
+        this.load_pages()
+      },
+      filter_content: function(is_correct, evt) {
+        this.correct_scope = evt.target.text
+        this.is_correct = is_correct
+        this.load_pages()
+      },
+      mark_it: function(item, is_correct) {
+        var url = '/api/page/' + item.id + '/mark_is_correct'
+        $.ajax({
+            url: url,
+            method: 'PUT',
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            data:  JSON.stringify({'is_correct': is_correct}),
+            success: function(res) {
+              var index= sutra.pages.indexOf(item)
+                sutra.pages.$set(index, {
+                    id: item.id,
+                    image_url: item.image_url,
+                    thumbnail_image_url: item.thumbnail_image_url,
+                    accuracy: item.accuracy,
+                    is_correct: res.is_correct
+                })
+            },
+            error: function(xhr, status, err) {
+                console.log(err);
+            }
+        });
+      }
     }
 });
 $(function(){
