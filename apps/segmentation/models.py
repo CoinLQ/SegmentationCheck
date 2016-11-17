@@ -100,7 +100,7 @@ class Page(models.Model, ThumbnailMixin):
         return word
 
     def get_image_path(self):
-        return settings.PAGE_IMAGE_ROOT+self.image
+        return settings.PAGE_IMAGE_ROOT + self.id + '.jpg'
 
     @property
     def image_url(self):
