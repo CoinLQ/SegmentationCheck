@@ -29,6 +29,7 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^account/', include('account.urls', namespace='account')),
     url(r'^home/', include('home.urls', namespace='home')),
+    url(r'^preprocess/', include('preprocess.urls', namespace='preprocess')),
     url(r'^managerawdata/', include('managerawdata.urls', namespace='managerawdata')),
     url(r'^page/', include('segmentation.urls', namespace='segmentation')),
     url(r'^classification_statistics/', include('classification_statistics.urls', namespace='classification_statistics')),

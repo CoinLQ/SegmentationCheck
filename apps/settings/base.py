@@ -65,6 +65,7 @@ LOCAL_APPS = [
     'segmentation',
     'characters',
     'classification_statistics',
+    'preprocess'
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
