@@ -37,9 +37,10 @@
                     </ul>
                 </div>
           </div>
+            <div class='row'>
             <div  style="margin-top:20px;display: inline-block">
                 <template v-for="item in pages">
-                    <div id="{{item.id}}" class="flow char-image {{gen_cls(item)}}">
+                    <div id="{{item.id}}" class="flow char-image {{gen_cls(item)}}" @contextmenu.prevent="handleContextmenu(item,$event)">
                         <img v-bind:src="item.thumbnail_image_url" alt="加载中..." class="lazy">
                         <span class="badge char-info">{{item.accuracy}}</span>
                         <div class="cmd-panel">
@@ -52,17 +53,14 @@
                 </template>
                 <div style="display: none" v-bind:style="menu_style" class="ctx-menu-container">
                     <div class="ctx-menu">
-                        <div class="ctx-item" v-on:click="cut_image_modal()">
-                           重新切分
-                        </div>
-                        <div class="ctx-divider"></div>
-                        <div class="ctx-item" v-on:click="goto_detail()">
-                           字形详情
+                        <div class="ctx-item" v-on:click="goto_page_detail()">
+                           页面详情
                         </div>
                     </div>
                 </div>
               </div>
-              <div  style="float: left;">
+              </div>
+              <div  class='row' style="float: left;">
                 <span class='pagitor first btn btn-default' id='char_index_first' v-on:click="load_pages(1)" ><span class="fa fa-step-backward"></span></span>
                 <span class='pagitor more-padding previous btn btn-default' id='char_index_previous' style="font-size:20px;" v-on:click="load_pages(pagination.previous_page)">❮</span>
                 <input class='form-control-inline pagitor_input input-sm' value={{pagination.page}} type='number' min="1" v-on:keyup.13="goto_pages($event)">
@@ -92,6 +90,7 @@
 var sutra = new Vue({
     el: '#sutra_view',
     data: {
+        selection: {},
         pages: [],
         pagination: {},
         is_correct: 0,
@@ -99,9 +98,30 @@ var sutra = new Vue({
         correct_scope: '显示全部',
         order_scope: '升序',
         page_size: 50,
-        current_page: 1
+        current_page: 1,
+        menu_style: {}
     },
     methods: {
+      handleContextmenu: function(item, e) {
+          document.removeEventListener('click', sutra._onContextMenuClick)
+          debugger;
+          this.menu_style = {
+              top: e.pageY - window.scrollY + 'px',
+              left: e.pageX + 'px',
+              display: 'block'
+          }
+          this.selection = this.pages.indexOf(item)
+          setTimeout(function() { document.addEventListener('click', sutra._onContextMenuClick) }, 200)
+      },
+      _onContextMenuClick: function(e) {
+          e.stopPropagation()
+          if ($('.ctx-menu-container').get(0) !== e.target) {
+              sutra.menu_style = {
+                  display: 'none'
+              }
+          }
+          document.removeEventListener('click', sutra._onContextMenuClick)
+      },
       gen_url: function(){
         var base_url = "/api/page?sutra=" + $('#sutra_view').data('id')
         base_url = base_url + '&page_size=' + sutra.page_size + "&page=" + this.current_page
@@ -179,7 +199,11 @@ var sutra = new Vue({
             error: function(xhr, status, err) {
                 console.log(err);
             }
-        });
+        })
+      },
+      goto_page_detail: function(item) {
+        url = "/page/" + this.pages[this.selection].id;
+        var _open = window.open(url);
       }
     }
 });
