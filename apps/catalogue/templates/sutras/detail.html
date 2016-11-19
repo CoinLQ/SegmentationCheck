@@ -19,12 +19,20 @@
     <div id='sutra_view' data-id='{{sutra.id}}' class='hidden'>
       {% verbatim %}
           <div class='row'>
-          <div id="order_scope" class="dropdown" style="display: inline-block;float:right;margin: 0px 10px;">
+                <div id="dis-mode" class="dropdown" style="display: inline-block;float:right;margin: 0px 10px;">
+                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span>{{display_mode}}</span>
+                        <span class="caret"></span></button>
+                    <ul class="dropdown-menu" style="margin-top:8px;">
+                        <li><a v-on:click="set_mode(0)" href="#">浏览模式</a></li>
+                        <li><a v-on:click="set_mode(1)" href="#">相似度模式</a></li>
+                    </ul>
+                </div>
+                <div id="order_scope" class="dropdown" style="display: inline-block;float:right;margin: 0px 10px;">
                     <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span>{{order_scope}}</span>
                         <span class="caret"></span></button>
                     <ul class="dropdown-menu" style="margin-top:8px;">
-                        <li><a v-on:click="set_order('accuracy', $event)" href="#">升序</a></li>
-                        <li><a v-on:click="set_order('-accuracy', $event)" href="#">降序</a></li>
+                        <li><a v-on:click="set_order(0, $event)" href="#">升序</a></li>
+                        <li><a v-on:click="set_order(1, $event)" href="#">降序</a></li>
                     </ul>
                 </div>
                 <div id="find_scope" class="dropdown" style="display: inline-block;float:right;margin: 0px 10px;">
@@ -38,12 +46,14 @@
                 </div>
           </div>
             <div class='row'>
-            <div  style="margin-top:20px;display: inline-block">
+            <div  style="margin-top:20px;">
                 <template v-for="item in pages">
                     <div id="{{item.id}}" class="flow char-image {{gen_cls(item)}}" @contextmenu.prevent="handleContextmenu(item,$event)">
-                        <img v-bind:src="item.thumbnail_image_url" alt="加载中..." class="lazy">
-                        <span class="badge char-info">{{item.accuracy}}</span>
-                        <div class="cmd-panel">
+                        <img v-bind:src="item.thumbnail_image_url" alt="加载中..." class="lazy" v-on:click="goto_page_detail(item)"/>
+                        <div class='fa lt-corner {{item_cls(item)}} {{brows_mode_cls()}}'></div>
+                        <span class="badge char-info {{acc_mode_cls()}}">{{item.accuracy/1000}}</span>
+                        <span class="badge pid-info {{brows_mode_cls()}}" style='font-weight: 200'>{{item.id.slice(5)}}</span>
+                        <div class="cmd-panel {{acc_mode_cls()}}">
                             <div class="btn-correct-o" title='正确' v-on:click="mark_it(item, 1)">
                             </div>
                             <div class="btn-error-o" title='错误' v-on:click="mark_it(item, -1)">
@@ -51,7 +61,7 @@
                         </div>
                     </div>
                 </template>
-                <div style="display: none" v-bind:style="menu_style" class="ctx-menu-container">
+                <div style="display: none" v-bind:style="menu_style" class="ctx-menu-container {{brows_mode_cls()}}">
                     <div class="ctx-menu">
                         <div class="ctx-item" v-on:click="goto_page_detail()">
                            页面详情
@@ -94,17 +104,56 @@ var sutra = new Vue({
         pages: [],
         pagination: {},
         is_correct: 0,
-        acc_order: 'accuracy',
+        order_mode: 0,
         correct_scope: '显示全部',
         order_scope: '升序',
         page_size: 50,
         current_page: 1,
-        menu_style: {}
+        menu_style: {},
+        mode: 0,
+    },
+    computed: {
+      display_mode: function(){
+        if (this.mode === 0) {
+          return '浏览模式'
+        } else {
+          return '相似度模式'
+        }
+
+      },
+      acc_order: function(){
+        if (this.order_mode === 0) {
+          return 'accuracy'
+        } else {
+          return '-accuracy'
+        }
+      },
+      browser_order: function(){
+        if (this.order_mode === 0) {
+          return 'id'
+        } else {
+          return '-id'
+        }
+      }
     },
     methods: {
+      set_mode: function(n) {
+        this.mode = n
+        this.load_pages()
+      },
+      acc_mode_cls: function(){
+        if (this.mode === 0)
+          return 'hidden'
+      },
+      brows_mode_cls: function(){
+        if (this.mode === 1)
+          return 'hidden'
+      },
+      item_cls: function(item){
+        return  (item.is_correct == 1) ? 'fa-star' : 'fa-star-o'
+      },
       handleContextmenu: function(item, e) {
           document.removeEventListener('click', sutra._onContextMenuClick)
-          debugger;
           this.menu_style = {
               top: e.pageY - window.scrollY + 'px',
               left: e.pageX + 'px',
@@ -128,7 +177,10 @@ var sutra = new Vue({
         if (sutra.is_correct!= 0) {
            base_url = base_url + '&is_correct=' + sutra.is_correct
         }
-        base_url = base_url + '&ordering=' + sutra.acc_order
+        if (this.mode === 1)
+          base_url = base_url + '&ordering=' + sutra.acc_order
+        else
+          base_url = base_url + '&ordering=' + sutra.browser_order
         return base_url
       },
       gen_cls: function(item) {
@@ -164,9 +216,9 @@ var sutra = new Vue({
       goto_pages: function(evt) {
         this.load_pages(evt.target.value)
       },
-      set_order: function(order_by, evt) {
+      set_order: function(n, evt) {
         this.order_scope = evt.target.text
-        this.acc_order = order_by
+        this.order_mode = n
         this.load_pages()
       },
       filter_content: function(is_correct, evt) {
@@ -202,7 +254,10 @@ var sutra = new Vue({
         })
       },
       goto_page_detail: function(item) {
-        url = "/page/" + this.pages[this.selection].id;
+        if (item)
+          var url = "/page/" + item.id
+        else
+          var url = "/page/" + this.pages[this.selection].id
         var _open = window.open(url);
       }
     }

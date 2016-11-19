@@ -42,12 +42,6 @@
     <nav class="navbar-inverse navbar-top">
       <div class="container">
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
           <a class="navbar-brand" href="/">字切分平台</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
@@ -59,7 +53,7 @@
 
             <li><a href="/segmentation/">切分</a></li> -->
             <li {% if request.path == '/characters/' %} class="active"{% endif %} ><a href="/characters/">字形管理</a></li>
-            <li {% if request.path == '/tripitaka/sutras' %} class="active"{% endif %}><a href="/tripitaka/sutras">经文管理</a></li>
+            <li {% if '/tripitaka/sutras' in request.path %} class="active"{% endif %}><a href="/tripitaka/sutras">经文管理</a></li>
             {% endif %}
           {% if user.is_authenticated %}
             <li {% if '/preprocess/' in request.path %} class="dropdown active"{% endif %}>
