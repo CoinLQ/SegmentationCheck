@@ -55,6 +55,27 @@ class PageViewSet(viewsets.ModelViewSet):
         serializer = PageSerializer(instance)
         return Response(serializer.data)
 
+    @detail_route(methods=['get'], url_path='split_presets')
+    def split_presets(self, request, pk):
+        instance = Page.objects.get(pk=pk)
+        lines_hash = {}
+        results = instance.character_set.order_by('-id')
+        if not results.first():
+            return Response({'id': instance.id, 'lines_hash': lines_hash})
+        for ch in results:
+            line_no_text = "%dL" % ch.line_no
+            if not lines_hash.get(line_no_text):
+                lines_hash[line_no_text] = { "border_r": ch.right,
+                    "border_l": ch.left, "char_lst": []}
+            lines_hash[line_no_text]["char_lst"].append({
+                "bottom": ch.bottom,
+                "top": ch.top,
+                "char_no": ch.char_pos,
+                "char": ch.char
+                })
+        return Response({'id': instance.id, 'lines_hash': lines_hash})
+
+
 class CharacterStatisticsViewSet(viewsets.ModelViewSet):
     serializer_class = CharacterStatisticsSerializer
     queryset = CharacterStatistics.objects.all().order_by('-total_cnt', 'char')

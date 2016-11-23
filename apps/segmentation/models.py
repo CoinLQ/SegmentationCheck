@@ -51,7 +51,7 @@ class Page(models.Model, ThumbnailMixin):
     def rebuild_accuracy():
         pages_avg = cache.get("pages_avg", None)
         if not pages_avg:
-            pages_avg = Character.objects.values('page_id').order_by().annotate(avg=Avg('accuracy'))
+            pages_avg = Character.objects.filter(is_correct=1).values('page_id').order_by().annotate(avg=Avg('accuracy'))
             cache.set("pages_avg", pages_avg)
             pages = []
             for i, page in enumerate(pages_avg, start=1):

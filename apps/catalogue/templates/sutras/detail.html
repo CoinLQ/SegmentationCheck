@@ -184,6 +184,10 @@ var sutra = new Vue({
         return base_url
       },
       gen_cls: function(item) {
+            if (this.mode == 0)
+            {
+              return ''
+            }
             var class_name;
             if (item.is_correct == 1) {
                 cls_name = 'correct-char flip-inx'

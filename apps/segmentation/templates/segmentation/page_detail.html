@@ -71,6 +71,7 @@ function sortKeysBy(obj, comparator) {
 var summary = {{summary | safe}}
 var rect= [0,0,0,0]
 var line_text = ''
+var page_detail = true
 
 function _pre_process(value) {
     if (value === " ")
@@ -110,6 +111,7 @@ $(function() {
 })
 
 function zoom_pic() {
+    page_detail = false
     $('#zoomImageModal').modal('show')
     $('.wrapper').width($(window).width()).height($(window).height() - $('.modal-header').height());
     if (!$('.wrapper svg')[0])
