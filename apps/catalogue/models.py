@@ -4,7 +4,7 @@ import numpy as np
 from django.contrib.postgres.fields import ArrayField
 from django.core.cache import cache
 from django.db import models
-from django.db.models import Avg, Count
+from django.db.models import Avg, Count, Q
 from django.utils.translation import ugettext_lazy as _
 
 # Create your models here.
@@ -91,7 +91,7 @@ class Sutra(models.Model):
         avg = cache.get("sutras_avg", None)
         try:
             if not avg:
-                avg = Page.objects.values('sutra_id').order_by().annotate(avg=Avg('accuracy'))
+                avg = Page.objects.filter(~Q(accuracy=0)).values('sutra_id').order_by().annotate(avg=Avg('accuracy'))
                 avg = dict((x['sutra_id'], x['avg']) for x in avg)
                 cache.set("sutras_avg", avg)
             return int(avg[self.id])/1000.0
