@@ -54,6 +54,7 @@ THIRD_PARTY_APPS = [
     'djcelery',
     'django_slack',
     "compressor",
+    'rest_framework_swagger',
     ]
 
 LOCAL_APPS = [
@@ -147,8 +148,7 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_PAGINATION_CLASS": "api.pagination.StandardPagination",
     "DEFAULT_FILTER_BACKENDS": (
-        "rest_framework.filters.SearchFilter",
-        "rest_framework.filters.DjangoFilterBackend",
+        "django_filters.rest_framework.DjangoFilterBackend",
     ),
 }
 

@@ -12,7 +12,6 @@ class OPageSerializer(serializers.ModelSerializer):
 
 class VolumeSerializer(serializers.ModelSerializer):
     o_pages = serializers.SerializerMethodField(read_only=True)
-    bars_count = serializers.CharField(read_only=True, source="tripitaka.bars_count")
     o_pages_count = serializers.IntegerField(source='get_o_pages_count')
 
     def get_o_pages(self, volume):
@@ -22,14 +21,13 @@ class VolumeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Volume
-        fields = ('id', 'number','start_page','end_page', 'o_pages', 'bars_count', 'o_pages_count')
-        read_only_fields = ('o_pages_count')
+        fields = ('id', 'start_page','end_page', 'o_pages', 'o_pages_count')
 
 class TripitakaSerializer(serializers.ModelSerializer):
     volumes = VolumeSerializer(many=True, read_only=True)
     class Meta:
         model = Tripitaka
-        fields = ('id', 'name','code', 'volumes_count', 'bars_count', 'volumes')
+        fields = ('id', 'name','code', 'volumes_count', 'volumes')
 
 class PageSerializer(serializers.ModelSerializer):
     class Meta:
