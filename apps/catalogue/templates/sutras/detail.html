@@ -53,15 +53,15 @@
                         <div class='fa lt-corner {{item_cls(item)}} {{brows_mode_cls()}}'></div>
                         <span class="badge char-info {{acc_mode_cls()}}">{{item.accuracy/1000}}</span>
                         <span class="badge pid-info {{brows_mode_cls()}}" style='font-weight: 200'>{{item.id.slice(5)}}</span>
-                        <div class="cmd-panel {{acc_mode_cls()}}">
+                        <!--div class="cmd-panel {{acc_mode_cls()}}">
                             <div class="btn-correct-o" title='正确' v-on:click="mark_it(item, 1)">
                             </div>
                             <div class="btn-error-o" title='错误' v-on:click="mark_it(item, -1)">
                             </div>
-                        </div>
+                        </div-->
                     </div>
                 </template>
-                <div style="display: none" v-bind:style="menu_style" class="ctx-menu-container {{brows_mode_cls()}}">
+                <div v-bind:style="menu_style" class="ctx-menu-container {{brows_mode_cls()}}">
                     <div class="ctx-menu">
                         <div class="ctx-item" v-on:click="goto_page_detail()">
                            页面详情

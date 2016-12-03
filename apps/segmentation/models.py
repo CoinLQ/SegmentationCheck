@@ -18,6 +18,7 @@ from utils.qiniu_uploader import upload_file
 from catalogue.models import Volume, Sutra
 from managerawdata.models import OPage
 from libs.thumbnail import ThumbnailMixin
+from libs.storage import silentremove
 logger = logging.getLogger(__name__)
 # Create your models here.
 class Page(models.Model, ThumbnailMixin):
@@ -202,6 +203,7 @@ class Character(models.Model):
         page_image = io.imread(pageimg_file, 0)
         char_image = page_image[self.top:self.bottom, self.left:self.right]
         io.imsave(self.get_image_path(), char_image)
+        #silentremove(self.npy_path())
 
     def upload_png_to_qiniu(self):
         png_filename = self.png_path()
