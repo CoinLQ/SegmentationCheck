@@ -23,16 +23,20 @@ from segmentation.models import Character
 make_dir(base_dir)
 
 def export_characters(char):
-  new_path = base_dir+'/'+ char
+  new_path = base_dir+ '/'+ char + '/'
   make_dir(new_path)
-  for ch in Character.objects.filter(is_correct=1, char=char)[:1000]:
+  n = 0
+  for ch in Character.objects.filter(is_correct=1, char=char):
     char_file = ch.get_image_path()
+    new_char_file = new_path + ch.image.encode('utf8')
+    if (n==1000):
+      break
     try:
-      copyfile(char_file, new_path)
+      copyfile(char_file, new_char_file)
+      n = n + 1
     except:
+      n = n -1
       pass
-
-
 
 if __name__ == '__main__':
     print sys.argv[1]
