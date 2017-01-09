@@ -170,7 +170,7 @@ $(function() {
     $('#recogModal').on('show.bs.modal', function(event) {
         var button = $(event.relatedTarget) // Button that triggered
         var modal = $(this)
-        modal.find('.modal-title').text('字符切分')
+        modal.find('.modal-title').text('机器识别')
         modal.find('.cut_image_char').text(charListContainer.char)
     });
 
