@@ -116,12 +116,6 @@
             <div style="clear:both;"> </div>
             {% verbatim %}
             <div id="charListArea" style="margin-right:-15px;margin-left:18px;display: inline-block">
-                <div v-if="predict_results.length!=0" >
-                    <span class='hanzi-header'> 识别结果:</span>
-                    <template v-for="res in predict_results">
-                        <span class="hanzi">{{res}}</span>
-                    </template>
-                </div>
                 <template v-for="item in items">
                     <div id="{{item.id}}" class="flow  char-image {{item.cls_name}} {{gen_cls(item)}}" @contextmenu.prevent="handleContextmenu(item,$event)">
                         <img v-bind:src="item.image_url" alt="加载中..." class="lazy">
@@ -154,7 +148,9 @@
                     </div>
                 </div>
                 {% endverbatim %}
+                {% include "characters/included/recog_modal.html" %}
                 {% include "characters/included/cut_modal.html" %}
+
             </div>
             {% include "characters/included/command_panel.html" %}
             <div class="row" style="margin-top:10px;margin-left: 0px">

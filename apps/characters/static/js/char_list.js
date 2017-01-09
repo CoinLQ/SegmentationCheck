@@ -37,12 +37,22 @@ var char_list = new Vue({
             var _open = window.open(url);
         },
         intelli_recog: function(){
+            var item = this.items[this.selection]
+            this.item_url = item.image_url
+            this.item_id = item.id
+
+            this.menu_style = {
+                display: 'none'
+            }
+             $("#recogModal").modal('show')
             var url = '/api/character/' + this.items[this.selection].id + '/recog'
             $.getJSON(url, function(ret){
                 char_list.predict_results = ret['result']
+
             }).error(function(jqXHR, textStatus, errorThrown){
                 char_list.predict_results = [textStatus]
             });
+            document.removeEventListener('click', char_list._onContextMenuClick)
         },
         showPanel: function(index) {
             if (this.selection != index) {
@@ -151,6 +161,13 @@ var char_list = new Vue({
 
 $(function() {
     $('#cutImageModal').on('show.bs.modal', function(event) {
+        var button = $(event.relatedTarget) // Button that triggered
+        var modal = $(this)
+        modal.find('.modal-title').text('字符切分')
+        modal.find('.cut_image_char').text(charListContainer.char)
+    });
+
+    $('#recogModal').on('show.bs.modal', function(event) {
         var button = $(event.relatedTarget) // Button that triggered
         var modal = $(this)
         modal.find('.modal-title').text('字符切分')
