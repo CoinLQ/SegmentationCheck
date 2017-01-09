@@ -116,6 +116,12 @@
             <div style="clear:both;"> </div>
             {% verbatim %}
             <div id="charListArea" style="margin-right:-15px;margin-left:18px;display: inline-block">
+                <div v-if="predict_results.length!=0" >
+                    <span class='hanzi-header'> 识别结果:</span>
+                    <template v-for="res in predict_results">
+                        <span class="hanzi">{{res}}</span>
+                    </template>
+                </div>
                 <template v-for="item in items">
                     <div id="{{item.id}}" class="flow  char-image {{item.cls_name}} {{gen_cls(item)}}" @contextmenu.prevent="handleContextmenu(item,$event)">
                         <img v-bind:src="item.image_url" alt="加载中..." class="lazy">
@@ -140,6 +146,10 @@
                         <div class="ctx-divider"></div>
                         <div class="ctx-item" v-on:click="goto_detail()">
                            字形详情
+                        </div>
+                        <div class="ctx-divider"></div>
+                        <div class="ctx-item" v-on:click="intelli_recog()">
+                            机器识别
                         </div>
                     </div>
                 </div>

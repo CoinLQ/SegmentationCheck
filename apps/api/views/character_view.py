@@ -8,6 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import viewsets, filters
 from rest_framework.filters import DjangoFilterBackend, OrderingFilter
 from rest_framework.response import Response
+from rest_framework.decorators import detail_route
 
 from segmentation.models import Character
 from characters.models import CharCutRecord
@@ -105,6 +106,12 @@ class CharacterViewSet(viewsets.ModelViewSet):
         except IndexError, e:
             print e
             return ''
+
+    @detail_route(methods=['get'], url_path='recog')
+    def recog(self, request, pk):
+        character = Character.objects.get(pk=pk)
+        ret = character.predict_reg()
+        return Response({'result': ret})
 
     def apply_cut(self, request, pk=None, direct=None, image_no=None):
         character = Character.objects.get(pk=pk)

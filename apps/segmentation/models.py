@@ -3,6 +3,9 @@ import os
 import random
 import shutil
 import logging
+import urllib2
+import json
+import base64
 
 from django.core.cache import cache
 from django.conf import settings
@@ -217,6 +220,21 @@ class Character(models.Model):
         backup_file = self.get_cut_image_path()
         shutil.copy(self.get_image_path(), backup_file)
         return backup_file
+
+    def base64_jpg(self):
+        f = open( self.get_image_path(), 'rb')
+        img64 = base64.b64encode(f.read())
+        f.close()
+        return img64
+
+    def predict_reg(self):
+        host = 'http://www.dzj3000.com:9090'
+        params = { "images": [self.base64_jpg()] }
+        req = urllib2.Request(host + "/imglst")
+        req.add_header("Content-Type", "application/json")
+        response = urllib2.urlopen(req, json.dumps(params))
+        ret = json.loads(response.read())
+        return ret['predictions'][0]
 
     @classmethod
     def update_statistics(cls, char):

@@ -13,7 +13,8 @@ var char_list = new Vue({
             top: 0,
             left: 0,
             display: 'none'
-        }
+        },
+        predict_results: []
     },
 
     csrf_token: '{{ csrf_token }}',
@@ -34,6 +35,14 @@ var char_list = new Vue({
         goto_detail: function(){
             url = "/characters/" + this.items[this.selection].id;
             var _open = window.open(url);
+        },
+        intelli_recog: function(){
+            var url = '/api/character/' + this.items[this.selection].id + '/recog'
+            $.getJSON(url, function(ret){
+                char_list.predict_results = ret['result']
+            }).error(function(jqXHR, textStatus, errorThrown){
+                char_list.predict_results = [textStatus]
+            });
         },
         showPanel: function(index) {
             if (this.selection != index) {
