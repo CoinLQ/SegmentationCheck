@@ -1144,12 +1144,15 @@ text-shadow : rgba(255,255,255,0.5) 0 5px 6px, rgba(255,255,255,0.2) 1px 3px 3px
   padding: 3px 6px;
   margin: 3px;
   display: inline;
+  font-size: 24px;
+  font-weight: 400;
 }
 
 #recog-contain > :first-child{
   background-color : #337ab7;
   color: gainsboro;
-  font-size: 18px;
+  font-weight: 400;
+  font-size: 28px;
 }
 .hanzi-header {
   padding: 3px 6px;
