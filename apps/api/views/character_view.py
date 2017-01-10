@@ -110,7 +110,10 @@ class CharacterViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'], url_path='recog')
     def recog(self, request, pk):
         character = Character.objects.get(pk=pk)
-        ret = character.predict_reg()
+        if (character.is_same == 0):
+            ret = character.predict_reg()
+        else:
+            ret = character.recog_chars
         return Response({'result': ret})
 
     def apply_cut(self, request, pk=None, direct=None, image_no=None):
