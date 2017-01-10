@@ -10,6 +10,7 @@ import base64
 from django.core.cache import cache
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.postgres.fields import ArrayField
 from django.db import models, transaction
 from django.db.models import SmallIntegerField,Sum, Case, When, Value, Count, Avg
 from django.utils.translation import ugettext_lazy as _
@@ -128,13 +129,18 @@ class Character(models.Model):
     is_correct = models.SmallIntegerField(default=0, db_index=True)
     ## the field values. [1, 0, -1]. 1 means integrity, -1 not, 0 default
     is_integrity = models.SmallIntegerField(default=0, db_index=True)
+    ## the field values. [1, 0, -1]. 1 means same, -1 not, 0 default
+    is_same = models.SmallIntegerField(default=0)
     accuracy = models.SmallIntegerField(default=-1, db_index=True)
     is_dirty = models.BooleanField(default=False)
+    recog_chars = ArrayField(models.CharField(max_length=4, blank=True), size=10, default=[])
+
 
     class Meta:
         index_together = [
             ("char", "is_correct"),
             ("char", "accuracy"),
+            ("char", "is_same"),
         ]
 
     def __unicode__(self):
@@ -222,9 +228,12 @@ class Character(models.Model):
         return backup_file
 
     def base64_jpg(self):
-        f = open( self.get_image_path(), 'rb')
-        img64 = base64.b64encode(f.read())
-        f.close()
+        try:
+            f = open( self.get_image_path(), 'rb')
+            img64 = base64.b64encode(f.read())
+            f.close()
+        except:
+            img64 = '/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAAVACQDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD3+iiigAooooAKKKKACiiigAooooAKKKKAP//Z'
         return img64
 
     def predict_reg(self):
@@ -253,6 +262,39 @@ class Character(models.Model):
         statistics, created = CharacterStatistics.objects.get_or_create(char=char)
         CharacterStatistics.objects.filter(char=char).update(uncheck_cnt=result['uncheck_cnt'], correct_cnt=result['correct_cnt'],
                         err_cnt=result['err_cnt'], total_cnt=result['total_cnt'])
+
+    @classmethod
+    def recog_characters(cls, char):
+        char_count_map = {}
+        total_count = Character.objects.filter(char=char, is_same=0).count()
+        iter_count = (total_count - 1) / 100
+        start = 0
+        left_count = total_count % 100
+        for i in range(iter_count):
+            start = i * 100
+            characters = Character.objects.filter(char=char, is_same=0)[start:start+100]
+            Character.bulk_update_recog(characters)
+        characters = Character.objects.filter(char=char, is_same=0)[start:left_count]
+        Character.bulk_update_recog(characters)
+
+    @classmethod
+    @transaction.atomic
+    def bulk_update_recog(cls, char_list):
+        host = 'http://www.dzj3000.com:9090'
+        image_list = map(lambda ch:ch.base64_jpg(), char_list)
+        params = { "images": image_list }
+        req = urllib2.Request(host + "/imglst")
+        req.add_header("Content-Type", "application/json")
+        response = urllib2.urlopen(req, json.dumps(params))
+        ret = json.loads(response.read())
+        recog_result = ret['predictions']
+        for index, ch in enumerate(char_list):
+            if (ch.char == recog_result[index][0]):
+                ch.is_same = 1
+            else:
+                ch.is_same = -1
+            ch.recog_chars = recog_result[index]
+            ch.save()
 
     def up_neighbor_char(self):
         key_prefix = self.pk.split('L')[0]
@@ -284,6 +326,7 @@ class Character(models.Model):
         char.danger_rebuild_image()
         char.is_integrity = 1
         char.is_correct = 0
+        char.is_same = 0
         char.save()
         return char, backup_file
 

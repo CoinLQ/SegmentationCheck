@@ -43,7 +43,7 @@
             <div class="switch-box is-segment" style="float: right;margin-top: 64px;">
                 <input id="match" class="switch-box-input match-option" type="checkbox" v-on:click="toggle_match()" />
                 <label for="match" class="switch-box-slider"></label>
-                <label for="match" class="switch-box-label">整页图文不匹配</label>
+                <label for="match" class="switch-box-label page-label">整页图文不匹配</label>
             </div>
         </div>
     </div>
@@ -91,7 +91,7 @@ $(function() {
     var is_correct = {{page.is_correct}}
     if (is_correct === 1) {
         $('input.match-option').prop('checked', true)
-        $('.switch-box-label').text('整页图文匹配')
+        $('.page-label').text('整页图文匹配')
     }
     var pre_node = $('#page_text pre');
     _.map(sortKeysBy(summary), function(value, key) {
