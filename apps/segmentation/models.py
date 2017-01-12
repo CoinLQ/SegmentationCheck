@@ -243,6 +243,12 @@ class Character(models.Model):
         req.add_header("Content-Type", "application/json")
         response = urllib2.urlopen(req, json.dumps(params))
         ret = json.loads(response.read())
+        if (self.char == ret['predictions'][0][0]):
+            self.is_same = 1
+        else:
+            self.is_same = -1
+        self.recog_chars = ret['predictions'][0]
+        self.save()
         return ret['predictions'][0]
 
     @classmethod

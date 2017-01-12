@@ -40,7 +40,7 @@ var char_list = new Vue({
             var item = this.items[this.selection]
             this.item_url = item.image_url
             this.item_id = item.id
-
+            char_list.predict_results = []
             this.menu_style = {
                 display: 'none'
             }
