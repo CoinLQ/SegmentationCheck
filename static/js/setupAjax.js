@@ -39,5 +39,6 @@ $.ajaxSetup({
         if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
             xhr.setRequestHeader("X-CSRFToken", csrftoken);
         }
-    }
+    },
+    cache: false
 });
