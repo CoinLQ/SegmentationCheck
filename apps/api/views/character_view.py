@@ -130,6 +130,7 @@ class CharacterViewSet(viewsets.ModelViewSet):
             record.save()
             character.is_integrity = 1
             character.is_correct = 1
+            character.is_same = 0
             character.save()
             character.danger_rebuild_image()
             ret = character.upload_png_to_qiniu()
