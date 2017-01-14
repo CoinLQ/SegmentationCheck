@@ -41,6 +41,11 @@ $(function() {
         makeOption();
     });
 
+    $('#detectModal').on('show.bs.modal', function(event) {
+        var button = $(event.relatedTarget);
+        var modal = $(this);
+        modal.find('#chart_char').text(button.data('char'));
+    });
 
     $("#classify-grade .dropdown-menu a").click(function() {
         var li = $(this);

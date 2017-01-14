@@ -159,10 +159,15 @@ var charListContainer = {
             $("#checkchar").text(charListContainer.char);
             $(".classifyChart").data('char', charListContainer.char);
             $(".accuracy_cal").data('char', charListContainer.char);
+            $(".recog_detect").data('char', charListContainer.char);
             if (charListContainer.total > 20) {
                 $(".classifyChart").removeClass('hidden');
                 $(".accuracy_cal").removeClass('hidden');
+            }else {
+                $(".classifyChart").addClass('hidden');
+                $(".accuracy_cal").addClass('hidden');
             }
+            $('.recog_detect').removeClass('hidden')
             charListContainer.page_number = 1;
             $('.radio-btn').removeClass('actived');
             $('.radio-btn.show-all').addClass('actived');

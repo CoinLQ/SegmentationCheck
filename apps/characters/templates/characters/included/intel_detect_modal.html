@@ -1,0 +1,49 @@
+<div class="bd-detect">
+  {% verbatim %}
+    <div class="modal fade" id="detectModal" tabindex="-1" role="dialog" aria-labelledby="detectModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <div class="row">
+                        <div class="col-md-1 col-md-offset-1" <div class="h4 modal-title" style="display: inline" id="detectModalLabel"><strong id='chart_char' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>？</strong>
+                        </div>
+                        <div class="col-md-8">
+                            <div id="classify-grade" class="dropdown" style="display: inline;margin-left: 30px">类型选择：
+                                <button class="btn" :class="selection_class(0)" v-on:click="switch_type(0)">人工标错</button>
+                                <button class="btn" :class="selection_class(1)" v-on:click="switch_type(1)">人工标对</button>
+                                <button class="btn" :class="selection_class(2)" v-on:click="switch_type(2)">未标记</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="chart-container" style="margin-left:100px;margin-right: 10px;">
+                        <div id="detectList" style="margin-right:-15px;margin-left:18px;display: inline-block">
+                            <p v-if="detect_items.length == 0">暂无数据</p>
+                            <template v-for="item in detect_items">
+                                <div id="{{item.id}}" class="flow char-image">
+                                    <img v-bind:src="item.image_url" alt="加载中..." class="lazy">
+                                    <i class='fa fa-check detect-icon pull-right' :class="detect_class(item)"></i>
+                                    <span class="badge char-info">{{item.accuracy/1000.0}}</span>
+                                    <div class="cmd-panel">
+                                        <div class="btn-correct-c" title='切换' v-on:click="toggel_check(item)">
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endverbatim %}
+</div>
+<script>
+
+
+</script>

@@ -1,6 +1,8 @@
 import base64
 import six
 import logging
+import urllib2
+import json
 
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
@@ -8,7 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import viewsets, filters
 from rest_framework.filters import DjangoFilterBackend, OrderingFilter
 from rest_framework.response import Response
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import detail_route, list_route
 
 from segmentation.models import Character
 from characters.models import CharCutRecord
@@ -25,6 +27,7 @@ class CharacterFilter(filters.FilterSet):
             'page_id': ['exact'],
             'char': ['exact'],
             'is_correct': ['exact', 'lt', 'gt'],
+            'is_same': ['exact']
         }
 
 stage_map = {'t-up': [ -3, -8, -13, -18, -23 ][::-1],
@@ -106,6 +109,17 @@ class CharacterViewSet(viewsets.ModelViewSet):
         except IndexError, e:
             print e
             return ''
+    @list_route(methods=['post'], url_path='input-recog')
+    def input_recog(self, request):
+        #image = request.data['image']
+        #image = self.request.query_params.get('image', None)
+        host = 'http://www.dzj3000.com:9090'
+        params = { "images": request.data['images'] }
+        req = urllib2.Request(host + "/imglst")
+        req.add_header("Content-Type", "application/json")
+        response = urllib2.urlopen(req, json.dumps(params))
+        ret = json.loads(response.read())
+        return Response(ret)
 
     @detail_route(methods=['get'], url_path='recog')
     def recog(self, request, pk):

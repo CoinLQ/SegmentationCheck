@@ -32,6 +32,9 @@ def index(request):
 def help(request):
     return render(request, 'characters/characters_help.html')
 
+def recog_demo(request):
+    return render(request, 'characters/characters_recog_demo.html')
+
 def char_dashboard(request):
     return render(request, 'characters/char_dashboard.html')
 

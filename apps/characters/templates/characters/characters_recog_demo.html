@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% load compress %}
+{% block head %}
+<title>字索引</title>
+{% compress css %}
+<link href="/static/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/static/treemap/css/font-awesome.min.css">
+<link rel="stylesheet" href="/static/characters/css/app.css">
+{% endcompress %}
+{% endblock %}
+{% block mainbody %}
+<form class="form-horizontal" id="img2b64">
+    <div class='row'>
+        <div class='col-md-4 col-md-offset-4'>
+            <h2>识别Demo</h2></div>
+    </div>
+    <div class='row'>
+        <div class='col-md-6 col-md-offset-2'>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">读取类型:</label>
+                <div class="col-sm-10">
+                    <select class="form-control" name="convertType">
+                        <option value="Canvas">Canvas</option>
+                        <option value="FileReader" selected>FileReader</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">HTTP图像资源:</label>
+                <div class="col-sm-10">
+                    <input type="url" name="url" class="form-control" placeholder="Insert an IMAGE-URL" value="http://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">本地文件:</label>
+                <div class="col-sm-10">
+                    <input type="file" id="files" class="form-control" placeholder="Insert an IMAGE-URL" multiple/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <input type="submit" class="btn btn-default">
+                </div>
+            </div>
+            </div>
+            </div>
+</form>
+<div class="output form-horizontal row" style="display: none">
+    <div>
+        <strong class="col-md-2 text-right">输出结果:</strong>
+        <div id="list" class="col-md-10 ">
+          {#  <img class="img" style="max-width:200px"> #}
+        </div>
+    </div>
+
+
+    <div>
+        <strong class="col-md-2 text-right"></strong>
+        <div class="col-md-10">
+            <span class='textbox h5'></span>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+{% endblock %}
+{% block foot  %}
+<!--for index-->
+{% compress js %}
+<script type="text/javascript">
+
+function recog_file(data) {
+  $('.output').find('.textbox')
+  .text('识别中。。。')
+  $.ajax({
+            url: '/api/character/input-recog',
+            method: 'POST',
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            data:  JSON.stringify(data),
+            success: function(res) {
+              result = _(res.predictions).map(function(t){ return t.slice(0,3).join('-')})
+              var childrens = $('#list span');
+              _(result).each(function(e,i){
+                $(childrens[i]).append(e)
+              })
+                $('.output').find('.textbox').text('')
+            },
+            error: function(xhr, status, err) {
+                console.log(err);
+                $('.output').find('.textbox').text(err)
+            }
+        })
+}
+function handleFileSelect(evt) {
+    var files = evt.target.files; // FileList object
+    var images = [];
+    var length = files.length
+    $('#list').html('')
+    // Loop through the FileList and render image files as thumbnails.
+    for (var i = 0, f; f = files[i]; i++) {
+
+      // Only process image files.
+      if (!f.type.match('image.*')) {
+        continue;
+      }
+
+      var reader = new FileReader();
+
+      // Closure to capture the file information.
+      reader.onload = (function(theFile) {
+        return function(e) {
+          // Render thumbnail.
+          var base64Img = e.target.result;
+          images.push(base64Img.split(',')[1])
+          $('.output')
+          .find('.img')
+          .attr('src', base64Img)
+          .end().show()
+          var span = document.createElement('span');
+            span.innerHTML = ['<img class="thumb" style="width: 120px" src="', e.target.result,
+                              '" title="', escape(theFile.name), '"/>'].join('');
+            document.getElementById('list').insertBefore(span, null);
+        };
+      })(f);
+
+      // Read in the image file as a data URL.
+      reader.readAsDataURL(f);
+    }
+    var params = { "images": images }
+    setTimeout(function(){recog_file(params)},2000);
+  }
+
+  document.getElementById('files').addEventListener('change', handleFileSelect, false);
+
+    function convertImgToDataURLviaCanvas(url, callback, outputFormat) {
+  var img = new Image();
+  img.crossOrigin = 'Anonymous';
+  img.onload = function() {
+    var canvas = document.createElement('CANVAS');
+    var ctx = canvas.getContext('2d');
+    var dataURL;
+    canvas.height = this.height;
+    canvas.width = this.width;
+    ctx.drawImage(this, 0, 0);
+    dataURL = canvas.toDataURL(outputFormat);
+    callback(dataURL);
+    canvas = null;
+  };
+  img.src = url;
+}
+
+function convertFileToDataURLviaFileReader(url, callback) {
+  var xhr = new XMLHttpRequest();
+  xhr.responseType = 'blob';
+  xhr.onload = function() {
+    var reader = new FileReader();
+    reader.onloadend = function() {
+      callback(reader.result);
+    }
+    reader.readAsDataURL(xhr.response);
+  };
+  xhr.open('GET', url);
+  xhr.send();
+}
+
+$('#img2b64').submit(function(event) {
+
+  var convertType = $(this).find('[name=convertType]').val();
+  var convertFunction = convertType === 'FileReader' ?
+    convertFileToDataURLviaFileReader :
+    convertImgToDataURLviaCanvas;
+  var imageUrl = $(this).find('[name=url]').val();
+  var images = []
+  convertFunction(imageUrl, function(base64Img) {
+
+        images.push(base64Img.split(',')[1])
+        $('.output')
+        .find('.img')
+        .attr('src', base64Img)
+        .end().show()
+        var span = document.createElement('span');
+          span.innerHTML = ['<img class="thumb" style="width: 120px" src="', base64Img,
+                            '" />'].join('');
+          document.getElementById('list').insertBefore(span, null);
+      var params = { "images": [base64Img.split(',')[1]] }
+      recog_file(params);
+  });
+
+
+
+  event.preventDefault();
+});
+
+</script>
+{% endcompress %}
+{% endblock %}

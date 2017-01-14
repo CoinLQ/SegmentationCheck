@@ -2,11 +2,13 @@ var char_list = new Vue({
     el: '#charListArea',
     data: {
         selection: 0,
+        detect_selection: 0,
         item_id: '',
         item_url: '',
         item_direct: '',
         items: charListContainer.data,
         cut_items: [],
+        detect_items: [],
         degree: 0,
         final_degree: 0,
         menu_style: {
@@ -156,6 +158,44 @@ var char_list = new Vue({
             this.item_direct = direct
             $("#cutDetailModal").modal('show')
         },
+        selection_class: function(idx) {
+            if (this.detect_selection == idx){
+              return 'btn-success'
+            }
+            return 'btn-default'
+        },
+        detect_class: function(item) {
+            if (item.checked) {
+                return ''
+            }
+            return 'hidden'
+        },
+        toggel_check: function(item) {
+            item.checked = !item.checked
+            this.items.$set(this.detect_items.indexOf(item), item)
+        },
+        switch_type: function(idx) {
+          this.detect_selection = idx
+          this.fetch_detect_items(idx)
+        },
+        fetch_detect_items: function(idx) {
+            var url = '/api/character?char=' + charListContainer.char
+            if (idx==0){
+                url += '&is_correct=-1&is_same=1'
+            } else if (idx==1){
+                url += '&is_correct=1&is_same=-1'
+            } else if (idx==2){
+                url += '&is_correct=0&is_same=1'
+            }
+            $.getJSON(url, function(ret){
+                char_list.detect_items = _.map(ret.models, function(item) {
+                        item['checked'] = true;
+                        return item;
+                    });
+            }).error(function(jqXHR, textStatus, errorThrown){
+                char_list.detect_items = []
+            });
+        }
     }
 });
 
@@ -288,3 +328,33 @@ var cut_detail = new Vue({
         }
     }
 });
+
+var recog_detect = new Vue({
+    el: '#detectModal',
+    data: {
+        selection: 0,
+        detect_items: []
+    },
+    created: function(){
+
+    },
+    watch:{
+      selection: function() {
+
+      }
+    },
+    methods: {
+      selection_class: function(idx) {
+        if (selection == idx){
+          return 'btn-success'
+        }
+        return 'btn-default'
+      },
+      check_it: function(item){
+
+      },
+      switch_type: function(idx) {
+        this.selection = idx;
+      }
+    }
+  })

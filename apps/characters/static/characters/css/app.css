@@ -623,7 +623,7 @@ span.fa-volume-off {
     border-radius: 20px;
 }
 
-.cmd-panel:hover .btn-error-o, .cmd-panel:hover .btn-correct-o {
+.cmd-panel:hover .btn-error-o, .cmd-panel:hover .btn-correct-o, .cmd-panel:hover .btn-correct-c{
   visibility:visible;
 }
 
@@ -725,8 +725,27 @@ span.fa-volume-off {
   background-color: rgba(28, 195, 28, 0.7);
   animation:0.5s vanishIn ease;
 }
+.btn-correct-c {
+  width: 90px;
+  height: 90px;
+  left: 0px;
+  top: 0px;
+  visibility: hidden;
+  position: absolute;
+  line-height: 42px;
+  padding: 15px 15px 4px 15px;
+  border-radius: 18px 18px 0px 0px ;
+  background-color: rgba(28, 195, 28, 0.7);
+  animation:0.5s vanishIn ease;
+}
 
 .btn-correct-o:hover {
+  background-color: rgba(28, 195, 28, 0.8);
+  box-shadow: rgba(28, 195, 28, 0.9) 0px 0px 20px 2px;
+  border-color: white;
+}
+
+.btn-correct-c:hover {
   background-color: rgba(28, 195, 28, 0.8);
   box-shadow: rgba(28, 195, 28, 0.9) 0px 0px 20px 2px;
   border-color: white;
@@ -1158,4 +1177,10 @@ text-shadow : rgba(255,255,255,0.5) 0 5px 6px, rgba(255,255,255,0.2) 1px 3px 3px
   padding: 3px 6px;
   width: 130px;
   margin:auto;
+}
+.detect-icon {
+  width: 30px;
+  color: red;
+  font-size: 16px;
+  margin-top: -3px;
 }
