@@ -148,6 +148,7 @@ def set_correct(request):
         data = {'status': 'error'}
     return JsonResponse(data)
 
+
 def tree_map(request):
     return render(request, 'characters/tree_map.html')
 

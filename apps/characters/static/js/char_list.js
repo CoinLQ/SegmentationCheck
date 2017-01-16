@@ -3,6 +3,8 @@ var char_list = new Vue({
     data: {
         selection: 0,
         detect_selection: 0,
+        detect_page: 1,
+        detect_pagination: {},
         item_id: '',
         item_url: '',
         item_direct: '',
@@ -32,6 +34,17 @@ var char_list = new Vue({
             }
             // if (this.items.indexOf(item) == this.selection)
             //     cls_name = cls_name.replace(/flip-inx/, '')
+            return cls_name;
+        },
+        gen_detect_cls:  function(item) {
+            var class_name;
+            if (item.is_correct == 1) {
+               cls_name = !item.checked ? 'correct-char flip-inx' : 'error-char flip-inx'
+            } else if (item.is_correct == -1) {
+                cls_name = !item.checked ? 'error-char flip-inx' : 'correct-char flip-inx'
+            } else {
+                cls_name = !item.checked ? 'twinkling' : 'correct-char flip-inx'
+            }
             return cls_name;
         },
         goto_detail: function(){
@@ -160,15 +173,18 @@ var char_list = new Vue({
         },
         selection_class: function(idx) {
             if (this.detect_selection == idx){
-              return 'btn-success'
+               return this.detect_selection == 0 ? 'btn-danger' : 'btn-success'
             }
             return 'btn-default'
         },
+        has_correct: function(item) {
+            return item.is_correct != 1
+        },
         detect_class: function(item) {
-            if (item.checked) {
-                return ''
+            if (!item.checked) {
+                return this.has_correct(item) ? 'detect-icon-green' : 'detect-icon'
             }
-            return 'hidden'
+            return this.has_correct(item) ? 'detect-icon' : 'detect-icon-green'
         },
         toggel_check: function(item) {
             item.checked = !item.checked
@@ -176,9 +192,10 @@ var char_list = new Vue({
         },
         switch_type: function(idx) {
           this.detect_selection = idx
-          this.fetch_detect_items(idx)
+          this.fetch_detect_items()
         },
-        fetch_detect_items: function(idx) {
+        fetch_detect_items: function(page=1) {
+            var idx = this.detect_selection
             var url = '/api/character?char=' + charListContainer.char
             if (idx==0){
                 url += '&is_correct=-1&is_same=1'
@@ -187,13 +204,60 @@ var char_list = new Vue({
             } else if (idx==2){
                 url += '&is_correct=0&is_same=1'
             }
+            url += '&page_size=50'
+            url += '&page=' + page
             $.getJSON(url, function(ret){
                 char_list.detect_items = _.map(ret.models, function(item) {
                         item['checked'] = true;
                         return item;
                     });
+                char_list.detect_pagination = ret.pagination
             }).error(function(jqXHR, textStatus, errorThrown){
                 char_list.detect_items = []
+            });
+        },
+        go_first: function() {
+            this.fetch_detect_items(1)
+        },
+        go_last: function() {
+            this.fetch_detect_items(this.detect_pagination.total_pages)
+        },
+        go_previous: function() {
+            if (this.detect_pagination.previous_page)
+                this.fetch_detect_items(this.detect_pagination.previous_page)
+        },
+        go_next: function() {
+            if (this.detect_pagination.next_page)
+                this.fetch_detect_items(this.detect_pagination.next_page)
+        },
+        detect_batch_toggle: function() {
+            char_list.detect_items = _.map(char_list.detect_items, function(item) {
+                        item['checked'] = !item['checked'];
+                        return item;
+                    });
+        },
+        submit_recog_detect: function(){
+            var checked_ids = _.filter(char_list.detect_items, function(item) {
+                        if (item['checked']) return item;
+                    }).map(function(it){ return it.id });;
+            var unchecked_ids = _.filter(char_list.detect_items, function(item) {
+                        if (!item['checked']) return item;
+                    }).map(function(it){ return it.id });
+            var data = {type: this.detect_selection, checked_ids: checked_ids, unchecked_ids: unchecked_ids, char: charListContainer.char}
+            $.ajax({
+              url: '/api/character/filter-mark',
+              method: 'post',
+              dataType: 'json',
+              contentType:"application/json; charset=utf-8",
+              data: JSON.stringify(data),
+              cache: false,
+              success: function(data) {
+                char_list.detect_items = []
+              }.bind(this),
+              error: function(xhr, status, err) {
+                console.log('error');
+                console.error( err.toString());
+              }.bind(this)
             });
         }
     }
@@ -328,33 +392,3 @@ var cut_detail = new Vue({
         }
     }
 });
-
-var recog_detect = new Vue({
-    el: '#detectModal',
-    data: {
-        selection: 0,
-        detect_items: []
-    },
-    created: function(){
-
-    },
-    watch:{
-      selection: function() {
-
-      }
-    },
-    methods: {
-      selection_class: function(idx) {
-        if (selection == idx){
-          return 'btn-success'
-        }
-        return 'btn-default'
-      },
-      check_it: function(item){
-
-      },
-      switch_type: function(idx) {
-        this.selection = idx;
-      }
-    }
-  })

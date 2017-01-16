@@ -14,7 +14,7 @@
 {% block mainbody %}
 <div class="container">
     <div class='row'>
-        <div class='col-md-4 col-xs-12'>
+        <div class='col-md-5 col-xs-12'>
             <div class="box">
                 <div class="box-header">
                     <h3 class="box-title"></h3>
@@ -38,6 +38,7 @@
                                     <br>分度</th>
                                 <th class="hidden">左重心</th>
                                 <th class="hidden">右重心</th>
+                                <th>识别<br>差异</th>
                             </tr>
                         </thead>
                         <tbody id="char_index_tbody">
@@ -49,7 +50,7 @@
             <!-- /.box -->
         </div>
         <!--end col-md-3 -->
-        <div class='col-md-8 col-xs-12' style="margin-top:20px;">
+        <div class='col-md-7 col-xs-12' style="margin-top:20px;">
             <div class='row'>
                 <div class="col-md-5" style="margin-top:-16px;">
                     <strong id='checkchar' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>？</strong>
@@ -155,6 +156,7 @@
 
             </div>
             {% include "characters/included/command_panel.html" %}
+             <div style="clear:both;"> </div>
             <div class="row" style="margin-top:10px;margin-left: 0px">
                 <div class="btn btn-default batch-check" id="correct_btn"><span class="tooltiptext">剩余全部标对</span><span style="color: #9AFF9A;font-size:20px;padding:0px 8px" class="fa fa-check"></span><span style="color: #9AFF9A;font-size:20px;padding:0px 8px" class="fa fa-check"></span></div>
                 <div class="btn btn-default batch-check" id="err_btn"><span class="tooltiptext">剩余全部标错</span><span style="color: pink;font-size:20px;padding:0px 10px" class="fa fa-times"></span><span style="color: pink;font-size:20px;padding:0px 10px" class="fa fa-times"></span></div>
@@ -215,7 +217,8 @@ var chars = [
         "{{char.uncheck_cnt}}",
         "{{char.charstock.weight}}",
         "{{char.charstock.l_value}}",
-        "{{char.charstock.r_value}}"
+        "{{char.charstock.r_value}}",
+        "{{char.recog_diff_count}}"
     ],
     {% endfor %}
 ]

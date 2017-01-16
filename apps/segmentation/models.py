@@ -263,11 +263,14 @@ class Character(models.Model):
             uncheck_cnt=Sum(Case(When(is_correct=0, then=Value(1)),
             default=Value(0),
             output_field=SmallIntegerField())),
-            total_cnt=Count('is_correct') )
+            total_cnt=Count('is_correct'),
+            recog_diff_count=Sum(Case(When(is_correct=-1, is_same=1, then=Value(1)), When(is_correct=1, is_same=-1, then=Value(1)),
+            default=Value(0),
+            output_field=SmallIntegerField())))
         # add character statistics, if it's missing.
         statistics, created = CharacterStatistics.objects.get_or_create(char=char)
         CharacterStatistics.objects.filter(char=char).update(uncheck_cnt=result['uncheck_cnt'], correct_cnt=result['correct_cnt'],
-                        err_cnt=result['err_cnt'], total_cnt=result['total_cnt'])
+                        err_cnt=result['err_cnt'], total_cnt=result['total_cnt'], recog_diff_count=result['recog_diff_count'])
 
     @classmethod
     def recog_characters(cls, char):
@@ -348,6 +351,7 @@ class CharacterStatistics(models.Model):
     err_cnt = models.IntegerField(default=0)
     correct_cnt = models.IntegerField(default=0)
     weight = models.DecimalField(default=0, max_digits=4, decimal_places=3, db_index= True)
+    recog_diff_count = models.IntegerField(default=0)
 
     def __unicode__(self):
         return u'%s:%d' % (self.char,self.total_cnt )

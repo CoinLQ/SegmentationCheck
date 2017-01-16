@@ -56,6 +56,7 @@ var charListContainer = {
                 null,
                 { "sType": "numeric-abs" },
                 null,
+                null,
                 null
             ],
             // Rows and column headers stored in a "data" object:
@@ -83,8 +84,7 @@ var charListContainer = {
                 page_number = charListContainer.pagination.next_page;
             } else if ($(this).hasClass('last')) {
                 page_number = charListContainer.pagination.total_pages;
-            }
-            if (!page_number) {
+            }else {
                 return;
             }
             charListContainer.page_number = page_number;

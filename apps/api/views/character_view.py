@@ -6,6 +6,7 @@ import json
 
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import transaction
 
 from rest_framework import viewsets, filters
 from rest_framework.filters import DjangoFilterBackend, OrderingFilter
@@ -120,6 +121,38 @@ class CharacterViewSet(viewsets.ModelViewSet):
         response = urllib2.urlopen(req, json.dumps(params))
         ret = json.loads(response.read())
         return Response(ret)
+
+    @list_route(methods=['post'], url_path='filter-mark')
+    @transaction.atomic
+    def filter_mark_by_recog(self, request):
+        checked_chars = Character.objects.filter(id__in=request.data['checked_ids'])
+        unchecked_chars = Character.objects.filter(id__in=request.data['unchecked_ids'])
+        result_type = request.data['type']
+        if (result_type == 0):
+            for char in checked_chars:
+                char.is_correct = 1
+                char.save()
+            for char in unchecked_chars:
+                char.is_same = -2
+                char.save()
+        elif (result_type == 1):
+            for char in checked_chars:
+                char.is_correct = -1
+                char.save()
+            for char in unchecked_chars:
+                char.is_same = 2
+                char.save()
+        elif (result_type == 2):
+            for char in checked_chars:
+                char.is_correct = 1
+                char.save()
+            for char in unchecked_chars:
+                char.is_correct = -1
+                char.is_same = 2
+                char.save()
+        Character.update_statistics(request.data['char'])
+        return Response({'status': 'ok'})
+
 
     @detail_route(methods=['get'], url_path='recog')
     def recog(self, request, pk):
