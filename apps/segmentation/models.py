@@ -289,7 +289,7 @@ class Character(models.Model):
     @classmethod
     @transaction.atomic
     def bulk_update_recog(cls, char_list):
-         if not char_list:
+        if not char_list:
                return
         host = 'http://www.dzj3000.com:9090'
         image_list = map(lambda ch:ch.base64_jpg(), char_list)
