@@ -337,7 +337,10 @@ class Character(models.Model):
         char.danger_rebuild_image()
         char.is_integrity = 1
         char.is_correct = 0
-        char.is_same = 0
+        try:
+            char.predict_reg()
+        except:
+            pass
         char.save()
         return char, backup_file
 

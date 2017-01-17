@@ -14,13 +14,13 @@
 {% block mainbody %}
 <div class="container">
     <div class='row'>
-        <div class='col-md-5 col-xs-12'>
+        <div class='col-md-4 col-xs-12'>
             <div class="box">
                 <div class="box-header">
                     <h3 class="box-title"></h3>
                 </div>
                 <div class="box-body">
-                    <table id="char_index" class="table table-bordered table-striped">
+                    <table id="char_index" class="table table-bordered table-striped" style='margin-left: -50px'>
                         <thead>
                             <tr>
                                 <th>No</th>
@@ -50,7 +50,7 @@
             <!-- /.box -->
         </div>
         <!--end col-md-3 -->
-        <div class='col-md-7 col-xs-12' style="margin-top:20px;">
+        <div class='col-md-8 col-xs-12' style="margin-top:20px;">
             <div class='row'>
                 <div class="col-md-12" style="margin-top:-16px;">
                     <strong id='checkchar' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>？</strong>
@@ -156,7 +156,6 @@
                 {% endverbatim %}
                 {% include "characters/included/intel_detect_modal.html" %}
                 {% include "characters/included/recog_modal.html" %}
-
                 {% include "characters/included/cut_modal.html" %}
             </div>
            </div>

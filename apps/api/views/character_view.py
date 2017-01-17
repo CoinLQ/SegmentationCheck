@@ -179,6 +179,10 @@ class CharacterViewSet(viewsets.ModelViewSet):
             character.is_integrity = 1
             character.is_correct = 1
             character.is_same = 0
+            try:
+                character.predict_reg()
+            except:
+                pass
             character.save()
             character.danger_rebuild_image()
             ret = character.upload_png_to_qiniu()
@@ -204,4 +208,4 @@ class CharacterViewSet(viewsets.ModelViewSet):
             logger.exception('Apply cut An error occurred')
             ret = e
 
-        return Response({'status': ret, 'image_url': character.local_image_url()})
+        return Response({'status': ret, 'image_url': character.local_image_url(), is_same: character.is_same})

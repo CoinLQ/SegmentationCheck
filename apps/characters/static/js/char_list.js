@@ -54,11 +54,21 @@ var char_list = new Vue({
             return cls_name;
         },
         goto_detail: function(){
-            url = "/characters/" + this.items[this.selection].id;
+            if (this.detecting){
+                var item = this.detect_items[this.detect_selection]
+            } else {
+                var item = this.items[this.selection]
+            }
+
+            url = "/characters/" + titem.id;
             var _open = window.open(url);
         },
         intelli_recog: function(){
-            var item = this.items[this.selection]
+            if (this.detecting){
+                var item = this.detect_items[this.detect_selection]
+            } else {
+                var item = this.items[this.selection]
+            }
             this.item_url = item.image_url
             this.item_id = item.id
             char_list.predict_results = []
@@ -171,7 +181,7 @@ var char_list = new Vue({
                 display: 'block'
             }
             this.detect_selection = this.detect_items.indexOf(item)
-            setTimeout(function() { document.addEventListener('click', char_list._onContextMenuClick) }, 200)
+            setTimeout(function() { document.addEventListener('click', char_list._onDetectContextMenuClick) }, 200)
         },
         _onDetectContextMenuClick: function(e) {
             e.stopPropagation()
@@ -183,7 +193,7 @@ var char_list = new Vue({
             document.removeEventListener('click', char_list._onDetectContextMenuClick)
         },
         cut_image_modal: function(is_detect=false) {
-            if (is_detect){
+            if (this.detecting){
                 var item = this.detect_items[this.detect_selection]
             } else {
                 var item = this.items[this.selection]
@@ -195,6 +205,7 @@ var char_list = new Vue({
                 display: 'none'
             }
             document.removeEventListener('click', char_list._onContextMenuClick)
+            document.removeEventListener('click', char_list._onDetectContextMenuClick)
         },
         cut_detail_modal: function(direct) {
             this.item_direct = direct
@@ -417,14 +428,14 @@ var cut_detail = new Vue({
                             })
                         }else {
                             var item = char_list.detect_items[char_list.detect_selection]
-                            char_list.detect_items.$set(char_list.selection, {
+                            char_list.detect_items.$set(char_list.detect_selection, {
                                 show: false,
                                 id: item.id,
                                 image_url: url,
-                                cls_name: item.cls_name,
                                 accuracy: item.accuracy,
                                 char: item.char,
-                                is_correct: 1
+                                is_correct: 1,
+                                is_same: res.is_same
                             })
                         }
 

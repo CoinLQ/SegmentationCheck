@@ -1,18 +1,29 @@
-{% extends "base.html" %}
-{% load compress %}
-{% block head %}
+{% extends "base.html" %} {% load compress %} {% block head %}
 <title>字索引</title>
 {% compress css %}
+<style type="text/css">
+big {
+    color: red;
+}
+
+.thumb {
+    background: #e1e1e1;
+    padding: 5px;
+}
+
+.thumb_container {
+    width: 110px;
+    float: left;
+    margin: 5px;
+}
+</style>
 <link href="/static/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
 <link rel="stylesheet" href="/static/treemap/css/font-awesome.min.css">
-<link rel="stylesheet" href="/static/characters/css/app.css">
-{% endcompress %}
-{% endblock %}
-{% block mainbody %}
+<link rel="stylesheet" href="/static/characters/css/app.css"> {% endcompress %} {% endblock %} {% block mainbody %}
 <form class="form-horizontal" id="img2b64">
     <div class='row'>
         <div class='col-md-4 col-md-offset-4'>
-            <h2>识别Demo</h2></div>
+            <h2>机器识别</h2></div>
     </div>
     <div class='row'>
         <div class='col-md-6 col-md-offset-2'>
@@ -42,171 +53,182 @@
                     <input type="submit" class="btn btn-default">
                 </div>
             </div>
-            </div>
-            </div>
-</form>
-<div class="output form-horizontal row" style="display: none">
-    <div>
-        <strong class="col-md-2 text-right">输出结果:</strong>
-        <div id="list" class="col-md-10 ">
-          {#  <img class="img" style="max-width:200px"> #}
         </div>
     </div>
-
-
+</form>
+<div class="output form-horizontal row" style="display: none">
+    <div class="col-md-4 col-md-offset-4" style="
+">
+        <h2>输出结果:</h2></div>
+    <div id="list" class="col-md-6 col-md-offset-3 ">
+    </div>
     <div>
-        <strong class="col-md-2 text-right"></strong>
-        <div class="col-md-10">
+        <div class="col-md-6 col-md-offset-3">
             <span class='textbox h5'></span>
         </div>
     </div>
 </div>
 </div>
-</div>
-
-{% endblock %}
-{% block foot  %}
+{% endblock %} {% block foot %}
 <!--for index-->
 {% compress js %}
 <script type="text/javascript">
-
 function recog_file(data) {
-  $('.output').find('.textbox')
-  .text('识别中。。。')
-  $.ajax({
-            url: '/api/character/input-recog',
-            method: 'POST',
-            dataType: 'json',
-            contentType: "application/json; charset=utf-8",
-            data:  JSON.stringify(data),
-            success: function(res) {
-              result = _(res.predictions).map(function(t){ return t.slice(0,3).join('-')})
-              var childrens = $('#list span');
-              _(result).each(function(e,i){
-                $(childrens[i]).append(e)
-              })
-                $('.output').find('.textbox').text('')
-            },
-            error: function(xhr, status, err) {
-                console.log(err);
-                $('.output').find('.textbox').text(err)
-            }
-        })
+    $('.output').find('.textbox')
+        .text('识别中。。。')
+    $.ajax({
+        url: '/api/character/input-recog',
+        method: 'POST',
+        dataType: 'json',
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(data),
+        success: function(res) {
+            result = _(res.predictions).map(function(t) {
+                return t.slice(0, 5)
+            })
+            var childrens = $('#list .thumb_container');
+
+            _(result).each(function(e, i) {
+                var big = $('<big></big>').text(e[0])
+                var p = $('<p class="thumb"></p>')
+                p.append(big)
+                p.append('-')
+                p.append(e.slice(1, 5).join('-'))
+                $(childrens[i]).append(p)
+            })
+            $('.output').find('.textbox').text('')
+        },
+        error: function(xhr, status, err) {
+            console.log(err);
+            $('.output').find('.textbox').text(err)
+        }
+    })
 }
+
 function handleFileSelect(evt) {
     var files = evt.target.files; // FileList object
     var images = [];
     var length = files.length
     $('#list').html('')
-    // Loop through the FileList and render image files as thumbnails.
+        // Loop through the FileList and render image files as thumbnails.
     for (var i = 0, f; f = files[i]; i++) {
 
-      // Only process image files.
-      if (!f.type.match('image.*')) {
-        continue;
-      }
+        // Only process image files.
+        if (!f.type.match('image.*')) {
+            continue;
+        }
 
-      var reader = new FileReader();
+        var reader = new FileReader();
 
-      // Closure to capture the file information.
-      reader.onload = (function(theFile) {
-        return function(e) {
-          // Render thumbnail.
-          var base64Img = e.target.result;
-          images.push(base64Img.split(',')[1])
-          $('.output')
-          .find('.img')
-          .attr('src', base64Img)
-          .end().show()
-          var span = document.createElement('span');
-            span.innerHTML = ['<img class="thumb" style="width: 120px" src="', e.target.result,
-                              '" title="', escape(theFile.name), '"/>'].join('');
-            document.getElementById('list').insertBefore(span, null);
-        };
-      })(f);
+        // Closure to capture the file information.
+        reader.onload = (function(theFile) {
+            return function(e) {
+                // Render thumbnail.
+                var base64Img = e.target.result;
+                images.push(base64Img.split(',')[1])
+                $('.output')
+                    .find('.img')
+                    .attr('src', base64Img)
+                    .end().show()
+                var span = $('<div class="thumb_container"></div>')
+                span.append(['<img class="thumb" style="width: 110px;height: 110px;" src="', e.target.result,
+                    '" title="', escape(theFile.name), '"/>'
+                ].join(''));
+                $('#list').append(span);
+            };
+        })(f);
 
-      // Read in the image file as a data URL.
-      reader.readAsDataURL(f);
+        // Read in the image file as a data URL.
+        reader.readAsDataURL(f);
     }
-    var params = { "images": images }
-    setTimeout(function(){recog_file(params)},2000);
-  }
+    var params = {
+        "images": images
+    }
+    setTimeout(function() {
+        recog_file(params)
+    }, 2000);
+}
 
-  document.getElementById('files').addEventListener('change', handleFileSelect, false);
+document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
-  function convertImgToDataURLviaCanvas(url, callback, outputFormat) {
+function convertImgToDataURLviaCanvas(url, callback, outputFormat) {
     var img = new Image();
     img.crossOrigin = 'Anonymous';
     img.onload = function() {
-    var canvas = document.createElement('CANVAS');
-    var ctx = canvas.getContext('2d');
-    var dataURL;
-    canvas.height = this.height;
-    canvas.width = this.width;
-    ctx.drawImage(this, 0, 0);
-    dataURL = canvas.toDataURL(outputFormat);
-    callback(dataURL);
-    canvas = null;
-  };
-  img.src = url;
+        var canvas = document.createElement('CANVAS');
+        var ctx = canvas.getContext('2d');
+        var dataURL;
+        canvas.height = this.height;
+        canvas.width = this.width;
+        ctx.drawImage(this, 0, 0);
+        dataURL = canvas.toDataURL(outputFormat);
+        callback(dataURL);
+        canvas = null;
+    };
+    img.src = url;
 }
 
 function convertFileToDataURLviaFileReader(url, callback) {
-  var xhr = new XMLHttpRequest();
-  xhr.responseType = 'blob';
-  xhr.onload = function() {
-    var reader = new FileReader();
-    reader.onloadend = function() {
-      callback(reader.result);
-    }
-    reader.readAsDataURL(xhr.response);
-  };
-  xhr.open('GET', url);
-  xhr.send();
+    var xhr = new XMLHttpRequest();
+    xhr.responseType = 'blob';
+    xhr.onload = function() {
+        var reader = new FileReader();
+        reader.onloadend = function() {
+            callback(reader.result);
+        }
+        reader.readAsDataURL(xhr.response);
+    };
+    xhr.open('GET', url);
+    xhr.send();
 }
 
 $('#img2b64').submit(function(event) {
 
-  var convertType = $(this).find('[name=convertType]').val();
-  var convertFunction = convertType === 'FileReader' ?
-    convertFileToDataURLviaFileReader :
-    convertImgToDataURLviaCanvas;
-  var imageUrl = $(this).find('[name=url]').val();
-  var images = []
-  convertFunction(imageUrl, function(base64Img) {
+    var convertType = $(this).find('[name=convertType]').val();
+    var convertFunction = convertType === 'FileReader' ?
+        convertFileToDataURLviaFileReader :
+        convertImgToDataURLviaCanvas;
+    var imageUrl = $(this).find('[name=url]').val();
+    var images = []
+    convertFunction(imageUrl, function(base64Img) {
         $('#list').html('')
         images.push(base64Img.split(',')[1])
         $('.output')
-        .find('.img')
-        .attr('src', base64Img)
-        .end().show()
-        var span = document.createElement('span');
-          span.innerHTML = ['<img class="thumb" style="width: 120px" src="', base64Img,
-                            '" />'].join('');
-          document.getElementById('list').insertBefore(span, null);
-      var params = { "images": [base64Img.split(',')[1]] }
-      recog_file(params);
-  });
+            .find('.img')
+            .attr('src', base64Img)
+            .end().show()
+        var span = $('<div class="thumb_container"></div>')
+        span.append(['<img class="thumb" style="width: 110px;" src="', base64Img,
+            '"/>'
+        ].join(''));
+        $('#list').append(span);
+        // var span = document.createElement('span');
+        //   span.innerHTML = ['<img class="thumb" style="width: 120px" src="', base64Img,
+        //                     '" />'].join('');
+        //   document.getElementById('list').insertBefore(span, null);
+        var params = {
+            "images": [base64Img.split(',')[1]]
+        }
+        recog_file(params);
+    });
 
 
 
-  event.preventDefault();
+    event.preventDefault();
 });
 
-$('select').on('change', function (e) {
+$('select').on('change', function(e) {
     var optionSelected = $("option:selected", this);
     var valueSelected = this.value;
     console.log(valueSelected);
-    if (valueSelected=="Canvas") {
-      $('.url-resource').removeClass('hidden')
-      $('.file-resource').addClass('hidden')
+    if (valueSelected == "Canvas") {
+        $('.url-resource').removeClass('hidden')
+        $('.file-resource').addClass('hidden')
     } else {
-      $('.url-resource').addClass('hidden')
-      $('.file-resource').removeClass('hidden')
+        $('.url-resource').addClass('hidden')
+        $('.file-resource').removeClass('hidden')
     }
     //
 });
-
 </script>
-{% endcompress %}
-{% endblock %}
+{% endcompress %} {% endblock %}

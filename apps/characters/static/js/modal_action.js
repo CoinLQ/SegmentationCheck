@@ -46,6 +46,7 @@ $(function() {
         var modal = $(this);
         char_list.detecting = true;
         modal.find('#chart_char').text(button.data('char'));
+        char_list.fetch_detect_items()
     });
 
     $('#detectModal').on('hide.bs.modal', function(event) {

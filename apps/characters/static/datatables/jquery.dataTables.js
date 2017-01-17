@@ -4254,7 +4254,8 @@
 		if ( tableWidthAttr ) {
 			table.style.width = _fnStringToCss( tableWidthAttr );
 		}else {
-			table.style.width = '100%'
+			//table.style.width = '100%'
+			table.style.marginLeft = '-50px'
 		}
 
 		if ( (tableWidthAttr || scrollX) && ! oSettings._reszEvt ) {
