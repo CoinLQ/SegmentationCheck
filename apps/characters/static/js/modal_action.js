@@ -44,7 +44,12 @@ $(function() {
     $('#detectModal').on('show.bs.modal', function(event) {
         var button = $(event.relatedTarget);
         var modal = $(this);
+        char_list.detecting = true;
         modal.find('#chart_char').text(button.data('char'));
+    });
+
+    $('#detectModal').on('hide.bs.modal', function(event) {
+        char_list.detecting = false;
     });
 
     $("#classify-grade .dropdown-menu a").click(function() {

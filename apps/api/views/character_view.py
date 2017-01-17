@@ -20,6 +20,8 @@ from api.serializers import CharacterSerializer
 from skimage import io
 from PIL import Image
 
+logger = logging.getLogger(__name__)
+
 class CharacterFilter(filters.FilterSet):
     class Meta:
         model = Character
@@ -37,7 +39,6 @@ stage_map = {'t-up': [ -3, -8, -13, -18, -23 ][::-1],
              'b-down': [ 3, 8, 13, 18, 23 ], }
 
 class CharacterViewSet(viewsets.ModelViewSet):
-    logger = logging.getLogger(__name__)
 
     serializer_class = CharacterSerializer
     filter_backends = (filters.DjangoFilterBackend, filters.OrderingFilter)

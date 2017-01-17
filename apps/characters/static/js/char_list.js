@@ -3,17 +3,23 @@ var char_list = new Vue({
     data: {
         selection: 0,
         detect_selection: 0,
+        detect_type: 0,
         detect_page: 1,
         detect_pagination: {},
         item_id: '',
         item_url: '',
         item_direct: '',
         items: charListContainer.data,
-        cut_items: [],
         detect_items: [],
         degree: 0,
         final_degree: 0,
+        detecting: false,
         menu_style: {
+            top: 0,
+            left: 0,
+            display: 'none'
+        },
+        detect_menu_style:{
             top: 0,
             left: 0,
             display: 'none'
@@ -157,8 +163,31 @@ var char_list = new Vue({
             }
             document.removeEventListener('click', char_list._onContextMenuClick)
         },
-        cut_image_modal: function() {
-            var item = this.items[this.selection]
+        handleDetectContextmenu: function(item, e) {
+            document.removeEventListener('click', char_list._onDetectContextMenuClick)
+            this.detect_menu_style = {
+                top: e.pageY - window.scrollY - 30 + 'px',
+                left: e.target.parentNode.parentNode.offsetLeft+ 50 + 'px',
+                display: 'block'
+            }
+            this.detect_selection = this.detect_items.indexOf(item)
+            setTimeout(function() { document.addEventListener('click', char_list._onContextMenuClick) }, 200)
+        },
+        _onDetectContextMenuClick: function(e) {
+            e.stopPropagation()
+            if ($('.ctx-detect-menu-container').get(0) !== e.target) {
+                char_list.detect_menu_style = {
+                    display: 'none'
+                }
+            }
+            document.removeEventListener('click', char_list._onDetectContextMenuClick)
+        },
+        cut_image_modal: function(is_detect=false) {
+            if (is_detect){
+                var item = this.detect_items[this.detect_selection]
+            } else {
+                var item = this.items[this.selection]
+            }
             this.item_url = item.image_url
             this.item_id = item.id
             $("#cutImageModal").modal('show')
@@ -172,8 +201,8 @@ var char_list = new Vue({
             $("#cutDetailModal").modal('show')
         },
         selection_class: function(idx) {
-            if (this.detect_selection == idx){
-               return this.detect_selection == 0 ? 'btn-danger' : 'btn-success'
+            if (this.detect_type == idx){
+               return this.detect_type == 0 ? 'btn-danger' : 'btn-success'
             }
             return 'btn-default'
         },
@@ -191,11 +220,11 @@ var char_list = new Vue({
             this.items.$set(this.detect_items.indexOf(item), item)
         },
         switch_type: function(idx) {
-          this.detect_selection = idx
+          this.detect_type = idx
           this.fetch_detect_items()
         },
         fetch_detect_items: function(page=1) {
-            var idx = this.detect_selection
+            var idx = this.detect_type
             var url = '/api/character?char=' + charListContainer.char
             if (idx==0){
                 url += '&is_correct=-1&is_same=1'
@@ -243,7 +272,7 @@ var char_list = new Vue({
             var unchecked_ids = _.filter(char_list.detect_items, function(item) {
                         if (!item['checked']) return item;
                     }).map(function(it){ return it.id });
-            var data = {type: this.detect_selection, checked_ids: checked_ids, unchecked_ids: unchecked_ids, char: charListContainer.char}
+            var data = {type: this.detect_type, checked_ids: checked_ids, unchecked_ids: unchecked_ids, char: charListContainer.char}
             $.ajax({
               url: '/api/character/filter-mark',
               method: 'post',
@@ -375,16 +404,30 @@ var cut_detail = new Vue({
                 $.post('/api/character/' + char_list.item_id + '/direct/' + char_list.item_direct + '/cut/' + this.final_item.degree,
                     function(res) {
                         var url = res.image_url + "?v=" + Math.random()
-                        var item = char_list.items[char_list.selection]
-                        char_list.items.$set(char_list.selection, {
-                            show: false,
-                            id: item.id,
-                            image_url: url,
-                            cls_name: item.cls_name,
-                            accuracy: item.accuracy,
-                            char: item.char,
-                            is_correct: 1
-                        })
+                        if (!char_list.detecting){
+                            var item = char_list.items[char_list.selection]
+                            char_list.items.$set(char_list.selection, {
+                                show: false,
+                                id: item.id,
+                                image_url: url,
+                                cls_name: item.cls_name,
+                                accuracy: item.accuracy,
+                                char: item.char,
+                                is_correct: 1
+                            })
+                        }else {
+                            var item = char_list.detect_items[char_list.detect_selection]
+                            char_list.detect_items.$set(char_list.selection, {
+                                show: false,
+                                id: item.id,
+                                image_url: url,
+                                cls_name: item.cls_name,
+                                accuracy: item.accuracy,
+                                char: item.char,
+                                is_correct: 1
+                            })
+                        }
+
                         char_list.item_url = url
                     }, 'json')
                 $("#cutDetailModal").modal('hide')

@@ -52,28 +52,46 @@
         <!--end col-md-3 -->
         <div class='col-md-7 col-xs-12' style="margin-top:20px;">
             <div class='row'>
-                <div class="col-md-5" style="margin-top:-16px;">
+                <div class="col-md-12" style="margin-top:-16px;">
                     <strong id='checkchar' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>？</strong>
                     <a class="btn btn-default" href="javascript:;" onclick="charListContainer.checkDict()" style="margin-top:-12px;padding:8px 12px;"><span class="tooltip_text">查字典</span><span class="fa fa-book"></span></a>
                     <a class="btn btn-default classifyChart hidden" href="javascript:;" data-toggle="modal" data-target="#classifyChartModal" data-char="？" style="margin-top:-12px;padding:8px 10px;"><span class="tooltip_text">相似度分布</span><span class="fa fa-bar-chart"></span></a>
                     <a class="btn btn-default circle-btn accuracy_cal hidden" href="javascript:;" data-toggle="modal" data-target="#accuracyModal" data-char="？"><span class="tooltip_text">重算</span><span class="fa fa-calculator"></span>
-                <div class="radial-progress" data-progress="100">
-                    <div class="circle">
-                        <div class="mask full">
-                            <div class="fill"></div>
+                    <div class="radial-progress" data-progress="100">
+                        <div class="circle">
+                            <div class="mask full">
+                                <div class="fill"></div>
+                            </div>
+                            <div class="mask half">
+                                <div class="fill"></div>
+                                <div class="fill fix"></div>
+                            </div>
+                            <div class="shadow1"></div>
                         </div>
-                        <div class="mask half">
-                            <div class="fill"></div>
-                            <div class="fill fix"></div>
-                        </div>
-                        <div class="shadow1"></div>
+                        <div class="inset1"></div>
                     </div>
-                    <div class="inset1"></div>
-                </div></a>
+                    </a>
                     <a class="btn btn-default accuracy_cal hidden" href="javascript:;" data-toggle="modal" data-target="#markModal" data-char="？" style="margin-top:-12px;padding:8px 12px;"><span class="tooltip_text">标记</span><span class="fa fa-paw"></span></a>
                     <a class="btn btn-default recog_detect hidden" href="javascript:;" data-toggle="modal" data-target="#detectModal" data-char="？" style="margin-top:-12px;padding:8px 12px;"><span class="tooltip_text">智能检测</span><span class="fa fa-check"></span></a>
+                    <div id="find_scope" class="dropdown" style="display: inline-block;float:right;margin: 14px 5px;">
+                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span>显示全部&nbsp;</span>
+                        <span class="caret"></span></button>
+                    <ul class="dropdown-menu" style="margin-top:8px;">
+                        <li><a data-value="-10" href="#">显示全部</a></li>
+                        <li><a data-value="0" href="#">未标记</a></li>
+                        <li><a data-value="-1" href="#">人工标错</a></li>
+                        <li><a data-value="1" href="#">人工标对</a></li>
+                    </ul>
                 </div>
-                <div id="accuracy_scope" class="form-inline dropdown" style="display: inline-block;margin-left: 2px;float:right">
+                <div id="order_scope" class="dropdown" style="display: inline-block;float:right;margin: 14px 5px;">
+                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span>升序&nbsp;</span>
+                        <span class="caret"></span></button>
+                    <ul class="dropdown-menu" style="margin-top:8px;">
+                        <li><a data-value="accuracy" href="#">升序</a></li>
+                        <li><a data-value="-accuracy" href="#">降序</a></li>
+                    </ul>
+                </div>
+                 <div id="accuracy_scope" class="form-inline dropdown" style="display: inline-block;margin-left: 2px;margin-top:14px;float:right">
                     <label>相似度:
                         <input class="accuracy_input form-control-inline" placeholder="0.5" aria-controls="char_index" style="margin-top:2px;" />
                     </label>
@@ -92,24 +110,10 @@
                         </ul>
                     </label>
                 </div>
-                <div id="order_scope" class="dropdown" style="display: inline-block;float:right;margin: 0px 10px;">
-                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span>升序&nbsp;</span>
-                        <span class="caret"></span></button>
-                    <ul class="dropdown-menu" style="margin-top:8px;">
-                        <li><a data-value="accuracy" href="#">升序</a></li>
-                        <li><a data-value="-accuracy" href="#">降序</a></li>
-                    </ul>
+
                 </div>
-                <div id="find_scope" class="dropdown" style="display: inline-block;float:right;margin: 0px 10px;">
-                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span>显示全部&nbsp;</span>
-                        <span class="caret"></span></button>
-                    <ul class="dropdown-menu" style="margin-top:8px;">
-                        <li><a data-value="-10" href="#">显示全部</a></li>
-                        <li><a data-value="0" href="#">未标记</a></li>
-                        <li><a data-value="-1" href="#">人工标错</a></li>
-                        <li><a data-value="1" href="#">人工标对</a></li>
-                    </ul>
-                </div>
+
+
                 {% include "characters/included/audio_play.html" %}
             </div>
             <div style="clear:both;"> </div>
@@ -119,7 +123,7 @@
             {% verbatim %}
             <div id="charListArea" style="margin-right:-15px;margin-left:18px;display: inline-block">
                 <template v-for="item in items">
-                    <div id="{{item.id}}" class="flow  char-image {{item.cls_name}} {{gen_cls(item)}}" @contextmenu.prevent="handleContextmenu(item,$event)">
+                    <div id="{{item.id}}" class="flow  char-image {{item.cls_name}} {{gen_cls(item)}}" @contextmenu.stop.prevent="handleContextmenu(item,$event)">
                         <img v-bind:src="item.image_url" alt="加载中..." class="lazy">
                         <span class="badge char-info">{{item.accuracy}}</span>
                         <div class="cmd-panel">
@@ -152,9 +156,11 @@
                 {% endverbatim %}
                 {% include "characters/included/intel_detect_modal.html" %}
                 {% include "characters/included/recog_modal.html" %}
-                {% include "characters/included/cut_modal.html" %}
 
+                {% include "characters/included/cut_modal.html" %}
             </div>
+           </div>
+
             {% include "characters/included/command_panel.html" %}
              <div style="clear:both;"> </div>
             <div class="row" style="margin-top:10px;margin-left: 0px">

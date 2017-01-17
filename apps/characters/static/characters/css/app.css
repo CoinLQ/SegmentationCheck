@@ -927,7 +927,7 @@ span.fa-volume-off {
   left: auto;
 }
 
-div.ctx-menu-container {
+div.ctx-menu-container, div.ctx-detect-menu-container {
   position: fixed;
   padding: 0;
   background-color: whitesmoke;

@@ -24,18 +24,22 @@
                     <div id="detectList" style="margin-right:-15px;margin-left:18px;display: inline-block">
                         <p v-if="detect_items.length == 0">暂无数据</p>
                         <template v-for="item in detect_items">
-                            <div id="{{item.id}}" class="flow char-image" :class="gen_detect_cls(item)">
+                            <div id="{{item.id}}" class="flow char-image" :class="gen_detect_cls(item)" @contextmenu.stop.prevent="handleDetectContextmenu(item,$event)">
                                 <img v-bind:src="item.image_url" alt="加载中..." class="lazy">
                                 <i class='fa fa-check pull-right' :class="detect_class(item)"></i>
                                 <span class="badge char-info">{{item.accuracy/1000.0}}</span>
                                 <div class="cmd-panel">
-                                    <div v-if="has_correct(item)" class="btn-correct-c" title='切换' v-on:click="toggel_check(item)">
-                                    </div>
-                                    <div v-else class="btn-error-c" title='切换' v-on:click="toggel_check(item)">
-                                    </div>
+                                    <div  :class="has_correct(item) ? 'btn-error-c' : 'btn-correct-c'" title='切换' v-on:click="toggel_check(item)">
                                 </div>
                             </div>
                         </template>
+                         <div style="display: none" v-bind:style="detect_menu_style" class="ctx-detect-menu-container">
+                            <div class="ctx-menu">
+                                <div class="ctx-item" v-on:click="cut_image_modal(true)">
+                                   重新切分
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -47,7 +51,7 @@
                 <div class='char-pagitor'>
                     <span class='pagitor btn btn-default' @click="go_first()"><span class="fa fa-step-backward"></span></span>
                     <span class='pagitor more-padding btn btn-default' @click.stop.prevent="go_previous()" style="font-size:20px;">❮</span>
-                    <input class='form-control-inline pagitor_input2 input-sm' type='number' min="1" value={{detect_pagination.page}}>
+                    <input class='form-control-inline pagitor_input2 input-sm' type='number' min="1" :value="detect_pagination.page">
                     <span class='pagitor_of'></span>
                     <span class='pagitor more-padding btn btn-default' @click.stop.prevent="go_next()" style="font-size:20px;">❯</span>
                     <span class='pagitor btn btn-default'  @click="go_last()"><span class="fa fa-step-forward"></span></span>
