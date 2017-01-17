@@ -20,18 +20,18 @@
                 <label class="col-sm-2 control-label">读取类型:</label>
                 <div class="col-sm-10">
                     <select class="form-control" name="convertType">
-                        <option value="Canvas">Canvas</option>
-                        <option value="FileReader" selected>FileReader</option>
+                        <option value="Canvas">远端URL</option>
+                        <option value="FileReader" selected>本地文件</option>
                     </select>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group url-resource hidden">
                 <label class="col-sm-2 control-label">HTTP图像资源:</label>
                 <div class="col-sm-10">
                     <input type="url" name="url" class="form-control" placeholder="Insert an IMAGE-URL" value="http://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png" />
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group file-resource">
                 <label class="col-sm-2 control-label">本地文件:</label>
                 <div class="col-sm-10">
                     <input type="file" id="files" class="form-control" placeholder="Insert an IMAGE-URL" multiple/>
@@ -134,10 +134,10 @@ function handleFileSelect(evt) {
 
   document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
-    function convertImgToDataURLviaCanvas(url, callback, outputFormat) {
-  var img = new Image();
-  img.crossOrigin = 'Anonymous';
-  img.onload = function() {
+  function convertImgToDataURLviaCanvas(url, callback, outputFormat) {
+    var img = new Image();
+    img.crossOrigin = 'Anonymous';
+    img.onload = function() {
     var canvas = document.createElement('CANVAS');
     var ctx = canvas.getContext('2d');
     var dataURL;
@@ -174,7 +174,7 @@ $('#img2b64').submit(function(event) {
   var imageUrl = $(this).find('[name=url]').val();
   var images = []
   convertFunction(imageUrl, function(base64Img) {
-
+        $('#list').html('')
         images.push(base64Img.split(',')[1])
         $('.output')
         .find('.img')
@@ -191,6 +191,20 @@ $('#img2b64').submit(function(event) {
 
 
   event.preventDefault();
+});
+
+$('select').on('change', function (e) {
+    var optionSelected = $("option:selected", this);
+    var valueSelected = this.value;
+    console.log(valueSelected);
+    if (valueSelected=="Canvas") {
+      $('.url-resource').removeClass('hidden')
+      $('.file-resource').addClass('hidden')
+    } else {
+      $('.url-resource').addClass('hidden')
+      $('.file-resource').removeClass('hidden')
+    }
+    //
 });
 
 </script>
