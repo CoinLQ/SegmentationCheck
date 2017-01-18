@@ -53,8 +53,8 @@ var char_list = new Vue({
             }
             return cls_name;
         },
-        goto_detail: function(){
-            if (this.detecting){
+        goto_detail: function(is_detect=false){
+            if (!is_detect){
                 var item = this.detect_items[this.detect_selection]
             } else {
                 var item = this.items[this.selection]
@@ -63,8 +63,8 @@ var char_list = new Vue({
             url = "/characters/" + titem.id;
             var _open = window.open(url);
         },
-        intelli_recog: function(){
-            if (this.detecting){
+        intelli_recog: function(is_detect=false){
+            if (!is_detect){
                 var item = this.detect_items[this.detect_selection]
             } else {
                 var item = this.items[this.selection]
@@ -193,7 +193,7 @@ var char_list = new Vue({
             document.removeEventListener('click', char_list._onDetectContextMenuClick)
         },
         cut_image_modal: function(is_detect=false) {
-            if (this.detecting){
+            if (!is_detect){
                 var item = this.detect_items[this.detect_selection]
             } else {
                 var item = this.items[this.selection]
