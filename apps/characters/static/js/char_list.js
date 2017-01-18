@@ -60,7 +60,7 @@ var char_list = new Vue({
                 var item = this.items[this.selection]
             }
 
-            url = "/characters/" + titem.id;
+            url = "/characters/" + item.id;
             var _open = window.open(url);
         },
         intelli_recog: function(is_detect=false){
@@ -202,6 +202,9 @@ var char_list = new Vue({
             this.item_id = item.id
             $("#cutImageModal").modal('show')
             this.menu_style = {
+                display: 'none'
+            }
+            this.detect_menu_style = {
                 display: 'none'
             }
             document.removeEventListener('click', char_list._onContextMenuClick)

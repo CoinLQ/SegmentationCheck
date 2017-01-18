@@ -206,6 +206,6 @@ class CharacterViewSet(viewsets.ModelViewSet):
             ret = 'not found neighbor char. '
         except Exception, e:
             logger.exception('Apply cut An error occurred')
-            ret = e
+            ret = e.message
 
-        return Response({'status': ret, 'image_url': character.local_image_url(), is_same: character.is_same})
+        return Response({'status': ret, 'image_url': character.local_image_url(), 'is_same': character.is_same})

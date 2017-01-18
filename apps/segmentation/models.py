@@ -224,7 +224,10 @@ class Character(models.Model):
 
     def backup_orig_character(self):
         backup_file = self.get_cut_image_path()
-        shutil.copy(self.get_image_path(), backup_file)
+        try:
+            shutil.copy(self.get_image_path(), backup_file)
+        except:
+            pass
         return backup_file
 
     def base64_jpg(self):
