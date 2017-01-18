@@ -54,7 +54,7 @@ var char_list = new Vue({
             return cls_name;
         },
         goto_detail: function(is_detect=false){
-            if (!is_detect){
+            if (is_detect){
                 var item = this.detect_items[this.detect_selection]
             } else {
                 var item = this.items[this.selection]
@@ -64,7 +64,7 @@ var char_list = new Vue({
             var _open = window.open(url);
         },
         intelli_recog: function(is_detect=false){
-            if (!is_detect){
+            if (is_detect){
                 var item = this.detect_items[this.detect_selection]
             } else {
                 var item = this.items[this.selection]
@@ -193,7 +193,7 @@ var char_list = new Vue({
             document.removeEventListener('click', char_list._onDetectContextMenuClick)
         },
         cut_image_modal: function(is_detect=false) {
-            if (!is_detect){
+            if (is_detect){
                 var item = this.detect_items[this.detect_selection]
             } else {
                 var item = this.items[this.selection]
