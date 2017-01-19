@@ -277,6 +277,7 @@ class Character(models.Model):
 
     @classmethod
     def recog_characters(cls, char):
+        import time
         char_count_map = {}
         total_count = Character.objects.filter(char=char, is_same=0).count()
         iter_count = (total_count - 1) / 100
@@ -284,8 +285,10 @@ class Character(models.Model):
         left_count = total_count % 100
         for i in range(iter_count):
             start = i * 100
-            characters = Character.objects.filter(char=char, is_same=0)[start:start+100]
+            characters = Character.objects.filter(char=char, is_same=0)[0:100]
             Character.bulk_update_recog(characters)
+            print(i)
+            time.sleep(1)
         characters = Character.objects.filter(char=char, is_same=0)[start:left_count]
         Character.bulk_update_recog(characters)
 

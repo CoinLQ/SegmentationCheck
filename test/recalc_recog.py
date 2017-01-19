@@ -15,7 +15,8 @@ django.setup()
 from segmentation.models import Character, CharacterStatistics
 
 def recog_all():
-  for char in CharacterStatistics.objects.order_by('total_cnt').values_list('char',flat=True)[50:]:
+  for char in CharacterStatistics.objects.order_by('-total_cnt').values_list('char',flat=True)[0:500]:
+    print(char)
     Character.recog_characters(char)
 
 if __name__ == '__main__':
