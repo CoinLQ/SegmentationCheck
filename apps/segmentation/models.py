@@ -23,6 +23,9 @@ from catalogue.models import Volume, Sutra
 from managerawdata.models import OPage
 from libs.thumbnail import ThumbnailMixin
 from libs.storage import silentremove
+
+from libs.classifier import pred_process
+
 logger = logging.getLogger(__name__)
 # Create your models here.
 class Page(models.Model, ThumbnailMixin):
@@ -286,11 +289,11 @@ class Character(models.Model):
         for i in range(iter_count):
             start = i * 100
             characters = Character.objects.filter(char=char, is_same=0)[0:100]
-            Character.bulk_update_recog(characters)
+            Character.bulk_update_recog_2(characters)
             print(i)
             time.sleep(1)
         characters = Character.objects.filter(char=char, is_same=0)[start:left_count]
-        Character.bulk_update_recog(characters)
+        Character.bulk_update_recog_2(characters)
 
     @classmethod
     @transaction.atomic
@@ -304,6 +307,22 @@ class Character(models.Model):
         req.add_header("Content-Type", "application/json")
         response = urllib2.urlopen(req, json.dumps(params))
         ret = json.loads(response.read())
+        recog_result = ret['predictions']
+        for index, ch in enumerate(char_list):
+            if (ch.char == recog_result[index][0]):
+                ch.is_same = 1
+            else:
+                ch.is_same = -1
+            ch.recog_chars = recog_result[index]
+            ch.save()
+
+    @classmethod
+    @transaction.atomic
+    def bulk_update_recog_2(cls, char_list):
+        if not char_list:
+               return
+        image_list = map(lambda ch:ch.get_image_path(), char_list)
+        ret = pred_process.process(image_list)
         recog_result = ret['predictions']
         for index, ch in enumerate(char_list):
             if (ch.char == recog_result[index][0]):
