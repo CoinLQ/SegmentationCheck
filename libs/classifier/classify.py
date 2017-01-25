@@ -12,8 +12,10 @@ import argparse
 import glob
 import time
 import codecs
-
-import caffe
+try:
+    import caffe
+except ImportError:
+    pass
 
 default_settings = {"model_def":         "./lenet_16000/deploy16000.prototxt",
         "pretrained_model":  "./lenet_16000/lenet_iter_16000.caffemodel",

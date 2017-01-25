@@ -60,7 +60,7 @@
                     <span class='pagitor btn btn-default' @click="go_first()"><span class="fa fa-step-backward"></span></span>
                     <span class='pagitor more-padding btn btn-default' @click.stop.prevent="go_previous()" style="font-size:20px;">❮</span>
                     <input class='form-control-inline pagitor_input2 input-sm' type='number' min="1" :value="detect_pagination.page">
-                    <span class='pagitor_of'></span>
+                    <span class='pagitor_of'>/ {{detect_pagination.total_pages}}</span>
                     <span class='pagitor more-padding btn btn-default' @click.stop.prevent="go_next()" style="font-size:20px;">❯</span>
                     <span class='pagitor btn btn-default'  @click="go_last()"><span class="fa fa-step-forward"></span></span>
                 </div>
