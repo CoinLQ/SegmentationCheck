@@ -208,6 +208,9 @@ charListContainer.page_number = 1;
 $('.radio-btn').removeClass('actived');
 $('.radio-btn.show-all').addClass('actived');
 charListContainer.fetchDataAndRender();
+if (location.hash.substr(1)=="recog") {
+    $('#detectModal').modal('show')
+}
 })
 </script>
 {% endcompress %}

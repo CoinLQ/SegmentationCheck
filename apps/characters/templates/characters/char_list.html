@@ -121,6 +121,15 @@ var chars = [
                         }
                         return data;
                     }
+                },
+                {
+                    targets: 9,
+                    render: function ( data, type, row, meta ) {
+                        if(type === 'display'){
+                            data = '<a href="/characters/' + row[1] + '#recog">' + data + '</a>';
+                        }
+                        return data;
+                    }
                 }
             ]
         });

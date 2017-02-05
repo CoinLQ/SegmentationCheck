@@ -37,7 +37,7 @@ $(function() {
     $('#accuracyModal').on('show.bs.modal', function(event) {
         var button = $(event.relatedTarget);
         var modal = $(this);
-        modal.find('#accuracy_char').text(button.data('char'));
+        modal.find('#accuracy_char').text(charListContainer.char);
         makeOption();
     });
 
@@ -45,7 +45,7 @@ $(function() {
         var button = $(event.relatedTarget);
         var modal = $(this);
         char_list.detecting = true;
-        modal.find('#chart_char').text(button.data('char'));
+        modal.find('#chart_char').text(charListContainer.char);
         char_list.fetch_detect_items()
     });
 
