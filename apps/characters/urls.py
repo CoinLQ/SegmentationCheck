@@ -4,8 +4,8 @@ from . import views
 
 urlpatterns = [
     #url(r'^$', views.index, name='character_index'),
-
     url(r'^$', login_required(views.Index.as_view()), name='character_index'),
+    url(r'^list/$', login_required(views.List .as_view()), name='character_list'),
     url(r'^task/$', views.task, name='task'),
     url(r'^task/help$', views.help, name='help'),
     url(r'^set_correct$', views.set_correct, name='set_correct'),
@@ -20,5 +20,6 @@ urlpatterns = [
     url(r'^last_task_result$', views.last_task_result, name='last_task_result'),
     url(r'^more_task_result$', views.more_task_result, name='more_task_result'),
     url(r'^(?P<character_id>[0-9A-Za-z-]+)$', views.detail, name='character_detail'),
+    url(r'^(?P<char>(.*))$', views.browser, name='character_browser'),
 
 ]

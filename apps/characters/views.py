@@ -19,8 +19,15 @@ from utils.get_checked_character import get_checked_character
 from .models import UserCredit, CharMarkRecord, ClassificationTask, ClassificationCompareResult
 from .tasks import classify_with_random_samples
 
-class Index(generic.ListView):
+class List(generic.ListView):
     template_name = 'characters/char_manage.html'
+    def get_queryset(self):
+        char_lst = CharacterStatistics.objects.select_related('charstock').all().order_by('-total_cnt','char')
+        return  char_lst
+
+
+class Index(generic.ListView):
+    template_name = 'characters/char_list.html'
     def get_queryset(self):
         char_lst = CharacterStatistics.objects.select_related('charstock').all().order_by('-total_cnt','char')
         return  char_lst
@@ -48,6 +55,9 @@ def detail(request, character_id):
     page = char.page
     t_char = page.locate_char(char)
     return render(request,'characters/character_detail.html',{'character': char, 'page': page,'t_char': t_char, 'summary': summary})
+
+def browser(request, char):
+    return render(request,'characters/browser/index.html',{'character': char})
 
 #@user_passes_test(lambda u:u.is_staff, login_url='/quiz')
 @login_required(login_url='/account/login/')

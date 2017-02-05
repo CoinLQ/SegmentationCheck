@@ -296,6 +296,7 @@ var charListContainer = {
         this.renderCharArea();
     },
     switchAndRender: function() {
+        return this.fetchDataAndRender();
         var that = this;
         if (this.char === '') {
             return;
@@ -382,6 +383,13 @@ var charListContainer = {
             }
             char_list.items = new_models;
             that.pagination = result.pagination;
+            if (that.pagination.total_entries > 20) {
+                $(".classifyChart").removeClass('hidden');
+                $(".accuracy_cal").removeClass('hidden');
+            }else {
+                $(".classifyChart").addClass('hidden');
+                $(".accuracy_cal").addClass('hidden');
+            }
             that.renderCharAndBind();
             that.paginationRender();
         });
@@ -389,5 +397,5 @@ var charListContainer = {
 }
 
 $(function() {
-    charListContainer.init();
+//    charListContainer.init();
 });

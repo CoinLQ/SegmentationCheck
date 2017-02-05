@@ -7,6 +7,7 @@ import urllib2
 import json
 import base64
 
+from django.utils import timezone
 from django.core.cache import cache
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -194,14 +195,20 @@ class Character(models.Model):
         return int(self.id.split('L')[1])
 
     def local_image_url(self):
-        statbuf = os.stat(self.get_image_path())
+        try:
+            statbuf = os.stat(self.get_image_path())
+        except:
+            statbuf = timezone.now()
         return u'/character_images/'+self.page_id+u'/'+self.image +  ("?v=%d" % statbuf.st_mtime)
 
     def get_image_path(self):
         base_path = settings.CHARACTER_IMAGE_ROOT+self.page_id
-        if not os.access(base_path, os.X_OK):
-            os.mkdir(base_path)
-        return settings.CHARACTER_IMAGE_ROOT+self.page_id+u'/'+self.image
+        image_path = settings.CHARACTER_IMAGE_ROOT+self.page_id+u'/'+self.image
+        if not os.access(image_path, os.X_OK):
+            if not os.access(base_path, os.X_OK):
+                os.mkdir(base_path)
+            self.danger_rebuild_image()
+        return image_path
 
     def get_cut_image_path(self):
         base_path = settings.CUT_CHARACTER_IMAGE_ROOT+self.page_id
@@ -211,10 +218,14 @@ class Character(models.Model):
         return settings.CUT_CHARACTER_IMAGE_ROOT + image_path
 
     def danger_rebuild_image(self):
-        pageimg_file = self.page.get_image_path()
-        page_image = io.imread(pageimg_file, 0)
-        char_image = page_image[self.top:self.bottom, self.left:self.right]
-        io.imsave(self.get_image_path(), char_image)
+        try:
+            pageimg_file = self.page.get_image_path()
+            page_image = io.imread(pageimg_file, 0)
+            char_image = page_image[self.top:self.bottom, self.left:self.right]
+            image_path = settings.CHARACTER_IMAGE_ROOT+self.page_id+u'/'+self.image
+            io.imsave(image_path, char_image)
+        except IOError, e:
+            pass
         #silentremove(self.npy_path())
 
     def upload_png_to_qiniu(self):

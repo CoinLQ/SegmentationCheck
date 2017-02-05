@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% load compress %}
+{% block head %}
+<title>字形列表</title>
+{% compress css %}
+<link href="/static/css/simplePagination.css" rel="stylesheet">
+<link href="/static/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/static/datatables/dataTables.bootstrap.css">
+<link rel="stylesheet" href="/static/characters/css/app.css">
+{% endcompress %}
+{% endblock %}
+{% block mainbody %}
+<div class="container">
+    <div class='row'>
+        <div class='col-md-12 col-xs-12'>
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title"></h3>
+                </div>
+                <div class="box-body">
+                    <table id="char_index" class="table table-bordered table-striped" style='margin-left: -50px'>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>字
+                                    <br>形</th>
+                                <th>总
+                                    <br>数</th>
+                                <th>正
+                                    <br>样本</th>
+                                <th>负
+                                    <br>样本</th>
+                                <th>未
+                                    <br>标记</th>
+                                <th>区
+                                    <br>分度</th>
+                                <th class="hidden">左重心</th>
+                                <th class="hidden">右重心</th>
+                                <th>异常</th>
+                            </tr>
+                        </thead>
+                        <tbody id="char_index_tbody">
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+
+</div>
+<!-- /.container -->
+{% endblock %}
+{% block foot %}
+<script type="text/javascript">
+var chars = [
+    {% for char in characterstatistics_list %}
+    [
+        "{{forloop.counter}}",
+        "{{char.char}}",
+        "{{char.total_cnt}}",
+        "{{char.correct_cnt}}",
+        "{{char.err_cnt}}",
+        "{{char.uncheck_cnt}}",
+        "{{char.charstock.weight}}",
+        "{{char.charstock.l_value}}",
+        "{{char.charstock.r_value}}",
+        "{{char.recog_diff_count}}"
+    ],
+    {% endfor %}
+]
+</script>
+{% compress js %}
+
+<script src="/static/datatables/jquery.dataTables.js"></script>
+<script src="/static/datatables/dataTables.bootstrap.js"></script>
+<script src="/static/datatables/input.js"></script>
+<script src="/static/js/jquery.simplePagination.js" charset="utf-8"></script>
+<script type="text/javascript">
+    $(function(){
+        $("#char_index").DataTable({
+            "pagingType": "input",
+            "info": false,
+            "borderClasses": false,
+            "bSortClasses": false,
+            "bProcessing": true,
+            "bDeferRender": true,
+            "bProcessing": true,
+            "bDeferRender": true,
+            "columns": [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                { "sType": "numeric-abs" },
+                null,
+                null,
+                null
+            ],
+            // Rows and column headers stored in a "data" object:
+            "aaData": chars,
+            language: {
+                search: "",
+                lengthMenu: " _MENU_ 字/页",
+                loadingRecords: "载入数据中...",
+                paginate: {
+                    first: "<span class='fa fa-step-backward'></span>",
+                    previous: "❮",
+                    next: "❯",
+                    last: "<span class='fa fa-step-forward'></span>"
+                }
+            },
+            columnDefs: [
+                {
+                    targets: 1,
+                    render: function ( data, type, row, meta ) {
+                        if(type === 'display'){
+                            data = '<a href="/characters/' + data + '">' + data + '</a>';
+                        }
+                        return data;
+                    }
+                }
+            ]
+        });
+    })
+</script>
+{% endcompress %}
+{% endblock %}
