@@ -117,7 +117,7 @@ var chars = [
                     targets: 1,
                     render: function ( data, type, row, meta ) {
                         if(type === 'display'){
-                            data = '<a href="/characters/' + data + '">' + data + '</a>';
+                            data = '<a target="_blank" href="/characters/' + data + '">' + data + '</a>';
                         }
                         return data;
                     }
@@ -126,7 +126,7 @@ var chars = [
                     targets: 9,
                     render: function ( data, type, row, meta ) {
                         if(type === 'display'){
-                            data = '<a href="/characters/' + row[1] + '#recog">' + data + '</a>';
+                            data = '<a target="_blank" href="/characters/' + row[1] + '#recog">' + data + '</a>';
                         }
                         return data;
                     }
