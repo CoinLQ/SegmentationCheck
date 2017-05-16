@@ -29,7 +29,7 @@ class VariantsFetcher:
     def fetch_variants(self, char):
         if not self.is_login:
             return None
-        url = 'http://hanzi.lqdzj.cn/hanzi-dict/search?param=%s' % char.encode('utf-8')
+        url = 'http://hanzi.lqdzj.cn/variant_detail?q=%s' % char.encode('utf-8')
         r = self.session.get(url)
         soup = BeautifulSoup(r.text)
         self.soup = soup

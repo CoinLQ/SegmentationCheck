@@ -268,7 +268,7 @@ var charListContainer = {
         if (t[0]) t[0].hideCircle();
     },
     checkDict: function() {
-        url = "http://hanzi.lqdzj.cn/hanzi-dict/search?param="
+        url = "http://hanzi.lqdzj.cn/variant_detail?q="
         url += charListContainer.char;
         var _open = window.open(url);
         if (_open == null || typeof(_open) == 'undefined')
