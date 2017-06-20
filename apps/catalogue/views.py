@@ -11,7 +11,7 @@ class SutraList(generic.ListView):
     def get_queryset(self):
         from segmentation.models import Page
         #Page.rebuild_accuracy()
-        sutra_list = Sutra.objects.all().order_by('id')
+        sutra_list = Sutra.objects.select_related('tripitaka').all().order_by('id')
         return  sutra_list
 
 

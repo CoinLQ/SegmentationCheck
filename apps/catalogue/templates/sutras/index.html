@@ -24,6 +24,8 @@
                         <thead>
                             <tr>
                                 <th>No</th>
+                                <th>藏
+                                    <br>经</th>
                                 <th>名
                                     <br>称</th>
                                 <th>经
@@ -58,6 +60,7 @@ var sutras = [
     {% for sutra in sutra_list %}
     [
         "{{sutra.id}}",
+        "{{sutra.tripitaka}}",
         "{{sutra.name}}",
         "{{sutra.gaolizang_id}}",
         "{{sutra.reel_nm}}",
@@ -83,6 +86,7 @@ var app = {
             "bProcessing": true,
             "bDeferRender": true,
             "columns": [
+                null,
                 null,
                 {
                     "title": "佛经名称",

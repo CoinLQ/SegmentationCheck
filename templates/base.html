@@ -49,21 +49,12 @@
 
             <li {% if request.path == '/' %} class="active"{% endif %}><a href="/">首页</a></li>
             {% if user.is_superuser %}
-            <!-- <li><a href="/managerawdata/">原始数据管理</a></li>
-
-            <li><a href="/segmentation/">切分</a></li> -->
+            <!-- <li><a href="/managerawdata/">原始数据管理</a></li>-->
             <li {% if request.path == '/characters/' %} class="active"{% endif %} ><a href="/characters/">字形管理</a></li>
             <li {% if '/tripitaka/sutras' in request.path %} class="active"{% endif %}><a href="/tripitaka/sutras">经文管理</a></li>
             {% endif %}
           {% if user.is_authenticated %}
-            <li {% if '/preprocess/' in request.path %} class="dropdown active"{% endif %}>
-              <a href="#" class="dropdown-toggle"  data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">数据预处理 <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="/preprocess/">图片预处理</a></li>
-                <li><a href="/preprocess/preprocess_page">文本预处理 </a></li>
-              </ul>
-            </li>
-            <li {% if request.path == '/characters/task/' %} class="active"{% endif %} ><a href="/characters/task/">说一不二</a></li>
+
           {% endif %}
             <li {% if request.path == '/characters/dashboard' %} class="active"{% endif %}><a href="/characters/dashboard">可视化</a></li>
             <li {% if request.path == '/characters/task/help' %} class="active"{% endif %}><a href="/characters/task/help">帮助信息</a></li>
