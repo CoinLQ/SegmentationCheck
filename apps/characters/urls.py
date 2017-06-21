@@ -20,6 +20,7 @@ urlpatterns = [
     url(r'^last_task_result$', views.last_task_result, name='last_task_result'),
     url(r'^more_task_result$', views.more_task_result, name='more_task_result'),
     url(r'^(?P<character_id>[0-9A-Za-z-]+)$', views.detail, name='character_detail'),
+    #url(r'^readonly/(?P<char>(.*))$', views.readonly, name='character_readonly'),
     url(r'^(?P<char>(.*))$', views.browser, name='character_browser'),
 
 ]

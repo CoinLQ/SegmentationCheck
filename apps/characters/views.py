@@ -57,7 +57,10 @@ def detail(request, character_id):
     return render(request,'characters/character_detail.html',{'character': char, 'page': page,'t_char': t_char, 'summary': summary})
 
 def browser(request, char):
-    return render(request,'characters/browser/index.html',{'character': char})
+    if request.user.is_authenticated():
+        return render(request,'characters/browser/index.html',{'character': char})
+    else:
+        return render(request,'characters/browser/readonly.html',{'character': char})
 
 #@user_passes_test(lambda u:u.is_staff, login_url='/quiz')
 @login_required(login_url='/account/login/')
@@ -96,7 +99,6 @@ def task(request):
                                                         'total_cnt':total_cnt,
                                                         'variant_lst':lq_variant,
                                                         } )
-
 
 @login_required(login_url='/account/login/')
 def set_correct(request):

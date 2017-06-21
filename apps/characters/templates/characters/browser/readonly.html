@@ -20,36 +20,8 @@
                 <div class="col-md-12" style="margin-top:-16px;">
                     <strong id='checkchar' style='font-size:36px; margin:0px;padding:8px;color:#483D8B;'>{{character}}</strong>
                     <a class="btn btn-default" href="javascript:;" onclick="charListContainer.checkDict()" style="margin-top:-12px;padding:8px 12px;"><span class="tooltip_text">查字典</span><span class="fa fa-book"></span></a>
-                    <a class="btn btn-default classifyChart hidden" href="javascript:;" data-toggle="modal" data-target="#classifyChartModal" data-char={{character}} style="margin-top:-12px;padding:8px 10px;"><span class="tooltip_text">相似度分布</span><span class="fa fa-bar-chart"></span></a>
-                    <a class="btn btn-default circle-btn accuracy_cal hidden" href="javascript:;" data-toggle="modal" data-target="#accuracyModal" data-char="？"><span class="tooltip_text">重算</span><span class="fa fa-calculator"></span>
-                    <div class="radial-progress" data-progress="100">
-                        <div class="circle">
-                            <div class="mask full">
-                                <div class="fill"></div>
-                            </div>
-                            <div class="mask half">
-                                <div class="fill"></div>
-                                <div class="fill fix"></div>
-                            </div>
-                            <div class="shadow1"></div>
-                        </div>
-                        <div class="inset1"></div>
-                    </div>
-                    </a>
-                    <a class="btn btn-default accuracy_cal hidden" href="javascript:;" data-toggle="modal" data-target="#markModal" data-char="？" style="margin-top:-12px;padding:8px 12px;"><span class="tooltip_text">标记</span><span class="fa fa-paw"></span></a>
-                    <a class="btn btn-default recog_detect hidden" href="javascript:;" data-toggle="modal" data-target="#detectModal" data-char="？" style="margin-top:-12px;padding:8px 12px;"><span class="tooltip_text">智能检测</span><span class="fa fa-check"></span></a>
-                    <div id="find_scope" class="dropdown" style="display: inline-block;float:right;margin: 14px 5px;">
-                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span>显示全部&nbsp;</span>
-                        <span class="caret"></span></button>
-                    <ul class="dropdown-menu" style="margin-top:8px;">
-                        <li><a data-value="-10" href="#">显示全部</a></li>
-                        <li><a data-value="0" href="#">未标记</a></li>
-                        <li><a data-value="-1" href="#">人工标错</a></li>
-                        <li><a data-value="1" href="#">人工标对</a></li>
-                    </ul>
-                </div>
                 <div id="order_scope" class="dropdown" style="display: inline-block;float:right;margin: 14px 5px;">
-                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span>升序</span>
+                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><span>降序</span>
                         <span class="caret"></span></button>
                     <ul class="dropdown-menu" style="margin-top:8px;">
                         <li><a data-value="accuracy" href="#">升序</a></li>
@@ -91,45 +63,17 @@
                     <div id="{{item.id}}" class="flow  char-image {{item.cls_name}} {{gen_cls(item)}}" @contextmenu.stop.prevent="handleContextmenu(item,$event)">
                         <img v-bind:src="item.image_url" alt="加载中..." class="lazy">
                         <span class="badge char-info">{{item.accuracy}}</span>
-                        <div class="cmd-panel">
-                            <div class="btn-correct-o" title='正确' v-on:click="mark_it(item, 1)">
-                            </div>
-                            <div class="btn-error-o" title='错误' v-on:click="mark_it(item, -1)">
-                            </div>
-                            <div class="btn btn-split-o" title='切错' v-on:click="mark_glyph(item, 1)">
-                            </div>
-                            <div class="btn btn-fuzzy-o" title='模糊' v-on:click="mark_glyph(item, 1)">
-                            </div>
-                        </div>
+
                     </div>
                 </template>
-                <div style="display: none" v-bind:style="menu_style" class="ctx-menu-container">
-                    <div class="ctx-menu">
-                        <div class="ctx-item" v-on:click="cut_image_modal()">
-                           重新切分
-                        </div>
-                        <div class="ctx-divider"></div>
-                        <div class="ctx-item" v-on:click="goto_detail()">
-                           字形详情
-                        </div>
-                        <div class="ctx-divider"></div>
-                        <div class="ctx-item" v-on:click="intelli_recog()">
-                            机器识别
-                        </div>
-                    </div>
-                </div>
                 {% endverbatim %}
-                {% include "characters/included/intel_detect_modal.html" %}
-                {% include "characters/included/recog_modal.html" %}
-                {% include "characters/included/cut_modal.html" %}
+
             </div>
            </div>
 
-            {% include "characters/included/command_panel.html" %}
+
              <div style="clear:both;"> </div>
             <div class="row" style="margin-top:10px;margin-left: 0px">
-                <div class="btn btn-default batch-check" id="correct_btn"><span class="tooltiptext">剩余全部标对</span><span style="color: #9AFF9A;font-size:20px;padding:0px 8px" class="fa fa-check"></span><span style="color: #9AFF9A;font-size:20px;padding:0px 8px" class="fa fa-check"></span></div>
-                <div class="btn btn-default batch-check" id="err_btn"><span class="tooltiptext">剩余全部标错</span><span style="color: pink;font-size:20px;padding:0px 10px" class="fa fa-times"></span><span style="color: pink;font-size:20px;padding:0px 10px" class="fa fa-times"></span></div>
                 <div class='char-pagitor'>
                     <span class='pagitor first btn btn-default' id='char_index_first'><span class="fa fa-step-backward"></span></span>
                     <span class='pagitor more-padding previous btn btn-default' id='char_index_previous' style="font-size:20px;">❮</span>
@@ -153,7 +97,7 @@
                         <label style="line-height: 31px;">字/页</label>
                     </div>
                 </div>
-                <div class="btn btn-default batch-check" id="clear_btn"><span class="tooltiptext">全部清空标记</span><span style="font-size:16px" class="fa fa-repeat">&nbsp;&nbsp;清空</span></div>
+
             </div>
             <div style="clear:both;"> </div>
             <div class="pagec" id="pagearea">
@@ -164,10 +108,6 @@
         <!--end col-md-9 -->
     </div>
     <!--endrow-->
-    {% include "characters/included/chart_modal.html" %}
-    {% include "characters/included/accuracy_modal.html" %}
-    {% include "characters/included/mark_modal.html" %}
-    {% include "characters/included/compare_result_modal.html" %}
     <div class="loading_icon">
         <!-- Place at bottom of page -->
     </div>
@@ -184,7 +124,7 @@
 <script src="/static/js/jquery.lazyload.min.js" charset="utf-8"></script>
 <script src="/static/js/modal_action.js" charset="utf-8"></script>
 <script src="/static/js/time_left.js" charset="utf-8"></script>
-<script src="/static/js/char_manage.js" charset="utf-8"></script>
+<script src="/static/js/char_manage_readonly.js" charset="utf-8"></script>
 <script src="/static/js/char_list.js" charset="utf-8"></script>
 <script>
 $(function(){

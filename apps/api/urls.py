@@ -6,7 +6,7 @@ from rest_framework.routers import DefaultRouter
 from views.default import TripitakaViewSet, VolumeViewSet, OPageViewSet, \
   PageViewSet, CharacterStatisticsViewSet, DataPointViewSet
 
-from views.character_view import CharacterViewSet
+from views.character_view import CharacterViewSet, CharacterReadViewSet
 from django.conf.urls import url, patterns, include
 
 from rest_framework.schemas import get_schema_view
@@ -26,6 +26,7 @@ router.register(r'volume', VolumeViewSet)
 router.register(r'o_page', OPageViewSet)
 router.register(r'page', PageViewSet)
 router.register(r'character', CharacterViewSet)
+router.register(r'characterread', CharacterReadViewSet)
 router.register(r'characterstatistics', CharacterStatisticsViewSet)
 router.register(r'datapoint', DataPointViewSet)
 

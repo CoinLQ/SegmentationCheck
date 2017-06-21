@@ -19,6 +19,7 @@ from api.serializers import CharacterSerializer
 
 from skimage import io
 from PIL import Image
+from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 
 logger = logging.getLogger(__name__)
 
@@ -209,3 +210,14 @@ class CharacterViewSet(viewsets.ModelViewSet):
             ret = e.message
 
         return Response({'status': ret, 'image_url': character.local_image_url(), 'is_same': character.is_same})
+
+class CharacterReadViewSet(viewsets.ModelViewSet):
+
+    serializer_class = CharacterSerializer
+    filter_backends = (filters.DjangoFilterBackend, filters.OrderingFilter)
+    filter_class = CharacterFilter
+    queryset = Character.objects.order_by('accuracy')
+    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
+
+    def get_queryset(self):
+        return Character.objects.all()
