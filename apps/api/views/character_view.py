@@ -121,7 +121,7 @@ class CharacterViewSet(viewsets.ModelViewSet):
         req = urllib2.Request(host + "/imglst")
         req.add_header("Content-Type", "application/json")
         response = urllib2.urlopen(req, json.dumps(params))
-        ret = json.loads(response.read())
+        ret = json.dumps(response.read())
         return Response(ret)
 
     @list_route(methods=['post'], url_path='filter-mark')
