@@ -79,7 +79,7 @@ function recog_file(data) {
     $.ajax({
         url: '/api/character/input-recog',
         method: 'POST',
-        dataType: 'jsonp',
+        dataType: 'json',
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify(data),
         success: function(res) {
