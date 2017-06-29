@@ -77,7 +77,7 @@ function recog_file(data) {
     $('.output').find('.textbox')
         .text('识别中。。。')
     $.ajax({
-        url: '/api/character/input-recog',
+        url: '/api/characterread/input-recog',
         method: 'POST',
         dataType: 'json',
         contentType: "application/json; charset=utf-8",

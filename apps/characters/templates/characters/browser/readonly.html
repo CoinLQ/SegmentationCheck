@@ -115,7 +115,6 @@
 <!-- /.container -->
 {% endblock %}
 {% block foot %}
-{% compress js %}
 <script src="/static/js/vue-click-outside.js"></script>
 <script src="/static/datatables/jquery.dataTables.js"></script>
 <script src="/static/datatables/dataTables.bootstrap.js"></script>
@@ -153,5 +152,4 @@ if (location.hash.substr(1)=="recog") {
 }
 })
 </script>
-{% endcompress %}
 {% endblock %}

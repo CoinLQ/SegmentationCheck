@@ -19,7 +19,7 @@ from api.serializers import CharacterSerializer
 
 from skimage import io
 from PIL import Image
-from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
+from rest_framework.permissions import AllowAny
 
 logger = logging.getLogger(__name__)
 
@@ -112,7 +112,7 @@ class CharacterViewSet(viewsets.ModelViewSet):
         except IndexError, e:
             print e
             return ''
-    @list_route(methods=['post'], url_path='input-recog')
+    '''@list_route(methods=['post'], url_path='input-recog')
     def input_recog(self, request):
         #image = request.data['image']
         #image = self.request.query_params.get('image', None)
@@ -121,9 +121,9 @@ class CharacterViewSet(viewsets.ModelViewSet):
         req = urllib2.Request(host + "/imglst")
         req.add_header("Content-Type", "application/json")
         response = urllib2.urlopen(req, json.dumps(params))
-        ret = json.dumps(response.read())
+        ret = json.loads(response.read())
         return Response(ret)
-
+    '''
     @list_route(methods=['post'], url_path='filter-mark')
     @transaction.atomic
     def filter_mark_by_recog(self, request):
@@ -217,7 +217,19 @@ class CharacterReadViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.DjangoFilterBackend, filters.OrderingFilter)
     filter_class = CharacterFilter
     queryset = Character.objects.order_by('accuracy')
-    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
+    permission_classes = (AllowAny,)
 
     def get_queryset(self):
         return Character.objects.all()
+
+    @list_route(methods=['post'], url_path='input-recog')
+    def input_recog(self, request):
+        #image = request.data['image']
+        #image = self.request.query_params.get('image', None)
+        host = 'http://www.dzj3000.com:9090'
+        params = { "images": request.data['images'] }
+        req = urllib2.Request(host + "/imglst")
+        req.add_header("Content-Type", "application/json")
+        response = urllib2.urlopen(req, json.dumps(params))
+        ret = json.loads(response.read())
+        return Response(ret)
