@@ -66,6 +66,8 @@ def browser(request, char):
                 return render(request,'characters/browser/index.html',{'character': char,'user_group': user_group})
             else:
                 return render(request, 'characters/browser/readonly.html', {'character': char, 'user_group': user_group})
+        else:
+            return render(request, 'characters/browser/readonly.html', {'character': char, 'user_group': user_group})
     else:
         return render(request,'characters/browser/readonly.html',{'character': char,'user_group': user_group})
 
