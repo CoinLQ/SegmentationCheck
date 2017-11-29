@@ -57,10 +57,18 @@ def detail(request, character_id):
     return render(request,'characters/character_detail.html',{'character': char, 'page': page,'t_char': t_char, 'summary': summary})
 
 def browser(request, char):
-    if request.user.is_authenticated():
-        return render(request,'characters/browser/index.html',{'character': char,'user_group': Group.objects.get(user=request.user)})
+    view_user = request.user
+    user_group = request.user.username
+    if view_user.is_authenticated():
+        if Group.objects.filter(user=view_user):
+            user_group = Group.objects.filter(user=view_user)[0].name
+            if user_group == 'verified' or view_user.is_superuser:
+                return render(request,'characters/browser/index.html',{'character': char,'user_group': user_group})
+            else:
+                return render(request, 'characters/browser/readonly.html', {'character': char, 'user_group': user_group})
     else:
-        return render(request,'characters/browser/readonly.html',{'character': char,'user_group': Group.objects.get(user=request.user)})
+        return render(request,'characters/browser/readonly.html',{'character': char,'user_group': user_group})
+
 
 #@user_passes_test(lambda u:u.is_staff, login_url='/quiz')
 @login_required(login_url='/account/login/')
