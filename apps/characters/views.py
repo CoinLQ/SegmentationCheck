@@ -15,7 +15,7 @@ from django.views import generic
 from segmentation.models import Character, CharacterStatistics
 from libs.fetch_variants import fetcher
 from utils.get_checked_character import get_checked_character
-
+from django.contrib.auth.models import Group
 from .models import UserCredit, CharMarkRecord, ClassificationTask, ClassificationCompareResult
 from .tasks import classify_with_random_samples
 
@@ -58,9 +58,9 @@ def detail(request, character_id):
 
 def browser(request, char):
     if request.user.is_authenticated():
-        return render(request,'characters/browser/index.html',{'character': char})
+        return render(request,'characters/browser/index.html',{'character': char,'user_group': Group.objects.get(user=request.user)})
     else:
-        return render(request,'characters/browser/readonly.html',{'character': char})
+        return render(request,'characters/browser/readonly.html',{'character': char,'user_group': Group.objects.get(user=request.user)})
 
 #@user_passes_test(lambda u:u.is_staff, login_url='/quiz')
 @login_required(login_url='/account/login/')
