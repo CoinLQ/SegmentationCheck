@@ -15,7 +15,7 @@ var charListContainer = {
     page_size: 50,
     page_number: 1,
     filter: '-10', //show all
-    order: 'accuracy',
+    order: '-accuracy',
     accuracy_base: NaN,
     accuracy_scope: 10,
     l_value: 0,
