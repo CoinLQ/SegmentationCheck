@@ -31,6 +31,7 @@ SECRET_KEY = '7hjHnMmsHduzVfxrf6upTFdhNRBiQunQLaQt'
 
 ALLOWED_HOSTS = [
     '112.74.23.141',
+    '119.23.79.245',
     '127.0.0.1',
     'dzj3000.com',
     'www.dzj3000.com',
