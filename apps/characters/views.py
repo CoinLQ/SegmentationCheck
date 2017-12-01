@@ -2,6 +2,7 @@
 import json
 import random
 import redis
+import datetime
 
 from django.http import JsonResponse
 from django.contrib.auth.decorators import user_passes_test, login_required, permission_required
@@ -60,9 +61,11 @@ def browser(request, char):
     view_user = request.user
     user_group = request.user.username
     if view_user.is_authenticated():
-        if Group.objects.filter(user=view_user):
+        if view_user.is_superuser or view_user.date_joined.replace(tzinfo=None) < datetime.datetime(2017, 12, 1, 0, 54):
+            return render(request, 'characters/browser/index.html', {'character': char, 'user_group': user_group})
+        elif Group.objects.filter(user=view_user):
             user_group = Group.objects.filter(user=view_user)[0].name
-            if user_group == 'verified' or view_user.is_superuser:
+            if user_group == 'verified' :
                 return render(request,'characters/browser/index.html',{'character': char,'user_group': user_group})
             else:
                 return render(request, 'characters/browser/readonly.html', {'character': char, 'user_group': user_group})
