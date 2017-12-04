@@ -4,7 +4,8 @@ from . import views
 
 urlpatterns = [
     #url(r'^$', views.index, name='character_index'),
-    url(r'^$', login_required(views.Index.as_view()), name='character_index'),
+    #url(r'^$', login_required(views.Index.as_view()), name='character_index'),
+    url(r'^$', views.Index.as_view(), name='character_index'),
     url(r'^list/$', login_required(views.List .as_view()), name='character_list'),
     url(r'^task/$', views.task, name='task'),
     url(r'^task/help$', views.help, name='help'),
