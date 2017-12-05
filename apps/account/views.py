@@ -7,6 +7,12 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.http import JsonResponse
+import re
+from django.http import HttpResponse
+
+import sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
 
 @csrf_protect
 def register(request):
@@ -19,6 +25,10 @@ def register(request):
             errors = []
 
             registerForm = RegistrationForm(request.POST)
+            regex = re.compile(r'^[\w\d_]*$')
+            if not regex.match(username):
+                return HttpResponse('用户名只能包含数字字母和下划线！')
+
             if not registerForm.is_valid():
                 errors.extend(registerForm.errors.values())
                 return JsonResponse({'error': errors})
