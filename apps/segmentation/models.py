@@ -177,8 +177,9 @@ class Character(models.Model):
             return self.local_image_url()
         #server_host = "http://asset-c%d.dzj3000.lqdzj.cn" % int(math.ceil(random.random() * 1))
         server_host = "http://dzj3000.lqdzj.cn"
-        return server_host + '/character_images/' + self.resource_key().replace(u'.jpg', u'.png')
-
+        #return server_host + '/web/character_images/' + self.resource_key().replace(u'.jpg', u'.png')
+        return server_host + '/character_images/' + self.resource_key()
+    
     @property
     def rect(self):
         return [self.left, self.top, self.right-self.left, self.bottom - self.top]
