@@ -226,7 +226,7 @@ class CharacterReadViewSet(viewsets.ModelViewSet):
     def input_recog(self, request):
         #image = request.data['image']
         #image = self.request.query_params.get('image', None)
-        host = 'http://www.dzj3000.com:9090'
+        host = 'http://www.dzj3000.lqdzj.cn:9090'
         params = { "images": request.data['images'] }
         req = urllib2.Request(host + "/imglst")
         req.add_header("Content-Type", "application/json")

@@ -254,7 +254,7 @@ class Character(models.Model):
         return img64
 
     def predict_reg(self):
-        host = 'http://www.dzj3000.com:9090'
+        host = 'http://www.dzj3000.lqdzj.cn:9090'
         params = { "images": [self.base64_jpg()] }
         req = urllib2.Request(host + "/imglst")
         req.add_header("Content-Type", "application/json")
@@ -311,7 +311,7 @@ class Character(models.Model):
     def bulk_update_recog(cls, char_list):
         if not char_list:
                return
-        host = 'http://www.dzj3000.com:9090'
+        host = 'http://www.dzj3000.lqdzj.cn:9090'
         image_list = map(lambda ch:ch.base64_jpg(), char_list)
         params = { "images": image_list }
         req = urllib2.Request(host + "/imglst")
