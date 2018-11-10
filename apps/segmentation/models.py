@@ -175,7 +175,7 @@ class Character(models.Model):
 
         if self.is_integrity == 1:
             return self.local_image_url()
-        server_host = "http://asset-c%d.dzj3000.com" % int(math.ceil(random.random() * 1))
+        server_host = "http://asset-c%d.dzj3000.lqdzj.cn" % int(math.ceil(random.random() * 1))
         return server_host + '/web/character_images/' + self.resource_key().replace(u'.jpg', u'.png')
 
     @property
